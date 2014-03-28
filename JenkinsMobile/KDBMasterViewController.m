@@ -30,6 +30,8 @@
     [super viewDidLoad];
 
     self.detailViewController = (KDBDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+
+    [self makeJenkinsRequests];
 }
 
 - (void)didReceiveMemoryWarning
@@ -50,7 +52,8 @@
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"JSON: %@", responseObject);
+        self.jenkinsJobs = [responseObject objectForKey:@"jobs"];
+        [self.tableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
         NSLog(@"Request Failed: %@, %@", error, error.userInfo);
@@ -63,12 +66,12 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 0;
+    return [self.jenkinsJobs count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -112,7 +115,9 @@
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    cell.textLabel.text = @"test";
+    NSDictionary *tempDictionary= [self.jenkinsJobs objectAtIndex:indexPath.row];
+    cell.textLabel.text = [tempDictionary objectForKey:@"name"];
+
 }
 
 @end
