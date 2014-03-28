@@ -15,6 +15,5 @@
 @property (strong, nonatomic) NSArray *jenkinsJobs;
 
 @property (strong, nonatomic) KDBDetailViewController *detailViewController;
-@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
 @end
