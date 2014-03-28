@@ -10,13 +10,9 @@
 
 @class KDBDetailViewController;
 
-#import <CoreData/CoreData.h>
-
-@interface KDBMasterViewController : UITableViewController <NSFetchedResultsControllerDelegate>
+@interface KDBMasterViewController : UITableViewController
 
 @property (strong, nonatomic) KDBDetailViewController *detailViewController;
-
-@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
 @end
