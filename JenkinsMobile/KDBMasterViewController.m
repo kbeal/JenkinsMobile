@@ -107,9 +107,8 @@
 {
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        /*
-        NSManagedObject *object = [[self fetchedResultsController] objectAtIndexPath:indexPath];
-        [[segue destinationViewController] setDetailItem:object];*/
+        NSDictionary *tempDictionary= [self.jenkinsJobs objectAtIndex:indexPath.row];
+        [[segue destinationViewController] setDetailItem: tempDictionary];
     }
 }
 
