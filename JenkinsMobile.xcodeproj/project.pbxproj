@@ -45,7 +45,7 @@
 		8A7CDB3218E777B40079F3F1 /* lock.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A7CDAFB18E777B40079F3F1 /* lock.png */; };
 		8A7CDB3318E777B40079F3F1 /* monitor.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A7CDAFC18E777B40079F3F1 /* monitor.png */; };
 		8A7CDB3418E777B40079F3F1 /* network.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A7CDAFD18E777B40079F3F1 /* network.png */; };
-		8A7CDB3518E777B40079F3F1 /* nobuilt.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A7CDAFE18E777B40079F3F1 /* nobuilt.png */; };
+		8A7CDB3518E777B40079F3F1 /* notbuilt.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A7CDAFE18E777B40079F3F1 /* notbuilt.png */; };
 		8A7CDB3618E777B40079F3F1 /* notepad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A7CDAFF18E777B40079F3F1 /* notepad.png */; };
 		8A7CDB3718E777B40079F3F1 /* orange-square.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A7CDB0018E777B40079F3F1 /* orange-square.png */; };
 		8A7CDB3818E777B40079F3F1 /* package.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A7CDB0118E777B40079F3F1 /* package.png */; };
@@ -147,7 +147,7 @@
 		8A7CDAFB18E777B40079F3F1 /* lock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lock.png; sourceTree = "<group>"; };
 		8A7CDAFC18E777B40079F3F1 /* monitor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = monitor.png; sourceTree = "<group>"; };
 		8A7CDAFD18E777B40079F3F1 /* network.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = network.png; sourceTree = "<group>"; };
-		8A7CDAFE18E777B40079F3F1 /* nobuilt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nobuilt.png; sourceTree = "<group>"; };
+		8A7CDAFE18E777B40079F3F1 /* notbuilt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notbuilt.png; sourceTree = "<group>"; };
 		8A7CDAFF18E777B40079F3F1 /* notepad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notepad.png; sourceTree = "<group>"; };
 		8A7CDB0018E777B40079F3F1 /* orange-square.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "orange-square.png"; sourceTree = "<group>"; };
 		8A7CDB0118E777B40079F3F1 /* package.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = package.png; sourceTree = "<group>"; };
@@ -243,28 +243,19 @@
 		8A7CDAD818E7779F0079F3F1 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				8A7CDB4D18E7783E0079F3F1 /* title.png */,
-				8A7CDB4918E778250079F3F1 /* progress-unknown-red.gif */,
-				8A7CDB4A18E778250079F3F1 /* progress-unknown.gif */,
-				8A7CDB4718E7780A0079F3F1 /* jenkins.png */,
-				8A7CDAD918E777B40079F3F1 /* aborted_anime.gif */,
-				8A7CDADA18E777B40079F3F1 /* blue_anime.gif */,
-				8A7CDADB18E777B40079F3F1 /* clipboard.gif */,
-				8A7CDADC18E777B40079F3F1 /* computer-flash.gif */,
-				8A7CDADD18E777B40079F3F1 /* disabled_anime.gif */,
-				8A7CDADE18E777B40079F3F1 /* green_anime.gif */,
-				8A7CDADF18E777B40079F3F1 /* grey_anime.gif */,
-				8A7CDAE018E777B40079F3F1 /* nobuilt_anime.gif */,
-				8A7CDAE118E777B40079F3F1 /* red_anime.gif */,
-				8A7CDAE218E777B40079F3F1 /* yellow_anime.gif */,
 				8A7CDAE318E777B40079F3F1 /* aborted.png */,
+				8A7CDAD918E777B40079F3F1 /* aborted_anime.gif */,
 				8A7CDAE418E777B40079F3F1 /* accept.png */,
 				8A7CDAE518E777B40079F3F1 /* attribute.png */,
 				8A7CDAE618E777B40079F3F1 /* blue.png */,
+				8A7CDADA18E777B40079F3F1 /* blue_anime.gif */,
+				8A7CDADB18E777B40079F3F1 /* clipboard.gif */,
 				8A7CDAE718E777B40079F3F1 /* clipboard.png */,
+				8A7CDADC18E777B40079F3F1 /* computer-flash.gif */,
 				8A7CDAE818E777B40079F3F1 /* computer-x.png */,
 				8A7CDAE918E777B40079F3F1 /* computer.png */,
 				8A7CDAEA18E777B40079F3F1 /* disabled.png */,
+				8A7CDADD18E777B40079F3F1 /* disabled_anime.gif */,
 				8A7CDAEB18E777B40079F3F1 /* document.png */,
 				8A7CDAEC18E777B40079F3F1 /* empty.png */,
 				8A7CDAED18E777B40079F3F1 /* error.png */,
@@ -273,7 +264,9 @@
 				8A7CDAF018E777B40079F3F1 /* folder.png */,
 				8A7CDAF118E777B40079F3F1 /* gear2.png */,
 				8A7CDAF218E777B40079F3F1 /* graph.png */,
+				8A7CDADE18E777B40079F3F1 /* green_anime.gif */,
 				8A7CDAF318E777B40079F3F1 /* grey.png */,
+				8A7CDADF18E777B40079F3F1 /* grey_anime.gif */,
 				8A7CDAF418E777B40079F3F1 /* health-00to19.png */,
 				8A7CDAF518E777B40079F3F1 /* health-20to39.png */,
 				8A7CDAF618E777B40079F3F1 /* health-40to59.png */,
@@ -281,15 +274,20 @@
 				8A7CDAF818E777B40079F3F1 /* health-80plus.png */,
 				8A7CDAF918E777B40079F3F1 /* help.png */,
 				8A7CDAFA18E777B40079F3F1 /* installer.png */,
+				8A7CDB4718E7780A0079F3F1 /* jenkins.png */,
 				8A7CDAFB18E777B40079F3F1 /* lock.png */,
 				8A7CDAFC18E777B40079F3F1 /* monitor.png */,
 				8A7CDAFD18E777B40079F3F1 /* network.png */,
-				8A7CDAFE18E777B40079F3F1 /* nobuilt.png */,
+				8A7CDAE018E777B40079F3F1 /* nobuilt_anime.gif */,
+				8A7CDAFE18E777B40079F3F1 /* notbuilt.png */,
 				8A7CDAFF18E777B40079F3F1 /* notepad.png */,
 				8A7CDB0018E777B40079F3F1 /* orange-square.png */,
 				8A7CDB0118E777B40079F3F1 /* package.png */,
 				8A7CDB0218E777B40079F3F1 /* plugin.png */,
+				8A7CDB4918E778250079F3F1 /* progress-unknown-red.gif */,
+				8A7CDB4A18E778250079F3F1 /* progress-unknown.gif */,
 				8A7CDB0318E777B40079F3F1 /* red.png */,
+				8A7CDAE118E777B40079F3F1 /* red_anime.gif */,
 				8A7CDB0418E777B40079F3F1 /* redo.png */,
 				8A7CDB0518E777B40079F3F1 /* refresh.png */,
 				8A7CDB0618E777B40079F3F1 /* search.png */,
@@ -299,9 +297,11 @@
 				8A7CDB0A18E777B40079F3F1 /* star.png */,
 				8A7CDB0B18E777B40079F3F1 /* system-log-out.png */,
 				8A7CDB0C18E777B40079F3F1 /* terminal.png */,
+				8A7CDB4D18E7783E0079F3F1 /* title.png */,
 				8A7CDB0D18E777B40079F3F1 /* user.png */,
 				8A7CDB0E18E777B40079F3F1 /* warning.png */,
 				8A7CDB0F18E777B40079F3F1 /* yellow.png */,
+				8A7CDAE218E777B40079F3F1 /* yellow_anime.gif */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -518,7 +518,7 @@
 				8A7CDB1818E777B40079F3F1 /* red_anime.gif in Resources */,
 				8A7CDB3318E777B40079F3F1 /* monitor.png in Resources */,
 				8A7CDB3218E777B40079F3F1 /* lock.png in Resources */,
-				8A7CDB3518E777B40079F3F1 /* nobuilt.png in Resources */,
+				8A7CDB3518E777B40079F3F1 /* notbuilt.png in Resources */,
 				8A7CDB2E18E777B40079F3F1 /* health-60to79.png in Resources */,
 				8A7CDB4B18E778250079F3F1 /* progress-unknown-red.gif in Resources */,
 				8A7CDB2418E777B40079F3F1 /* error.png in Resources */,
