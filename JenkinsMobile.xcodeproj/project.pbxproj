@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */; };
 		8AC329ED18E4F3A90002D106 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EC18E4F3A90002D106 /* Foundation.framework */; };
 		8AC329EF18E4F3A90002D106 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EE18E4F3A90002D106 /* CoreGraphics.framework */; };
 		8AC329F118E4F3A90002D106 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329F018E4F3A90002D106 /* UIKit.framework */; };
@@ -48,6 +49,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBViewPickerViewController.h; sourceTree = "<group>"; };
+		8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBViewPickerViewController.m; sourceTree = "<group>"; };
 		8AC329E918E4F3A90002D106 /* JenkinsMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JenkinsMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AC329EC18E4F3A90002D106 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8AC329EE18E4F3A90002D106 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -161,6 +164,8 @@
 				8AC32A0918E4F3A90002D106 /* KDBMasterViewController.h */,
 				8AC32A0A18E4F3A90002D106 /* KDBMasterViewController.m */,
 				8AC32A0C18E4F3A90002D106 /* KDBDetailViewController.h */,
+				8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */,
+				8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */,
 				8AC32A0D18E4F3A90002D106 /* KDBDetailViewController.m */,
 				8AC32A0F18E4F3A90002D106 /* Images.xcassets */,
 				8AC32A0618E4F3A90002D106 /* JenkinsMobile.xcdatamodeld */,
@@ -331,6 +336,7 @@
 				8AC32A0E18E4F3A90002D106 /* KDBDetailViewController.m in Sources */,
 				8AC32A4818E4FB6F0002D106 /* AFURLResponseSerialization.m in Sources */,
 				8AC32A0B18E4F3A90002D106 /* KDBMasterViewController.m in Sources */,
+				8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */,
 				8AC329FF18E4F3A90002D106 /* KDBAppDelegate.m in Sources */,
 				8AC32A4218E4FB6F0002D106 /* AFHTTPRequestOperationManager.m in Sources */,
 				8AC32A4518E4FB6F0002D106 /* AFSecurityPolicy.m in Sources */,
@@ -555,6 +561,7 @@
 				8AC32A2918E4F3A90002D106 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8AC32A2A18E4F3A90002D106 /* Build configuration list for PBXNativeTarget "JenkinsMobileTests" */ = {
 			isa = XCConfigurationList;
@@ -563,6 +570,7 @@
 				8AC32A2C18E4F3A90002D106 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
