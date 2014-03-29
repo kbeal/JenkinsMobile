@@ -31,7 +31,7 @@
 
     self.detailViewController = (KDBDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
 
-    [self makeJenkinsRequests];
+    [self makeJenkinsRequestsForViewURL:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -40,11 +40,15 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)makeJenkinsRequests
+-(void)makeJenkinsRequestsForViewURL: (NSURL *) url
 {
-    NSURL *url = [NSURL URLWithString:@"http://tomcat:8080/api/json"];
+    if (url==nil) {
+        url = [NSURL URLWithString:@"http://tomcat:8080/"];
+    }
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    NSURL *requestURL = [url URLByAppendingPathComponent:@"api/json"];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     //AFNetworking asynchronous url request
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
                                          initWithRequest:request];
@@ -116,7 +120,41 @@
 {
     NSDictionary *tempDictionary= [self.jenkinsJobs objectAtIndex:indexPath.row];
     cell.textLabel.text = [tempDictionary objectForKey:@"name"];
+}
 
+#pragma mark - IBActions
+-(IBAction)chooseViewButtonTapped:(id)sender
+{
+    if (_viewPicker == nil) {
+        //Create the ViewPickerViewController.
+        _viewPicker = [[KDBViewPickerViewController alloc] initWithStyle:UITableViewStylePlain];
+        
+        //Set this VC as the delegate.
+        _viewPicker.delegate = self;
+    }
+    
+    if (_viewPickerPopover == nil) {
+        //The view picker popover is not showing. Show it.
+        _viewPickerPopover = [[UIPopoverController alloc] initWithContentViewController:_viewPicker];
+        [_viewPickerPopover presentPopoverFromBarButtonItem:(UIBarButtonItem *)sender
+                                    permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    } else {
+        //The view picker popover is showing. Hide it.
+        [_viewPickerPopover dismissPopoverAnimated:YES];
+        _viewPickerPopover = nil;
+    }
+}
+
+#pragma mark - ViewPickerDelegate method
+-(void)selectedView:(NSURL *)newViewURL {
+    //Dismiss the popover if it's showing
+    if (_viewPickerPopover) {
+        [_viewPickerPopover dismissPopoverAnimated:YES];
+        _viewPickerPopover = nil;
+    }
+    
+    // reload the master table view with jobs from the selected view
+    [self makeJenkinsRequestsForViewURL: newViewURL];
 }
 
 @end

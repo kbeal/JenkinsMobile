@@ -19,7 +19,7 @@
 {
     self = [super initWithStyle:style];
     if (self) {
-        // Custom initialization
+        //self.preferredContentSize = CGSizeMake(150, 140);
     }
     return self;
 }
@@ -72,7 +72,7 @@
     
     //Notify the delegate if it exists.
     if (_delegate != nil) {
-        [_delegate selectedView:[view objectForKey:@"url"]];
+        [_delegate selectedView:[NSURL URLWithString:(NSString *)[view objectForKey:@"url"]]];
     }
 }
 
@@ -92,8 +92,12 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"viewCell" forIndexPath:indexPath];
+{    
+    static NSString *CellIdentifier = @"Cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+    }
     [self configureCell:cell atIndexPath:indexPath];
     return cell;
 }

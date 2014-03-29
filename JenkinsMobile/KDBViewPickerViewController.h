@@ -10,7 +10,7 @@
 
 @protocol ViewPickerDelegate <NSObject>
 @required
--(void)selectedView:(NSString *)newViewURL;
+-(void)selectedView:(NSURL *)newViewURL;
 @end
 
 @interface KDBViewPickerViewController : UITableViewController
