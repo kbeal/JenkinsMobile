@@ -120,6 +120,8 @@
 {
     NSDictionary *tempDictionary= [self.jenkinsJobs objectAtIndex:indexPath.row];
     cell.textLabel.text = [tempDictionary objectForKey:@"name"];
+    NSString *iconFileName = [NSString stringWithFormat:@"%@%@", [tempDictionary objectForKey:@"color"], @".png"];
+    cell.imageView.image = [UIImage imageNamed:iconFileName];
 }
 
 #pragma mark - IBActions
