@@ -9,8 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "KDBJenkinsViewsScrollView.h"
 
-@interface KDBJenkinsViewsViewController : UIViewController {
+@interface KDBJenkinsViewsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource> {
     IBOutlet KDBJenkinsViewsScrollView *jenkinsViewsScrollView;
 }
+
+// Dictionary mapping jenkins views to the jobs they contain
+@property (strong, nonatomic) NSMutableDictionary *jenkinsViewsJobs;
+@property (strong, nonatomic) NSString *currentURL;
 
 @end
