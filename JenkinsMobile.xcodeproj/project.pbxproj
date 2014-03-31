@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8A14345118E880A2000C2DB4 /* KDBJenkinsViewsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A14345018E880A2000C2DB4 /* KDBJenkinsViewsViewController.m */; };
+		8A14345418E8857B000C2DB4 /* KDBJenkinsViewsScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A14345318E8857B000C2DB4 /* KDBJenkinsViewsScrollView.m */; };
+		8A14345718E8863E000C2DB4 /* KDBJenkinsViewTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A14345618E8863E000C2DB4 /* KDBJenkinsViewTableView.m */; };
 		8A3CB9A918E7C39900D0D160 /* yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CB91918E7C39800D0D160 /* yellow.png */; };
 		8A3CB9AA18E7C39900D0D160 /* yellow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CB91A18E7C39800D0D160 /* yellow@2x.png */; };
 		8A3CB9AB18E7C39900D0D160 /* warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CB91B18E7C39800D0D160 /* warning.png */; };
@@ -195,6 +198,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8A14344F18E880A2000C2DB4 /* KDBJenkinsViewsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJenkinsViewsViewController.h; sourceTree = "<group>"; };
+		8A14345018E880A2000C2DB4 /* KDBJenkinsViewsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJenkinsViewsViewController.m; sourceTree = "<group>"; };
+		8A14345218E8857B000C2DB4 /* KDBJenkinsViewsScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJenkinsViewsScrollView.h; sourceTree = "<group>"; };
+		8A14345318E8857B000C2DB4 /* KDBJenkinsViewsScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJenkinsViewsScrollView.m; sourceTree = "<group>"; };
+		8A14345518E8863E000C2DB4 /* KDBJenkinsViewTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJenkinsViewTableView.h; sourceTree = "<group>"; };
+		8A14345618E8863E000C2DB4 /* KDBJenkinsViewTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJenkinsViewTableView.m; sourceTree = "<group>"; };
 		8A3CB91918E7C39800D0D160 /* yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = yellow.png; sourceTree = "<group>"; };
 		8A3CB91A18E7C39800D0D160 /* yellow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yellow@2x.png"; sourceTree = "<group>"; };
 		8A3CB91B18E7C39800D0D160 /* warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = warning.png; sourceTree = "<group>"; };
@@ -607,6 +616,12 @@
 				8AC329FE18E4F3A90002D106 /* KDBAppDelegate.m */,
 				8AC32A0018E4F3A90002D106 /* Main_iPhone.storyboard */,
 				8AC32A0318E4F3A90002D106 /* Main_iPad.storyboard */,
+				8A14344F18E880A2000C2DB4 /* KDBJenkinsViewsViewController.h */,
+				8A14345018E880A2000C2DB4 /* KDBJenkinsViewsViewController.m */,
+				8A14345218E8857B000C2DB4 /* KDBJenkinsViewsScrollView.h */,
+				8A14345318E8857B000C2DB4 /* KDBJenkinsViewsScrollView.m */,
+				8A14345518E8863E000C2DB4 /* KDBJenkinsViewTableView.h */,
+				8A14345618E8863E000C2DB4 /* KDBJenkinsViewTableView.m */,
 				8AC32A0918E4F3A90002D106 /* KDBMasterViewController.h */,
 				8AC32A0A18E4F3A90002D106 /* KDBMasterViewController.m */,
 				8AC32A0C18E4F3A90002D106 /* KDBDetailViewController.h */,
@@ -921,7 +936,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				8AC32A4618E4FB6F0002D106 /* AFURLConnectionOperation.m in Sources */,
+				8A14345718E8863E000C2DB4 /* KDBJenkinsViewTableView.m in Sources */,
 				8AC32A4118E4FB6F0002D106 /* AFHTTPRequestOperation.m in Sources */,
+				8A14345418E8857B000C2DB4 /* KDBJenkinsViewsScrollView.m in Sources */,
 				8AC32A4418E4FB6F0002D106 /* AFNetworkReachabilityManager.m in Sources */,
 				8AC32A4918E4FB6F0002D106 /* AFURLSessionManager.m in Sources */,
 				8AC32A4718E4FB6F0002D106 /* AFURLRequestSerialization.m in Sources */,
@@ -930,6 +947,7 @@
 				8AC32A0B18E4F3A90002D106 /* KDBMasterViewController.m in Sources */,
 				8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */,
 				8AC329FF18E4F3A90002D106 /* KDBAppDelegate.m in Sources */,
+				8A14345118E880A2000C2DB4 /* KDBJenkinsViewsViewController.m in Sources */,
 				8AC32A4218E4FB6F0002D106 /* AFHTTPRequestOperationManager.m in Sources */,
 				8AC32A4518E4FB6F0002D106 /* AFSecurityPolicy.m in Sources */,
 				8AC329FB18E4F3A90002D106 /* main.m in Sources */,
