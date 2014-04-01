@@ -40,9 +40,14 @@
         tableView.dataSource = self;
 
         [self->jenkinsViewsScrollView addSubview:tableView];
+        
+        if (i==0) {
+            self.currentView = tableView;
+        }
     }
 
     self->jenkinsViewsScrollView.contentSize = CGSizeMake(self->jenkinsViewsScrollView.frame.size.width * 3, self->jenkinsViewsScrollView.frame.size.height);
+    [self makeJenkinsRequestsForView:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -80,13 +85,24 @@
     [operation start];
 }
 
--(void) mapViewsToJobs: (NSDictionary *) views
+-(void) mapViewsToJobs: (NSArray *) views
 {
-    NSEnumerator *enumerator = [views keyEnumerator];
-    id key;
+    for (int i=0; i<views.count; i++) {
+        NSDictionary *view = [views objectAtIndex:i];
+        NSEnumerator *enumerator = [view keyEnumerator];
+        id key;
+        while ((key = [enumerator nextObject])) {
+            NSObject *val = [tmp objectForKey:key];
+            NSString *classname = NSStringFromClass([val class]);
+            NSLog([NSString stringWithFormat:@"%@%@%@",key,@" ",val]);
+        }
+    }
+    /*
+
     while ((key = [enumerator nextObject])) {
         [self queryJenkinsJobsInView:[[views objectForKey:key] objectForKey:@"url"]];
     }
+    [self.currentView reloadData];*/
 }
 
 -(void) queryJenkinsJobsInView: (NSString *) url

@@ -9,9 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface KDBJenkinsViewsScrollView : UIScrollView {
-
-    IBOutlet UITableViewController *currJenkinsView;
     
 }
+
 
 @end
