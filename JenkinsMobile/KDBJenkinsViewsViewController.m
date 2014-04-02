@@ -35,7 +35,6 @@
 
 - (void)addTableForEachJenkinsView
 {
-    NSArray *colors = [NSArray arrayWithObjects:[UIColor redColor], [UIColor greenColor], [UIColor blueColor], [UIColor brownColor], nil];
     for (int i = 0; i < self.jenkinsViews.count; i++) {
         CGRect frame;
         frame.origin.x = self->jenkinsViewsScrollView.frame.size.width * i;
@@ -46,7 +45,6 @@
         tableView.delegate = self;
         tableView.dataSource = self;
         [tableView setContentInset:UIEdgeInsetsMake(64, 0, 0, 0)];
-        tableView.backgroundColor = [colors objectAtIndex:i];
         
         [self->jenkinsViewsScrollView addSubview:tableView];
         
@@ -136,6 +134,7 @@
     if (previousPage != page) {
         self.currentJenkinsView = [self.jenkinsViews objectAtIndex:page];
         self.currentTableView = [[self->jenkinsViewsScrollView subviews] objectAtIndex:page];
+        self.navigationItem.title = self.currentJenkinsView;
         [self.currentTableView reloadData];
         previousPage = page;
     }
