@@ -27,32 +27,34 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.currentURL = @"http://tomcat:8080/";
+    self.currentJenkinsView = @"All";
     self.jenkinsViewsJobs = [[NSMutableDictionary alloc] init];
     self.jenkinsViews = [[NSMutableArray alloc] init];
     [self getAllJenkinsViews];
-    
-    NSArray *colors = [NSArray arrayWithObjects:[UIColor redColor], [UIColor greenColor], [UIColor blueColor], nil];
+}
+
+- (void)addTableForEachJenkinsView
+{
+    NSArray *colors = [NSArray arrayWithObjects:[UIColor redColor], [UIColor greenColor], [UIColor blueColor], [UIColor brownColor], nil];
     for (int i = 0; i < self.jenkinsViews.count; i++) {
         CGRect frame;
         frame.origin.x = self->jenkinsViewsScrollView.frame.size.width * i;
-        frame.origin.y = 0;
+        frame.origin.y = self->jenkinsViewsScrollView.frame.origin.y;
         frame.size = self->jenkinsViewsScrollView.frame.size;
-
+        
         UITableView *tableView = [[UITableView alloc] initWithFrame:frame];
         tableView.delegate = self;
         tableView.dataSource = self;
+        [tableView setContentInset:UIEdgeInsetsMake(64, 0, 0, 0)];
         tableView.backgroundColor = [colors objectAtIndex:i];
-
+        
         [self->jenkinsViewsScrollView addSubview:tableView];
         
         if (i==0) {
-            self.currentView = tableView;
+            self.currentTableView = tableView;
         }
     }
-
-    self->jenkinsViewsScrollView.contentSize = CGSizeMake(self->jenkinsViewsScrollView.frame.size.width * 3, self->jenkinsViewsScrollView.frame.size.height);
-    [self makeJenkinsRequestsForView:[self.jenkinsViews objectAtIndex:0]];
+    self->jenkinsViewsScrollView.contentSize = CGSizeMake(self->jenkinsViewsScrollView.frame.size.width * self.jenkinsViews.count, self->jenkinsViewsScrollView.frame.size.height);
 }
 
 - (void)didReceiveMemoryWarning
@@ -78,7 +80,9 @@
         for (int i=0; i<views.count; i++) {
             view = [views objectAtIndex:i];
             [self.jenkinsViews addObject:[view objectForKey:@"name"]];
+            [self makeJenkinsRequestsForView:[view objectForKey:@"name"]];
         }
+        [self addTableForEachJenkinsView];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
         NSLog(@"Request Failed: %@, %@", error, error.userInfo);
@@ -90,7 +94,7 @@
 -(void)makeJenkinsRequestsForView: (NSString *) view
 {
     NSURL *viewURL;
-    NSString *baseURLString = @"http://tomcat:8080/";
+    NSString *baseURLString = @"http://tomcat:8080/view/";
     if (view==nil) {
         viewURL = [NSURL URLWithString:baseURLString];
     } else {
@@ -107,7 +111,8 @@
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self mapViewsToJobs:[responseObject objectForKey:@"views"]];
+        [self mapView:view toJobs:[responseObject objectForKey:@"jobs"]];
+        [self.currentTableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
         NSLog(@"Request Failed: %@, %@", error, error.userInfo);
@@ -116,41 +121,9 @@
     [operation start];
 }
 
--(void) mapViewsToJobs: (NSArray *) views
+-(void) mapView:(NSString *)view toJobs: (NSArray *) jobs
 {
-    for (int i=0; i<views.count; i++) {
-        NSDictionary *view = [views objectAtIndex:i];
-        NSEnumerator *enumerator = [view keyEnumerator];
-        id key;
-        while ((key = [enumerator nextObject])) {
-            [self queryJenkinsJobsInView:[view objectForKey:@"url"]];
-        }
-    }
-    
-
-}
-
--(void) queryJenkinsJobsInView: (NSString *) url
-{
-    NSURL *viewURL =
-        [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",url,@"api/json"]];
-    
-    NSURLRequest *request = [NSURLRequest requestWithURL:viewURL];
-    //AFNetworking asynchronous url request
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
-                                         initWithRequest:request];
-    
-    operation.responseSerializer = [AFJSONResponseSerializer serializer];
-    
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self.jenkinsViewsJobs setObject:[responseObject objectForKey:@"jobs"] forKey:url];
-        [self.currentView reloadData];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        // Handle error
-        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
-    }];
-    
-    [operation start];
+    [self.jenkinsViewsJobs setObject:jobs forKey:view];
 }
 
 #pragma mark - ScrollView Delegate
@@ -161,9 +134,9 @@
     float fractionalPage = scrollView.contentOffset.x / pageWidth;
     NSInteger page = lround(fractionalPage);
     if (previousPage != page) {
-        // Page has changed, do your thing!
-        // ...
-        // Finally, update previous page
+        self.currentJenkinsView = [self.jenkinsViews objectAtIndex:page];
+        self.currentTableView = [[self->jenkinsViewsScrollView subviews] objectAtIndex:page];
+        [self.currentTableView reloadData];
         previousPage = page;
     }
 }
@@ -177,7 +150,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSArray *jobs = [self.jenkinsViewsJobs objectForKey:@"http://tomcat:8080/"];
+    NSArray *jobs = [self.jenkinsViewsJobs objectForKey:self.currentJenkinsView];
     return jobs.count;
 }
 
@@ -215,7 +188,7 @@
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *jobs = [self.jenkinsViewsJobs objectForKey:self.currentURL];
+    NSArray *jobs = [self.jenkinsViewsJobs objectForKey:self.currentJenkinsView];
     NSDictionary *job = [jobs objectAtIndex:indexPath.row];
     cell.textLabel.text = [job objectForKey:@"name"];
     NSString *iconFileName = [NSString stringWithFormat:@"%@%@", [job objectForKey:@"color"], @".png"];

@@ -22,16 +22,16 @@
         <!--Jenkins Views View Controller - All Jobs-->
         <scene sceneID="66b-22-Nry">
             <objects>
-                <viewController id="OgX-2x-pwK" customClass="KDBJenkinsViewsViewController" sceneMemberID="viewController">
+                <viewController automaticallyAdjustsScrollViewInsets="NO" id="OgX-2x-pwK" customClass="KDBJenkinsViewsViewController" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Ykr-JQ-oDI"/>
-                        <viewControllerLayoutGuide type="bottom" id="uGb-V9-wN3"/>
+                        <viewControllerLayoutGuide type="top" id="rt5-fo-h6G"/>
+                        <viewControllerLayoutGuide type="bottom" id="YvW-ld-2xa"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Vdc-A7-d6i">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" pagingEnabled="YES" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="exb-vO-tW6" customClass="KDBJenkinsViewsScrollView">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="exb-vO-tW6" customClass="KDBJenkinsViewsScrollView">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <connections>
@@ -40,6 +40,12 @@
                             </scrollView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="exb-vO-tW6" secondAttribute="trailing" id="36g-fz-Crp"/>
+                            <constraint firstItem="exb-vO-tW6" firstAttribute="top" secondItem="Vdc-A7-d6i" secondAttribute="top" id="7HI-gG-3Pp"/>
+                            <constraint firstAttribute="bottom" secondItem="exb-vO-tW6" secondAttribute="bottom" id="GZK-ln-YzL"/>
+                            <constraint firstItem="exb-vO-tW6" firstAttribute="leading" secondItem="Vdc-A7-d6i" secondAttribute="leading" id="NvR-kR-ZDq"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="All Jobs" id="24B-qZ-2SX"/>
                     <connections>
@@ -55,14 +61,14 @@
             <objects>
                 <viewController title="Detail" id="Ah7-4n-0Wa" customClass="KDBDetailViewController" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="4Bb-ej-aAA"/>
-                        <viewControllerLayoutGuide type="bottom" id="lDa-pV-6rM"/>
+                        <viewControllerLayoutGuide type="top" id="vHZ-kf-Clv"/>
+                        <viewControllerLayoutGuide type="bottom" id="kJv-xk-lyH"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="MMQ-IT-qOo">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="Detail view content goes here" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="Lei-5M-9Gs">
+                            <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" text="Detail view content goes here" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="Lei-5M-9Gs">
                                 <rect key="frame" x="20" y="276" width="280" height="17"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" size="system"/>
@@ -71,11 +77,6 @@
                             </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="Lei-5M-9Gs" firstAttribute="leading" secondItem="MMQ-IT-qOo" secondAttribute="leading" constant="20" symbolic="YES" id="62x-JV-TTJ"/>
-                            <constraint firstItem="Lei-5M-9Gs" firstAttribute="centerY" secondItem="MMQ-IT-qOo" secondAttribute="centerY" id="JzS-HC-Rnl"/>
-                            <constraint firstAttribute="trailing" secondItem="Lei-5M-9Gs" secondAttribute="trailing" constant="20" symbolic="YES" id="pXB-RP-Zz6"/>
-                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Detail" id="cra-N8-TIN"/>
                     <connections>

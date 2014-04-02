@@ -15,8 +15,8 @@
 
 // Dictionary mapping jenkins views to the jobs they contain
 @property (strong, nonatomic) NSMutableDictionary *jenkinsViewsJobs;
-@property (strong, nonatomic) NSString *currentURL;
-@property (strong, nonatomic) UITableView *currentView;
+@property (strong, nonatomic) NSString *currentJenkinsView;
+@property (strong, nonatomic) UITableView *currentTableView;
 @property (strong, nonatomic) NSMutableArray *jenkinsViews;
 
 @end
