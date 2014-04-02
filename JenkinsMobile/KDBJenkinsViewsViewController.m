@@ -29,9 +29,11 @@
     [super viewDidLoad];
     self.currentURL = @"http://tomcat:8080/";
     self.jenkinsViewsJobs = [[NSMutableDictionary alloc] init];
+    self.jenkinsViews = [[NSMutableArray alloc] init];
+    [self getAllJenkinsViews];
     
     NSArray *colors = [NSArray arrayWithObjects:[UIColor redColor], [UIColor greenColor], [UIColor blueColor], nil];
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < self.jenkinsViews.count; i++) {
         CGRect frame;
         frame.origin.x = self->jenkinsViewsScrollView.frame.size.width * i;
         frame.origin.y = 0;
@@ -50,13 +52,39 @@
     }
 
     self->jenkinsViewsScrollView.contentSize = CGSizeMake(self->jenkinsViewsScrollView.frame.size.width * 3, self->jenkinsViewsScrollView.frame.size.height);
-    [self makeJenkinsRequestsForView:nil];
+    [self makeJenkinsRequestsForView:[self.jenkinsViews objectAtIndex:0]];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(void)getAllJenkinsViews
+{
+    NSURL *requestURL = [NSURL URLWithString:@"http://tomcat:8080/api/json"];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    //AFNetworking asynchronous url request
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
+                                         initWithRequest:request];
+    
+    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSArray *views = [responseObject objectForKey:@"views"];
+        NSDictionary *view;
+        for (int i=0; i<views.count; i++) {
+            view = [views objectAtIndex:i];
+            [self.jenkinsViews addObject:[view objectForKey:@"name"]];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        // Handle error
+        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
+    }];
+    
+    [operation start];
 }
 
 -(void)makeJenkinsRequestsForView: (NSString *) view
@@ -124,6 +152,22 @@
     
     [operation start];
 }
+
+#pragma mark - ScrollView Delegate
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    static NSInteger previousPage = 0;
+    CGFloat pageWidth = scrollView.frame.size.width;
+    float fractionalPage = scrollView.contentOffset.x / pageWidth;
+    NSInteger page = lround(fractionalPage);
+    if (previousPage != page) {
+        // Page has changed, do your thing!
+        // ...
+        // Finally, update previous page
+        previousPage = page;
+    }
+}
+
 
 #pragma mark - TableView
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

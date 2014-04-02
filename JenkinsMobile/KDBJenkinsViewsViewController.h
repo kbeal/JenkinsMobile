@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "KDBJenkinsViewsScrollView.h"
 
-@interface KDBJenkinsViewsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource> {
+@interface KDBJenkinsViewsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate> {
     IBOutlet KDBJenkinsViewsScrollView *jenkinsViewsScrollView;
 }
 
@@ -17,5 +17,6 @@
 @property (strong, nonatomic) NSMutableDictionary *jenkinsViewsJobs;
 @property (strong, nonatomic) NSString *currentURL;
 @property (strong, nonatomic) UITableView *currentView;
+@property (strong, nonatomic) NSMutableArray *jenkinsViews;
 
 @end
