@@ -20,7 +20,6 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        self.currentURL = @"http://tomcat:8080/api/json";
     }
     return self;
 }
@@ -28,7 +27,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.currentURL = @"http://tomcat:8080/";
+    self.jenkinsViewsJobs = [[NSMutableDictionary alloc] init];
     
+    NSArray *colors = [NSArray arrayWithObjects:[UIColor redColor], [UIColor greenColor], [UIColor blueColor], nil];
     for (int i = 0; i < 3; i++) {
         CGRect frame;
         frame.origin.x = self->jenkinsViewsScrollView.frame.size.width * i;
@@ -38,6 +40,7 @@
         UITableView *tableView = [[UITableView alloc] initWithFrame:frame];
         tableView.delegate = self;
         tableView.dataSource = self;
+        tableView.backgroundColor = [colors objectAtIndex:i];
 
         [self->jenkinsViewsScrollView addSubview:tableView];
         
@@ -92,26 +95,19 @@
         NSEnumerator *enumerator = [view keyEnumerator];
         id key;
         while ((key = [enumerator nextObject])) {
-            NSObject *val = [tmp objectForKey:key];
-            NSString *classname = NSStringFromClass([val class]);
-            NSLog([NSString stringWithFormat:@"%@%@%@",key,@" ",val]);
+            [self queryJenkinsJobsInView:[view objectForKey:@"url"]];
         }
     }
-    /*
+    
 
-    while ((key = [enumerator nextObject])) {
-        [self queryJenkinsJobsInView:[[views objectForKey:key] objectForKey:@"url"]];
-    }
-    [self.currentView reloadData];*/
 }
 
 -(void) queryJenkinsJobsInView: (NSString *) url
 {
-    NSString *viewURL =
+    NSURL *viewURL =
         [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",url,@"api/json"]];
-    NSURL *requestURL = [NSURL URLWithString:viewURL];
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    NSURLRequest *request = [NSURLRequest requestWithURL:viewURL];
     //AFNetworking asynchronous url request
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
                                          initWithRequest:request];
@@ -120,6 +116,7 @@
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self.jenkinsViewsJobs setObject:[responseObject objectForKey:@"jobs"] forKey:url];
+        [self.currentView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
         NSLog(@"Request Failed: %@, %@", error, error.userInfo);
@@ -136,13 +133,16 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSDictionary *jobs = [self.jenkinsViewsJobs objectForKey:self.currentURL];
+    NSArray *jobs = [self.jenkinsViewsJobs objectForKey:@"http://tomcat:8080/"];
     return jobs.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] init];
+    }
     [self configureCell:cell atIndexPath:indexPath];
     return cell;
 }
@@ -171,11 +171,10 @@
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    /* TODO: Create a current URL variable that defaults to All. Will need to be switched when the scroll view pages.  
-     */
-    NSDictionary *jobs = [self.jenkinsViewsJobs objectForKey:self.currentURL];
-    cell.textLabel.text = [jobs objectForKey:@"name"];
-    NSString *iconFileName = [NSString stringWithFormat:@"%@%@", [jobs objectForKey:@"color"], @".png"];
+    NSArray *jobs = [self.jenkinsViewsJobs objectForKey:self.currentURL];
+    NSDictionary *job = [jobs objectAtIndex:indexPath.row];
+    cell.textLabel.text = [job objectForKey:@"name"];
+    NSString *iconFileName = [NSString stringWithFormat:@"%@%@", [job objectForKey:@"color"], @".png"];
     cell.imageView.image = [UIImage imageNamed:iconFileName];
 }
 
