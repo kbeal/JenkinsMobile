@@ -142,6 +142,25 @@
 
 
 #pragma mark - TableView
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 18)];
+    /* Create custom view to display section header... */
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, tableView.frame.size.width, 18)];
+    [label setFont:[UIFont boldSystemFontOfSize:12]];
+
+    int total_num_views = self.jenkinsViews.count;
+    CGFloat pageWidth = self->jenkinsViewsScrollView.frame.size.width;
+    float fractionalPage = self->jenkinsViewsScrollView.contentOffset.x / pageWidth;
+    NSInteger page = lround(fractionalPage)+1;
+    
+    
+    [label setText:[NSString stringWithFormat:@"%d%@%d",page,@"/",total_num_views]];
+    [view addSubview:label];
+    [view setBackgroundColor:[UIColor colorWithRed:166/255.0 green:177/255.0 blue:186/255.0 alpha:1.0]]; //your background color...
+    return view;
+}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 1;
