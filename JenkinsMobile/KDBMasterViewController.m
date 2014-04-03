@@ -21,6 +21,7 @@
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         self.clearsSelectionOnViewWillAppear = NO;
         self.preferredContentSize = CGSizeMake(320.0, 600.0);
+        self.tableView.separatorInset = UIEdgeInsetsZero;
     }
     [super awakeFromNib];
 }
@@ -148,12 +149,15 @@
 }
 
 #pragma mark - ViewPickerDelegate method
--(void)selectedView:(NSURL *)newViewURL {
+-(void)selectedView:(NSURL *)newViewURL withName:(NSString *)name {
     //Dismiss the popover if it's showing
     if (_viewPickerPopover) {
         [_viewPickerPopover dismissPopoverAnimated:YES];
         _viewPickerPopover = nil;
     }
+    
+    // update the title bar
+    self.navigationItem.title = name;
     
     // reload the master table view with jobs from the selected view
     [self makeJenkinsRequestsForViewURL: newViewURL];

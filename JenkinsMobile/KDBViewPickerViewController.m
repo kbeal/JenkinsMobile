@@ -72,7 +72,7 @@
     
     //Notify the delegate if it exists.
     if (_delegate != nil) {
-        [_delegate selectedView:[NSURL URLWithString:(NSString *)[view objectForKey:@"url"]]];
+        [_delegate selectedView:[NSURL URLWithString:(NSString *)[view objectForKey:@"url"]] withName:[view objectForKey:@"name"]];
     }
 }
 

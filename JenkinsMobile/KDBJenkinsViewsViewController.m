@@ -44,6 +44,7 @@
         UITableView *tableView = [[UITableView alloc] initWithFrame:frame];
         tableView.delegate = self;
         tableView.dataSource = self;
+        tableView.separatorInset = UIEdgeInsetsZero;
         [tableView setContentInset:UIEdgeInsetsMake(64, 0, 0, 0)];
         
         [self->jenkinsViewsScrollView addSubview:tableView];
