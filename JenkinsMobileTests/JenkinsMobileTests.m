@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "KDBJenkinsRequestHandler.h"
 
 @interface JenkinsMobileTests : XCTestCase
 
@@ -26,9 +27,24 @@
     [super tearDown];
 }
 
+/*
 - (void)testExample
 {
     XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+}*/
+
+- (void)testImportAllJenkinsViews
+{
+    KDBJenkinsRequestHandler *requestHandler = [[KDBJenkinsRequestHandler alloc] init];
+    [requestHandler importAllViews];
+    XCTFail(@"Verify some shit dude");
+}
+
+- (void)testImportAllJenkinsJobsForView
+{
+    KDBJenkinsRequestHandler *requestHandler = [[KDBJenkinsRequestHandler alloc] init];
+    [requestHandler importAllJobs];
+    XCTFail(@"Verify some shit dude");
 }
 
 @end

@@ -185,6 +185,7 @@
 		8AC32A4718E4FB6F0002D106 /* AFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AC32A3C18E4FB6F0002D106 /* AFURLRequestSerialization.m */; };
 		8AC32A4818E4FB6F0002D106 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AC32A3E18E4FB6F0002D106 /* AFURLResponseSerialization.m */; };
 		8AC32A4918E4FB6F0002D106 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AC32A4018E4FB6F0002D106 /* AFURLSessionManager.m */; };
+		8AE3B95C18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B95B18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -395,6 +396,8 @@
 		8AC32A3E18E4FB6F0002D106 /* AFURLResponseSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLResponseSerialization.m; sourceTree = "<group>"; };
 		8AC32A3F18E4FB6F0002D106 /* AFURLSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLSessionManager.h; sourceTree = "<group>"; };
 		8AC32A4018E4FB6F0002D106 /* AFURLSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLSessionManager.m; sourceTree = "<group>"; };
+		8AE3B95A18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KDBJenkinsRequestHandler.h; path = ../KDBJenkinsRequestHandler.h; sourceTree = "<group>"; };
+		8AE3B95B18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KDBJenkinsRequestHandler.m; path = ../KDBJenkinsRequestHandler.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -610,26 +613,28 @@
 		8AC329F418E4F3A90002D106 /* JenkinsMobile */ = {
 			isa = PBXGroup;
 			children = (
-				8A7CDAD818E7779F0079F3F1 /* Images */,
 				8AC32A2D18E4FB6F0002D106 /* AFNetworking */,
+				8A7CDAD818E7779F0079F3F1 /* Images */,
+				8AC32A0F18E4F3A90002D106 /* Images.xcassets */,
+				8AC32A0618E4F3A90002D106 /* JenkinsMobile.xcdatamodeld */,
 				8AC329FD18E4F3A90002D106 /* KDBAppDelegate.h */,
 				8AC329FE18E4F3A90002D106 /* KDBAppDelegate.m */,
-				8AC32A0018E4F3A90002D106 /* Main_iPhone.storyboard */,
-				8AC32A0318E4F3A90002D106 /* Main_iPad.storyboard */,
-				8A14344F18E880A2000C2DB4 /* KDBJenkinsViewsViewController.h */,
-				8A14345018E880A2000C2DB4 /* KDBJenkinsViewsViewController.m */,
+				8AC32A0C18E4F3A90002D106 /* KDBDetailViewController.h */,
+				8AC32A0D18E4F3A90002D106 /* KDBDetailViewController.m */,
+				8AE3B95A18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.h */,
+				8AE3B95B18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m */,
 				8A14345218E8857B000C2DB4 /* KDBJenkinsViewsScrollView.h */,
 				8A14345318E8857B000C2DB4 /* KDBJenkinsViewsScrollView.m */,
+				8A14344F18E880A2000C2DB4 /* KDBJenkinsViewsViewController.h */,
+				8A14345018E880A2000C2DB4 /* KDBJenkinsViewsViewController.m */,
 				8A14345518E8863E000C2DB4 /* KDBJenkinsViewTableView.h */,
 				8A14345618E8863E000C2DB4 /* KDBJenkinsViewTableView.m */,
 				8AC32A0918E4F3A90002D106 /* KDBMasterViewController.h */,
 				8AC32A0A18E4F3A90002D106 /* KDBMasterViewController.m */,
-				8AC32A0C18E4F3A90002D106 /* KDBDetailViewController.h */,
 				8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */,
 				8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */,
-				8AC32A0D18E4F3A90002D106 /* KDBDetailViewController.m */,
-				8AC32A0F18E4F3A90002D106 /* Images.xcassets */,
-				8AC32A0618E4F3A90002D106 /* JenkinsMobile.xcdatamodeld */,
+				8AC32A0318E4F3A90002D106 /* Main_iPad.storyboard */,
+				8AC32A0018E4F3A90002D106 /* Main_iPhone.storyboard */,
 				8AC329F518E4F3A90002D106 /* Supporting Files */,
 			);
 			path = JenkinsMobile;
@@ -948,6 +953,7 @@
 				8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */,
 				8AC329FF18E4F3A90002D106 /* KDBAppDelegate.m in Sources */,
 				8A14345118E880A2000C2DB4 /* KDBJenkinsViewsViewController.m in Sources */,
+				8AE3B95C18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m in Sources */,
 				8AC32A4218E4FB6F0002D106 /* AFHTTPRequestOperationManager.m in Sources */,
 				8AC32A4518E4FB6F0002D106 /* AFSecurityPolicy.m in Sources */,
 				8AC329FB18E4F3A90002D106 /* main.m in Sources */,
