@@ -12,7 +12,6 @@
 #import "View.h"
 #import "JenkinsInstance.h"
 #import "Build.h"
-#import "KDBJenkinsURLProtocol.h"
 
 @interface JenkinsMobileTests : XCTestCase
 @property (nonatomic, strong) NSManagedObjectContext *context;
@@ -26,26 +25,10 @@
     [super setUp];
 
     NSManagedObjectModel *model = [NSManagedObjectModel mergedModelFromBundles: nil];
-    NSLog(@"model: %@", model);
     NSPersistentStoreCoordinator *coord = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel: model];
     [coord addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:nil];
     _context = [[NSManagedObjectContext alloc] init];
     [_context setPersistentStoreCoordinator: coord];
-    
-    [NSURLProtocol registerClass:[KDBJenkinsURLProtocol class]];
-    
-	[KDBJenkinsURLProtocol setDelegate:nil];
-    
-	[KDBJenkinsURLProtocol setCannedStatusCode:200];
-	[KDBJenkinsURLProtocol setCannedHeaders:nil];
-	[KDBJenkinsURLProtocol setCannedResponseData:nil];
-	[KDBJenkinsURLProtocol setCannedError:nil];
-    
-	[KDBJenkinsURLProtocol setSupportedMethods:nil];
-	[KDBJenkinsURLProtocol setSupportedSchemes:nil];
-	[KDBJenkinsURLProtocol setSupportedBaseURL:nil];
-    
-	[KDBJenkinsURLProtocol setResponseDelay:0];
 }
 
 - (void)tearDown
@@ -175,45 +158,54 @@
     XCTAssert([job rel_Job_Builds].count==1, @"Job's build count should be 1, instead got %d",[job rel_Job_Builds].count);
 }
 
-
-- (void)testImportAllJenkinsViews
+- (void)testCreateViewWithValues
 {
-    KDBJenkinsRequestHandler *requestHandler = [[KDBJenkinsRequestHandler alloc] init];
-    [requestHandler importAllViews];
+    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
+    NSArray *jobs = [NSArray arrayWithObjects:[NSDictionary dictionaryWithObjects:jobKeys forKeys:[NSArray arrayWithObjects:@"Job1",@"http://example.com",@"blue", nil]],[NSDictionary dictionaryWithObjects:jobKeys forKeys:[NSArray arrayWithObjects:@"Job2",@"http://example.com",@"red", nil]],[NSDictionary dictionaryWithObjects:jobKeys forKeys:[NSArray arrayWithObjects:@"Job3",@"http://example.com",@"green", nil]], nil];
+    NSDictionary *values = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test1",@"url1",@"test1description",@"",jobs, nil] forKeys:[NSArray arrayWithObjects:@"name",@"url",@"description",@"property",@"jobs", nil]];
+    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:_context];
+    View *view = [jenkins createViewWithValues:values];
     
     NSError *error;
     NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
     [allViews setEntity:[NSEntityDescription entityForName:@"View" inManagedObjectContext:_context]];
     [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *views = [_context executeFetchRequest:allViews error:&error];
-    XCTAssert(views.count==4, @"view count should be 4, instead got %d", views.count);
+    
+    XCTAssert([view.name isEqualToString:@"test1"], @"view name wrong");
+    XCTAssert([view.url isEqualToString:@"url1"], @"view name wrong");
+    XCTAssert(view.rel_View_Jobs.count==3, @"view's job count should be 3, got %d instead",view.rel_View_Jobs.count);
+    XCTAssert(views.count==1, @"view count should be 1, instead got %d", views.count);
 }
 
-- (void)testKDBJenkinsURLProtocol
+- (void)testPersistViewsToLocalStorage
 {
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com"]];
-    id requestObject = [NSDictionary dictionaryWithObjectsAndKeys:
-                        [NSArray arrayWithObjects:[NSNumber numberWithInt:0], [NSNumber numberWithInt:1], [NSNumber numberWithInt:2], nil], @"array",
-                        @"hello", @"string",
-                        nil];
+    //pass an nsarray of views to KDBJenkinsRequestHandler.persistViewsToLocalStorage
+    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:_context];
     
-	NSData *requestData = [NSJSONSerialization dataWithJSONObject:requestObject options:0 error:nil];
-    [KDBJenkinsURLProtocol setCannedResponseData:requestData];
+    NSArray *views = [NSArray arrayWithObjects: [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test1",@"url1", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test2",@"url2", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test3",@"url3", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test4",@"url4", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]], nil ];
     
-	NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+    [jenkins persistViewsToLocalStorage: views];
     
-	id responseObject = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];
-    
-    XCTAssertNotNil(responseObject, @"no canned response from http request");
-    XCTAssertTrue([responseObject isKindOfClass:[NSDictionary class]], @"canned response has wrong format (nont dictionary)");
+    NSError *error;
+    NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
+    [allViews setEntity:[NSEntityDescription entityForName:@"View" inManagedObjectContext:_context]];
+    [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *fetchedviews = [_context executeFetchRequest:allViews error:&error];
+    XCTAssert(fetchedviews.count==4, @"view count should be 4, instead got %d", views.count);
 }
 
-/*
-- (void)testImportAllJenkinsJobsForView
-{
-    KDBJenkinsRequestHandler *requestHandler = [[KDBJenkinsRequestHandler alloc] init];
-    [requestHandler importAllJobs];
-    XCTFail(@"Verify some shit dude");
-}*/
+//- (void)testPersistJobsToLocalStorage
+//{
+//    //pass an nsarray of jobs to KDBJenkinsRequestHandler.persistJobsToLocalStorage
+//    XCTFail(@"implement mofo");
+//}
+
+//- (void)testImportAllJenkinsJobsForView
+//{
+//    KDBJenkinsRequestHandler *requestHandler = [[KDBJenkinsRequestHandler alloc] init];
+//    [requestHandler importAllJobs];
+//    XCTFail(@"Verify some shit dude");
+//}
 
 @end

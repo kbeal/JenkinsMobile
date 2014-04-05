@@ -7,10 +7,20 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "View.h"
+#import "Job.h"
 
 @interface KDBJenkinsRequestHandler : NSObject
 
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+
+- (id) initWithManagedObjectContext: (NSManagedObjectContext *) context;
 - (void) importAllViews;
-- (void) importAllJobs;
+- (void) importDetailsForView: (View *) view;
+- (void) importDetailsForJob: (Job *) job;
+- (NSSet *) createJobsFromArray: (NSArray *) jobsArray;
+- (View *) createViewWithValues: (NSDictionary *) values;
+- (void) persistViewsToLocalStorage: (NSArray *) views;
+- (Job *) persistJobWithValues: (NSDictionary *) values;
 
 @end
