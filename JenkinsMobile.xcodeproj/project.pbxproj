@@ -156,6 +156,7 @@
 		8A3CBA3818E7C39900D0D160 /* accept-24x24@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CB9A818E7C39900D0D160 /* accept-24x24@2x.png */; };
 		8A3CBA3B18E7C57C00D0D160 /* notbuilt.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CBA3918E7C57C00D0D160 /* notbuilt.png */; };
 		8A3CBA3C18E7C57C00D0D160 /* notbuilt@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CBA3A18E7C57C00D0D160 /* notbuilt@2x.png */; };
+		8A4BB44F18F045B2003EB0D4 /* KDBJenkinsURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4BB44E18F045B2003EB0D4 /* KDBJenkinsURLProtocol.m */; };
 		8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */; };
 		8AC329ED18E4F3A90002D106 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EC18E4F3A90002D106 /* Foundation.framework */; };
 		8AC329EF18E4F3A90002D106 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EE18E4F3A90002D106 /* CoreGraphics.framework */; };
@@ -174,7 +175,6 @@
 		8AC32A1818E4F3A90002D106 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EC18E4F3A90002D106 /* Foundation.framework */; };
 		8AC32A1918E4F3A90002D106 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329F018E4F3A90002D106 /* UIKit.framework */; };
 		8AC32A1A18E4F3A90002D106 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329F218E4F3A90002D106 /* CoreData.framework */; };
-		8AC32A2218E4F3A90002D106 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8AC32A2018E4F3A90002D106 /* InfoPlist.strings */; };
 		8AC32A2418E4F3A90002D106 /* JenkinsMobileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AC32A2318E4F3A90002D106 /* JenkinsMobileTests.m */; };
 		8AC32A4118E4FB6F0002D106 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AC32A2F18E4FB6F0002D106 /* AFHTTPRequestOperation.m */; };
 		8AC32A4218E4FB6F0002D106 /* AFHTTPRequestOperationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AC32A3118E4FB6F0002D106 /* AFHTTPRequestOperationManager.m */; };
@@ -355,6 +355,8 @@
 		8A3CB9A818E7C39900D0D160 /* accept-24x24@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "accept-24x24@2x.png"; sourceTree = "<group>"; };
 		8A3CBA3918E7C57C00D0D160 /* notbuilt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notbuilt.png; sourceTree = "<group>"; };
 		8A3CBA3A18E7C57C00D0D160 /* notbuilt@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "notbuilt@2x.png"; sourceTree = "<group>"; };
+		8A4BB44D18F045B2003EB0D4 /* KDBJenkinsURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJenkinsURLProtocol.h; sourceTree = "<group>"; };
+		8A4BB44E18F045B2003EB0D4 /* KDBJenkinsURLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJenkinsURLProtocol.m; sourceTree = "<group>"; };
 		8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBViewPickerViewController.h; sourceTree = "<group>"; };
 		8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBViewPickerViewController.m; sourceTree = "<group>"; };
 		8AC329E918E4F3A90002D106 /* JenkinsMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JenkinsMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -378,8 +380,6 @@
 		8AC32A0F18E4F3A90002D106 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		8AC32A1518E4F3A90002D106 /* JenkinsMobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JenkinsMobileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AC32A1618E4F3A90002D106 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		8AC32A1F18E4F3A90002D106 /* JenkinsMobileTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "JenkinsMobileTests-Info.plist"; sourceTree = "<group>"; };
-		8AC32A2118E4F3A90002D106 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8AC32A2318E4F3A90002D106 /* JenkinsMobileTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JenkinsMobileTests.m; sourceTree = "<group>"; };
 		8AC32A2E18E4FB6F0002D106 /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
 		8AC32A2F18E4FB6F0002D106 /* AFHTTPRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPRequestOperation.m; sourceTree = "<group>"; };
@@ -668,18 +668,10 @@
 			isa = PBXGroup;
 			children = (
 				8AC32A2318E4F3A90002D106 /* JenkinsMobileTests.m */,
-				8AC32A1E18E4F3A90002D106 /* Supporting Files */,
+				8A4BB44D18F045B2003EB0D4 /* KDBJenkinsURLProtocol.h */,
+				8A4BB44E18F045B2003EB0D4 /* KDBJenkinsURLProtocol.m */,
 			);
 			path = JenkinsMobileTests;
-			sourceTree = "<group>";
-		};
-		8AC32A1E18E4F3A90002D106 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				8AC32A1F18E4F3A90002D106 /* JenkinsMobileTests-Info.plist */,
-				8AC32A2018E4F3A90002D106 /* InfoPlist.strings */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		8AC32A2D18E4FB6F0002D106 /* AFNetworking */ = {
@@ -957,7 +949,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8AC32A2218E4F3A90002D106 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -998,6 +989,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A4BB44F18F045B2003EB0D4 /* KDBJenkinsURLProtocol.m in Sources */,
 				8AC32A2418E4F3A90002D106 /* JenkinsMobileTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1035,14 +1027,6 @@
 				8AC32A0418E4F3A90002D106 /* Base */,
 			);
 			name = Main_iPad.storyboard;
-			sourceTree = "<group>";
-		};
-		8AC32A2018E4F3A90002D106 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8AC32A2118E4F3A90002D106 /* en */,
-			);
-			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

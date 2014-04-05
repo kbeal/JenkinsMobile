@@ -12,6 +12,7 @@
 #import "View.h"
 #import "JenkinsInstance.h"
 #import "Build.h"
+#import "KDBJenkinsURLProtocol.h"
 
 @interface JenkinsMobileTests : XCTestCase
 @property (nonatomic, strong) NSManagedObjectContext *context;
@@ -30,6 +31,21 @@
     [coord addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:nil];
     _context = [[NSManagedObjectContext alloc] init];
     [_context setPersistentStoreCoordinator: coord];
+    
+    [NSURLProtocol registerClass:[KDBJenkinsURLProtocol class]];
+    
+	[KDBJenkinsURLProtocol setDelegate:nil];
+    
+	[KDBJenkinsURLProtocol setCannedStatusCode:200];
+	[KDBJenkinsURLProtocol setCannedHeaders:nil];
+	[KDBJenkinsURLProtocol setCannedResponseData:nil];
+	[KDBJenkinsURLProtocol setCannedError:nil];
+    
+	[KDBJenkinsURLProtocol setSupportedMethods:nil];
+	[KDBJenkinsURLProtocol setSupportedSchemes:nil];
+	[KDBJenkinsURLProtocol setSupportedBaseURL:nil];
+    
+	[KDBJenkinsURLProtocol setResponseDelay:0];
 }
 
 - (void)tearDown
@@ -171,6 +187,25 @@
     [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *views = [_context executeFetchRequest:allViews error:&error];
     XCTAssert(views.count==4, @"view count should be 4, instead got %d", views.count);
+}
+
+- (void)testKDBJenkinsURLProtocol
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com"]];
+    id requestObject = [NSDictionary dictionaryWithObjectsAndKeys:
+                        [NSArray arrayWithObjects:[NSNumber numberWithInt:0], [NSNumber numberWithInt:1], [NSNumber numberWithInt:2], nil], @"array",
+                        @"hello", @"string",
+                        nil];
+    
+	NSData *requestData = [NSJSONSerialization dataWithJSONObject:requestObject options:0 error:nil];
+    [KDBJenkinsURLProtocol setCannedResponseData:requestData];
+    
+	NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+    
+	id responseObject = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];
+    
+    XCTAssertNotNil(responseObject, @"no canned response from http request");
+    XCTAssertTrue([responseObject isKindOfClass:[NSDictionary class]], @"canned response has wrong format (nont dictionary)");
 }
 
 /*
