@@ -54,17 +54,47 @@
 
 - (void)testInsertingViews
 {
+    NSError *error;
+    NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
+    [allViews setEntity:[NSEntityDescription entityForName:@"View" inManagedObjectContext:_context]];
+    [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *origviews = [_context executeFetchRequest:allViews error:&error];
     
+    [NSEntityDescription insertNewObjectForEntityForName:@"View" inManagedObjectContext:_context];
+    
+    NSArray *newviews = [_context executeFetchRequest:allViews error:&error];
+    
+    XCTAssert(newviews.count==origviews.count+1, @"jobs count should incrase by 1 to %d, instead got %d",origviews.count+1,newviews.count);
 }
 
 - (void)testInsertingJenkinsInstances
 {
+    NSError *error;
+    NSFetchRequest *allInstances = [[NSFetchRequest alloc] init];
+    [allInstances setEntity:[NSEntityDescription entityForName:@"JenkinsInstance" inManagedObjectContext:_context]];
+    [allInstances setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *originstances = [_context executeFetchRequest:allInstances error:&error];
     
+    [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
+    
+    NSArray *newinstances = [_context executeFetchRequest:allInstances error:&error];
+    
+    XCTAssert(newinstances.count==originstances.count+1, @"jobs count should incrase by 1 to %d, instead got %d",originstances.count+1,newinstances.count);
 }
 
 - (void)testInsertingBuilds
 {
+    NSError *error;
+    NSFetchRequest *allBuilds = [[NSFetchRequest alloc] init];
+    [allBuilds setEntity:[NSEntityDescription entityForName:@"Build" inManagedObjectContext:_context]];
+    [allBuilds setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *origbuilds = [_context executeFetchRequest:allBuilds error:&error];
     
+    [NSEntityDescription insertNewObjectForEntityForName:@"Build" inManagedObjectContext:_context];
+    
+    NSArray *newbuilds = [_context executeFetchRequest:allBuilds error:&error];
+    
+    XCTAssert(newbuilds.count==origbuilds.count+1, @"jobs count should incrase by 1 to %d, instead got %d",origbuilds.count+1,newbuilds.count);
 }
 
 /*
