@@ -21,8 +21,8 @@
         <relationship name="rel_Build_Job" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="rel_Job_Builds" inverseEntity="Job" syncable="YES"/>
     </entity>
     <entity name="JenkinsInstance" representedClassName="JenkinsInstance">
-        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="url" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="url" attributeType="String" syncable="YES"/>
         <relationship name="rel_Jobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="rel_Job_JenkinsInstance" inverseEntity="Job" syncable="YES"/>
         <relationship name="rel_Views" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="View" inverseName="rel_View_JenkinsInstance" inverseEntity="View" syncable="YES"/>
         <userInfo/>
@@ -38,7 +38,7 @@
         <attribute name="firstBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="healthReport" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="inQueue" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="job_description" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="job_description" attributeType="String" syncable="YES"/>
         <attribute name="keepDependencies" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="lastBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="lastCompletedBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
@@ -47,21 +47,21 @@
         <attribute name="lastSuccessfulBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="lastUnstableBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="lastUnsuccessfulBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="nextBuildNumber" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="property" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="queueItem" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="scm" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="upstreamProjects" optional="YES" attributeType="Transformable" syncable="YES"/>
-        <attribute name="url" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="url" attributeType="String" syncable="YES"/>
         <relationship name="rel_Job_Builds" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Build" inverseName="rel_Build_Job" inverseEntity="Build" syncable="YES"/>
-        <relationship name="rel_Job_JenkinsInstance" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="JenkinsInstance" inverseName="rel_Jobs" inverseEntity="JenkinsInstance" syncable="YES"/>
+        <relationship name="rel_Job_JenkinsInstance" maxCount="1" deletionRule="Nullify" destinationEntity="JenkinsInstance" inverseName="rel_Jobs" inverseEntity="JenkinsInstance" syncable="YES"/>
         <relationship name="rel_Job_View" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="View" inverseName="rel_View_Jobs" inverseEntity="View" syncable="YES"/>
     </entity>
     <entity name="View" representedClassName="View" syncable="YES">
-        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="property" optional="YES" attributeType="Transformable" syncable="YES"/>
-        <attribute name="url" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="url" attributeType="String" syncable="YES"/>
         <attribute name="view_description" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="rel_View_JenkinsInstance" maxCount="1" deletionRule="Nullify" destinationEntity="JenkinsInstance" inverseName="rel_Views" inverseEntity="JenkinsInstance" syncable="YES"/>
         <relationship name="rel_View_Jobs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Job" inverseName="rel_Job_View" inverseEntity="Job" syncable="YES"/>

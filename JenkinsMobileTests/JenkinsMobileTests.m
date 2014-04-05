@@ -9,6 +9,9 @@
 #import <XCTest/XCTest.h>
 #import "KDBJenkinsRequestHandler.h"
 #import "Job.h"
+#import "View.h"
+#import "JenkinsInstance.h"
+#import "Build.h"
 
 @interface JenkinsMobileTests : XCTestCase
 @property (nonatomic, strong) NSManagedObjectContext *context;
@@ -45,12 +48,26 @@
     [allJobs setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *origjobs = [_context executeFetchRequest:allJobs error:&error];
 
-    [NSEntityDescription insertNewObjectForEntityForName:@"Job" inManagedObjectContext:_context];
+    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
+    jinstance.name = @"TestInstance";
+    jinstance.url = @"http://www.google.com";
+    
+    Job *job = [NSEntityDescription insertNewObjectForEntityForName:@"Job" inManagedObjectContext:_context];
+    job.name = @"TestJob";
+    job.url = @"http://www.google.com";
+    job.job_description = @"Test job description";
+    job.rel_Job_JenkinsInstance = jinstance;
+    
+    if (![_context save:&error]) {
+        XCTFail(@"Unresolved error %@, %@", error, [error userInfo]);
+    }
     
     NSArray *newjobs = [_context executeFetchRequest:allJobs error:&error];
     
     XCTAssert(newjobs.count==origjobs.count+1, @"jobs count should incrase by 1 to %d, instead got %d",origjobs.count+1,newjobs.count);
+    XCTAssert([jinstance rel_Jobs].count==1, @"jenkins instance's job count should be 1, instead got %d",[jinstance rel_Jobs].count);
 }
+
 
 - (void)testInsertingViews
 {
@@ -60,12 +77,36 @@
     [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *origviews = [_context executeFetchRequest:allViews error:&error];
     
-    [NSEntityDescription insertNewObjectForEntityForName:@"View" inManagedObjectContext:_context];
+    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
+    jinstance.name = @"TestInstance";
+    jinstance.url = @"http://www.google.com";
+    
+    
+    
+    View *view = [NSEntityDescription insertNewObjectForEntityForName:@"View" inManagedObjectContext:_context];
+    view.rel_View_JenkinsInstance = jinstance;
+    view.name = @"TestView";
+    view.url = @"http://www.google.com";
+    
+    Job *job = [NSEntityDescription insertNewObjectForEntityForName:@"Job" inManagedObjectContext:_context];
+    job.name = @"TestJob";
+    job.url = @"http://www.google.com";
+    job.job_description = @"Test job description";
+    job.rel_Job_JenkinsInstance = jinstance;
+    [view addRel_View_JobsObject:job];
+    
+    if (![_context save:&error]) {
+        XCTFail(@"Unresolved error %@, %@", error, [error userInfo]);
+    }
     
     NSArray *newviews = [_context executeFetchRequest:allViews error:&error];
     
-    XCTAssert(newviews.count==origviews.count+1, @"jobs count should incrase by 1 to %d, instead got %d",origviews.count+1,newviews.count);
+    XCTAssert(newviews.count==origviews.count+1, @"views count should incrase by 1 to %d, instead got %d",origviews.count+1,newviews.count);
+    XCTAssert([view rel_View_Jobs].count==1, @"jobs count should be 1, instead it is %d",[view rel_View_Jobs].count);
+    XCTAssert([job rel_Job_View].count==1, @"job's view count should be 1, instead it is %d",[job rel_Job_View].count);
+    XCTAssert([jinstance rel_Views].count==1, @"jenkins instance's view count should be 1, instead it is %d",[jinstance rel_Views].count);
 }
+
 
 - (void)testInsertingJenkinsInstances
 {
@@ -75,11 +116,16 @@
     [allInstances setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *originstances = [_context executeFetchRequest:allInstances error:&error];
     
-    [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
+    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
+    jinstance.name = @"TestInstance";
+    jinstance.url = @"http://www.google.com";
+    if (![_context save:&error]) {
+        XCTFail(@"Unresolved error %@, %@", error, [error userInfo]);
+    }
     
     NSArray *newinstances = [_context executeFetchRequest:allInstances error:&error];
     
-    XCTAssert(newinstances.count==originstances.count+1, @"jobs count should incrase by 1 to %d, instead got %d",originstances.count+1,newinstances.count);
+    XCTAssert(newinstances.count==originstances.count+1, @"JenkinsInstance count should incrase by 1 to %d, instead got %d",originstances.count+1,newinstances.count);
 }
 
 - (void)testInsertingBuilds
@@ -90,21 +136,44 @@
     [allBuilds setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *origbuilds = [_context executeFetchRequest:allBuilds error:&error];
     
-    [NSEntityDescription insertNewObjectForEntityForName:@"Build" inManagedObjectContext:_context];
+    Build *build = [NSEntityDescription insertNewObjectForEntityForName:@"Build" inManagedObjectContext:_context];
+    
+    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
+    jinstance.name = @"TestInstance";
+    jinstance.url = @"http://www.google.com";
+    
+    Job *job = [NSEntityDescription insertNewObjectForEntityForName:@"Job" inManagedObjectContext:_context];
+    job.name = @"TestJob";
+    job.url = @"http://www.google.com";
+    job.job_description = @"Test job description";
+    job.rel_Job_JenkinsInstance = jinstance;
+    
+    build.rel_Build_Job = job;
+    if (![_context save:&error]) {
+        XCTFail(@"Unresolved error %@, %@", error, [error userInfo]);
+    }
     
     NSArray *newbuilds = [_context executeFetchRequest:allBuilds error:&error];
     
-    XCTAssert(newbuilds.count==origbuilds.count+1, @"jobs count should incrase by 1 to %d, instead got %d",origbuilds.count+1,newbuilds.count);
+    XCTAssert(newbuilds.count==origbuilds.count+1, @"Build count should incrase by 1 to %d, instead got %d",origbuilds.count+1,newbuilds.count);
+    XCTAssert([job rel_Job_Builds].count==1, @"Job's build count should be 1, instead got %d",[job rel_Job_Builds].count);
 }
 
-/*
+
 - (void)testImportAllJenkinsViews
 {
     KDBJenkinsRequestHandler *requestHandler = [[KDBJenkinsRequestHandler alloc] init];
     [requestHandler importAllViews];
-    XCTFail(@"Verify some shit dude");
+    
+    NSError *error;
+    NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
+    [allViews setEntity:[NSEntityDescription entityForName:@"View" inManagedObjectContext:_context]];
+    [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *views = [_context executeFetchRequest:allViews error:&error];
+    XCTAssert(views.count==4, @"view count should be 4, instead got %d", views.count);
 }
 
+/*
 - (void)testImportAllJenkinsJobsForView
 {
     KDBJenkinsRequestHandler *requestHandler = [[KDBJenkinsRequestHandler alloc] init];
