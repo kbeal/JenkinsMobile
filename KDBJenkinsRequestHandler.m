@@ -90,7 +90,35 @@
     jinstance.name = @"TestInstance";
     jinstance.url = @"http://www.google.com";
     
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"All",@"http://www.google.com", nil];
+    View *view = [self createViewWithValues:[NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys]];
+
     Job *job = [NSEntityDescription insertNewObjectForEntityForName:@"Job" inManagedObjectContext:self.managedObjectContext];
+    job.rel_Job_JenkinsInstance = jinstance;
+    [job addRel_Job_ViewObject:view];
+    job.url = [values objectForKey:@"url"];
+    job.name = [values objectForKey:@"name"];
+    job.color = [values objectForKey:@"color"];
+    job.buildable = [[values objectForKey:@"buildable"] isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+    job.concurrentBuild = [[values objectForKey:@"concurrentBuild"] isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+    job.displayName = [values objectForKey:@"displayName"];
+    job.queueItem = [values objectForKey:@"queueItem"];
+    job.inQueue = [[values objectForKey:@"inQueue"] isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+    job.job_description = [values objectForKey:@"description"];
+    job.keepDependencies = [[values objectForKey:@"keepDependencies"] isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+    job.firstBuild = [values objectForKey:@"firstBuild"];
+    job.lastBuild = [values objectForKey:@"lastBuild"];
+    job.lastCompletedBuild = [values objectForKey:@"lastCompletedBuild"];
+    job.lastFailedBuild = [values objectForKey:@"lastFailedBuild"];
+    job.lastStableBuild = [values objectForKey:@"lastStableBuild"];
+    job.lastSuccessfulBuild= [values objectForKey:@"lastSuccessfulBuild"];
+    job.lastUnstableBuild = [values objectForKey:@"lastUnstableBuild"];
+    job.lastUnsuccessfulBuild = [values objectForKey:@"lastUnsuccessfulBuild"];
+    job.nextBuildNumber = [values objectForKey:@"nextBuildNumber"];
+    
+
+
     return job;
 }
 
