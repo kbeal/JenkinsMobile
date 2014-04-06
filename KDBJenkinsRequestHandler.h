@@ -18,7 +18,7 @@
 - (void) importAllViews;
 - (void) importDetailsForView: (View *) view;
 - (void) importDetailsForJob: (Job *) job;
-- (void) persistViewsToLocalStorage: (NSArray *) views;
+- (void) persistViewsToLocalStorage: (NSArray *) views forJenkinsInstance:(JenkinsInstance *) jinstance;
 - (void) persistJobsToLocalStorage: (NSArray *) jobs forJenkinsInstance: (JenkinsInstance *) jinstance;
 
 @end

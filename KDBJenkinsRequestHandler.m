@@ -30,7 +30,7 @@
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
 
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self persistViewsToLocalStorage:[responseObject objectForKey:@"views"]];
+        //[self persistViewsToLocalStorage:[responseObject objectForKey:@"views"]];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
         NSLog(@"Request Failed: %@, %@", error, error.userInfo);
@@ -39,12 +39,8 @@
     [operation start];
 }
 
-- (void) persistViewsToLocalStorage: (NSArray *) views
+- (void) persistViewsToLocalStorage: (NSArray *) views forJenkinsInstance:(JenkinsInstance *)jinstance
 {
-    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:self.managedObjectContext];
-    jinstance.name = @"TestInstance";
-    jinstance.url = @"http://www.google.com";
-    
     for (int i=0; i<views.count; i++) {
         [View createViewWithValues:[views objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forJenkinsInstance:jinstance];
     }
