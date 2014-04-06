@@ -21,7 +21,7 @@
 - (NSSet *) createJobsFromArray: (NSArray *) jobsArray;
 - (View *) createViewWithValues: (NSDictionary *) values;
 - (void) persistViewsToLocalStorage: (NSArray *) views;
-- (void) persistJob: (Job *) job;
+- (void) persistJobsToLocalStorage: (NSArray *) jobs;
 - (Job *) createJobWithValues: (NSDictionary *) values;
 
 @end

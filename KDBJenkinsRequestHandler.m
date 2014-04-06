@@ -78,9 +78,15 @@
     return jobs;
 }
 
-- (void) persistJob: (Job *) job
+- (void) persistJobsToLocalStorage: (NSArray *) jobs
 {
-
+    for (NSDictionary *job in jobs) {
+        [self createJobWithValues:job];
+    }
+    NSError *error;
+    if (![self.managedObjectContext save:&error]) {
+        [NSException raise:@"Unable to import jobs" format:@"Error saving context: %@", error];
+    }
 }
 
 - (Job *) createJobWithValues: (NSDictionary *) values

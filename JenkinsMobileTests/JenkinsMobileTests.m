@@ -35,7 +35,10 @@
 {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     
-    //TODO: delete all data
+    [self deleteAllBuilds];
+    [self deleteAllJobs];
+    [self deleteAllViews];
+    [self deleteAllJenkinsInstances];
     [super tearDown];
 }
 
@@ -193,7 +196,7 @@
     [allViews setEntity:[NSEntityDescription entityForName:@"View" inManagedObjectContext:_context]];
     [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *fetchedviews = [_context executeFetchRequest:allViews error:&error];
-    XCTAssert(fetchedviews.count==4, @"view count should be 4, instead got %d", views.count);
+    XCTAssert(fetchedviews.count==4, @"view count should be 4, instead got %d", fetchedviews.count);
 }
 
 - (void)testCreateJobWithValues
@@ -229,17 +232,69 @@
     XCTAssert([job rel_Job_View].count==1, @"job must have one view relationshiop");
 }
 
-//- (void)testPersistJobsToLocalStorage
-//{
-//    //pass an nsarray of jobs to KDBJenkinsRequestHandler.persistJobsToLocalStorage
-//    XCTFail(@"implement mofo");
-//}
+- (void)testPersistJobsToLocalStorage
+{
+    //pass an nsarray of views to KDBJenkinsRequestHandler.persistViewsToLocalStorage
+    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:_context];
+    
+    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"color",@"url",@"buildable",@"concurrentBuild",@"displayName",@"firstBuild",@"lastBuild",@"lastCompletedBuild",@"lastFailedBuild",@"lastStableBuild",@"lastSuccessfulBuild",@"lastUnstableBuild",@"lastUnsuccessfulBuild",@"nextBuildNumber",@"inQueue",@"description",@"keepDependencies",nil ];
+    
+    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",@"true",@"false",@"Test1",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test1 Description",@"false", nil];
+    
+    NSArray *jobValues2 = [NSArray arrayWithObjects:@"Test2",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job2/",@"true",@"false",@"Test2",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test2 Description",@"false", nil];
+    
+    NSArray *jobValues3 = [NSArray arrayWithObjects:@"Test3",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job3/",@"true",@"false",@"Test3",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test3 Description",@"false", nil];
+    
+    
+    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
+    NSDictionary *job2 = [NSDictionary dictionaryWithObjects:jobValues2 forKeys:jobKeys];
+    NSDictionary *job3 = [NSDictionary dictionaryWithObjects:jobValues3 forKeys:jobKeys];
 
-//- (void)testImportAllJenkinsJobsForView
-//{
-//    KDBJenkinsRequestHandler *requestHandler = [[KDBJenkinsRequestHandler alloc] init];
-//    [requestHandler importAllJobs];
-//    XCTFail(@"Verify some shit dude");
-//}
+    [jenkins persistJobsToLocalStorage: [NSArray arrayWithObjects:job1,job2,job3, nil]];
+    
+    NSError *error;
+    NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
+    [allJobs setEntity:[NSEntityDescription entityForName:@"Job" inManagedObjectContext:_context]];
+    [allJobs setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *fetchedjobs = [_context executeFetchRequest:allJobs error:&error];
+    XCTAssert(fetchedjobs.count==3, @"view count should be 3, instead got %d", fetchedjobs.count);
+}
+
+- (void) deleteAllRecordsForEntity: (NSString *) entityName
+{
+    NSFetchRequest * allRecords = [[NSFetchRequest alloc] init];
+    [allRecords setEntity:[NSEntityDescription entityForName:entityName inManagedObjectContext:_context]];
+    [allRecords setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    
+    NSError * error = nil;
+    NSArray * records = [_context executeFetchRequest:allRecords error:&error];
+
+
+    for (NSManagedObject *obj in records) {
+        [_context deleteObject:obj];
+    }
+    NSError *saveError = nil;
+    [_context save:&saveError];
+}
+
+- (void) deleteAllJobs
+{
+    [self deleteAllRecordsForEntity:@"Job"];
+}
+
+- (void) deleteAllViews
+{
+    [self deleteAllRecordsForEntity:@"View"];
+}
+
+- (void) deleteAllJenkinsInstances
+{
+    [self deleteAllRecordsForEntity:@"JenkinsInstance"];
+}
+
+- (void) deleteAllBuilds
+{
+    [self deleteAllRecordsForEntity:@"Build"];
+}
 
 @end
