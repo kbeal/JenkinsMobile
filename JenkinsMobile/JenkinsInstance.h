@@ -32,4 +32,9 @@
 - (void)addRel_Views:(NSSet *)values;
 - (void)removeRel_Views:(NSSet *)values;
 
+- (void)setValues:(NSDictionary *) values;
+
++ (JenkinsInstance *)createJenkinsInstanceWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
++ (JenkinsInstance *)getCurrentJenkinsInstanceFromManagedObjectContext:(NSManagedObjectContext *) context;
+
 @end

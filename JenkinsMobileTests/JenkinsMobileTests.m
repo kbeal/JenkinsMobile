@@ -15,6 +15,7 @@
 
 @interface JenkinsMobileTests : XCTestCase
 @property (nonatomic, strong) NSManagedObjectContext *context;
+@property (nonatomic, strong) JenkinsInstance *jinstance;
 
 @end
 
@@ -29,6 +30,11 @@
     [coord addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:nil];
     _context = [[NSManagedObjectContext alloc] init];
     [_context setPersistentStoreCoordinator: coord];
+    
+    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES], nil];
+    NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    _jinstance = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
 }
 
 - (void)tearDown
@@ -48,18 +54,14 @@
     NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
     [allJobs setEntity:[NSEntityDescription entityForName:@"Job" inManagedObjectContext:_context]];
     [allJobs setIncludesPropertyValues:NO]; //only fetch the managedObjectID
-    NSArray *origjobs = [_context executeFetchRequest:allJobs error:&error];
-
-    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
-    jinstance.name = @"TestInstance";
-    jinstance.url = @"http://www.google.com";
+    NSArray *origjobs = [_context executeFetchRequest:allJobs error:&error];\
     
     Job *job = [NSEntityDescription insertNewObjectForEntityForName:@"Job" inManagedObjectContext:_context];
     job.name = @"TestJob";
     job.url = @"http://www.google.com";
     job.job_description = @"Test job description";
     job.color = @"color";
-    job.rel_Job_JenkinsInstance = jinstance;
+    job.rel_Job_JenkinsInstance = _jinstance;
     
     if (![_context save:&error]) {
         XCTFail(@"Unresolved error %@, %@", error, [error userInfo]);
@@ -68,7 +70,7 @@
     NSArray *newjobs = [_context executeFetchRequest:allJobs error:&error];
     
     XCTAssert(newjobs.count==origjobs.count+1, @"jobs count should incrase by 1 to %d, instead got %d",origjobs.count+1,newjobs.count);
-    XCTAssert([jinstance rel_Jobs].count==1, @"jenkins instance's job count should be 1, instead got %d",[jinstance rel_Jobs].count);
+    XCTAssert([_jinstance rel_Jobs].count==1, @"jenkins instance's job count should be 1, instead got %d",[_jinstance rel_Jobs].count);
 }
 
 
@@ -80,14 +82,8 @@
     [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *origviews = [_context executeFetchRequest:allViews error:&error];
     
-    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
-    jinstance.name = @"TestInstance";
-    jinstance.url = @"http://www.google.com";
-    
-    
-    
     View *view = [NSEntityDescription insertNewObjectForEntityForName:@"View" inManagedObjectContext:_context];
-    view.rel_View_JenkinsInstance = jinstance;
+    view.rel_View_JenkinsInstance = _jinstance;
     view.name = @"TestView";
     view.url = @"http://www.google.com";
     
@@ -95,7 +91,7 @@
     job.name = @"TestJob";
     job.url = @"http://www.google.com";
     job.job_description = @"Test job description";
-    job.rel_Job_JenkinsInstance = jinstance;
+    job.rel_Job_JenkinsInstance = _jinstance;
     job.color = @"blue";
     [view addRel_View_JobsObject:job];
     
@@ -108,28 +104,7 @@
     XCTAssert(newviews.count==origviews.count+1, @"views count should incrase by 1 to %d, instead got %d",origviews.count+1,newviews.count);
     XCTAssert([view rel_View_Jobs].count==1, @"jobs count should be 1, instead it is %d",[view rel_View_Jobs].count);
     XCTAssert([job rel_Job_View].count==1, @"job's view count should be 1, instead it is %d",[job rel_Job_View].count);
-    XCTAssert([jinstance rel_Views].count==1, @"jenkins instance's view count should be 1, instead it is %d",[jinstance rel_Views].count);
-}
-
-
-- (void)testInsertingJenkinsInstances
-{
-    NSError *error;
-    NSFetchRequest *allInstances = [[NSFetchRequest alloc] init];
-    [allInstances setEntity:[NSEntityDescription entityForName:@"JenkinsInstance" inManagedObjectContext:_context]];
-    [allInstances setIncludesPropertyValues:NO]; //only fetch the managedObjectID
-    NSArray *originstances = [_context executeFetchRequest:allInstances error:&error];
-    
-    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
-    jinstance.name = @"TestInstance";
-    jinstance.url = @"http://www.google.com";
-    if (![_context save:&error]) {
-        XCTFail(@"Unresolved error %@, %@", error, [error userInfo]);
-    }
-    
-    NSArray *newinstances = [_context executeFetchRequest:allInstances error:&error];
-    
-    XCTAssert(newinstances.count==originstances.count+1, @"JenkinsInstance count should incrase by 1 to %d, instead got %d",originstances.count+1,newinstances.count);
+    XCTAssert([_jinstance rel_Views].count==1, @"jenkins instance's view count should be 1, instead it is %d",[_jinstance rel_Views].count);
 }
 
 - (void)testInsertingBuilds
@@ -142,16 +117,12 @@
     
     Build *build = [NSEntityDescription insertNewObjectForEntityForName:@"Build" inManagedObjectContext:_context];
     
-    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
-    jinstance.name = @"TestInstance";
-    jinstance.url = @"http://www.google.com";
-    
     Job *job = [NSEntityDescription insertNewObjectForEntityForName:@"Job" inManagedObjectContext:_context];
     job.name = @"TestJob";
     job.url = @"http://www.google.com";
     job.job_description = @"Test job description";
     job.color = @"blue";
-    job.rel_Job_JenkinsInstance = jinstance;
+    job.rel_Job_JenkinsInstance = _jinstance;
     
     build.rel_Build_Job = job;
     if (![_context save:&error]) {
@@ -175,11 +146,7 @@
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
 
     
-    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
-    jinstance.name = @"TestInstance";
-    jinstance.url = @"http://www.google.com";
-    
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:jinstance];
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
     
     NSError *error;
     NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
@@ -201,7 +168,7 @@
     
     NSArray *views = [NSArray arrayWithObjects: [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test1",@"url1", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test2",@"url2", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test3",@"url3", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test4",@"url4", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]], nil ];
     
-    [jenkins persistViewsToLocalStorage: views];
+    [jenkins persistViewsToLocalStorage: views forJenkinsInstance:_jinstance];
     
     NSError *error;
     NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
@@ -218,11 +185,7 @@
     
     NSArray *jobValues = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",@"true",@"false",@"Test1",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test1 Description",@"false", nil];
     
-    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
-    jinstance.name = @"TestInstance";
-    jinstance.url = @"http://www.google.com";
-    
-    Job *job = [Job createJobWithValues:[NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys] inManagedObjectContext:_context forJenkinsInstance:jinstance];
+    Job *job = [Job createJobWithValues:[NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys] inManagedObjectContext:_context forJenkinsInstance:_jinstance];
     
     XCTAssert([job.name isEqualToString:@"Test1"], @"job name should be Test1, is actually %@",job.name);
     XCTAssert([job.color isEqualToString:@"blue"], @"job color is wrong");
@@ -251,11 +214,7 @@
     NSArray *values = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue",nil];
     NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     
-    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
-    jinstance.name = @"TestInstance";
-    jinstance.url = @"http://www.google.com";
-    
-    Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context forJenkinsInstance:jinstance];
+    Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context forJenkinsInstance:_jinstance];
     
     XCTAssert([job.name isEqualToString:@"Job1"], @"job name should be Job1, is actually %@",job.name);
     XCTAssert([job.color isEqualToString:@"blue"], @"job color is wrong");
@@ -279,12 +238,8 @@
     NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
     NSDictionary *job2 = [NSDictionary dictionaryWithObjects:jobValues2 forKeys:jobKeys];
     NSDictionary *job3 = [NSDictionary dictionaryWithObjects:jobValues3 forKeys:jobKeys];
-    
-    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
-    jinstance.name = @"TestInstance";
-    jinstance.url = @"http://www.google.com";
 
-    [jenkins persistJobsToLocalStorage: [NSArray arrayWithObjects:job1,job2,job3, nil] forJenkinsInstance:jinstance];
+    [jenkins persistJobsToLocalStorage: [NSArray arrayWithObjects:job1,job2,job3, nil] forJenkinsInstance:_jinstance];
     
     NSError *error;
     NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
@@ -292,6 +247,45 @@
     [allJobs setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *fetchedjobs = [_context executeFetchRequest:allJobs error:&error];
     XCTAssert(fetchedjobs.count==3, @"view count should be 3, instead got %d", fetchedjobs.count);
+}
+
+- (void) testCreateJenkinsInstance
+{
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://ci.kylebeal.com",[NSNumber numberWithBool:YES], nil];
+    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
+    NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    JenkinsInstance *instance = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
+    
+    XCTAssert([instance.name isEqualToString:@"TestInstance"], @"name is wrong");
+    XCTAssert([instance.url isEqualToString:@"http://ci.kylebeal.com"], @"url is wrong");
+    XCTAssert([instance.current isEqualToNumber:[NSNumber numberWithBool:YES]], @"not current instance");
+}
+
+- (void) testGetCurrentJenkinsInstance
+{
+    JenkinsInstance *current = [JenkinsInstance getCurrentJenkinsInstanceFromManagedObjectContext:_context];
+    XCTAssertEqualObjects(current, _jinstance, @"instances aren't equal");
+}
+
+- (void) testNoDuplicateJenkinsInstances
+{
+    NSArray *values1 = [NSArray arrayWithObjects:@"TestInstance",@"http://ci.kylebeal.com",[NSNumber numberWithBool:YES], nil];
+    NSArray *values2 = [NSArray arrayWithObjects:@"TestInstance2",@"http://ci.kylebeal.com",[NSNumber numberWithBool:NO], nil];
+    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
+
+    NSDictionary *instancevalues1 = [NSDictionary dictionaryWithObjects:values1 forKeys:keys];
+    NSDictionary *instancevalues2 = [NSDictionary dictionaryWithObjects:values2 forKeys:keys];
+    
+    [JenkinsInstance createJenkinsInstanceWithValues:instancevalues1 inManagedObjectContext:_context];
+    [JenkinsInstance createJenkinsInstanceWithValues:instancevalues2 inManagedObjectContext:_context];
+    
+    NSError *error;
+    NSFetchRequest *allJInstances = [[NSFetchRequest alloc] init];
+    [allJInstances setEntity:[NSEntityDescription entityForName:@"JenkinsInstance" inManagedObjectContext:_context]];
+    [allJInstances setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *fetchedinstances = [_context executeFetchRequest:allJInstances error:&error];
+    
+    XCTAssert(fetchedinstances.count==2,@"too many jenkins instances, should be 2, have %d",fetchedinstances.count);
 }
 
 - (void) deleteAllRecordsForEntity: (NSString *) entityName
