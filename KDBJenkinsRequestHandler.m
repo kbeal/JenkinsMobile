@@ -63,69 +63,30 @@
     view.url = [values objectForKey:@"url"];
     view.property = [values objectForKey:@"property"];
     view.view_description = [values objectForKey:@"description"];
-    [view setRel_View_Jobs:[self createJobsFromArray:[values objectForKey:@"jobs"]]];
+    [view setRel_View_Jobs:[self createJobsFromArray:[values objectForKey:@"jobs"] forJenkinsInstance:jinstance]];
     view.rel_View_JenkinsInstance = jinstance;
     
     return view;
 }
 
-- (NSSet *) createJobsFromArray: (NSArray *) jobsArray
+- (NSSet *) createJobsFromArray: (NSArray *) jobsArray forJenkinsInstance: (JenkinsInstance *) jinstance
 {
     NSMutableSet *jobs = [[NSMutableSet alloc] initWithCapacity:jobsArray.count];
     for (int i=0; i<jobsArray.count; i++) {
-        [jobs addObject:[self createJobWithValues:[jobsArray objectAtIndex:i]]];
+        [jobs addObject:[Job createJobWithValues:[jobsArray objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forJenkinsInstance:jinstance]];
     }
     return jobs;
 }
 
-- (void) persistJobsToLocalStorage: (NSArray *) jobs
+- (void) persistJobsToLocalStorage: (NSArray *) jobs forJenkinsInstance: (JenkinsInstance *) jinstance
 {
     for (NSDictionary *job in jobs) {
-        [self createJobWithValues:job];
+        [Job createJobWithValues:job inManagedObjectContext:self.managedObjectContext forJenkinsInstance:jinstance];
     }
     NSError *error;
     if (![self.managedObjectContext save:&error]) {
         [NSException raise:@"Unable to import jobs" format:@"Error saving context: %@", error];
     }
-}
-
-- (Job *) createJobWithValues: (NSDictionary *) values
-{
-    // TODO: get current Jenkins Instance
-    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:self.managedObjectContext];
-    jinstance.name = @"TestInstance";
-    jinstance.url = @"http://www.google.com";
-    
-    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
-    NSArray *viewValues = [NSArray arrayWithObjects:@"All",@"http://www.google.com", nil];
-    View *view = [self createViewWithValues:[NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys]];
-
-    Job *job = [NSEntityDescription insertNewObjectForEntityForName:@"Job" inManagedObjectContext:self.managedObjectContext];
-    job.rel_Job_JenkinsInstance = jinstance;
-    [job addRel_Job_ViewObject:view];
-    job.url = [values objectForKey:@"url"];
-    job.name = [values objectForKey:@"name"];
-    job.color = [values objectForKey:@"color"];
-    job.buildable = [[values objectForKey:@"buildable"] isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-    job.concurrentBuild = [[values objectForKey:@"concurrentBuild"] isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-    job.displayName = [values objectForKey:@"displayName"];
-    job.queueItem = [values objectForKey:@"queueItem"];
-    job.inQueue = [[values objectForKey:@"inQueue"] isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-    job.job_description = [values objectForKey:@"description"];
-    job.keepDependencies = [[values objectForKey:@"keepDependencies"] isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-    job.firstBuild = [values objectForKey:@"firstBuild"];
-    job.lastBuild = [values objectForKey:@"lastBuild"];
-    job.lastCompletedBuild = [values objectForKey:@"lastCompletedBuild"];
-    job.lastFailedBuild = [values objectForKey:@"lastFailedBuild"];
-    job.lastStableBuild = [values objectForKey:@"lastStableBuild"];
-    job.lastSuccessfulBuild= [values objectForKey:@"lastSuccessfulBuild"];
-    job.lastUnstableBuild = [values objectForKey:@"lastUnstableBuild"];
-    job.lastUnsuccessfulBuild = [values objectForKey:@"lastUnsuccessfulBuild"];
-    job.nextBuildNumber = [values objectForKey:@"nextBuildNumber"];
-    
-
-
-    return job;
 }
 
 - (View *) importViewDetails: (NSString *) viewName
