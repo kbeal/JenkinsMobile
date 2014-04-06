@@ -30,7 +30,7 @@
     <entity name="Job" representedClassName="Job" syncable="YES">
         <attribute name="actions" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="buildable" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="color" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="color" attributeType="String" syncable="YES"/>
         <attribute name="concurrentBuild" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="displayName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="displayNameOrNull" optional="YES" attributeType="String" syncable="YES"/>
@@ -38,7 +38,7 @@
         <attribute name="firstBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="healthReport" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="inQueue" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="job_description" attributeType="String" syncable="YES"/>
+        <attribute name="job_description" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="keepDependencies" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="lastBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="lastCompletedBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
