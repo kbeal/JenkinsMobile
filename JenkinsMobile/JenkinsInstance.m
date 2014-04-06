@@ -2,7 +2,7 @@
 //  JenkinsInstance.m
 //  JenkinsMobile
 //
-//  Created by Kyle on 4/4/14.
+//  Created by Kyle on 4/6/14.
 //  Copyright (c) 2014 Kyle Beal. All rights reserved.
 //
 
@@ -15,6 +15,7 @@
 
 @dynamic name;
 @dynamic url;
+@dynamic current;
 @dynamic rel_Jobs;
 @dynamic rel_Views;
 
