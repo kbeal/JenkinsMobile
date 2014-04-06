@@ -18,8 +18,6 @@
 - (void) importAllViews;
 - (void) importDetailsForView: (View *) view;
 - (void) importDetailsForJob: (Job *) job;
-- (NSSet *) createJobsFromArray: (NSArray *) jobsArray forJenkinsInstance: (JenkinsInstance *) jinstance;
-- (View *) createViewWithValues: (NSDictionary *) values;
 - (void) persistViewsToLocalStorage: (NSArray *) views;
 - (void) persistJobsToLocalStorage: (NSArray *) jobs forJenkinsInstance: (JenkinsInstance *) jinstance;
 

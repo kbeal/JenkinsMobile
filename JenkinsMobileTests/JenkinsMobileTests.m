@@ -58,6 +58,7 @@
     job.name = @"TestJob";
     job.url = @"http://www.google.com";
     job.job_description = @"Test job description";
+    job.color = @"color";
     job.rel_Job_JenkinsInstance = jinstance;
     
     if (![_context save:&error]) {
@@ -95,6 +96,7 @@
     job.url = @"http://www.google.com";
     job.job_description = @"Test job description";
     job.rel_Job_JenkinsInstance = jinstance;
+    job.color = @"blue";
     [view addRel_View_JobsObject:job];
     
     if (![_context save:&error]) {
@@ -148,6 +150,7 @@
     job.name = @"TestJob";
     job.url = @"http://www.google.com";
     job.job_description = @"Test job description";
+    job.color = @"blue";
     job.rel_Job_JenkinsInstance = jinstance;
     
     build.rel_Build_Job = job;
@@ -161,43 +164,52 @@
     XCTAssert([job rel_Job_Builds].count==1, @"Job's build count should be 1, instead got %d",[job rel_Job_Builds].count);
 }
 
-//- (void)testCreateViewWithValues
-//{
-//    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
-//    NSArray *jobs = [NSArray arrayWithObjects:[NSDictionary dictionaryWithObjects:jobKeys forKeys:[NSArray arrayWithObjects:@"Job1",@"http://example.com",@"blue", nil]],[NSDictionary dictionaryWithObjects:jobKeys forKeys:[NSArray arrayWithObjects:@"Job2",@"http://example.com",@"red", nil]],[NSDictionary dictionaryWithObjects:jobKeys forKeys:[NSArray arrayWithObjects:@"Job3",@"http://example.com",@"green", nil]], nil];
-//    NSDictionary *values = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test1",@"url1",@"test1description",@"",jobs, nil] forKeys:[NSArray arrayWithObjects:@"name",@"url",@"description",@"property",@"jobs", nil]];
-//    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:_context];
-//    View *view = [jenkins createViewWithValues:values];
-//    
-//    NSError *error;
-//    NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
-//    [allViews setEntity:[NSEntityDescription entityForName:@"View" inManagedObjectContext:_context]];
-//    [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
-//    NSArray *views = [_context executeFetchRequest:allViews error:&error];
-//    
-//    XCTAssert([view.name isEqualToString:@"test1"], @"view name wrong");
-//    XCTAssert([view.url isEqualToString:@"url1"], @"view name wrong");
-//    XCTAssert(view.rel_View_Jobs.count==3, @"view's job count should be 3, got %d instead",view.rel_View_Jobs.count);
-//    XCTAssert(views.count==4, @"view count should be 4, instead got %d", views.count);
-//    
-//}
+- (void)testCreateViewWithValues
+{
+    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
+    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
+    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
+    NSArray *jobs = [NSArray arrayWithObjects:job1,nil];
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url",@"description",@"property",@"jobs", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",@"descriptiontest1",@"",jobs,nil];
+    NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
 
-//- (void)testPersistViewsToLocalStorage
-//{
-//    //pass an nsarray of views to KDBJenkinsRequestHandler.persistViewsToLocalStorage
-//    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:_context];
-//    
-//    NSArray *views = [NSArray arrayWithObjects: [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test1",@"url1", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test2",@"url2", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test3",@"url3", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test4",@"url4", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]], nil ];
-//    
-//    [jenkins persistViewsToLocalStorage: views];
-//    
-//    NSError *error;
-//    NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
-//    [allViews setEntity:[NSEntityDescription entityForName:@"View" inManagedObjectContext:_context]];
-//    [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
-//    NSArray *fetchedviews = [_context executeFetchRequest:allViews error:&error];
-//    XCTAssert(fetchedviews.count==4, @"view count should be 4, instead got %d", fetchedviews.count);
-//}
+    
+    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
+    jinstance.name = @"TestInstance";
+    jinstance.url = @"http://www.google.com";
+    
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:jinstance];
+    
+    NSError *error;
+    NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
+    [allViews setEntity:[NSEntityDescription entityForName:@"View" inManagedObjectContext:_context]];
+    [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *views = [_context executeFetchRequest:allViews error:&error];
+    
+    XCTAssert([view.name isEqualToString:@"test1"], @"view name wrong");
+    XCTAssert([view.url isEqualToString:@"url1"], @"view name wrong");
+    XCTAssert(view.rel_View_Jobs.count==1, @"view's job count should be 1, got %d instead",view.rel_View_Jobs.count);
+    XCTAssert(views.count==1, @"view count should be 4, instead got %d", views.count);
+    
+}
+
+- (void)testPersistViewsToLocalStorage
+{
+    //pass an nsarray of views to KDBJenkinsRequestHandler.persistViewsToLocalStorage
+    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:_context];
+    
+    NSArray *views = [NSArray arrayWithObjects: [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test1",@"url1", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test2",@"url2", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test3",@"url3", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test4",@"url4", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]], nil ];
+    
+    [jenkins persistViewsToLocalStorage: views];
+    
+    NSError *error;
+    NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
+    [allViews setEntity:[NSEntityDescription entityForName:@"View" inManagedObjectContext:_context]];
+    [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *fetchedviews = [_context executeFetchRequest:allViews error:&error];
+    XCTAssert(fetchedviews.count==4, @"view count should be 4, instead got %d", fetchedviews.count);
+}
 
 - (void)testCreateJobWithValues
 {
@@ -233,33 +245,54 @@
     XCTAssertNotNil(job.rel_Job_JenkinsInstance, @"jenkins instance is null");
 }
 
-//- (void)testPersistJobsToLocalStorage
-//{
-//    //pass an nsarray of views to KDBJenkinsRequestHandler.persistViewsToLocalStorage
-//    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:_context];
-//    
-//    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"color",@"url",@"buildable",@"concurrentBuild",@"displayName",@"firstBuild",@"lastBuild",@"lastCompletedBuild",@"lastFailedBuild",@"lastStableBuild",@"lastSuccessfulBuild",@"lastUnstableBuild",@"lastUnsuccessfulBuild",@"nextBuildNumber",@"inQueue",@"description",@"keepDependencies",nil ];
-//    
-//    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",@"true",@"false",@"Test1",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test1 Description",@"false", nil];
-//    
-//    NSArray *jobValues2 = [NSArray arrayWithObjects:@"Test2",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job2/",@"true",@"false",@"Test2",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test2 Description",@"false", nil];
-//    
-//    NSArray *jobValues3 = [NSArray arrayWithObjects:@"Test3",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job3/",@"true",@"false",@"Test3",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test3 Description",@"false", nil];
-//    
-//    
-//    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
-//    NSDictionary *job2 = [NSDictionary dictionaryWithObjects:jobValues2 forKeys:jobKeys];
-//    NSDictionary *job3 = [NSDictionary dictionaryWithObjects:jobValues3 forKeys:jobKeys];
-//
-//    [jenkins persistJobsToLocalStorage: [NSArray arrayWithObjects:job1,job2,job3, nil]];
-//    
-//    NSError *error;
-//    NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
-//    [allJobs setEntity:[NSEntityDescription entityForName:@"Job" inManagedObjectContext:_context]];
-//    [allJobs setIncludesPropertyValues:NO]; //only fetch the managedObjectID
-//    NSArray *fetchedjobs = [_context executeFetchRequest:allJobs error:&error];
-//    XCTAssert(fetchedjobs.count==3, @"view count should be 3, instead got %d", fetchedjobs.count);
-//}
+- (void)testCreateJobWithMinimalValues
+{
+    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"color",nil];
+    NSArray *values = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue",nil];
+    NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
+    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
+    jinstance.name = @"TestInstance";
+    jinstance.url = @"http://www.google.com";
+    
+    Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context forJenkinsInstance:jinstance];
+    
+    XCTAssert([job.name isEqualToString:@"Job1"], @"job name should be Job1, is actually %@",job.name);
+    XCTAssert([job.color isEqualToString:@"blue"], @"job color is wrong");
+    XCTAssert([job.url isEqualToString:@"http://www.google.com"], @"job url is wrong, is actually %@",job.url);
+}
+
+- (void)testPersistJobsToLocalStorage
+{
+    //pass an nsarray of views to KDBJenkinsRequestHandler.persistViewsToLocalStorage
+    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:_context];
+    
+    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"color",@"url",@"buildable",@"concurrentBuild",@"displayName",@"firstBuild",@"lastBuild",@"lastCompletedBuild",@"lastFailedBuild",@"lastStableBuild",@"lastSuccessfulBuild",@"lastUnstableBuild",@"lastUnsuccessfulBuild",@"nextBuildNumber",@"inQueue",@"description",@"keepDependencies",nil ];
+    
+    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",@"true",@"false",@"Test1",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test1 Description",@"false", nil];
+    
+    NSArray *jobValues2 = [NSArray arrayWithObjects:@"Test2",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job2/",@"true",@"false",@"Test2",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test2 Description",@"false", nil];
+    
+    NSArray *jobValues3 = [NSArray arrayWithObjects:@"Test3",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job3/",@"true",@"false",@"Test3",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test3 Description",@"false", nil];
+    
+    
+    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
+    NSDictionary *job2 = [NSDictionary dictionaryWithObjects:jobValues2 forKeys:jobKeys];
+    NSDictionary *job3 = [NSDictionary dictionaryWithObjects:jobValues3 forKeys:jobKeys];
+    
+    JenkinsInstance *jinstance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:_context];
+    jinstance.name = @"TestInstance";
+    jinstance.url = @"http://www.google.com";
+
+    [jenkins persistJobsToLocalStorage: [NSArray arrayWithObjects:job1,job2,job3, nil] forJenkinsInstance:jinstance];
+    
+    NSError *error;
+    NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
+    [allJobs setEntity:[NSEntityDescription entityForName:@"Job" inManagedObjectContext:_context]];
+    [allJobs setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *fetchedjobs = [_context executeFetchRequest:allJobs error:&error];
+    XCTAssert(fetchedjobs.count==3, @"view count should be 3, instead got %d", fetchedjobs.count);
+}
 
 - (void) deleteAllRecordsForEntity: (NSString *) entityName
 {

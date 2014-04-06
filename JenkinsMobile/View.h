@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import "JenkinsInstance.h"
 
 @class Job;
 
@@ -27,5 +28,9 @@
 - (void)removeRel_View_JobsObject:(Job *)value;
 - (void)addRel_View_Jobs:(NSSet *)values;
 - (void)removeRel_View_Jobs:(NSSet *)values;
+
+- (void)setValues:(NSDictionary *) values;
+
++ (View *)createViewWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forJenkinsInstance:(JenkinsInstance *) jinstance;
 
 @end
