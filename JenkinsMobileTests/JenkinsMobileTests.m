@@ -288,6 +288,57 @@
     XCTAssert(fetchedinstances.count==2,@"too many jenkins instances, should be 2, have %d",fetchedinstances.count);
 }
 
+- (void) testUpdatingJob
+{
+    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"color",nil];
+    NSArray *values = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue",nil];
+    NSArray *values2 = [NSArray arrayWithObjects:@"Job1Test",@"http://www.google.com",@"green",nil];
+    NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    NSDictionary *jobvalues2 = [NSDictionary dictionaryWithObjects:values2 forKeys:keys];
+    
+    [Job createJobWithValues:jobvalues inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    [Job createJobWithValues:jobvalues2 inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    
+    NSError *error;
+    NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
+    [allJobs setEntity:[NSEntityDescription entityForName:@"Job" inManagedObjectContext:_context]];
+    [allJobs setPredicate:[NSPredicate predicateWithFormat:@"url = %@", @"http://www.google.com"]];
+    [allJobs setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *fetchedjobs = [_context executeFetchRequest:allJobs error:&error];
+    Job *fetchedjob = [fetchedjobs lastObject];
+    
+    XCTAssert(fetchedjobs.count==1, @"wrong number of fetched jobs");
+    XCTAssert([fetchedjob.name isEqualToString:@"Job1Test"], @"job name is wrong");
+    XCTAssert([fetchedjob.url isEqualToString:@"http://www.google.com"], @"job url is wrong");
+    XCTAssert([fetchedjob.color isEqualToString:@"green"], @"job color is wrong");
+}
+
+- (void) testUpdatingView
+{
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url",@"description",@"property", nil];
+    NSArray *viewValues1 = [NSArray arrayWithObjects:@"test1",@"url1",@"descriptiontest1",@"",nil];
+    NSArray *viewValues2 = [NSArray arrayWithObjects:@"test2",@"url1",@"descriptiontest2",@"",nil];
+    NSDictionary *values1 = [NSDictionary dictionaryWithObjects:viewValues1 forKeys:viewKeys];
+    NSDictionary *values2 = [NSDictionary dictionaryWithObjects:viewValues2 forKeys:viewKeys];
+    
+    
+    [View createViewWithValues:values1 inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    [View createViewWithValues:values2 inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    
+    NSError *error;
+    NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
+    [allViews setEntity:[NSEntityDescription entityForName:@"View" inManagedObjectContext:_context]];
+    [allViews setPredicate:[NSPredicate predicateWithFormat:@"url = %@", @"url1"]];
+    [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *fetchedviews = [_context executeFetchRequest:allViews error:&error];
+    View *fetchedview = [fetchedviews lastObject];
+    
+    XCTAssert(fetchedviews.count==1, @"wrong number of fetched views");
+    XCTAssert([fetchedview.name isEqualToString:@"test2"], @"view name is wrong");
+    XCTAssert([fetchedview.url isEqualToString:@"url1"], @"view url is wrong");
+    XCTAssert([fetchedview.view_description isEqualToString:@"descriptiontest2"], @"view description is wrong");
+}
+
 - (void) deleteAllRecordsForEntity: (NSString *) entityName
 {
     NSFetchRequest * allRecords = [[NSFetchRequest alloc] init];
