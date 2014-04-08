@@ -55,7 +55,7 @@
         <attribute name="scm" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="upstreamProjects" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="url" attributeType="String" indexed="YES" syncable="YES"/>
-        <relationship name="rel_Job_Builds" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Build" inverseName="rel_Build_Job" inverseEntity="Build" syncable="YES"/>
+        <relationship name="rel_Job_Builds" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Build" inverseName="rel_Build_Job" inverseEntity="Build" syncable="YES"/>
         <relationship name="rel_Job_JenkinsInstance" maxCount="1" deletionRule="Nullify" destinationEntity="JenkinsInstance" inverseName="rel_Jobs" inverseEntity="JenkinsInstance" syncable="YES"/>
         <relationship name="rel_Job_View" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="View" inverseName="rel_View_Jobs" inverseEntity="View" syncable="YES"/>
     </entity>

@@ -399,8 +399,14 @@
     NSError *saveError = nil;
     [_context save:&saveError];
     
+    NSFetchRequest *allBuilds = [[NSFetchRequest alloc] init];
+    [allBuilds setEntity:[NSEntityDescription entityForName:@"Build" inManagedObjectContext:_context]];
+    [allBuilds setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *fetchedbuilds = [_context executeFetchRequest:allBuilds error:&error];
+    
     XCTAssert(view.rel_View_Jobs.count==0, @"view's job count is wrong");
     XCTAssert(_jinstance.rel_Jobs.count==0, @"jenkins instance's job count is wrong");
+    XCTAssert(fetchedbuilds.count==0, @"build count is wrong");
 }
 
 - (void) testDeletingJenkinsInstance
@@ -483,6 +489,28 @@
     
     XCTAssert([build.url isEqual:@"http://www.google.com"], @"build url is wrong");
     XCTAssert([build.number isEqualToNumber:[NSNumber numberWithInt:100]], @"build number is wrong");
+}
+
+- (void) testDeleteBuild
+{
+    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
+    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
+    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
+    Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    
+    NSArray *buildkeys = [NSArray arrayWithObjects:@"number",@"url",nil];
+    NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com", nil];
+    NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
+    
+    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJob:job];
+    
+    XCTAssert(job.rel_Job_Builds.count==1, @"job's build count is wrong");
+
+    [_context deleteObject:build];
+    NSError *saveError = nil;
+    [_context save:&saveError];
+    
+    XCTAssert(job.rel_Job_Builds.count==0, @"job's build count is wrong");
 }
 
 - (void) deleteAllRecordsForEntity: (NSString *) entityName
