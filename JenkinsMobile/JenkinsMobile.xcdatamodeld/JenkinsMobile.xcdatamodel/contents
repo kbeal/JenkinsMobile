@@ -65,12 +65,12 @@
         <attribute name="url" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="view_description" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="rel_View_JenkinsInstance" maxCount="1" deletionRule="Nullify" destinationEntity="JenkinsInstance" inverseName="rel_Views" inverseEntity="JenkinsInstance" syncable="YES"/>
-        <relationship name="rel_View_Jobs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Job" inverseName="rel_Job_View" inverseEntity="Job" syncable="YES"/>
+        <relationship name="rel_View_Jobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="rel_Job_View" inverseEntity="Job" syncable="YES"/>
     </entity>
     <elements>
         <element name="Build" positionX="144" positionY="396" width="128" height="315"/>
         <element name="JenkinsInstance" positionX="-18" positionY="101" width="128" height="120"/>
-        <element name="Job" positionX="135" positionY="216" width="128" height="480"/>
-        <element name="View" positionX="261" positionY="216" width="128" height="135"/>
+        <element name="Job" positionX="135" positionY="216" width="128" height="478"/>
+        <element name="View" positionX="261" positionY="216" width="128" height="133"/>
     </elements>
 </model>

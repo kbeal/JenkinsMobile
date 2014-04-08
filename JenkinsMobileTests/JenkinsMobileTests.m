@@ -339,6 +339,66 @@
     XCTAssert([fetchedview.view_description isEqualToString:@"descriptiontest2"], @"view description is wrong");
 }
 
+- (void) testDeletingView
+{
+    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
+    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
+    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
+    NSArray *jobs = [NSArray arrayWithObjects:job1,nil];
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url",@"description",@"property",@"jobs", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",@"descriptiontest1",@"",jobs,nil];
+    NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
+    
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    [_context deleteObject:view];
+    NSError *saveError = nil;
+    [_context save:&saveError];
+    
+    NSError *error;
+    NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
+    [allJobs setEntity:[NSEntityDescription entityForName:@"Job" inManagedObjectContext:_context]];
+    [allJobs setPredicate:[NSPredicate predicateWithFormat:@"url = %@", @"http://www.google.com"]];
+    [allJobs setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *fetchedjobs = [_context executeFetchRequest:allJobs error:&error];
+    Job *fetchedjob = [fetchedjobs lastObject];
+    
+
+    
+    XCTAssert(fetchedjob.rel_Job_View.count==0, @"job's view count is wrong");
+    XCTAssert(fetchedjobs.count==1, @"job count is wrong");
+    XCTAssert([fetchedjob.name isEqualToString:@"Job1"], @"job name is wrong");
+}
+
+- (void) testDeletingJob
+{
+    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
+    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
+    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
+    NSArray *jobs = [NSArray arrayWithObjects:job1,nil];
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url",@"description",@"property",@"jobs", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",@"descriptiontest1",@"",jobs,nil];
+    NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
+    
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    
+    NSError *error;
+    NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
+    [allJobs setEntity:[NSEntityDescription entityForName:@"Job" inManagedObjectContext:_context]];
+    [allJobs setPredicate:[NSPredicate predicateWithFormat:@"url = %@", @"http://www.google.com"]];
+    [allJobs setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *fetchedjobs = [_context executeFetchRequest:allJobs error:&error];
+    Job *fetchedjob = [fetchedjobs lastObject];
+    
+    XCTAssert(view.rel_View_Jobs.count==1, @"view's job count is wrong");
+    XCTAssert(fetchedjob.rel_Job_View.count==1, @"job's view count is wrong");
+    
+    [_context deleteObject:fetchedjob];
+    NSError *saveError = nil;
+    [_context save:&saveError];
+    
+    XCTAssert(view.rel_View_Jobs.count==0, @"view's job count is wrong");
+}
+
 - (void) deleteAllRecordsForEntity: (NSString *) entityName
 {
     NSFetchRequest * allRecords = [[NSFetchRequest alloc] init];
