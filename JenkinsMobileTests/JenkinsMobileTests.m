@@ -399,6 +399,42 @@
     XCTAssert(view.rel_View_Jobs.count==0, @"view's job count is wrong");
 }
 
+- (void) testDeletingJenkinsInstance
+{
+    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
+    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
+    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
+    NSArray *jobs = [NSArray arrayWithObjects:job1,nil];
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url",@"description",@"property",@"jobs", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",@"descriptiontest1",@"",jobs,nil];
+    NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
+    [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];    
+    
+    [_context deleteObject:_jinstance];
+    NSError *saveError = nil;
+    [_context save:&saveError];
+    
+    NSError *error;
+    NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
+    [allJobs setEntity:[NSEntityDescription entityForName:@"Job" inManagedObjectContext:_context]];
+    [allJobs setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *fetchedjobs = [_context executeFetchRequest:allJobs error:&error];
+    
+    NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
+    [allViews setEntity:[NSEntityDescription entityForName:@"View" inManagedObjectContext:_context]];
+    [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *fetchedviews = [_context executeFetchRequest:allViews error:&error];
+    
+    NSFetchRequest *allBuilds = [[NSFetchRequest alloc] init];
+    [allBuilds setEntity:[NSEntityDescription entityForName:@"Build" inManagedObjectContext:_context]];
+    [allBuilds setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+    NSArray *fetchedbuilds = [_context executeFetchRequest:allBuilds error:&error];
+    
+    XCTAssert(fetchedjobs.count==0, @"should be no more jobs!");
+    XCTAssert(fetchedviews.count==0, @"should be no more views!");
+    XCTAssert(fetchedbuilds.count==0, @"should be no more builds!");
+}
+
 - (void) deleteAllRecordsForEntity: (NSString *) entityName
 {
     NSFetchRequest * allRecords = [[NSFetchRequest alloc] init];
