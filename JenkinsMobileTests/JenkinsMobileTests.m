@@ -367,6 +367,7 @@
     XCTAssert(fetchedjob.rel_Job_View.count==0, @"job's view count is wrong");
     XCTAssert(fetchedjobs.count==1, @"job count is wrong");
     XCTAssert([fetchedjob.name isEqualToString:@"Job1"], @"job name is wrong");
+    XCTAssert(_jinstance.rel_Views.count==0, @"jenkins instance's view count is wrong");
 }
 
 - (void) testDeletingJob
@@ -397,6 +398,7 @@
     [_context save:&saveError];
     
     XCTAssert(view.rel_View_Jobs.count==0, @"view's job count is wrong");
+    XCTAssert(_jinstance.rel_Jobs.count==0, @"jenkins instance's job count is wrong");
 }
 
 - (void) testDeletingJenkinsInstance
