@@ -2,12 +2,13 @@
 //  Build.h
 //  JenkinsMobile
 //
-//  Created by Kyle on 4/4/14.
+//  Created by Kyle on 4/7/14.
 //  Copyright (c) 2014 Kyle Beal. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import "JenkinsInstance.h"
 
 @class Job;
 
@@ -24,12 +25,16 @@
 @property (nonatomic, retain) NSNumber * estimatedDuration;
 @property (nonatomic, retain) NSString * executor;
 @property (nonatomic, retain) NSString * fullDisplayName;
-@property (nonatomic, retain) NSString * id;
+@property (nonatomic, retain) NSString * build_id;
 @property (nonatomic, retain) NSNumber * keepLog;
 @property (nonatomic, retain) NSNumber * number;
 @property (nonatomic, retain) NSString * result;
 @property (nonatomic, retain) NSDate * timestamp;
 @property (nonatomic, retain) NSString * url;
 @property (nonatomic, retain) Job *rel_Build_Job;
+
+- (void)setValues:(NSDictionary *) values;
+
++ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJob: (Job *) job;
 
 @end

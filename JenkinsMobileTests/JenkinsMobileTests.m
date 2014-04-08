@@ -116,6 +116,8 @@
     NSArray *origbuilds = [_context executeFetchRequest:allBuilds error:&error];
     
     Build *build = [NSEntityDescription insertNewObjectForEntityForName:@"Build" inManagedObjectContext:_context];
+    build.url = @"http://www.google.com";
+    build.number = [NSNumber numberWithInt:100];
     
     Job *job = [NSEntityDescription insertNewObjectForEntityForName:@"Job" inManagedObjectContext:_context];
     job.name = @"TestJob";
@@ -435,6 +437,52 @@
     XCTAssert(fetchedjobs.count==0, @"should be no more jobs!");
     XCTAssert(fetchedviews.count==0, @"should be no more views!");
     XCTAssert(fetchedbuilds.count==0, @"should be no more builds!");
+}
+
+- (void) testCreateBuild
+{
+    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
+    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
+    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
+    Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    
+    NSArray *buildkeys = [NSArray arrayWithObjects:@"description",@"building",@"builtOn",@"duration",@"estimatedDuration",@"executor",@"fullDisplayName",@"build_id",@"keepLog",@"number",@"result",@"timestamp",@"url",nil];
+    NSArray *buildvalues = [NSArray arrayWithObjects:@"build 1 description",[NSNumber numberWithBool:NO],@"1/1/14",[NSNumber numberWithInt:123456],[NSNumber numberWithInt:123456],@"",@"build 1 test",@"build test id",[NSNumber numberWithBool:NO],[NSNumber numberWithInt:100],@"SUCCESS",[NSDate dateWithTimeIntervalSince1970:1396916908635],@"http://www.google.com", nil];
+    NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
+    
+    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJob:job];
+    
+    XCTAssert([build.build_description isEqual:@"build 1 description"], @"build description is wrong, is actually %@",build.build_description);
+    XCTAssert([build.building isEqual:[NSNumber numberWithBool:NO]], @"building is wrong");
+    XCTAssert([build.builtOn isEqual:@"1/1/14"], @"built on is wrong, is actually %@", build.builtOn);
+    XCTAssert([build.duration isEqualToNumber:[NSNumber numberWithInt:123456]], @"build duration is wrong");
+    XCTAssert([build.estimatedDuration isEqualToNumber:[NSNumber numberWithInt:123456]], @"estimated build duration is wrong");
+    XCTAssert([build.executor isEqual:@""], @"build executor should be nil");
+    XCTAssert([build.fullDisplayName isEqual:@"build 1 test"], @"build full display name is wrong");
+    XCTAssert([build.build_id isEqual:@"build test id"], @"build id is wrong");
+    XCTAssert([build.keepLog isEqualToNumber:[NSNumber numberWithBool:NO]], @"keep log is wrong");
+    XCTAssert([build.number isEqualToNumber:[NSNumber numberWithInt:100]], @"build number is wrong");
+    XCTAssert([build.result isEqual:@"SUCCESS"], @"build result is wrong");
+    XCTAssert([build.timestamp isEqualToDate:[NSDate dateWithTimeIntervalSince1970:1396916908635]], @"build timestamp is wrong");
+    XCTAssert([build.url isEqual:@"http://www.google.com"], @"build url is wrong");
+
+}
+
+- (void) testCreateBuildWithMinimalValues
+{
+    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
+    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
+    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
+    Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    
+    NSArray *buildkeys = [NSArray arrayWithObjects:@"number",@"url",nil];
+    NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com", nil];
+    NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
+    
+    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJob:job];
+    
+    XCTAssert([build.url isEqual:@"http://www.google.com"], @"build url is wrong");
+    XCTAssert([build.number isEqualToNumber:[NSNumber numberWithInt:100]], @"build number is wrong");
 }
 
 - (void) deleteAllRecordsForEntity: (NSString *) entityName

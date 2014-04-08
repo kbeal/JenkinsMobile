@@ -156,6 +156,7 @@
 		8A3CBA3818E7C39900D0D160 /* accept-24x24@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CB9A818E7C39900D0D160 /* accept-24x24@2x.png */; };
 		8A3CBA3B18E7C57C00D0D160 /* notbuilt.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CBA3918E7C57C00D0D160 /* notbuilt.png */; };
 		8A3CBA3C18E7C57C00D0D160 /* notbuilt@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CBA3A18E7C57C00D0D160 /* notbuilt@2x.png */; };
+		8A4C5C1318F37EC800DE82B6 /* Build.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4C5C1218F37EC800DE82B6 /* Build.m */; };
 		8A5A224D18F20A3A001FA8EB /* JenkinsInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5A224C18F20A3A001FA8EB /* JenkinsInstance.m */; };
 		8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */; };
 		8AC329ED18E4F3A90002D106 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EC18E4F3A90002D106 /* Foundation.framework */; };
@@ -188,7 +189,6 @@
 		8AE3B95C18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B95B18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m */; };
 		8AE3B95F18EF80C900E061C1 /* Job.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B95E18EF80C900E061C1 /* Job.m */; };
 		8AE3B96218EF80CA00E061C1 /* View.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B96118EF80CA00E061C1 /* View.m */; };
-		8AE3B96518EF80CA00E061C1 /* Build.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B96418EF80CA00E061C1 /* Build.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -354,6 +354,8 @@
 		8A3CB9A818E7C39900D0D160 /* accept-24x24@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "accept-24x24@2x.png"; sourceTree = "<group>"; };
 		8A3CBA3918E7C57C00D0D160 /* notbuilt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notbuilt.png; sourceTree = "<group>"; };
 		8A3CBA3A18E7C57C00D0D160 /* notbuilt@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "notbuilt@2x.png"; sourceTree = "<group>"; };
+		8A4C5C1118F37EC800DE82B6 /* Build.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Build.h; sourceTree = "<group>"; };
+		8A4C5C1218F37EC800DE82B6 /* Build.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Build.m; sourceTree = "<group>"; };
 		8A5A224B18F20A3A001FA8EB /* JenkinsInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JenkinsInstance.h; sourceTree = "<group>"; };
 		8A5A224C18F20A3A001FA8EB /* JenkinsInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JenkinsInstance.m; sourceTree = "<group>"; };
 		8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBViewPickerViewController.h; sourceTree = "<group>"; };
@@ -405,8 +407,6 @@
 		8AE3B95E18EF80C900E061C1 /* Job.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Job.m; sourceTree = "<group>"; };
 		8AE3B96018EF80CA00E061C1 /* View.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = View.h; sourceTree = "<group>"; };
 		8AE3B96118EF80CA00E061C1 /* View.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = View.m; sourceTree = "<group>"; };
-		8AE3B96318EF80CA00E061C1 /* Build.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Build.h; sourceTree = "<group>"; };
-		8AE3B96418EF80CA00E061C1 /* Build.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Build.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -698,10 +698,10 @@
 		8AE3B96918EF80D000E061C1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				8A4C5C1118F37EC800DE82B6 /* Build.h */,
+				8A4C5C1218F37EC800DE82B6 /* Build.m */,
 				8A5A224B18F20A3A001FA8EB /* JenkinsInstance.h */,
 				8A5A224C18F20A3A001FA8EB /* JenkinsInstance.m */,
-				8AE3B96318EF80CA00E061C1 /* Build.h */,
-				8AE3B96418EF80CA00E061C1 /* Build.m */,
 				8AE3B96018EF80CA00E061C1 /* View.h */,
 				8AE3B96118EF80CA00E061C1 /* View.m */,
 				8AE3B95D18EF80C900E061C1 /* Job.h */,
@@ -954,7 +954,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8AE3B96518EF80CA00E061C1 /* Build.m in Sources */,
+				8A4C5C1318F37EC800DE82B6 /* Build.m in Sources */,
 				8AC32A4618E4FB6F0002D106 /* AFURLConnectionOperation.m in Sources */,
 				8A14345718E8863E000C2DB4 /* KDBJenkinsViewTableView.m in Sources */,
 				8AC32A4118E4FB6F0002D106 /* AFHTTPRequestOperation.m in Sources */,
