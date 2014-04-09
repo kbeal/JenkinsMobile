@@ -166,11 +166,11 @@
 - (void)testPersistViewsToLocalStorage
 {
     //pass an nsarray of views to KDBJenkinsRequestHandler.persistViewsToLocalStorage
-    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:_context];
+    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:_context andJenkinsInstance:_jinstance];
     
     NSArray *views = [NSArray arrayWithObjects: [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test1",@"url1", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test2",@"url2", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test3",@"url3", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test4",@"url4", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]], nil ];
     
-    [jenkins persistViewsToLocalStorage: views forJenkinsInstance:_jinstance];
+    [jenkins persistViewsToLocalStorage: views];
     
     NSError *error;
     NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
@@ -183,9 +183,16 @@
 - (void)testCreateJobWithValues
 {
     
-    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"color",@"url",@"buildable",@"concurrentBuild",@"displayName",@"firstBuild",@"lastBuild",@"lastCompletedBuild",@"lastFailedBuild",@"lastStableBuild",@"lastSuccessfulBuild",@"lastUnstableBuild",@"lastUnsuccessfulBuild",@"nextBuildNumber",@"inQueue",@"description",@"keepDependencies",nil ];
+    NSArray *buildkeys = [NSArray arrayWithObjects:@"url",@"number", nil];
+    NSArray *buildvalues1 = [NSArray arrayWithObjects:@"http://www.google.com",[NSNumber numberWithInt:100], nil];
+    NSArray *buildvalues2 = [NSArray arrayWithObjects:@"http://www.google.com/mail",[NSNumber numberWithInt:200], nil];
+    NSDictionary *build1 = [NSDictionary dictionaryWithObjects:buildvalues1 forKeys:buildkeys];
+    NSDictionary *build2 = [NSDictionary dictionaryWithObjects:buildvalues2 forKeys:buildkeys];
+    NSArray *builds = [NSArray arrayWithObjects:build1,build2, nil];
     
-    NSArray *jobValues = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",@"true",@"false",@"Test1",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test1 Description",@"false", nil];
+    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"color",@"url",@"buildable",@"concurrentBuild",@"displayName",@"firstBuild",@"lastBuild",@"lastCompletedBuild",@"lastFailedBuild",@"lastStableBuild",@"lastSuccessfulBuild",@"lastUnstableBuild",@"lastUnsuccessfulBuild",@"nextBuildNumber",@"inQueue",@"description",@"keepDependencies",@"builds",nil ];
+    
+    NSArray *jobValues = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",@"true",@"false",@"Test1",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test1 Description",@"false",builds, nil];
     
     Job *job = [Job createJobWithValues:[NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys] inManagedObjectContext:_context forJenkinsInstance:_jinstance];
     
@@ -208,6 +215,7 @@
     XCTAssertEqual(job.job_description, @"Test1 Description", @"job description is wrong is actually %@", job.job_description);
     XCTAssertEqualObjects(job.keepDependencies, [NSNumber numberWithBool:NO], @"keep dependencies should be false, is actually %@", [job.keepDependencies stringValue]);
     XCTAssertNotNil(job.rel_Job_JenkinsInstance, @"jenkins instance is null");
+    XCTAssert(job.rel_Job_Builds.count==2, @"job's build count is wrong");
 }
 
 - (void)testCreateJobWithMinimalValues
@@ -221,34 +229,6 @@
     XCTAssert([job.name isEqualToString:@"Job1"], @"job name should be Job1, is actually %@",job.name);
     XCTAssert([job.color isEqualToString:@"blue"], @"job color is wrong");
     XCTAssert([job.url isEqualToString:@"http://www.google.com"], @"job url is wrong, is actually %@",job.url);
-}
-
-- (void)testPersistJobsToLocalStorage
-{
-    //pass an nsarray of views to KDBJenkinsRequestHandler.persistViewsToLocalStorage
-    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:_context];
-    
-    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"color",@"url",@"buildable",@"concurrentBuild",@"displayName",@"firstBuild",@"lastBuild",@"lastCompletedBuild",@"lastFailedBuild",@"lastStableBuild",@"lastSuccessfulBuild",@"lastUnstableBuild",@"lastUnsuccessfulBuild",@"nextBuildNumber",@"inQueue",@"description",@"keepDependencies",nil ];
-    
-    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",@"true",@"false",@"Test1",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test1 Description",@"false", nil];
-    
-    NSArray *jobValues2 = [NSArray arrayWithObjects:@"Test2",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job2/",@"true",@"false",@"Test2",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test2 Description",@"false", nil];
-    
-    NSArray *jobValues3 = [NSArray arrayWithObjects:@"Test3",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job3/",@"true",@"false",@"Test3",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test3 Description",@"false", nil];
-    
-    
-    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
-    NSDictionary *job2 = [NSDictionary dictionaryWithObjects:jobValues2 forKeys:jobKeys];
-    NSDictionary *job3 = [NSDictionary dictionaryWithObjects:jobValues3 forKeys:jobKeys];
-
-    [jenkins persistJobsToLocalStorage: [NSArray arrayWithObjects:job1,job2,job3, nil] forJenkinsInstance:_jinstance];
-    
-    NSError *error;
-    NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
-    [allJobs setEntity:[NSEntityDescription entityForName:@"Job" inManagedObjectContext:_context]];
-    [allJobs setIncludesPropertyValues:NO]; //only fetch the managedObjectID
-    NSArray *fetchedjobs = [_context executeFetchRequest:allJobs error:&error];
-    XCTAssert(fetchedjobs.count==3, @"view count should be 3, instead got %d", fetchedjobs.count);
 }
 
 - (void) testCreateJenkinsInstance

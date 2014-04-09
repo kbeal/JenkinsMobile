@@ -9,16 +9,23 @@
 #import <Foundation/Foundation.h>
 #import "View.h"
 #import "Job.h"
+#import "Build.h"
+#import "JenkinsInstance.h"
 
 @interface KDBJenkinsRequestHandler : NSObject
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (strong, nonatomic) JenkinsInstance *jinstance;
 
-- (id) initWithManagedObjectContext: (NSManagedObjectContext *) context;
+- (id) initWithManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) instance;
+
 - (void) importAllViews;
-- (void) importDetailsForView: (View *) view;
-- (void) importDetailsForJob: (Job *) job;
-- (void) persistViewsToLocalStorage: (NSArray *) views forJenkinsInstance:(JenkinsInstance *) jinstance;
-- (void) persistJobsToLocalStorage: (NSArray *) jobs forJenkinsInstance: (JenkinsInstance *) jinstance;
+- (void) importDetailsForView: (NSString *) viewURL;
+- (void) importDetailsForJob: (NSString *) jobURL;
+- (void) importDetailsForBuild: (NSString *) buildURL forJob: (Job *) job;
+- (void) persistViewsToLocalStorage: (NSArray *) views;
+- (void) persistViewToLocalStorage: (NSDictionary *) viewvals;
+- (void) persistJobToLocalStorage: (NSDictionary *) job;
+- (void) persistBuildToLocalStorage: (NSDictionary *) buildvals forJob: (Job *) job;
 
 @end

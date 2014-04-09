@@ -87,10 +87,20 @@
     self.lastUnstableBuild = [values objectForKey:@"lastUnstableBuild"];
     self.lastUnsuccessfulBuild = [values objectForKey:@"lastUnsuccessfulBuild"];
     self.nextBuildNumber = [values objectForKey:@"nextBuildNumber"];
+    [self setRel_Job_Builds:[self createBuildsFromJobValues:[values objectForKey:@"builds"]]];
     NSError *error;
     if (![self.managedObjectContext save:&error]) {
         [NSException raise:@"Unable to set job values" format:@"Error saving context: %@", error];
     }
+}
+
+- (NSSet *) createBuildsFromJobValues: (NSArray *) buildsArray
+{
+    NSMutableSet *builds = [[NSMutableSet alloc] initWithCapacity:buildsArray.count];
+    for (int i=0; i<buildsArray.count; i++) {
+        [builds addObject:[Build createBuildWithValues:[buildsArray objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forJob:self]];
+    }
+    return builds;
 }
 
 @end

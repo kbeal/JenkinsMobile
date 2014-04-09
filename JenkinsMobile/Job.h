@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 #import "JenkinsInstance.h"
+#import "Build.h"
 
 
 @interface Job : NSManagedObject

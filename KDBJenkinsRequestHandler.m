@@ -8,19 +8,19 @@
 
 #import "KDBJenkinsRequestHandler.h"
 #import "AFNetworking.h"
-#import "JenkinsInstance.h"
 
 @implementation KDBJenkinsRequestHandler
 
-- (id) initWithManagedObjectContext: (NSManagedObjectContext *) context
+- (id) initWithManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) instance
 {
     self.managedObjectContext=context;
+    self.jinstance = instance;
     return self;
 }
 
 - (void) importAllViews
 {
-    NSURL *requestURL = [NSURL URLWithString:@"http://tomcat:8080/api/json"];
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",self.jinstance.url,@"api/json"]];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     //AFNetworking asynchronous url request
@@ -30,7 +30,7 @@
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
 
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        //[self persistViewsToLocalStorage:[responseObject objectForKey:@"views"]];
+        [self persistViewsToLocalStorage:[responseObject objectForKey:@"views"]];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
         NSLog(@"Request Failed: %@, %@", error, error.userInfo);
@@ -39,10 +39,77 @@
     [operation start];
 }
 
-- (void) persistViewsToLocalStorage: (NSArray *) views forJenkinsInstance:(JenkinsInstance *)jinstance
+- (void) importDetailsForView: (NSString *) viewURL
+{
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",viewURL,@"api/json"]];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    //AFNetworking asynchronous url request
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
+                                         initWithRequest:request];
+    
+    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self persistViewToLocalStorage:responseObject];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        // Handle error
+        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
+    }];
+    
+    [operation start];
+}
+
+- (void) importDetailsForJob:(NSString *)jobURL
+{
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",jobURL,@"api/json"]];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    //AFNetworking asynchronous url request
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
+                                         initWithRequest:request];
+    
+    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self persistJobToLocalStorage:responseObject];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        // Handle error
+        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
+    }];
+    
+    [operation start];
+}
+
+- (void) importDetailsForBuild: (NSString *) buildURL forJob: (Job *) job
+{
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",buildURL,@"api/json"]];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    //AFNetworking asynchronous url request
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
+                                         initWithRequest:request];
+    
+    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self persistBuildToLocalStorage:responseObject forJob:job];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        // Handle error
+        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
+    }];
+    
+    [operation start];
+}
+
+- (void) persistViewsToLocalStorage: (NSArray *) views
 {
     for (int i=0; i<views.count; i++) {
-        [View createViewWithValues:[views objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forJenkinsInstance:jinstance];
+        View * view = [View createViewWithValues:[views objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
+        [self importDetailsForView:view.url];
+        for (Job *job in view.rel_View_Jobs) {
+            [self importDetailsForJob:job.url];
+        }
     }
     
     NSError *error;
@@ -51,31 +118,22 @@
     }
 }
 
-- (void) persistJobsToLocalStorage: (NSArray *) jobs forJenkinsInstance: (JenkinsInstance *) jinstance
+- (void) persistViewToLocalStorage: (NSDictionary *) viewvals
 {
-    for (NSDictionary *job in jobs) {
-        [Job createJobWithValues:job inManagedObjectContext:self.managedObjectContext forJenkinsInstance:jinstance];
-    }
-    NSError *error;
-    if (![self.managedObjectContext save:&error]) {
-        [NSException raise:@"Unable to import jobs" format:@"Error saving context: %@", error];
+    [View createViewWithValues:viewvals inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
+}
+
+- (void) persistJobToLocalStorage: (NSDictionary *) jobvals
+{
+    Job *job = [Job createJobWithValues:jobvals inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
+    for (Build *build in job.rel_Job_Builds) {
+        [self importDetailsForBuild:build.url forJob:job];
     }
 }
 
-- (View *) importViewDetails: (NSString *) viewName
+- (void) persistBuildToLocalStorage: (NSDictionary *) buildvals forJob: (Job *) job
 {
-    //property
-    //description
-    //jobs
-    View *view;
-    return view;
-}
-
-
-
-- (void) importAllJobs
-{
-    
+    [Build createBuildWithValues:buildvals inManagedObjectContext:self.managedObjectContext forJob:job];
 }
 
 @end
