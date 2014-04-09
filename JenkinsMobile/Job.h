@@ -10,6 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "JenkinsInstance.h"
 #import "Build.h"
+#import "View.h"
 
 
 @interface Job : NSManagedObject
@@ -59,7 +60,7 @@
 
 - (void)setValues:(NSDictionary *) values;
 
-+ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forJenkinsInstance:(JenkinsInstance *) jinstance;
++ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view;
 
 
 @end

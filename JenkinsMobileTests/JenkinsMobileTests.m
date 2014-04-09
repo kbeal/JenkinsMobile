@@ -194,7 +194,15 @@
     
     NSArray *jobValues = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",@"true",@"false",@"Test1",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test1 Description",@"false",builds, nil];
     
-    Job *job = [Job createJobWithValues:[NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys] inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
+    NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
+    
+    
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    
+
+    Job *job = [Job createJobWithValues:[NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys] inManagedObjectContext:_context forView:view];
     
     XCTAssert([job.name isEqualToString:@"Test1"], @"job name should be Test1, is actually %@",job.name);
     XCTAssert([job.color isEqualToString:@"blue"], @"job color is wrong");
@@ -224,7 +232,12 @@
     NSArray *values = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue",nil];
     NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     
-    Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
+    NSDictionary *viewvals = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
+    
+    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
     
     XCTAssert([job.name isEqualToString:@"Job1"], @"job name should be Job1, is actually %@",job.name);
     XCTAssert([job.color isEqualToString:@"blue"], @"job color is wrong");
@@ -278,8 +291,16 @@
     NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSDictionary *jobvalues2 = [NSDictionary dictionaryWithObjects:values2 forKeys:keys];
     
-    [Job createJobWithValues:jobvalues inManagedObjectContext:_context forJenkinsInstance:_jinstance];
-    [Job createJobWithValues:jobvalues2 inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
+    NSDictionary *viewvals = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
+    
+    
+    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+
+    
+    [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
+    [Job createJobWithValues:jobvalues2 inManagedObjectContext:_context forView:view];
     
     NSError *error;
     NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
@@ -430,7 +451,13 @@
     NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
     NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
     NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
-    Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
+    NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    
+    Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forView:view];
     
     NSArray *buildkeys = [NSArray arrayWithObjects:@"description",@"building",@"builtOn",@"duration",@"estimatedDuration",@"executor",@"fullDisplayName",@"build_id",@"keepLog",@"number",@"result",@"timestamp",@"url",nil];
     NSArray *buildvalues = [NSArray arrayWithObjects:@"build 1 description",[NSNumber numberWithBool:NO],@"1/1/14",[NSNumber numberWithInt:123456],[NSNumber numberWithInt:123456],@"",@"build 1 test",@"build test id",[NSNumber numberWithBool:NO],[NSNumber numberWithInt:100],@"SUCCESS",[NSDate dateWithTimeIntervalSince1970:1396916908635],@"http://www.google.com", nil];
@@ -459,7 +486,14 @@
     NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
     NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
     NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
-    Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    
+    
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
+    NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+
+    Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forView:view];
     
     NSArray *buildkeys = [NSArray arrayWithObjects:@"number",@"url",nil];
     NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com", nil];
@@ -476,7 +510,15 @@
     NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
     NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
     NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
-    Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
+    NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
+    
+    
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+
+    Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forView:view];
     
     NSArray *buildkeys = [NSArray arrayWithObjects:@"number",@"url",nil];
     NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com", nil];

@@ -9,6 +9,8 @@
 #import "KDBAppDelegate.h"
 
 #import "KDBMasterViewController.h"
+#import "JenkinsInstance.h"
+#import "KDBJenkinsRequestHandler.h"
 
 @implementation KDBAppDelegate
 
@@ -32,6 +34,15 @@
         KDBMasterViewController *controller = (KDBMasterViewController *)navigationController.topViewController;
         controller.managedObjectContext = self.managedObjectContext;
     }
+    
+    NSArray *jenkinskeys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
+    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES], nil];
+    NSDictionary *jenkins = [NSDictionary dictionaryWithObjects:jenkinsvalues forKeys:jenkinskeys];
+    JenkinsInstance *jinstance = [JenkinsInstance createJenkinsInstanceWithValues:jenkins inManagedObjectContext:self.managedObjectContext];
+    
+    KDBJenkinsRequestHandler *handler = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:self.managedObjectContext andJenkinsInstance:jinstance];
+    [handler importAllViews];
+    
     return YES;
 }
 							

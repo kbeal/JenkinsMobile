@@ -20,12 +20,12 @@
 - (id) initWithManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) instance;
 
 - (void) importAllViews;
-- (void) importDetailsForView: (NSString *) viewURL;
-- (void) importDetailsForJob: (NSString *) jobURL;
+- (void) importDetailsForView: (View *) view;
+- (void) importDetailsForJob:(NSString *)jobURL inView:(View *) view;
 - (void) importDetailsForBuild: (NSString *) buildURL forJob: (Job *) job;
 - (void) persistViewsToLocalStorage: (NSArray *) views;
 - (void) persistViewToLocalStorage: (NSDictionary *) viewvals;
-- (void) persistJobToLocalStorage: (NSDictionary *) job;
+- (void) persistJobToLocalStorage: (NSDictionary *) jobvals inView: (View *) view;
 - (void) persistBuildToLocalStorage: (NSDictionary *) buildvals forJob: (Job *) job;
 
 @end

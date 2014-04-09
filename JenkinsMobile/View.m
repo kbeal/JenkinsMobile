@@ -9,6 +9,8 @@
 #import "View.h"
 #import "Job.h"
 
+// Convert any NULL values to nil. Lifted from Kevin Ballard here: http://stackoverflow.com/a/9138033
+#define NULL_TO_NIL(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
 
 @implementation View
 
@@ -19,11 +21,11 @@
 @dynamic rel_View_JenkinsInstance;
 @dynamic rel_View_Jobs;
 
-+ (View *)createViewWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forJenkinsInstance:(JenkinsInstance *) jinstance
++ (View *)createViewWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forJenkinsInstance:(JenkinsInstance *) jinstance;
 {
     View *view = nil;
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    
+
     request.entity = [NSEntityDescription entityForName:@"View" inManagedObjectContext:context];
     request.predicate = [NSPredicate predicateWithFormat:@"url = %@", [values objectForKey:@"url"]];
     NSError *executeFetchError = nil;
@@ -45,15 +47,19 @@
 
 - (void)setValues:(NSDictionary *) values
 {
-    self.name = [values objectForKey:@"name"];
-    self.url = [values objectForKey:@"url"];
-    self.property = [values objectForKey:@"property"];
-    self.view_description = [values objectForKey:@"description"];
-    self.rel_View_JenkinsInstance = [values objectForKey:@"jenkinsInstance"];
-    [self setRel_View_Jobs:[self createJobsFromViewValues:[values objectForKey:@"jobs"]]];
+    self.name = NULL_TO_NIL([values objectForKey:@"name"]);
+    self.url = NULL_TO_NIL([values objectForKey:@"url"]);
+    self.property = NULL_TO_NIL([values objectForKey:@"property"]);
+    self.view_description = NULL_TO_NIL([values objectForKey:@"description"]);
+    self.rel_View_JenkinsInstance = NULL_TO_NIL([values objectForKey:@"jenkinsInstance"]);
     NSError *error;
     if (![self.managedObjectContext save:&error]) {
         [NSException raise:@"Unable to set view values" format:@"Error saving context: %@", error];
+    }
+
+    [self setRel_View_Jobs:[self createJobsFromViewValues:[values objectForKey:@"jobs"]]];
+    if (![self.managedObjectContext save:&error]) {
+        [NSException raise:@"Unable to set view values after creating view's jobs" format:@"Error saving context: %@", error];
     }
 
 }
@@ -62,7 +68,7 @@
 {
     NSMutableSet *jobs = [[NSMutableSet alloc] initWithCapacity:jobsArray.count];
     for (int i=0; i<jobsArray.count; i++) {
-        [jobs addObject:[Job createJobWithValues:[jobsArray objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forJenkinsInstance:(JenkinsInstance *)self.rel_View_JenkinsInstance]];
+        [jobs addObject:[Job createJobWithValues:[jobsArray objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forView:self]];
     }
     return jobs;
 }

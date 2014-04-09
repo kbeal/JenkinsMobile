@@ -20,6 +20,7 @@
 
 - (void) importAllViews
 {
+    //NSLog(@"importing views...");
     NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",self.jinstance.url,@"api/json"]];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
@@ -39,9 +40,10 @@
     [operation start];
 }
 
-- (void) importDetailsForView: (NSString *) viewURL
+- (void) importDetailsForView: (View *) view
 {
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",viewURL,@"api/json"]];
+    //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for view: ",view.url]);
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",view.url,@"api/json"]];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     //AFNetworking asynchronous url request
@@ -60,7 +62,7 @@
     [operation start];
 }
 
-- (void) importDetailsForJob:(NSString *)jobURL
+- (void) importDetailsForJob:(NSString *)jobURL inView:(View *) view
 {
     NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",jobURL,@"api/json"]];
     
@@ -72,7 +74,7 @@
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self persistJobToLocalStorage:responseObject];
+        [self persistJobToLocalStorage:responseObject inView:view];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
         NSLog(@"Request Failed: %@, %@", error, error.userInfo);
@@ -83,6 +85,7 @@
 
 - (void) importDetailsForBuild: (NSString *) buildURL forJob: (Job *) job
 {
+    //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job: ",job.url]);
     NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",buildURL,@"api/json"]];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
@@ -104,12 +107,10 @@
 
 - (void) persistViewsToLocalStorage: (NSArray *) views
 {
+    //NSLog([NSString stringWithFormat:@"%@%d%@",@"saving ",views.count,@" views..."]);
     for (int i=0; i<views.count; i++) {
         View * view = [View createViewWithValues:[views objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
-        [self importDetailsForView:view.url];
-        for (Job *job in view.rel_View_Jobs) {
-            [self importDetailsForJob:job.url];
-        }
+        [self importDetailsForView:view];
     }
     
     NSError *error;
@@ -120,12 +121,15 @@
 
 - (void) persistViewToLocalStorage: (NSDictionary *) viewvals
 {
-    [View createViewWithValues:viewvals inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
+    View *view = [View createViewWithValues:viewvals inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
+    for (Job *job in view.rel_View_Jobs) {
+        [self importDetailsForJob:job.url inView:view];
+    }
 }
 
-- (void) persistJobToLocalStorage: (NSDictionary *) jobvals
+- (void) persistJobToLocalStorage: (NSDictionary *) jobvals inView: (View *) view
 {
-    Job *job = [Job createJobWithValues:jobvals inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
+    Job *job = [Job createJobWithValues:jobvals inManagedObjectContext:self.managedObjectContext forView:view];
     for (Build *build in job.rel_Job_Builds) {
         [self importDetailsForBuild:build.url forJob:job];
     }

@@ -8,6 +8,9 @@
 
 #import "Job.h"
 
+// Convert any NULL values to nil. Lifted from Kevin Ballard here: http://stackoverflow.com/a/9138033
+#define NULL_TO_NIL(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
+
 @implementation Job
 
 @dynamic actions;
@@ -41,7 +44,7 @@
 @dynamic rel_Job_View;
 
 
-+ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forJenkinsInstance:(JenkinsInstance *) jinstance
++ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view;
 {
     Job *job = nil;
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
@@ -58,35 +61,35 @@
                                              inManagedObjectContext:context];
     }
     
-    NSMutableDictionary *valuesWithJenkinsInstance = [NSMutableDictionary dictionaryWithDictionary:values];
-    [valuesWithJenkinsInstance setObject:jinstance forKey:@"jenkinsInstance"];
-    [job setValues:valuesWithJenkinsInstance];
+    [job addRel_Job_ViewObject:view];
+    
+    job.rel_Job_JenkinsInstance = view.rel_View_JenkinsInstance;
+    [job setValues:values];
     
     return job;
 }
 
 - (void)setValues:(NSDictionary *) values
 {
-    self.rel_Job_JenkinsInstance = [values objectForKey:@"jenkinsInstance"];
-    self.url = [values objectForKey:@"url"];
-    self.name = [values objectForKey:@"name"];
-    self.color = [values objectForKey:@"color"];
-    self.buildable = [[values objectForKey:@"buildable"] isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-    self.concurrentBuild = [[values objectForKey:@"concurrentBuild"] isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-    self.displayName = [values objectForKey:@"displayName"];
-    self.queueItem = [values objectForKey:@"queueItem"];
-    self.inQueue = [[values objectForKey:@"inQueue"] isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-    self.job_description = [values objectForKey:@"description"];
-    self.keepDependencies = [[values objectForKey:@"keepDependencies"] isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-    self.firstBuild = [values objectForKey:@"firstBuild"];
-    self.lastBuild = [values objectForKey:@"lastBuild"];
-    self.lastCompletedBuild = [values objectForKey:@"lastCompletedBuild"];
-    self.lastFailedBuild = [values objectForKey:@"lastFailedBuild"];
-    self.lastStableBuild = [values objectForKey:@"lastStableBuild"];
-    self.lastSuccessfulBuild= [values objectForKey:@"lastSuccessfulBuild"];
-    self.lastUnstableBuild = [values objectForKey:@"lastUnstableBuild"];
-    self.lastUnsuccessfulBuild = [values objectForKey:@"lastUnsuccessfulBuild"];
-    self.nextBuildNumber = [values objectForKey:@"nextBuildNumber"];
+    self.url = NULL_TO_NIL([values objectForKey:@"url"]);
+    self.name = NULL_TO_NIL([values objectForKey:@"name"]);
+    self.color = NULL_TO_NIL([values objectForKey:@"color"]);
+    self.buildable = [NULL_TO_NIL([values objectForKey:@"buildable"]) isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+    self.concurrentBuild = [NULL_TO_NIL([values objectForKey:@"concurrentBuild"]) isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+    self.displayName = NULL_TO_NIL([values objectForKey:@"displayName"]);
+    self.queueItem = NULL_TO_NIL([values objectForKey:@"queueItem"]);
+    self.inQueue = [NULL_TO_NIL([values objectForKey:@"inQueue"]) isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+    self.job_description = NULL_TO_NIL([values objectForKey:@"description"]);
+    self.keepDependencies = [NULL_TO_NIL([values objectForKey:@"keepDependencies"]) isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+    self.firstBuild = NULL_TO_NIL([values objectForKey:@"firstBuild"]);
+    self.lastBuild = NULL_TO_NIL([values objectForKey:@"lastBuild"]);
+    self.lastCompletedBuild = NULL_TO_NIL([values objectForKey:@"lastCompletedBuild"]);
+    self.lastFailedBuild = NULL_TO_NIL([values objectForKey:@"lastFailedBuild"]);
+    self.lastStableBuild = NULL_TO_NIL([values objectForKey:@"lastStableBuild"]);
+    self.lastSuccessfulBuild= NULL_TO_NIL([values objectForKey:@"lastSuccessfulBuild"]);
+    self.lastUnstableBuild = NULL_TO_NIL([values objectForKey:@"lastUnstableBuild"]);
+    self.lastUnsuccessfulBuild = NULL_TO_NIL([values objectForKey:@"lastUnsuccessfulBuild"]);
+    self.nextBuildNumber = NULL_TO_NIL([values objectForKey:@"nextBuildNumber"]);
     [self setRel_Job_Builds:[self createBuildsFromJobValues:[values objectForKey:@"builds"]]];
     NSError *error;
     if (![self.managedObjectContext save:&error]) {
