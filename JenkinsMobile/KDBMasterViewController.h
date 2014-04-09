@@ -8,12 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "KDBViewPickerViewController.h"
+#import "Job.h"
 
 @class KDBDetailViewController;
 
-@interface KDBMasterViewController : UITableViewController <ViewPickerDelegate>
+@interface KDBMasterViewController : UITableViewController <ViewPickerDelegate, NSFetchedResultsControllerDelegate>
 
-@property (strong, nonatomic) NSArray *jenkinsJobs;
+@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
 @property (strong, nonatomic) KDBDetailViewController *detailViewController;
 
