@@ -44,7 +44,7 @@
 @dynamic rel_Job_View;
 
 
-+ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view byCaller:(NSString *) caller;
++ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view
 {
     Job *job = nil;
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
@@ -64,12 +64,12 @@
     [job addRel_Job_ViewObject:view];
     
     job.rel_Job_JenkinsInstance = view.rel_View_JenkinsInstance;
-    [job setValues:values byCaller:caller];
+    [job setValues:values];
     
     return job;
 }
 
-- (void)setValues:(NSDictionary *) values byCaller:(NSString *) caller;
+- (void)setValues:(NSDictionary *) values
 {
     self.url = NULL_TO_NIL([values objectForKey:@"url"]);
     self.name = NULL_TO_NIL([values objectForKey:@"name"]);
@@ -95,21 +95,6 @@
     if (![self.managedObjectContext save:&error]) {
         [NSException raise:@"Unable to set job values" format:@"Error saving context: %@", error];
     }
-    
-    [self setRel_Job_Builds:[self createBuildsFromJobValues:[values objectForKey:@"builds"]]];
-    
-    if (![self.managedObjectContext save:&error]) {
-        [NSException raise:@"Unable to set job values after creating job's builds" format:@"%@ ************Error saving context: %@", caller, error];
-    }
-}
-
-- (NSSet *) createBuildsFromJobValues: (NSArray *) buildsArray
-{
-    NSMutableSet *builds = [[NSMutableSet alloc] initWithCapacity:buildsArray.count];
-    for (int i=0; i<buildsArray.count; i++) {
-        [builds addObject:[Build createBuildWithValues:[buildsArray objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forJob:self]];
-    }
-    return builds;
 }
 
 @end

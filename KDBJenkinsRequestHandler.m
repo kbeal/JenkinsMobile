@@ -94,10 +94,10 @@
     [operation start];
 }
 
-- (void) importDetailsForBuild: (NSString *) buildURL forJob: (Job *) job
+- (void) importDetailsForBuild: (int) buildNumber forJob: (Job *) job
 {
     //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job: ",job.url]);
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",buildURL,@"api/json"]];
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%d%@",job.url,buildNumber,@"/api/json"]];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     //AFNetworking asynchronous url request
@@ -140,10 +140,20 @@
 
 - (void) persistJobToLocalStorage: (NSDictionary *) jobvals inView: (View *) view
 {
-    Job *job = [Job createJobWithValues:jobvals inManagedObjectContext:self.managedObjectContext forView:view byCaller:@"persistJob"];
-//    for (Build *build in job.rel_Job_Builds) {
-//        [self importDetailsForBuild:build.url forJob:job];
-//    }
+    Job *job = [Job createJobWithValues:jobvals inManagedObjectContext:self.managedObjectContext forView:view];
+    [self importAllBuildsForJob:job];
+}
+
+- (void) importAllBuildsForJob: (Job *) job
+{
+    if (job.firstBuild)
+    {
+        int firstBuild = [job.firstBuild intValue];
+        int lastBuild = [job.lastBuild intValue];
+        for (int i=firstBuild; i<=lastBuild; i++) {
+            [self importDetailsForBuild:i forJob:job];
+        }
+    }
 }
 
 - (void) persistBuildToLocalStorage: (NSDictionary *) buildvals forJob: (Job *) job

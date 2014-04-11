@@ -22,7 +22,7 @@
 - (void) importAllViews;
 - (void) importDetailsForView: (View *) view;
 - (void) importDetailsForJob:(NSString *)jobURL inView:(View *) view;
-- (void) importDetailsForBuild: (NSString *) buildURL forJob: (Job *) job;
+- (void) importDetailsForBuild: (int) buildNumber forJob: (Job *) job;
 - (void) persistViewsToLocalStorage: (NSArray *) views;
 - (void) persistViewToLocalStorage: (NSDictionary *) viewvals;
 - (void) persistJobToLocalStorage: (NSDictionary *) jobvals inView: (View *) view;

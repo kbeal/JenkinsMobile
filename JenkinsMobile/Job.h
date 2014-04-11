@@ -60,7 +60,7 @@
 
 - (void)setValues:(NSDictionary *) values byCaller:(NSString *) caller;
 
-+ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view byCaller:(NSString *) caller;
++ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view;
 
 
 @end
