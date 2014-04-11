@@ -53,7 +53,18 @@
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self persistViewToLocalStorage:responseObject];
+        // The default Jenkin's 'All' view has the same URL as the node.
+        // Which means when we query it, the response doesn't look like a typical view.
+        // We have to get the views array out of reponse in that case.
+        NSDictionary *viewValues = responseObject;
+        JenkinsInstance *viewsJI = (JenkinsInstance *)view.rel_View_JenkinsInstance;
+        if ([view.url isEqual:viewsJI.url])
+        {
+            NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"jobs",@"description", nil];
+            NSArray *values = [NSArray arrayWithObjects:view.name,view.url,[responseObject objectForKey:@"jobs"],[responseObject objectForKey:@"description"], nil];
+            viewValues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+        }
+        [self persistViewToLocalStorage:viewValues];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
         NSLog(@"Request Failed: %@, %@", error, error.userInfo);
@@ -129,10 +140,10 @@
 
 - (void) persistJobToLocalStorage: (NSDictionary *) jobvals inView: (View *) view
 {
-    Job *job = [Job createJobWithValues:jobvals inManagedObjectContext:self.managedObjectContext forView:view];
-    for (Build *build in job.rel_Job_Builds) {
-        [self importDetailsForBuild:build.url forJob:job];
-    }
+    Job *job = [Job createJobWithValues:jobvals inManagedObjectContext:self.managedObjectContext forView:view byCaller:@"persistJob"];
+//    for (Build *build in job.rel_Job_Builds) {
+//        [self importDetailsForBuild:build.url forJob:job];
+//    }
 }
 
 - (void) persistBuildToLocalStorage: (NSDictionary *) buildvals forJob: (Job *) job

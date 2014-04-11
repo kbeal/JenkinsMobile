@@ -44,7 +44,7 @@
 @dynamic rel_Job_View;
 
 
-+ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view;
++ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view byCaller:(NSString *) caller;
 {
     Job *job = nil;
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
@@ -64,36 +64,42 @@
     [job addRel_Job_ViewObject:view];
     
     job.rel_Job_JenkinsInstance = view.rel_View_JenkinsInstance;
-    [job setValues:values];
+    [job setValues:values byCaller:caller];
     
     return job;
 }
 
-- (void)setValues:(NSDictionary *) values
+- (void)setValues:(NSDictionary *) values byCaller:(NSString *) caller;
 {
     self.url = NULL_TO_NIL([values objectForKey:@"url"]);
     self.name = NULL_TO_NIL([values objectForKey:@"name"]);
     self.color = NULL_TO_NIL([values objectForKey:@"color"]);
-    self.buildable = [NULL_TO_NIL([values objectForKey:@"buildable"]) isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-    self.concurrentBuild = [NULL_TO_NIL([values objectForKey:@"concurrentBuild"]) isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+    self.buildable = [values objectForKey:@"buildable"];
+    self.concurrentBuild = [values objectForKey:@"concurrentBuild"];
     self.displayName = NULL_TO_NIL([values objectForKey:@"displayName"]);
     self.queueItem = NULL_TO_NIL([values objectForKey:@"queueItem"]);
-    self.inQueue = [NULL_TO_NIL([values objectForKey:@"inQueue"]) isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+    self.inQueue = [values objectForKey:@"inQueue"];
     self.job_description = NULL_TO_NIL([values objectForKey:@"description"]);
-    self.keepDependencies = [NULL_TO_NIL([values objectForKey:@"keepDependencies"]) isEqualToString:@"true"] ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-    self.firstBuild = NULL_TO_NIL([values objectForKey:@"firstBuild"]);
-    self.lastBuild = NULL_TO_NIL([values objectForKey:@"lastBuild"]);
-    self.lastCompletedBuild = NULL_TO_NIL([values objectForKey:@"lastCompletedBuild"]);
-    self.lastFailedBuild = NULL_TO_NIL([values objectForKey:@"lastFailedBuild"]);
-    self.lastStableBuild = NULL_TO_NIL([values objectForKey:@"lastStableBuild"]);
-    self.lastSuccessfulBuild= NULL_TO_NIL([values objectForKey:@"lastSuccessfulBuild"]);
-    self.lastUnstableBuild = NULL_TO_NIL([values objectForKey:@"lastUnstableBuild"]);
-    self.lastUnsuccessfulBuild = NULL_TO_NIL([values objectForKey:@"lastUnsuccessfulBuild"]);
+    self.keepDependencies = [values objectForKey:@"keepDependencies"];
+    self.firstBuild = [NULL_TO_NIL([values objectForKey:@"firstBuild"]) objectForKey:@"number"];
+    self.lastBuild = [NULL_TO_NIL([values objectForKey:@"lastBuild"]) objectForKey:@"number"];
+    self.lastCompletedBuild = [NULL_TO_NIL([values objectForKey:@"lastCompletedBuild"]) objectForKey:@"number"];
+    self.lastFailedBuild = [NULL_TO_NIL([values objectForKey:@"lastFailedBuild"]) objectForKey:@"number"];
+    self.lastStableBuild = [NULL_TO_NIL([values objectForKey:@"lastStableBuild"]) objectForKey:@"number"];
+    self.lastSuccessfulBuild= [NULL_TO_NIL([values objectForKey:@"lastSuccessfulBuild"]) objectForKey:@"number"];
+    self.lastUnstableBuild = [NULL_TO_NIL([values objectForKey:@"lastUnstableBuild"]) objectForKey:@"number"];
+    self.lastUnsuccessfulBuild = [NULL_TO_NIL([values objectForKey:@"lastUnsuccessfulBuild"]) objectForKey:@"number"];
     self.nextBuildNumber = NULL_TO_NIL([values objectForKey:@"nextBuildNumber"]);
-    [self setRel_Job_Builds:[self createBuildsFromJobValues:[values objectForKey:@"builds"]]];
+    
     NSError *error;
     if (![self.managedObjectContext save:&error]) {
         [NSException raise:@"Unable to set job values" format:@"Error saving context: %@", error];
+    }
+    
+    [self setRel_Job_Builds:[self createBuildsFromJobValues:[values objectForKey:@"builds"]]];
+    
+    if (![self.managedObjectContext save:&error]) {
+        [NSException raise:@"Unable to set job values after creating job's builds" format:@"%@ ************Error saving context: %@", caller, error];
     }
 }
 

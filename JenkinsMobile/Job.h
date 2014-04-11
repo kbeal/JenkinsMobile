@@ -58,9 +58,9 @@
 - (void)addRel_Job_View:(NSSet *)values;
 - (void)removeRel_Job_View:(NSSet *)values;
 
-- (void)setValues:(NSDictionary *) values;
+- (void)setValues:(NSDictionary *) values byCaller:(NSString *) caller;
 
-+ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view;
++ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view byCaller:(NSString *) caller;
 
 
 @end

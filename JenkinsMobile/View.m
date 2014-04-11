@@ -68,7 +68,7 @@
 {
     NSMutableSet *jobs = [[NSMutableSet alloc] initWithCapacity:jobsArray.count];
     for (int i=0; i<jobsArray.count; i++) {
-        [jobs addObject:[Job createJobWithValues:[jobsArray objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forView:self]];
+        [jobs addObject:[Job createJobWithValues:[jobsArray objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forView:self byCaller:@"createJobsFromView"]];
     }
     return jobs;
 }
