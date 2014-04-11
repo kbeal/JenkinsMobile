@@ -75,7 +75,8 @@
     self.keepLog = NULL_TO_NIL([values objectForKey:@"keepLog"]);
     self.number = NULL_TO_NIL([values objectForKey:@"number"]);
     self.result = NULL_TO_NIL([values objectForKey:@"result"]);
-    self.timestamp = NULL_TO_NIL([values objectForKey:@"timestamp"]);
+    NSNumber *timestamp = NULL_TO_NIL([values objectForKey:@"timestamp"]);
+    self.timestamp = [NSDate dateWithTimeIntervalSince1970:[timestamp intValue]];
     self.url = NULL_TO_NIL([values objectForKey:@"url"]);
     NSError *error;
     if (![self.managedObjectContext save:&error]) {
