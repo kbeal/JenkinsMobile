@@ -17,6 +17,8 @@
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) JenkinsInstance *jinstance;
 
+@property (nonatomic) NSTimeInterval timetaken;
+
 - (id) initWithManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) instance;
 
 - (void) importAllViews;

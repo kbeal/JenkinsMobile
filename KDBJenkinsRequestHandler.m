@@ -73,51 +73,52 @@
     [operation start];
 }
 
-- (void) importDetailsForJob:(NSString *)jobURL inView:(View *) view
-{
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",jobURL,@"api/json"]];
-    
-    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
-    //AFNetworking asynchronous url request
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
-                                         initWithRequest:request];
-    
-    operation.responseSerializer = [AFJSONResponseSerializer serializer];
-    
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self persistJobToLocalStorage:responseObject inView:view];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        // Handle error
-        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
-    }];
-    
-    [operation start];
-}
+//- (void) importDetailsForJob:(NSString *)jobURL inView:(View *) view
+//{
+//    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",jobURL,@"api/json"]];
+//    
+//    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+//    //AFNetworking asynchronous url request
+//    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
+//                                         initWithRequest:request];
+//    
+//    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+//    
+//    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        [self persistJobToLocalStorage:responseObject inView:view];
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        // Handle error
+//        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
+//    }];
+//    
+//    [operation start];
+//}
 
-- (void) importDetailsForBuild: (int) buildNumber forJob: (Job *) job
-{
-    //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job: ",job.url]);
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%d%@",job.url,buildNumber,@"/api/json"]];
-    
-    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
-    //AFNetworking asynchronous url request
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
-                                         initWithRequest:request];
-    
-    operation.responseSerializer = [AFJSONResponseSerializer serializer];
-    
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self persistBuildToLocalStorage:responseObject forJob:job];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        // Handle error
-        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
-    }];
-    
-    [operation start];
-}
+//- (void) importDetailsForBuild: (int) buildNumber forJob: (Job *) job
+//{
+//    //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job: ",job.url]);
+//    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%d%@",job.url,buildNumber,@"/api/json"]];
+//    
+//    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+//    //AFNetworking asynchronous url request
+//    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
+//                                         initWithRequest:request];
+//    
+//    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+//    
+//    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        [self persistBuildToLocalStorage:responseObject forJob:job];
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        // Handle error
+//        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
+//    }];
+//    
+//    [operation start];
+//}
 
 - (void) persistViewsToLocalStorage: (NSArray *) views
 {
+    NSTimeInterval start = [[NSDate date] timeIntervalSince1970];
     //NSLog([NSString stringWithFormat:@"%@%d%@",@"saving ",views.count,@" views..."]);
     for (int i=0; i<views.count; i++) {
         View * view = [View createViewWithValues:[views objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
@@ -128,39 +129,44 @@
     if (![self.managedObjectContext save:&error]) {
         [NSException raise:@"Unable to import views" format:@"Error saving context: %@", error];
     }
+    self.timetaken += ([[NSDate date] timeIntervalSince1970] - start);
 }
 
 - (void) persistViewToLocalStorage: (NSDictionary *) viewvals
 {
+    NSTimeInterval start = [[NSDate date] timeIntervalSince1970];
     View *view = [View createViewWithValues:viewvals inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
-    for (Job *job in view.rel_View_Jobs) {
-        [self importDetailsForJob:job.url inView:view];
-    }
+    self.timetaken += ([[NSDate date] timeIntervalSince1970] - start);
+//    for (Job *job in view.rel_View_Jobs) {
+//        [self importDetailsForJob:job.url inView:view];
+//    }
+    self.timetaken += ([[NSDate date] timeIntervalSince1970] - start);
+    NSLog([NSString stringWithFormat:@"%@%f",@"Done in: ",self.timetaken]);
 }
 
-- (void) persistJobToLocalStorage: (NSDictionary *) jobvals inView: (View *) view
-{
-    Job *job = [Job createJobWithValues:jobvals inManagedObjectContext:self.managedObjectContext forView:view];
-    [self importAllBuildsForJob:job];
-}
+//- (void) persistJobToLocalStorage: (NSDictionary *) jobvals inView: (View *) view
+//{
+//    Job *job = [Job createJobWithValues:jobvals inManagedObjectContext:self.managedObjectContext forView:view];
+//    [self importAllBuildsForJob:job];
+//}
 
-- (void) importAllBuildsForJob: (Job *) job
-{
-    if (job.firstBuild)
-    {
-        int lastImportedBuild = [job.lastImportedBuild intValue];
-        int firstBuild = [job.firstBuild intValue];
-        int start = lastImportedBuild > firstBuild ? lastImportedBuild : firstBuild;
-        int lastBuild = [job.lastBuild intValue];
-        for (int i=start; i<=lastBuild; i++) {
-            [self importDetailsForBuild:i forJob:job];
-        }
-    }
-}
+//- (void) importAllBuildsForJob: (Job *) job
+//{
+//    if (job.firstBuild)
+//    {
+//        int lastImportedBuild = [job.lastImportedBuild intValue];
+//        int firstBuild = [job.firstBuild intValue];
+//        int start = lastImportedBuild > firstBuild ? lastImportedBuild : firstBuild;
+//        int lastBuild = [job.lastBuild intValue];
+//        for (int i=start; i<=lastBuild; i++) {
+//            [self importDetailsForBuild:i forJob:job];
+//        }
+//    }
+//}
 
-- (void) persistBuildToLocalStorage: (NSDictionary *) buildvals forJob: (Job *) job
-{
-    [Build createBuildWithValues:buildvals inManagedObjectContext:self.managedObjectContext forJob:job];
-}
+//- (void) persistBuildToLocalStorage: (NSDictionary *) buildvals forJob: (Job *) job
+//{
+//    [Build createBuildWithValues:buildvals inManagedObjectContext:self.managedObjectContext forJob:job];
+//}
 
 @end
