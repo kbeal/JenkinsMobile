@@ -36,7 +36,7 @@
     }
     
     NSArray *jenkinskeys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
-    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES], nil];
+    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",@"https://jenkins.ci.cloudbees.com/job/plugins/",[NSNumber numberWithBool:YES], nil];
     NSDictionary *jenkins = [NSDictionary dictionaryWithObjects:jenkinsvalues forKeys:jenkinskeys];
     JenkinsInstance *jinstance = [JenkinsInstance createJenkinsInstanceWithValues:jenkins inManagedObjectContext:self.managedObjectContext];
     
