@@ -2,11 +2,14 @@
 //  Job.m
 //  JenkinsMobile
 //
-//  Created by Kyle on 4/4/14.
+//  Created by Kyle Beal on 4/14/14.
 //  Copyright (c) 2014 Kyle Beal. All rights reserved.
 //
 
 #import "Job.h"
+#import "Build.h"
+#import "JenkinsInstance.h"
+#import "View.h"
 
 // Convert any NULL values to nil. Lifted from Kevin Ballard here: http://stackoverflow.com/a/9138033
 #define NULL_TO_NIL(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
@@ -39,10 +42,10 @@
 @dynamic scm;
 @dynamic upstreamProjects;
 @dynamic url;
+@dynamic lastImportedBuild;
 @dynamic rel_Job_Builds;
 @dynamic rel_Job_JenkinsInstance;
 @dynamic rel_Job_View;
-
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view
 {
@@ -58,12 +61,12 @@
         NSLog(@"[%@, %@] error looking up job with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), [values objectForKey:@"url"], [executeFetchError localizedDescription]);
     } else if (!job) {
         job = [NSEntityDescription insertNewObjectForEntityForName:@"Job"
-                                             inManagedObjectContext:context];
+                                            inManagedObjectContext:context];
     }
     
     [job addRel_Job_ViewObject:view];
     
-    job.rel_Job_JenkinsInstance = view.rel_View_JenkinsInstance;
+    job.rel_Job_JenkinsInstance = (JenkinsInstance *)view.rel_View_JenkinsInstance;
     [job setValues:values];
     
     return job;

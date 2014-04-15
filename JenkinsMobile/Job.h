@@ -2,16 +2,14 @@
 //  Job.h
 //  JenkinsMobile
 //
-//  Created by Kyle on 4/4/14.
+//  Created by Kyle Beal on 4/14/14.
 //  Copyright (c) 2014 Kyle Beal. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-#import "JenkinsInstance.h"
-#import "Build.h"
-#import "View.h"
 
+@class Build, JenkinsInstance, View;
 
 @interface Job : NSManagedObject
 
@@ -41,26 +39,26 @@
 @property (nonatomic, retain) id scm;
 @property (nonatomic, retain) id upstreamProjects;
 @property (nonatomic, retain) NSString * url;
+@property (nonatomic, retain) NSNumber * lastImportedBuild;
 @property (nonatomic, retain) NSSet *rel_Job_Builds;
-@property (nonatomic, retain) NSManagedObject *rel_Job_JenkinsInstance;
+@property (nonatomic, retain) JenkinsInstance *rel_Job_JenkinsInstance;
 @property (nonatomic, retain) NSSet *rel_Job_View;
 @end
 
 @interface Job (CoreDataGeneratedAccessors)
 
-- (void)addRel_Job_BuildsObject:(NSManagedObject *)value;
-- (void)removeRel_Job_BuildsObject:(NSManagedObject *)value;
+- (void)addRel_Job_BuildsObject:(Build *)value;
+- (void)removeRel_Job_BuildsObject:(Build *)value;
 - (void)addRel_Job_Builds:(NSSet *)values;
 - (void)removeRel_Job_Builds:(NSSet *)values;
 
-- (void)addRel_Job_ViewObject:(NSManagedObject *)value;
-- (void)removeRel_Job_ViewObject:(NSManagedObject *)value;
+- (void)addRel_Job_ViewObject:(View *)value;
+- (void)removeRel_Job_ViewObject:(View *)value;
 - (void)addRel_Job_View:(NSSet *)values;
 - (void)removeRel_Job_View:(NSSet *)values;
 
 - (void)setValues:(NSDictionary *) values byCaller:(NSString *) caller;
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view;
-
 
 @end
