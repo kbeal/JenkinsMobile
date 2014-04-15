@@ -2,7 +2,7 @@
 //  Build.h
 //  JenkinsMobile
 //
-//  Created by Kyle on 4/7/14.
+//  Created by Kyle Beal on 4/14/14.
 //  Copyright (c) 2014 Kyle Beal. All rights reserved.
 //
 
@@ -17,15 +17,15 @@
 @property (nonatomic, retain) id actions;
 @property (nonatomic, retain) id artifacts;
 @property (nonatomic, retain) NSString * build_description;
+@property (nonatomic, retain) NSString * build_id;
 @property (nonatomic, retain) NSNumber * building;
 @property (nonatomic, retain) NSString * builtOn;
 @property (nonatomic, retain) id changeset;
 @property (nonatomic, retain) id culprits;
 @property (nonatomic, retain) NSNumber * duration;
 @property (nonatomic, retain) NSNumber * estimatedDuration;
-@property (nonatomic, retain) NSString * executor;
+@property (nonatomic, retain) id executor;
 @property (nonatomic, retain) NSString * fullDisplayName;
-@property (nonatomic, retain) NSString * build_id;
 @property (nonatomic, retain) NSNumber * keepLog;
 @property (nonatomic, retain) NSNumber * number;
 @property (nonatomic, retain) NSString * result;

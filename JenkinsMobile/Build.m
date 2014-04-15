@@ -2,7 +2,7 @@
 //  Build.m
 //  JenkinsMobile
 //
-//  Created by Kyle on 4/7/14.
+//  Created by Kyle Beal on 4/14/14.
 //  Copyright (c) 2014 Kyle Beal. All rights reserved.
 //
 
@@ -12,11 +12,13 @@
 // Convert any NULL values to nil. Lifted from Kevin Ballard here: http://stackoverflow.com/a/9138033
 #define NULL_TO_NIL(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
 
+
 @implementation Build
 
 @dynamic actions;
 @dynamic artifacts;
 @dynamic build_description;
+@dynamic build_id;
 @dynamic building;
 @dynamic builtOn;
 @dynamic changeset;
@@ -25,7 +27,6 @@
 @dynamic estimatedDuration;
 @dynamic executor;
 @dynamic fullDisplayName;
-@dynamic build_id;
 @dynamic keepLog;
 @dynamic number;
 @dynamic result;
@@ -48,7 +49,7 @@
         NSLog(@"[%@, %@] error looking up build with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), [values objectForKey:@"url"], [executeFetchError localizedDescription]);
     } else if (!build) {
         build = [NSEntityDescription insertNewObjectForEntityForName:@"Build"
-                                             inManagedObjectContext:context];
+                                              inManagedObjectContext:context];
     }
     
     build.rel_Build_Job = job;
