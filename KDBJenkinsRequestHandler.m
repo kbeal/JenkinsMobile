@@ -153,7 +153,6 @@
         int start = lastImportedBuild > firstBuild ? lastImportedBuild : firstBuild;
         int lastBuild = [job.lastBuild intValue];
         for (int i=start; i<=lastBuild; i++) {
-            NSLog([NSString stringWithFormat:@"%@%d",@"import build: ", i]);
             [self importDetailsForBuild:i forJob:job];
         }
     }
