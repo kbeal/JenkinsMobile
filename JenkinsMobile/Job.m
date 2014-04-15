@@ -2,7 +2,7 @@
 //  Job.m
 //  JenkinsMobile
 //
-//  Created by Kyle Beal on 4/14/14.
+//  Created by Kyle Beal on 4/15/14.
 //  Copyright (c) 2014 Kyle Beal. All rights reserved.
 //
 
@@ -31,6 +31,7 @@
 @dynamic lastBuild;
 @dynamic lastCompletedBuild;
 @dynamic lastFailedBuild;
+@dynamic lastImportedBuild;
 @dynamic lastStableBuild;
 @dynamic lastSuccessfulBuild;
 @dynamic lastUnstableBuild;
@@ -42,7 +43,6 @@
 @dynamic scm;
 @dynamic upstreamProjects;
 @dynamic url;
-@dynamic lastImportedBuild;
 @dynamic rel_Job_Builds;
 @dynamic rel_Job_JenkinsInstance;
 @dynamic rel_Job_View;

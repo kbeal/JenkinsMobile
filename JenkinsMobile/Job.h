@@ -2,7 +2,7 @@
 //  Job.h
 //  JenkinsMobile
 //
-//  Created by Kyle Beal on 4/14/14.
+//  Created by Kyle Beal on 4/15/14.
 //  Copyright (c) 2014 Kyle Beal. All rights reserved.
 //
 
@@ -28,6 +28,7 @@
 @property (nonatomic, retain) NSNumber * lastBuild;
 @property (nonatomic, retain) NSNumber * lastCompletedBuild;
 @property (nonatomic, retain) NSNumber * lastFailedBuild;
+@property (nonatomic, retain) NSNumber * lastImportedBuild;
 @property (nonatomic, retain) NSNumber * lastStableBuild;
 @property (nonatomic, retain) NSNumber * lastSuccessfulBuild;
 @property (nonatomic, retain) NSNumber * lastUnstableBuild;
@@ -35,11 +36,10 @@
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSNumber * nextBuildNumber;
 @property (nonatomic, retain) id property;
-@property (nonatomic, retain) NSString * queueItem;
+@property (nonatomic, retain) id queueItem;
 @property (nonatomic, retain) id scm;
 @property (nonatomic, retain) id upstreamProjects;
 @property (nonatomic, retain) NSString * url;
-@property (nonatomic, retain) NSNumber * lastImportedBuild;
 @property (nonatomic, retain) NSSet *rel_Job_Builds;
 @property (nonatomic, retain) JenkinsInstance *rel_Job_JenkinsInstance;
 @property (nonatomic, retain) NSSet *rel_Job_View;
