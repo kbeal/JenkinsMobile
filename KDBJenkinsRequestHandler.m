@@ -15,6 +15,8 @@
 {
     self.managedObjectContext=context;
     self.jinstance = instance;
+    self.view_count = 0;
+    self.viewDetails = [[NSMutableArray alloc] init];
     return self;
 }
 
@@ -40,10 +42,17 @@
     [operation start];
 }
 
-- (void) importDetailsForView: (View *) view
+- (void) importDetailsForViews: (NSArray *) views
+{
+    for (NSDictionary *view in views) {
+        [self importDetailsForView:[view objectForKey:@"name"] atURL:[view objectForKey:@"url"]];
+    }
+}
+
+- (void) importDetailsForView: (NSString *) viewName atURL: (NSString *) viewURL
 {
     //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for view: ",view.url]);
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",view.url,@"api/json"]];
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",viewURL,@"api/json"]];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     //AFNetworking asynchronous url request
@@ -57,14 +66,13 @@
         // Which means when we query it, the response doesn't look like a typical view.
         // We have to get the views array out of reponse in that case.
         NSDictionary *viewValues = responseObject;
-        JenkinsInstance *viewsJI = (JenkinsInstance *)view.rel_View_JenkinsInstance;
-        if ([view.url isEqual:viewsJI.url])
+        if ([viewURL isEqual:self.jinstance.url])
         {
             NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"jobs",@"description", nil];
-            NSArray *values = [NSArray arrayWithObjects:view.name,view.url,[responseObject objectForKey:@"jobs"],[responseObject objectForKey:@"description"], nil];
+            NSArray *values = [NSArray arrayWithObjects:viewName,viewURL,[responseObject objectForKey:@"jobs"],[responseObject objectForKey:@"description"], nil];
             viewValues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
         }
-        [self persistViewToLocalStorage:viewValues];
+        [self appendViewDetailsWithValues:viewValues];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
         NSLog(@"Request Failed: %@, %@", error, error.userInfo);
@@ -118,30 +126,41 @@
 
 - (void) persistViewsToLocalStorage: (NSArray *) views
 {
-    NSTimeInterval start = [[NSDate date] timeIntervalSince1970];
-    //NSLog([NSString stringWithFormat:@"%@%d%@",@"saving ",views.count,@" views..."]);
-    for (int i=0; i<views.count; i++) {
-        View * view = [View createViewWithValues:[views objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
-        [self importDetailsForView:view];
+    @autoreleasepool {
+        for (NSDictionary *view in views) {
+            [View createViewWithValues:view inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
+        }
+        NSError *error;
+        if (![self.managedObjectContext save:&error]) {
+            [NSException raise:@"Unable to create views" format:@"Error saving context: %@", error];
+        }
+        self.view_count = views.count;
     }
+    [self importDetailsForViews:views];
     
-    NSError *error;
-    if (![self.managedObjectContext save:&error]) {
-        [NSException raise:@"Unable to import views" format:@"Error saving context: %@", error];
-    }
-    self.timetaken += ([[NSDate date] timeIntervalSince1970] - start);
+//    for (int i=0; i<views.count; i++) {
+//        View * view = [View createViewWithValues:[views objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
+//        [self importDetailsForView:view];
+//    }
+//    
+//    NSError *error;
+//    if (![self.managedObjectContext save:&error]) {
+//        [NSException raise:@"Unable to import views" format:@"Error saving context: %@", error];
+//    }
 }
 
-- (void) persistViewToLocalStorage: (NSDictionary *) viewvals
+- (void) persistViewDetailsToLocalStorage
 {
-    NSTimeInterval start = [[NSDate date] timeIntervalSince1970];
-    View *view = [View createViewWithValues:viewvals inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
-    self.timetaken += ([[NSDate date] timeIntervalSince1970] - start);
-//    for (Job *job in view.rel_View_Jobs) {
-//        [self importDetailsForJob:job.url inView:view];
-//    }
-    self.timetaken += ([[NSDate date] timeIntervalSince1970] - start);
-    NSLog([NSString stringWithFormat:@"%@%f",@"Done in: ",self.timetaken]);
+    @autoreleasepool {
+        for (NSDictionary *view in self.viewDetails) {
+            [View createViewWithValues:view inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
+        }
+        NSError *error;
+        if (![self.managedObjectContext save:&error]) {
+            [NSException raise:@"Unable to save view details." format:@"Error saving context: %@", error];
+        }
+    }
+    //TODO: importDetailsForJobs
 }
 
 //- (void) persistJobToLocalStorage: (NSDictionary *) jobvals inView: (View *) view
@@ -168,5 +187,13 @@
 //{
 //    [Build createBuildWithValues:buildvals inManagedObjectContext:self.managedObjectContext forJob:job];
 //}
+
+- (void) appendViewDetailsWithValues: (NSDictionary *) viewValues
+{
+    [self.viewDetails addObject:viewValues];
+    if (self.viewDetails.count == self.view_count) {
+        [self persistViewDetailsToLocalStorage];
+    }
+}
 
 @end
