@@ -52,16 +52,7 @@
     self.property = NULL_TO_NIL([values objectForKey:@"property"]);
     self.view_description = NULL_TO_NIL([values objectForKey:@"description"]);
     self.rel_View_JenkinsInstance = NULL_TO_NIL([values objectForKey:@"jenkinsInstance"]);
-    NSError *error;
-    if (![self.managedObjectContext save:&error]) {
-        [NSException raise:@"Unable to set view values" format:@"Error saving context: %@", error];
-    }
-
     [self setRel_View_Jobs:[self createJobsFromViewValues:[values objectForKey:@"jobs"]]];
-    if (![self.managedObjectContext save:&error]) {
-        [NSException raise:@"Unable to set view values after creating view's jobs" format:@"Error saving context: %@", error];
-    }
-
 }
 
 - (NSSet *) createJobsFromViewValues: (NSArray *) jobsArray
