@@ -45,6 +45,22 @@
     return view;
 }
 
++ (View *)fetchViewWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context
+{
+    View *view = nil;
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    
+    request.entity = [NSEntityDescription entityForName:@"View" inManagedObjectContext:context];
+    request.predicate = [NSPredicate predicateWithFormat:@"url = %@", url];
+    NSError *executeFetchError = nil;
+    view = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
+    if (executeFetchError) {
+        NSLog(@"[%@, %@] error looking up view with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), url, [executeFetchError localizedDescription]);
+    }
+    
+    return view;
+}
+
 - (void)setValues:(NSDictionary *) values
 {
     self.name = NULL_TO_NIL([values objectForKey:@"name"]);
