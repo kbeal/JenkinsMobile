@@ -77,7 +77,7 @@
     self.number = NULL_TO_NIL([values objectForKey:@"number"]);
     self.result = NULL_TO_NIL([values objectForKey:@"result"]);
     NSNumber *timestamp = NULL_TO_NIL([values objectForKey:@"timestamp"]);
-    self.timestamp = [NSDate dateWithTimeIntervalSince1970:[timestamp intValue]];
+    self.timestamp = [NSDate dateWithTimeIntervalSince1970:[timestamp doubleValue]];
     self.url = NULL_TO_NIL([values objectForKey:@"url"]);
     self.rel_Build_Job.lastImportedBuild = self.number;
     NSError *error;
