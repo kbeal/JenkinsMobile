@@ -183,16 +183,11 @@
 - (void)testCreateJobWithValues
 {
     
-    NSArray *buildkeys = [NSArray arrayWithObjects:@"url",@"number", nil];
-    NSArray *buildvalues1 = [NSArray arrayWithObjects:@"http://www.google.com",[NSNumber numberWithInt:100], nil];
-    NSArray *buildvalues2 = [NSArray arrayWithObjects:@"http://www.google.com/mail",[NSNumber numberWithInt:200], nil];
-    NSDictionary *build1 = [NSDictionary dictionaryWithObjects:buildvalues1 forKeys:buildkeys];
-    NSDictionary *build2 = [NSDictionary dictionaryWithObjects:buildvalues2 forKeys:buildkeys];
-    NSArray *builds = [NSArray arrayWithObjects:build1,build2, nil];
+    NSDictionary *jobbuilddict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:1] forKey:@"number"];
     
-    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"color",@"url",@"buildable",@"concurrentBuild",@"displayName",@"firstBuild",@"lastBuild",@"lastCompletedBuild",@"lastFailedBuild",@"lastStableBuild",@"lastSuccessfulBuild",@"lastUnstableBuild",@"lastUnsuccessfulBuild",@"nextBuildNumber",@"inQueue",@"description",@"keepDependencies",@"builds",nil ];
+    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"color",@"url",@"buildable",@"concurrentBuild",@"displayName",@"firstBuild",@"lastBuild",@"lastCompletedBuild",@"lastFailedBuild",@"lastStableBuild",@"lastSuccessfulBuild",@"lastUnstableBuild",@"lastUnsuccessfulBuild",@"nextBuildNumber",@"inQueue",@"description",@"keepDependencies",nil ];
     
-    NSArray *jobValues = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",@"true",@"false",@"Test1",[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:1],[NSNumber numberWithInt:2],@"false",@"Test1 Description",@"false",builds, nil];
+    NSArray *jobValues = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",[NSNumber numberWithInt:1],[NSNumber numberWithInt:0],@"Test1",jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,[NSNumber numberWithInt:2],[NSNumber numberWithBool:NO],@"Test1 Description",[NSNumber numberWithBool:NO], nil];
     
     NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
     NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
@@ -223,7 +218,6 @@
     XCTAssertEqual(job.job_description, @"Test1 Description", @"job description is wrong is actually %@", job.job_description);
     XCTAssertEqualObjects(job.keepDependencies, [NSNumber numberWithBool:NO], @"keep dependencies should be false, is actually %@", [job.keepDependencies stringValue]);
     XCTAssertNotNil(job.rel_Job_JenkinsInstance, @"jenkins instance is null");
-    XCTAssert(job.rel_Job_Builds.count==2, @"job's build count is wrong");
 }
 
 - (void)testCreateJobWithMinimalValues
@@ -460,7 +454,7 @@
     Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forView:view];
     
     NSArray *buildkeys = [NSArray arrayWithObjects:@"description",@"building",@"builtOn",@"duration",@"estimatedDuration",@"executor",@"fullDisplayName",@"build_id",@"keepLog",@"number",@"result",@"timestamp",@"url",nil];
-    NSArray *buildvalues = [NSArray arrayWithObjects:@"build 1 description",[NSNumber numberWithBool:NO],@"1/1/14",[NSNumber numberWithInt:123456],[NSNumber numberWithInt:123456],@"",@"build 1 test",@"build test id",[NSNumber numberWithBool:NO],[NSNumber numberWithInt:100],@"SUCCESS",[NSDate dateWithTimeIntervalSince1970:1396916908635],@"http://www.google.com", nil];
+    NSArray *buildvalues = [NSArray arrayWithObjects:@"build 1 description",[NSNumber numberWithBool:NO],@"1/1/14",[NSNumber numberWithInt:123456],[NSNumber numberWithInt:123456],@"",@"build 1 test",@"build test id",[NSNumber numberWithBool:NO],[NSNumber numberWithInt:100],@"SUCCESS",[NSNumber numberWithDouble:139691690635],@"http://www.google.com", nil];
     NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
     
     Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJob:job];
@@ -476,7 +470,7 @@
     XCTAssert([build.keepLog isEqualToNumber:[NSNumber numberWithBool:NO]], @"keep log is wrong");
     XCTAssert([build.number isEqualToNumber:[NSNumber numberWithInt:100]], @"build number is wrong");
     XCTAssert([build.result isEqual:@"SUCCESS"], @"build result is wrong");
-    XCTAssert([build.timestamp isEqualToDate:[NSDate dateWithTimeIntervalSince1970:1396916908635]], @"build timestamp is wrong");
+    XCTAssert([build.timestamp isEqualToDate:[NSDate dateWithTimeIntervalSince1970:139691690635]], @"build timestamp is wrong %f",[build.timestamp timeIntervalSince1970]);
     XCTAssert([build.url isEqual:@"http://www.google.com"], @"build url is wrong");
 
 }
