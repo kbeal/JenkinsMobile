@@ -19,6 +19,8 @@
     self.viewDetails = [[NSMutableArray alloc] init];
     self.viewsJobsCounts = [[NSMutableDictionary alloc] init];
     self.viewsJobsDetails = [[NSMutableDictionary alloc] init];
+    self.jobsBuildsCounts = [[NSMutableDictionary alloc] init];
+    self.jobsBuildsDetails = [[NSMutableDictionary alloc] init];
     return self;
 }
 
@@ -108,34 +110,46 @@
 {
     for (NSDictionary *view in self.viewDetails) {
         NSArray *jobs = [view objectForKey:@"jobs"];
-        [self.viewsJobsCounts setObject:[NSNumber numberWithInt:jobs.count] forKey:[view objectForKey:@"url"]];
+        [self.viewsJobsCounts setObject:[NSNumber numberWithLong:jobs.count] forKey:[view objectForKey:@"url"]];
         for (NSDictionary *job in jobs) {
             [self importDetailsForJobAtURL:[job objectForKey:@"url"] inViewAtURL:[view objectForKey:@"url"]];
         }
     }
 }
 
-//- (void) importDetailsForBuild: (int) buildNumber forJob: (Job *) job
-//{
-//    //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job: ",job.url]);
-//    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%d%@",job.url,buildNumber,@"/api/json"]];
-//    
-//    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
-//    //AFNetworking asynchronous url request
-//    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
-//                                         initWithRequest:request];
-//    
-//    operation.responseSerializer = [AFJSONResponseSerializer serializer];
-//    
-//    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        [self persistBuildToLocalStorage:responseObject forJob:job];
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        // Handle error
-//        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
-//    }];
-//    
-//    [operation start];
-//}
+- (void) importDetailsForBuildsForJobs: (NSArray *) jobs
+{
+    NSArray *builds = nil;
+    for (NSDictionary *job in jobs) {
+        builds = [job objectForKey:@"builds"];
+        [self.jobsBuildsCounts setObject:[NSNumber numberWithLong:builds.count] forKey:[job objectForKey:@"url"]];
+        for (NSDictionary *build in [job objectForKey:@"builds"]) {
+            [self importDetailsForBuild:[build objectForKey:@"number"] forJobURL:[job objectForKey:@"url"]];
+        }
+    }
+}
+
+- (void) importDetailsForBuild: (NSNumber *) buildNumber forJobURL: (NSString *) jobURL
+{
+    //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job: ",job.url]);
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",jobURL,[buildNumber stringValue],@"/api/json"]];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    //AFNetworking asynchronous url request
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
+                                         initWithRequest:request];
+    
+    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self appendBuildDetailsWithValues:responseObject forJobAtURL:jobURL];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        // Handle error
+        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
+    }];
+    
+    [operation start];
+}
 
 - (void) persistViewsToLocalStorage: (NSArray *) views
 {
@@ -147,7 +161,7 @@
         if (![self.managedObjectContext save:&error]) {
             [NSException raise:@"Unable to create views" format:@"Error saving context: %@", error];
         }
-        self.view_count = views.count;
+        self.view_count = [NSNumber numberWithLong:views.count];
     }
     [self importDetailsForViews:views];
 }
@@ -166,29 +180,15 @@
     [self importDetailsForJobs];
 }
 
-//- (void) importAllBuildsForJob: (Job *) job
-//{
-//    if (job.firstBuild)
-//    {
-//        int lastImportedBuild = [job.lastImportedBuild intValue];
-//        int firstBuild = [job.firstBuild intValue];
-//        int start = lastImportedBuild > firstBuild ? lastImportedBuild : firstBuild;
-//        int lastBuild = [job.lastBuild intValue];
-//        for (int i=start; i<=lastBuild; i++) {
-//            [self importDetailsForBuild:i forJob:job];
-//        }
-//    }
-//}
-
-//- (void) persistBuildToLocalStorage: (NSDictionary *) buildvals forJob: (Job *) job
-//{
-//    [Build createBuildWithValues:buildvals inManagedObjectContext:self.managedObjectContext forJob:job];
-//}
+- (void) persistBuildToLocalStorage: (NSDictionary *) buildvals forJob: (Job *) job
+{
+    [Build createBuildWithValues:buildvals inManagedObjectContext:self.managedObjectContext forJob:job];
+}
 
 - (void) appendViewDetailsWithValues: (NSDictionary *) viewValues
 {
     [self.viewDetails addObject:viewValues];
-    if (self.viewDetails.count == self.view_count) {
+    if ([NSNumber numberWithLong:self.viewDetails.count] == self.view_count) {
         [self persistViewDetailsToLocalStorage];
     }
 }
@@ -206,6 +206,19 @@
     }
 }
 
+- (void) appendBuildDetailsWithValues: (NSDictionary *) buildValues forJobAtURL: (NSString *) jobURL
+{
+    NSMutableArray *builds = [self.jobsBuildsDetails objectForKey:jobURL];
+    if (builds==nil) {
+        builds = [[NSMutableArray alloc] init];
+    }
+    [builds addObject:buildValues];
+    [self.jobsBuildsDetails setObject:builds forKey:jobURL];
+    if (builds.count==[[self.jobsBuildsCounts objectForKey:jobURL] intValue]) {
+        [self persistBuildDetailsToLocalStorageForJobAtURL:jobURL];
+    }
+}
+
 - (void) persistJobDetailsToLocalStorageForView: (NSString *) viewURL
 {
     @autoreleasepool {
@@ -218,7 +231,21 @@
             [NSException raise:@"Unable to save job details." format:@"Error saving context: %@", error];
         }
     }
-    //TODO import details for builds
+    [self importDetailsForBuildsForJobs:[self.viewsJobsDetails objectForKey:viewURL]];
+}
+
+- (void) persistBuildDetailsToLocalStorageForJobAtURL: (NSString *) jobURL
+{
+    @autoreleasepool {
+        Job *job = [Job fetchJobAtURL:jobURL inManagedObjectContext:self.managedObjectContext];
+        for (NSDictionary *build in [self.jobsBuildsDetails objectForKey:jobURL]) {
+            [Build createBuildWithValues:build inManagedObjectContext:self.managedObjectContext forJob:job];
+        }
+        NSError *error;
+        if (![self.managedObjectContext save:&error]) {
+            [NSException raise:@"Unable to save build details." format:@"Error saving context: %@", error];
+        }
+    }
 }
 
 @end

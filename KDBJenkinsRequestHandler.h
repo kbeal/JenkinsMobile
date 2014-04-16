@@ -16,10 +16,12 @@
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) JenkinsInstance *jinstance;
-@property (nonatomic) int view_count;
+@property (strong, nonatomic) NSNumber *view_count;
 @property (strong, nonatomic) NSMutableArray *viewDetails;
 @property (strong, nonatomic) NSMutableDictionary *viewsJobsCounts;
 @property (strong, nonatomic) NSMutableDictionary *viewsJobsDetails;
+@property (strong, nonatomic) NSMutableDictionary *jobsBuildsCounts;
+@property (strong, nonatomic) NSMutableDictionary *jobsBuildsDetails;
 
 - (id) initWithManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) instance;
 
@@ -28,12 +30,14 @@
 - (void) importDetailsForViews: (NSArray *) views;
 - (void) importDetailsForJobAtURL:(NSString *)jobURL inViewAtURL:(NSString *) viewURL;
 - (void) importDetailsForJobs;
-- (void) importDetailsForBuild: (int) buildNumber forJob: (Job *) job;
+- (void) importDetailsForBuild: (NSNumber *) buildNumber forJobURL: (NSString *) jobURL;
+- (void) importDetailsForBuildsForJobs: (NSArray *) jobs;
 - (void) persistViewsToLocalStorage: (NSArray *) views;
 - (void) persistViewDetailsToLocalStorage;
 - (void) persistJobDetailsToLocalStorageForView: (NSString *) viewURL;
-- (void) persistBuildToLocalStorage: (NSDictionary *) buildvals forJob: (Job *) job;
+- (void) persistBuildDetailsToLocalStorageForJobAtURL: (NSString *) jobURL;
 - (void) appendViewDetailsWithValues: (NSDictionary *) viewValues;
 - (void) appendJobDetailsWithValues: (NSDictionary *) jobValues forViewAtURL: (NSString *) viewURL;
+- (void) appendBuildDetailsWithValues: (NSDictionary *) buildValues forJobAtURL: (NSString *) jobURL;
 
 @end

@@ -60,5 +60,6 @@
 - (void)setValues:(NSDictionary *) values byCaller:(NSString *) caller;
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view;
++ (Job *)fetchJobAtURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context;
 
 @end

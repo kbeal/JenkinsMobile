@@ -72,6 +72,23 @@
     return job;
 }
 
++ (Job *)fetchJobAtURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context
+{
+    Job *job = nil;
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    
+    request.entity = [NSEntityDescription entityForName:@"Job" inManagedObjectContext:context];
+    request.predicate = [NSPredicate predicateWithFormat:@"url = %@", url];
+    NSError *executeFetchError = nil;
+    job = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
+    
+    if (executeFetchError) {
+        NSLog(@"[%@, %@] error looking up job with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), url, [executeFetchError localizedDescription]);
+    }
+    
+    return job;
+}
+
 - (void)setValues:(NSDictionary *) values
 {
     self.url = NULL_TO_NIL([values objectForKey:@"url"]);
