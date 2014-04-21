@@ -14,6 +14,7 @@
 - (id) initWithManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) instance
 {
     self.managedObjectContext=context;
+    
     self.jinstance = instance;
     self.view_count = 0;
     self.viewDetails = [[NSMutableArray alloc] init];
@@ -21,6 +22,7 @@
     self.viewsJobsDetails = [[NSMutableDictionary alloc] init];
     self.jobsBuildsCounts = [[NSMutableDictionary alloc] init];
     self.jobsBuildsDetails = [[NSMutableDictionary alloc] init];
+    
     return self;
 }
 
@@ -154,13 +156,12 @@
 - (void) persistViewsToLocalStorage: (NSArray *) views
 {
     @autoreleasepool {
-        for (NSDictionary *view in views) {
-            [View createViewWithValues:view inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
-        }
-        NSError *error;
-        if (![self.managedObjectContext save:&error]) {
-            [NSException raise:@"Unable to create views" format:@"Error saving context: %@", error];
-        }
+        [self.managedObjectContext performBlock:^{
+            for (NSDictionary *view in views) {
+                [View createViewWithValues:view inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance.url];
+            }
+            [self saveContext];
+        }];
         self.view_count = [NSNumber numberWithLong:views.count];
     }
     [self importDetailsForViews:views];
@@ -169,15 +170,14 @@
 - (void) persistViewDetailsToLocalStorage
 {
     @autoreleasepool {
-        for (NSDictionary *view in self.viewDetails) {
-            [View createViewWithValues:view inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance];
-        }
-        NSError *error;
-        if (![self.managedObjectContext save:&error]) {
-            [NSException raise:@"Unable to save view details." format:@"Error saving context: %@", error];
-        }
+        [self.managedObjectContext performBlock:^{
+            for (NSDictionary *view in self.viewDetails) {
+                [View createViewWithValues:view inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance.url];
+            }
+            [self saveContext];
+        }];
     }
-    [self importDetailsForJobs];
+    //[self importDetailsForJobs];
 }
 
 - (void) persistBuildToLocalStorage: (NSDictionary *) buildvals forJob: (Job *) job
@@ -226,10 +226,7 @@
         for (NSDictionary *job in [self.viewsJobsDetails objectForKey:viewURL]) {
             [Job createJobWithValues:job inManagedObjectContext:self.managedObjectContext forView:view];
         }
-        NSError *error;
-        if (![self.managedObjectContext save:&error]) {
-            [NSException raise:@"Unable to save job details." format:@"Error saving context: %@", error];
-        }
+        [self saveContext];
     }
     [self importDetailsForBuildsForJobs:[self.viewsJobsDetails objectForKey:viewURL]];
 }
@@ -241,11 +238,20 @@
         for (NSDictionary *build in [self.jobsBuildsDetails objectForKey:jobURL]) {
             [Build createBuildWithValues:build inManagedObjectContext:self.managedObjectContext forJob:job];
         }
+        [self saveContext];
+    }
+}
+
+- (void) saveContext
+{    
+    [self.managedObjectContext performBlock:^{
         NSError *error;
         if (![self.managedObjectContext save:&error]) {
             [NSException raise:@"Unable to save build details." format:@"Error saving context: %@", error];
         }
-    }
+    }];
 }
+
+
 
 @end

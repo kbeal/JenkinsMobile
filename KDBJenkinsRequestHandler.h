@@ -14,7 +14,7 @@
 
 @interface KDBJenkinsRequestHandler : NSObject
 
-@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext; //masterMOC, works on bg thread
 @property (strong, nonatomic) JenkinsInstance *jinstance;
 @property (strong, nonatomic) NSNumber *view_count;
 @property (strong, nonatomic) NSMutableArray *viewDetails;

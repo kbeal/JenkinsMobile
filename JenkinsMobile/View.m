@@ -21,7 +21,7 @@
 @dynamic rel_View_JenkinsInstance;
 @dynamic rel_View_Jobs;
 
-+ (View *)createViewWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forJenkinsInstance:(JenkinsInstance *) jinstance;
++ (View *)createViewWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forJenkinsInstance:(NSString *) jenkinsURL
 {
     View *view = nil;
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
@@ -36,6 +36,11 @@
     } else if (!view) {
         view = [NSEntityDescription insertNewObjectForEntityForName:@"View"
                                             inManagedObjectContext:context];
+    }
+    
+    JenkinsInstance *jinstance = [JenkinsInstance fetchJenkinsInstanceWithURL:jenkinsURL fromManagedObjectContext:context];
+    if (jinstance==nil) {
+        NSLog(@"PROBLEM!!!!! JenkinsInstance not found");
     }
     
     NSMutableDictionary *valuesWithJenkinsInstance = [NSMutableDictionary dictionaryWithDictionary:values];

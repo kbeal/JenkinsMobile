@@ -14,12 +14,24 @@
 
 @implementation KDBAppDelegate
 
-@synthesize managedObjectContext = _managedObjectContext;
+@synthesize masterMOC = _masterMOC;
+@synthesize mainMOC = _mainMOC;
 @synthesize managedObjectModel = _managedObjectModel;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter addObserver:self selector:@selector(contextChanged:) name:NSManagedObjectContextDidSaveNotification object:self.masterMOC];
+    NSArray *jenkinskeys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
+    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",@"https://jenkins.ci.cloudbees.com/job/plugins/",[NSNumber numberWithBool:YES], nil];
+    NSDictionary *jenkins = [NSDictionary dictionaryWithObjects:jenkinsvalues forKeys:jenkinskeys];
+    JenkinsInstance *jinstance = [JenkinsInstance createJenkinsInstanceWithValues:jenkins inManagedObjectContext:self.masterMOC];
+    [self saveContext];
+    
+    KDBJenkinsRequestHandler *handler = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:self.masterMOC andJenkinsInstance:jinstance];
+    [handler importAllViews];
+    
     // Override point for customization after application launch.
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
@@ -28,24 +40,37 @@
         
         UINavigationController *masterNavigationController = splitViewController.viewControllers[0];
         KDBMasterViewController *controller = (KDBMasterViewController *)masterNavigationController.topViewController;
-        controller.managedObjectContext = self.managedObjectContext;
+        controller.managedObjectContext = self.mainMOC;
     } else {
         UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
         KDBMasterViewController *controller = (KDBMasterViewController *)navigationController.topViewController;
-        controller.managedObjectContext = self.managedObjectContext;
+        controller.managedObjectContext = self.mainMOC;
     }
-    
-    NSArray *jenkinskeys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
-    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",@"https://jenkins.ci.cloudbees.com/job/plugins/",[NSNumber numberWithBool:YES], nil];
-    NSDictionary *jenkins = [NSDictionary dictionaryWithObjects:jenkinsvalues forKeys:jenkinskeys];
-    JenkinsInstance *jinstance = [JenkinsInstance createJenkinsInstanceWithValues:jenkins inManagedObjectContext:self.managedObjectContext];
-    
-    KDBJenkinsRequestHandler *handler = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:self.managedObjectContext andJenkinsInstance:jinstance];
-    [handler importAllViews];
     
     return YES;
 }
-							
+
+- (void) contextChanged: (NSNotification *) notification
+{
+    // Only interested in merging from master into main.
+    if ([notification object] != self.masterMOC) return;
+    
+//    NSSet *updatedObjects = notification.userInfo[NSUpdatedObjectsKey];
+//    NSSet *updatedObjectIDs = [updatedObjects valueForKey:@"objectID"];
+
+//    [self.mainMOC performBlock:^{
+//        for (NSManagedObject *object in [self.mainMOC registeredObjects]) {
+//            if (![object isFault] && [updatedObjectIDs containsObject:[object objectID]]) {
+//                [self.mainMOC refreshObject:object mergeChanges:YES];
+//            }
+//        }
+//    }];
+    
+    [self.mainMOC performBlock:^{
+        [self.mainMOC mergeChangesFromContextDidSaveNotification:notification];
+    }];
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -76,34 +101,53 @@
 
 - (void)saveContext
 {
-    NSError *error = nil;
-    NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
+    NSManagedObjectContext *managedObjectContext = self.masterMOC;
     if (managedObjectContext != nil) {
-        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
-             // Replace this implementation with code to handle the error appropriately.
-             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        } 
+        [self.masterMOC performBlock:^{
+            NSError *error = nil;
+            if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
+                 // Replace this implementation with code to handle the error appropriately.
+                 // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
+                NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+                abort();
+            }
+        }];
     }
 }
 
 #pragma mark - Core Data stack
 
-// Returns the managed object context for the application.
+// Returns the master managed object context for the application.
+// This context writes to disk in a background thread
 // If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
-- (NSManagedObjectContext *)managedObjectContext
+- (NSManagedObjectContext *)masterMOC
 {
-    if (_managedObjectContext != nil) {
-        return _managedObjectContext;
+    if (_masterMOC != nil) {
+        return _masterMOC;
     }
     
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
     if (coordinator != nil) {
-        _managedObjectContext = [[NSManagedObjectContext alloc] init];
-        [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+        _masterMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        [_masterMOC setPersistentStoreCoordinator:coordinator];
     }
-    return _managedObjectContext;
+    return _masterMOC;
+}
+
+// Returns the main managed object context for the application.
+// This context is for UI use as it exists on the main thread
+// If the context doesn't already exist, it is created and bound to the master managed object context
+- (NSManagedObjectContext *)mainMOC
+{
+    if (_mainMOC != nil) {
+        return _mainMOC;
+    }
+    
+    _mainMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
+    [_mainMOC setUndoManager:nil];
+    [_mainMOC setParentContext:[self masterMOC]];
+    
+    return _mainMOC;
 }
 
 // Returns the managed object model for the application.
