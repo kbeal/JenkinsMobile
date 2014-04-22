@@ -23,6 +23,7 @@
 {
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter addObserver:self selector:@selector(contextChanged:) name:NSManagedObjectContextDidSaveNotification object:self.masterMOC];
+    [self mainMOC];
     NSArray *jenkinskeys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
     NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",@"https://jenkins.ci.cloudbees.com/job/plugins/",[NSNumber numberWithBool:YES], nil];
     NSDictionary *jenkins = [NSDictionary dictionaryWithObjects:jenkinsvalues forKeys:jenkinskeys];
@@ -40,11 +41,11 @@
         
         UINavigationController *masterNavigationController = splitViewController.viewControllers[0];
         KDBMasterViewController *controller = (KDBMasterViewController *)masterNavigationController.topViewController;
-        controller.managedObjectContext = self.mainMOC;
+        controller.managedObjectContext = _mainMOC;
     } else {
         UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
         KDBMasterViewController *controller = (KDBMasterViewController *)navigationController.topViewController;
-        controller.managedObjectContext = self.mainMOC;
+        controller.managedObjectContext = _mainMOC;
     }
     
     return YES;
@@ -66,8 +67,8 @@
 //        }
 //    }];
     
-    [self.mainMOC performBlock:^{
-        [self.mainMOC mergeChangesFromContextDidSaveNotification:notification];
+    [_mainMOC performBlock:^{
+        [_mainMOC mergeChangesFromContextDidSaveNotification:notification];
     }];
 }
 
@@ -145,7 +146,9 @@
     
     _mainMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
     [_mainMOC setUndoManager:nil];
-    [_mainMOC setParentContext:[self masterMOC]];
+    [_mainMOC performBlockAndWait:^{
+        [_mainMOC setParentContext:_masterMOC];
+    }];
     
     return _mainMOC;
 }
