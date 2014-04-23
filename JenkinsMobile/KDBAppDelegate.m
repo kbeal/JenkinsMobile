@@ -56,17 +56,6 @@
     // Only interested in merging from master into main.
     if ([notification object] != self.masterMOC) return;
     
-//    NSSet *updatedObjects = notification.userInfo[NSUpdatedObjectsKey];
-//    NSSet *updatedObjectIDs = [updatedObjects valueForKey:@"objectID"];
-
-//    [self.mainMOC performBlock:^{
-//        for (NSManagedObject *object in [self.mainMOC registeredObjects]) {
-//            if (![object isFault] && [updatedObjectIDs containsObject:[object objectID]]) {
-//                [self.mainMOC refreshObject:object mergeChanges:YES];
-//            }
-//        }
-//    }];
-    
     [_mainMOC performBlock:^{
         [_mainMOC mergeChangesFromContextDidSaveNotification:notification];
     }];
@@ -123,16 +112,18 @@
 // If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
 - (NSManagedObjectContext *)masterMOC
 {
-    if (_masterMOC != nil) {
+    @synchronized(_masterMOC) {
+        if (_masterMOC != nil) {
+            return _masterMOC;
+        }
+        
+        NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+        if (coordinator != nil) {
+            _masterMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+            [_masterMOC setPersistentStoreCoordinator:coordinator];
+        }
         return _masterMOC;
     }
-    
-    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-    if (coordinator != nil) {
-        _masterMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-        [_masterMOC setPersistentStoreCoordinator:coordinator];
-    }
-    return _masterMOC;
 }
 
 // Returns the main managed object context for the application.
@@ -140,17 +131,17 @@
 // If the context doesn't already exist, it is created and bound to the master managed object context
 - (NSManagedObjectContext *)mainMOC
 {
-    if (_mainMOC != nil) {
+    @synchronized(_mainMOC) {
+        if (_mainMOC != nil) {
+            return _mainMOC;
+        }
+        
+        _mainMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
+        [_mainMOC setUndoManager:nil];
+        [_mainMOC setParentContext:_masterMOC];
+        
         return _mainMOC;
     }
-    
-    _mainMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
-    [_mainMOC setUndoManager:nil];
-    [_mainMOC performBlockAndWait:^{
-        [_mainMOC setParentContext:_masterMOC];
-    }];
-    
-    return _mainMOC;
 }
 
 // Returns the managed object model for the application.
