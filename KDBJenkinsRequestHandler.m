@@ -177,7 +177,7 @@
             [self saveContext];
         }];
     }
-    //[self importDetailsForJobs];
+    [self importDetailsForJobs];
 }
 
 - (void) persistBuildToLocalStorage: (NSDictionary *) buildvals forJob: (Job *) job
@@ -247,7 +247,7 @@
     [self.managedObjectContext performBlock:^{
         NSError *error;
         if (![self.managedObjectContext save:&error]) {
-            [NSException raise:@"Unable to save build details." format:@"Error saving context: %@", error];
+            [NSException raise:@"Unable to save context." format:@"Error saving context: %@", error];
         }
     }];
 }
