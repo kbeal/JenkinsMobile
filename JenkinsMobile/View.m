@@ -23,19 +23,12 @@
 
 + (View *)createViewWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forJenkinsInstance:(NSString *) jenkinsURL
 {
-    View *view = nil;
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-
-    request.entity = [NSEntityDescription entityForName:@"View" inManagedObjectContext:context];
-    request.predicate = [NSPredicate predicateWithFormat:@"url = %@", [values objectForKey:@"url"]];
-    NSError *executeFetchError = nil;
-    view = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
-    
-    if (executeFetchError) {
-        NSLog(@"[%@, %@] error looking up view with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), [values objectForKey:@"url"], [executeFetchError localizedDescription]);
-    } else if (!view) {
-        view = [NSEntityDescription insertNewObjectForEntityForName:@"View"
+    __block View *view = [View fetchViewWithURL:[values objectForKey:@"url"] inContext:context];
+    if (!view) {
+        [context performBlockAndWait:^{
+            view = [NSEntityDescription insertNewObjectForEntityForName:@"View"
                                             inManagedObjectContext:context];
+        }];
     }
     
     JenkinsInstance *jinstance = [JenkinsInstance fetchJenkinsInstanceWithURL:jenkinsURL fromManagedObjectContext:context];
@@ -52,16 +45,18 @@
 
 + (View *)fetchViewWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context
 {
-    View *view = nil;
+    __block View *view = nil;
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     
-    request.entity = [NSEntityDescription entityForName:@"View" inManagedObjectContext:context];
-    request.predicate = [NSPredicate predicateWithFormat:@"url = %@", url];
-    NSError *executeFetchError = nil;
-    view = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
-    if (executeFetchError) {
-        NSLog(@"[%@, %@] error looking up view with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), url, [executeFetchError localizedDescription]);
-    }
+    [context performBlockAndWait:^{
+        request.entity = [NSEntityDescription entityForName:@"View" inManagedObjectContext:context];
+        request.predicate = [NSPredicate predicateWithFormat:@"url = %@", url];
+        NSError *executeFetchError = nil;
+        view = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
+        if (executeFetchError) {
+            NSLog(@"[%@, %@] error looking up view with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), url, [executeFetchError localizedDescription]);
+        }
+    }];
     
     return view;
 }
@@ -80,7 +75,9 @@
 {
     NSMutableSet *jobs = [[NSMutableSet alloc] initWithCapacity:jobsArray.count];
     for (int i=0; i<jobsArray.count; i++) {
-        [jobs addObject:[Job createJobWithValues:[jobsArray objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forView:self]];
+        [self.managedObjectContext performBlockAndWait:^{
+            [jobs addObject:[Job createJobWithValues:[jobsArray objectAtIndex:i] inManagedObjectContext:self.managedObjectContext forView:self]];
+        }];
     }
     return jobs;
 }

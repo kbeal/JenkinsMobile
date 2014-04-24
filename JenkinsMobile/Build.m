@@ -36,25 +36,36 @@
 
 + (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJob: (Job *) job;
 {
-    Build *build = nil;
+    __block Build *build = [Build fetchBuildWithURL:[values objectForKey:@"url"] inContext:context];
     
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    
-    request.entity = [NSEntityDescription entityForName:@"Build" inManagedObjectContext:context];
-    request.predicate = [NSPredicate predicateWithFormat:@"url = %@", [values objectForKey:@"url"]];
-    NSError *executeFetchError = nil;
-    build = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
-    
-    if (executeFetchError) {
-        NSLog(@"[%@, %@] error looking up build with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), [values objectForKey:@"url"], [executeFetchError localizedDescription]);
-    } else if (!build) {
-        build = [NSEntityDescription insertNewObjectForEntityForName:@"Build"
+    if (!build) {
+        [context performBlockAndWait:^{
+            build = [NSEntityDescription insertNewObjectForEntityForName:@"Build"
                                               inManagedObjectContext:context];
+        }];
     }
     
     build.rel_Build_Job = job;
     
     [build setValues:values];
+    
+    return build;
+}
+
++ (Build *)fetchBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context
+{
+    __block Build *build = nil;
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    
+    [context performBlockAndWait:^{
+        request.entity = [NSEntityDescription entityForName:@"Build" inManagedObjectContext:context];
+        request.predicate = [NSPredicate predicateWithFormat:@"url = %@", url];
+        NSError *executeFetchError = nil;
+        build = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
+        if (executeFetchError) {
+            NSLog(@"[%@, %@] error looking up build with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), url, [executeFetchError localizedDescription]);
+        }
+    }];
     
     return build;
 }

@@ -36,5 +36,6 @@
 - (void)setValues:(NSDictionary *) values;
 
 + (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJob: (Job *) job;
++ (Build *)fetchBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
 
 @end

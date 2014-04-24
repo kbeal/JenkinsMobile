@@ -49,19 +49,13 @@
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view
 {
-    Job *job = nil;
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    __block Job *job = [Job fetchJobAtURL:[values objectForKey:@"url"] inManagedObjectContext:context];
     
-    request.entity = [NSEntityDescription entityForName:@"Job" inManagedObjectContext:context];
-    request.predicate = [NSPredicate predicateWithFormat:@"url = %@", [values objectForKey:@"url"]];
-    NSError *executeFetchError = nil;
-    job = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
-    
-    if (executeFetchError) {
-        NSLog(@"[%@, %@] error looking up job with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), [values objectForKey:@"url"], [executeFetchError localizedDescription]);
-    } else if (!job) {
-        job = [NSEntityDescription insertNewObjectForEntityForName:@"Job"
+    if (!job) {
+        [context performBlockAndWait:^{
+            job = [NSEntityDescription insertNewObjectForEntityForName:@"Job"
                                             inManagedObjectContext:context];
+        }];
     }
     
     [job addRel_Job_ViewObject:view];
@@ -74,17 +68,19 @@
 
 + (Job *)fetchJobAtURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context
 {
-    Job *job = nil;
+    __block Job *job = nil;
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     
-    request.entity = [NSEntityDescription entityForName:@"Job" inManagedObjectContext:context];
-    request.predicate = [NSPredicate predicateWithFormat:@"url = %@", url];
-    NSError *executeFetchError = nil;
-    job = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
-    
-    if (executeFetchError) {
-        NSLog(@"[%@, %@] error looking up job with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), url, [executeFetchError localizedDescription]);
-    }
+    [context performBlockAndWait:^{
+        request.entity = [NSEntityDescription entityForName:@"Job" inManagedObjectContext:context];
+        request.predicate = [NSPredicate predicateWithFormat:@"url = %@", url];
+        NSError *executeFetchError = nil;
+        job = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
+        
+        if (executeFetchError) {
+            NSLog(@"[%@, %@] error looking up job with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), url, [executeFetchError localizedDescription]);
+        }
+    }];
     
     return job;
 }

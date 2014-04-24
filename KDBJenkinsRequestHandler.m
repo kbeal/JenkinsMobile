@@ -28,7 +28,7 @@
 
 - (void) importAllViews
 {
-    //NSLog(@"importing views...");
+    //NSLog(@"Starting view import...");
     NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",self.jinstance.url,@"api/json"]];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
@@ -57,6 +57,7 @@
 
 - (void) importDetailsForView: (NSString *) viewName atURL: (NSString *) viewURL
 {
+    //NSLog([NSString stringWithFormat:@"%@%@",@"import details for view: ",viewName]);
     //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for view: ",view.url]);
     NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",viewURL,@"api/json"]];
     
@@ -89,6 +90,7 @@
 
 - (void) importDetailsForJobAtURL:(NSString *)jobURL inViewAtURL:(NSString *) viewURL
 {
+    //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job at url: ",jobURL]);
     NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",jobURL,@"api/json"]];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
@@ -114,6 +116,7 @@
         NSArray *jobs = [view objectForKey:@"jobs"];
         [self.viewsJobsCounts setObject:[NSNumber numberWithLong:jobs.count] forKey:[view objectForKey:@"url"]];
         for (NSDictionary *job in jobs) {
+            //NSLog([NSString stringWithFormat:@"%@%@",@"import details for job: ",[job objectForKey:@"name"]]);
             [self importDetailsForJobAtURL:[job objectForKey:@"url"] inViewAtURL:[view objectForKey:@"url"]];
         }
     }
@@ -126,6 +129,7 @@
         builds = [job objectForKey:@"builds"];
         [self.jobsBuildsCounts setObject:[NSNumber numberWithLong:builds.count] forKey:[job objectForKey:@"url"]];
         for (NSDictionary *build in [job objectForKey:@"builds"]) {
+            NSLog([NSString stringWithFormat:@"%@%@",@"import details for build: ",[build objectForKey:@"url"]]);
             [self importDetailsForBuild:[build objectForKey:@"number"] forJobURL:[job objectForKey:@"url"]];
         }
     }
@@ -133,7 +137,7 @@
 
 - (void) importDetailsForBuild: (NSNumber *) buildNumber forJobURL: (NSString *) jobURL
 {
-    //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job: ",job.url]);
+//    NSLog([NSString stringWithFormat:@"%@%@",@"importing details for build: ",buildNumber]);
     NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",jobURL,[buildNumber stringValue],@"/api/json"]];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
@@ -160,6 +164,7 @@
             for (NSDictionary *view in views) {
                 [View createViewWithValues:view inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance.url];
             }
+            NSLog(@"saving views...");
             [self saveContext];
         }];
         self.view_count = [NSNumber numberWithLong:views.count];
@@ -174,6 +179,7 @@
             for (NSDictionary *view in self.viewDetails) {
                 [View createViewWithValues:view inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance.url];
             }
+            NSLog(@"Saving view details...");
             [self saveContext];
         }];
     }
@@ -226,9 +232,14 @@
         for (NSDictionary *job in [self.viewsJobsDetails objectForKey:viewURL]) {
             [Job createJobWithValues:job inManagedObjectContext:self.managedObjectContext forView:view];
         }
-        [self saveContext];
-    }
-    [self importDetailsForBuildsForJobs:[self.viewsJobsDetails objectForKey:viewURL]];
+        NSLog([NSString stringWithFormat:@"%@%@",@"saving job details for view: ",viewURL]);
+        [self.managedObjectContext performBlock:^{
+            NSError *error;
+            if (![self.managedObjectContext save:&error]) {
+                [NSException raise:@"Unable to save context." format:@"Error saving context: %@", error];
+            }
+        }];    }
+        [self importDetailsForBuildsForJobs:[self.viewsJobsDetails objectForKey:viewURL]];
 }
 
 - (void) persistBuildDetailsToLocalStorageForJobAtURL: (NSString *) jobURL
@@ -238,6 +249,7 @@
         for (NSDictionary *build in [self.jobsBuildsDetails objectForKey:jobURL]) {
             [Build createBuildWithValues:build inManagedObjectContext:self.managedObjectContext forJob:job];
         }
+        NSLog([NSString stringWithFormat:@"%@%@",@"saving details for builds for job: ",jobURL]);
         [self saveContext];
     }
 }
