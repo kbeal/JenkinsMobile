@@ -186,11 +186,6 @@
     [self importDetailsForJobs];
 }
 
-- (void) persistBuildToLocalStorage: (NSDictionary *) buildvals forJob: (Job *) job
-{
-    [Build createBuildWithValues:buildvals inManagedObjectContext:self.managedObjectContext forJob:job];
-}
-
 - (void) appendViewDetailsWithValues: (NSDictionary *) viewValues
 {
     [self.viewDetails addObject:viewValues];
@@ -230,15 +225,13 @@
     @autoreleasepool {
         View *view = [View fetchViewWithURL:viewURL inContext:self.managedObjectContext];
         for (NSDictionary *job in [self.viewsJobsDetails objectForKey:viewURL]) {
-            [Job createJobWithValues:job inManagedObjectContext:self.managedObjectContext forView:view];
+            [self.managedObjectContext performBlock:^{
+                [Job createJobWithValues:job inManagedObjectContext:self.managedObjectContext forView:view];
+            }];
         }
         NSLog([NSString stringWithFormat:@"%@%@",@"saving job details for view: ",viewURL]);
-        [self.managedObjectContext performBlock:^{
-            NSError *error;
-            if (![self.managedObjectContext save:&error]) {
-                [NSException raise:@"Unable to save context." format:@"Error saving context: %@", error];
-            }
-        }];    }
+        [self saveContext];
+    }
         [self importDetailsForBuildsForJobs:[self.viewsJobsDetails objectForKey:viewURL]];
 }
 
@@ -247,7 +240,9 @@
     @autoreleasepool {
         Job *job = [Job fetchJobAtURL:jobURL inManagedObjectContext:self.managedObjectContext];
         for (NSDictionary *build in [self.jobsBuildsDetails objectForKey:jobURL]) {
-            [Build createBuildWithValues:build inManagedObjectContext:self.managedObjectContext forJob:job];
+            [self.managedObjectContext performBlock:^{
+                [Build createBuildWithValues:build inManagedObjectContext:self.managedObjectContext forJob:job];
+            }];
         }
         NSLog([NSString stringWithFormat:@"%@%@",@"saving details for builds for job: ",jobURL]);
         [self saveContext];
