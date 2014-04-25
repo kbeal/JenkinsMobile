@@ -30,7 +30,8 @@
     JenkinsInstance *jinstance = [JenkinsInstance createJenkinsInstanceWithValues:jenkins inManagedObjectContext:self.masterMOC];
     [self saveContext];
     
-    KDBJenkinsRequestHandler *handler = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:self.masterMOC andJenkinsInstance:jinstance];
+    KDBJenkinsRequestHandler *handler = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:jinstance];
+    handler.managedObjectContext = self.masterMOC;
     [handler importAllViews];
     
     // Override point for customization after application launch.

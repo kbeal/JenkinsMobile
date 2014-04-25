@@ -11,10 +11,11 @@
 
 @implementation KDBJenkinsRequestHandler
 
-- (id) initWithManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) instance
+@synthesize importJobsMOC = _importJobsMOC;
+@synthesize importBuildsMOC = _importBuildsMOC;
+
+- (id) initWithJenkinsInstance: (JenkinsInstance *) instance
 {
-    self.managedObjectContext=context;
-    
     self.jinstance = instance;
     self.view_count = 0;
     self.viewDetails = [[NSMutableArray alloc] init];
@@ -165,7 +166,11 @@
                 [View createViewWithValues:view inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance.url];
             }
             NSLog(@"saving views...");
-            [self saveContext];
+            NSError *masterError;
+            if (![self.managedObjectContext save:&masterError]) {
+                NSLog(@"Error saving master context %@, %@", masterError, [masterError userInfo]);
+                abort();
+            }
         }];
         self.view_count = [NSNumber numberWithLong:views.count];
     }
@@ -180,7 +185,11 @@
                 [View createViewWithValues:view inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance.url];
             }
             NSLog(@"Saving view details...");
-            [self saveContext];
+            NSError *masterError;
+            if (![self.managedObjectContext save:&masterError]) {
+                NSLog(@"Error saving master context %@, %@", masterError, [masterError userInfo]);
+                abort();
+            }
         }];
     }
     [self importDetailsForJobs];
@@ -223,14 +232,28 @@
 - (void) persistJobDetailsToLocalStorageForView: (NSString *) viewURL
 {
     @autoreleasepool {
-        View *view = [View fetchViewWithURL:viewURL inContext:self.managedObjectContext];
+        View *view = [View fetchViewWithURL:viewURL inContext:self.importJobsMOC];
         for (NSDictionary *job in [self.viewsJobsDetails objectForKey:viewURL]) {
-            [self.managedObjectContext performBlock:^{
-                [Job createJobWithValues:job inManagedObjectContext:self.managedObjectContext forView:view];
+            [self.importJobsMOC performBlock:^{
+                [Job createJobWithValues:job inManagedObjectContext:self.importJobsMOC forView:view];
             }];
         }
         NSLog([NSString stringWithFormat:@"%@%@",@"saving job details for view: ",viewURL]);
-        [self saveContext];
+        [self.importJobsMOC performBlock:^ {
+            NSError *importJobsError;
+            if (![self.importJobsMOC save:&importJobsError]) {
+                NSLog(@"Error saving import jobs context %@, %@", importJobsError, [importJobsError userInfo]);
+                abort();
+            }
+            [self.managedObjectContext performBlock:^ {
+                NSError *masterError;
+                if (![self.managedObjectContext save:&masterError]) {
+                    NSLog(@"Error saving master context %@, %@", masterError, [masterError userInfo]);
+                    abort();
+                }
+            }];
+            [self.importJobsMOC reset];
+        }];
     }
         [self importDetailsForBuildsForJobs:[self.viewsJobsDetails objectForKey:viewURL]];
 }
@@ -238,25 +261,68 @@
 - (void) persistBuildDetailsToLocalStorageForJobAtURL: (NSString *) jobURL
 {
     @autoreleasepool {
-        Job *job = [Job fetchJobAtURL:jobURL inManagedObjectContext:self.managedObjectContext];
+        Job *job = [Job fetchJobAtURL:jobURL inManagedObjectContext:self.importBuildsMOC];
         for (NSDictionary *build in [self.jobsBuildsDetails objectForKey:jobURL]) {
-            [self.managedObjectContext performBlock:^{
-                [Build createBuildWithValues:build inManagedObjectContext:self.managedObjectContext forJob:job];
+            [self.importBuildsMOC performBlock:^{
+                [Build createBuildWithValues:build inManagedObjectContext:self.importBuildsMOC forJob:job];
             }];
         }
         NSLog([NSString stringWithFormat:@"%@%@",@"saving details for builds for job: ",jobURL]);
-        [self saveContext];
+        [self.importBuildsMOC performBlock:^ {
+            NSLog([NSString stringWithFormat:@"%@%lu",@"saving this many objs: ",(unsigned long)[[self.importBuildsMOC registeredObjects] count]]);
+            NSError *importBuildsError;
+            if (![self.importBuildsMOC save:&importBuildsError]) {
+                NSLog(@"Error saving import builds context %@, %@", importBuildsError, [importBuildsError userInfo]);
+                abort();
+            }
+            [self.managedObjectContext performBlock:^ {
+                NSError *masterError;
+                if (![self.managedObjectContext save:&masterError]) {
+                    NSLog(@"Error saving master context %@, %@", masterError, [masterError userInfo]);
+                    abort();
+                }
+            }];
+            [self.importBuildsMOC reset];
+        }];
     }
 }
 
-- (void) saveContext
-{    
-    [self.managedObjectContext performBlock:^{
-        NSError *error;
-        if (![self.managedObjectContext save:&error]) {
-            [NSException raise:@"Unable to save context." format:@"Error saving context: %@", error];
+// This context is for import jobs in a background thread
+// If the context doesn't already exist, it is created and bound to the master managed object context
+- (NSManagedObjectContext *)importJobsMOC
+{
+    @synchronized(_importJobsMOC) {
+        if (_importJobsMOC != nil) {
+            return _importJobsMOC;
         }
-    }];
+        
+        _importJobsMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        [_importJobsMOC performBlockAndWait:^{
+            [_importJobsMOC setUndoManager:nil];
+            [_importJobsMOC setParentContext:self.managedObjectContext];
+        }];
+        
+        return _importJobsMOC;
+    }
+}
+
+// This context is for import builds in a background thread
+// If the context doesn't already exist, it is created and bound to the master managed object context
+- (NSManagedObjectContext *)importBuildsMOC
+{
+    @synchronized(_importBuildsMOC) {
+        if (_importBuildsMOC != nil) {
+            return _importBuildsMOC;
+        }
+        
+        _importBuildsMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        [_importBuildsMOC performBlockAndWait:^{
+            [_importBuildsMOC setUndoManager:nil];
+            [_importBuildsMOC setParentContext:self.managedObjectContext];
+        }];
+        
+        return _importBuildsMOC;
+    }
 }
 
 
