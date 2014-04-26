@@ -32,12 +32,11 @@
 @property (nonatomic, retain) NSDate * timestamp;
 @property (nonatomic, retain) NSString * url;
 @property (nonatomic, retain) NSString * jobURL;
-@property (nonatomic, retain) Job *rel_Build_Job;
 
 - (void)setValues:(NSDictionary *) values;
 
-+ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJob: (Job *) job;
 + (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJobAtURL:(NSString *)jobURL;
 + (Build *)fetchBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
++ (NSArray *) fetchAllBuildsWithJobURL: (NSString *) jobURL inContext: (NSManagedObjectContext *) context;
 
 @end

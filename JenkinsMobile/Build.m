@@ -32,28 +32,6 @@
 @dynamic timestamp;
 @dynamic url;
 @dynamic jobURL;
-@dynamic rel_Build_Job;
-
-+ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJob: (Job *) job
-{
-    __block Build *build = [Build fetchBuildWithURL:[values objectForKey:@"url"] inContext:context];
-    
-    if (!build) {
-        [context performBlockAndWait:^{
-            build = [NSEntityDescription insertNewObjectForEntityForName:@"Build"
-                                                  inManagedObjectContext:context];
-        }];
-    }
-    
-    build.rel_Build_Job = job;
-    
-    NSMutableDictionary *newVals = [NSMutableDictionary dictionaryWithDictionary:values];
-    [newVals setObject:job.url forKey:@"jobURL"];
-    
-    [build setValues:newVals];
-    
-    return build;
-}
 
 // Creates a build that does not yet have a job relation.
 + (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJobAtURL:(NSString *)jobURL
@@ -90,6 +68,23 @@
     }];
     
     return build;
+}
+
++ (NSArray *) fetchAllBuildsWithJobURL: (NSString *) jobURL inContext: (NSManagedObjectContext *) context
+{
+    __block NSArray *builds = nil;
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [context performBlockAndWait:^{
+        request.entity = [NSEntityDescription entityForName:@"Build" inManagedObjectContext:context];
+        request.predicate = [NSPredicate predicateWithFormat:@"jobURL = %@", jobURL];
+        NSError *fetchError = nil;
+        builds = [context executeFetchRequest:request error:&fetchError];
+        if (fetchError) {
+            NSLog(@"[%@, %@] error looking up build with joburl: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), jobURL, [fetchError localizedDescription]);
+        }
+    }];
+    
+    return builds;
 }
 
 - (void)setValues:(NSDictionary *) values

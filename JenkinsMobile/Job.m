@@ -43,7 +43,6 @@
 @dynamic scm;
 @dynamic upstreamProjects;
 @dynamic url;
-@dynamic rel_Job_Builds;
 @dynamic rel_Job_JenkinsInstance;
 @dynamic rel_Job_View;
 
