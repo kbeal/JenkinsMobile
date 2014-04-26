@@ -455,7 +455,20 @@
     XCTAssert([build.result isEqual:@"SUCCESS"], @"build result is wrong");
     XCTAssert([build.timestamp isEqualToDate:[NSDate dateWithTimeIntervalSince1970:139691690635]], @"build timestamp is wrong %f",[build.timestamp timeIntervalSince1970]);
     XCTAssert([build.url isEqual:@"http://www.google.com"], @"build url is wrong");
+    XCTAssert([build.jobURL isEqualToString:@"http://www.google.com"], @"build's job url is wrong");
+}
 
+- (void) testCreateBuildWithoutJob
+{
+    NSArray *buildkeys = [NSArray arrayWithObjects:@"number",@"url",nil];
+    NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com", nil];
+    NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
+    
+    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJobAtURL:@"http://www.google.com"];
+    
+    XCTAssert([build.number isEqualToNumber:[NSNumber numberWithInt:100]], @"build number is wrong");
+    XCTAssert([build.url isEqual:@"http://www.google.com"], @"build url is wrong");
+    XCTAssert([build.jobURL isEqualToString:@"http://www.google.com"], @"build's job url is wrong");
 }
 
 - (void) testCreateBuildWithMinimalValues

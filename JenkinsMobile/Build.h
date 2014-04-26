@@ -2,7 +2,7 @@
 //  Build.h
 //  JenkinsMobile
 //
-//  Created by Kyle Beal on 4/14/14.
+//  Created by Kyle Beal on 4/25/14.
 //  Copyright (c) 2014 Kyle Beal. All rights reserved.
 //
 
@@ -31,11 +31,13 @@
 @property (nonatomic, retain) NSString * result;
 @property (nonatomic, retain) NSDate * timestamp;
 @property (nonatomic, retain) NSString * url;
+@property (nonatomic, retain) NSString * jobURL;
 @property (nonatomic, retain) Job *rel_Build_Job;
 
 - (void)setValues:(NSDictionary *) values;
 
 + (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJob: (Job *) job;
++ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJobAtURL:(NSString *)jobURL;
 + (Build *)fetchBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
 
 @end

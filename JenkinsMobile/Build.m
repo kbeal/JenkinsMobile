@@ -2,7 +2,7 @@
 //  Build.m
 //  JenkinsMobile
 //
-//  Created by Kyle Beal on 4/14/14.
+//  Created by Kyle Beal on 4/25/14.
 //  Copyright (c) 2014 Kyle Beal. All rights reserved.
 //
 
@@ -11,7 +11,6 @@
 
 // Convert any NULL values to nil. Lifted from Kevin Ballard here: http://stackoverflow.com/a/9138033
 #define NULL_TO_NIL(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
-
 
 @implementation Build
 
@@ -32,22 +31,45 @@
 @dynamic result;
 @dynamic timestamp;
 @dynamic url;
+@dynamic jobURL;
 @dynamic rel_Build_Job;
 
-+ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJob: (Job *) job;
++ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJob: (Job *) job
 {
     __block Build *build = [Build fetchBuildWithURL:[values objectForKey:@"url"] inContext:context];
     
     if (!build) {
         [context performBlockAndWait:^{
             build = [NSEntityDescription insertNewObjectForEntityForName:@"Build"
-                                              inManagedObjectContext:context];
+                                                  inManagedObjectContext:context];
         }];
     }
     
     build.rel_Build_Job = job;
     
-    [build setValues:values];
+    NSMutableDictionary *newVals = [NSMutableDictionary dictionaryWithDictionary:values];
+    [newVals setObject:job.url forKey:@"jobURL"];
+    
+    [build setValues:newVals];
+    
+    return build;
+}
+
+// Creates a build that does not yet have a job relation.
++ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJobAtURL:(NSString *)jobURL
+{
+    NSMutableDictionary *newVals = [NSMutableDictionary dictionaryWithDictionary:values];
+    [newVals setObject:jobURL forKey:@"jobURL"];
+    
+    __block Build *build = [Build fetchBuildWithURL:[values objectForKey:@"url"] inContext:context];
+    
+    if (!build) {
+        [context performBlockAndWait:^{
+            build = [NSEntityDescription insertNewObjectForEntityForName:@"Build" inManagedObjectContext:context];
+        }];
+    }
+    
+    [build setValues:newVals];
     
     return build;
 }
@@ -90,7 +112,8 @@
     NSNumber *timestamp = NULL_TO_NIL([values objectForKey:@"timestamp"]);
     self.timestamp = [NSDate dateWithTimeIntervalSince1970:[timestamp doubleValue]];
     self.url = NULL_TO_NIL([values objectForKey:@"url"]);
-    self.rel_Build_Job.lastImportedBuild = self.number;
+    self.jobURL = NULL_TO_NIL([values objectForKey:@"jobURL"]);
+    //self.rel_Build_Job.lastImportedBuild = self.number;
 }
 
 @end
