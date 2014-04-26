@@ -7,7 +7,6 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "KDBJenkinsRequestHandler.h"
 #import "Job.h"
 #import "View.h"
 #import "JenkinsInstance.h"
@@ -28,9 +27,9 @@
     NSManagedObjectModel *model = [NSManagedObjectModel mergedModelFromBundles: nil];
     NSPersistentStoreCoordinator *coord = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel: model];
     [coord addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:nil];
-    _context = [[NSManagedObjectContext alloc] init];
+    _context = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
     [_context setPersistentStoreCoordinator: coord];
-    
+
     NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
     NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES], nil];
     NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
@@ -148,7 +147,7 @@
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
 
     
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     
     NSError *error;
     NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
@@ -163,22 +162,6 @@
     
 }
 
-- (void)testPersistViewsToLocalStorage
-{
-    //pass an nsarray of views to KDBJenkinsRequestHandler.persistViewsToLocalStorage
-    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:_context andJenkinsInstance:_jinstance];
-    
-    NSArray *views = [NSArray arrayWithObjects: [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test1",@"url1", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test2",@"url2", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test3",@"url3", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test4",@"url4", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]], nil ];
-    
-    [jenkins persistViewsToLocalStorage: views];
-    
-    NSError *error;
-    NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
-    [allViews setEntity:[NSEntityDescription entityForName:@"View" inManagedObjectContext:_context]];
-    [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
-    NSArray *fetchedviews = [_context executeFetchRequest:allViews error:&error];
-    XCTAssert(fetchedviews.count==4, @"view count should be 4, instead got %d", fetchedviews.count);
-}
 
 - (void)testCreateJobWithValues
 {
@@ -194,7 +177,7 @@
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
     
     
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     
 
     Job *job = [Job createJobWithValues:[NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys] inManagedObjectContext:_context forView:view];
@@ -230,7 +213,7 @@
     NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
     NSDictionary *viewvals = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
     
-    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
     
     XCTAssert([job.name isEqualToString:@"Job1"], @"job name should be Job1, is actually %@",job.name);
@@ -290,7 +273,7 @@
     NSDictionary *viewvals = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
     
     
-    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
 
     
     [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
@@ -319,8 +302,8 @@
     NSDictionary *values2 = [NSDictionary dictionaryWithObjects:viewValues2 forKeys:viewKeys];
     
     
-    [View createViewWithValues:values1 inManagedObjectContext:_context forJenkinsInstance:_jinstance];
-    [View createViewWithValues:values2 inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    [View createViewWithValues:values1 inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
+    [View createViewWithValues:values2 inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     
     NSError *error;
     NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
@@ -346,7 +329,7 @@
     NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",@"descriptiontest1",@"",jobs,nil];
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
     
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     [_context deleteObject:view];
     NSError *saveError = nil;
     [_context save:&saveError];
@@ -377,7 +360,7 @@
     NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",@"descriptiontest1",@"",jobs,nil];
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
     
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     
     NSError *error;
     NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
@@ -413,7 +396,7 @@
     NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url",@"description",@"property",@"jobs", nil];
     NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",@"descriptiontest1",@"",jobs,nil];
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
-    [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];    
+    [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     
     [_context deleteObject:_jinstance];
     NSError *saveError = nil;
@@ -449,7 +432,7 @@
     NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
     NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     
     Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forView:view];
     
@@ -485,7 +468,7 @@
     NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
     NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
 
     Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forView:view];
     
@@ -510,7 +493,7 @@
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
     
     
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
 
     Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forView:view];
     
