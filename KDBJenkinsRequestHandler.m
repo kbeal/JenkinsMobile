@@ -11,9 +11,6 @@
 
 @implementation KDBJenkinsRequestHandler
 
-@synthesize importJobsMOC = _importJobsMOC;
-@synthesize importBuildsMOC = _importBuildsMOC;
-
 - (id) initWithJenkinsInstance: (JenkinsInstance *) instance
 {
     self.jinstance = instance;
@@ -286,45 +283,6 @@
         }];
     }
 }
-
-// This context is for import jobs in a background thread
-// If the context doesn't already exist, it is created and bound to the master managed object context
-- (NSManagedObjectContext *)importJobsMOC
-{
-    @synchronized(_importJobsMOC) {
-        if (_importJobsMOC != nil) {
-            return _importJobsMOC;
-        }
-        
-        _importJobsMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-        [_importJobsMOC performBlockAndWait:^{
-            [_importJobsMOC setUndoManager:nil];
-            [_importJobsMOC setParentContext:self.managedObjectContext];
-        }];
-        
-        return _importJobsMOC;
-    }
-}
-
-// This context is for import builds in a background thread
-// If the context doesn't already exist, it is created and bound to the master managed object context
-- (NSManagedObjectContext *)importBuildsMOC
-{
-    @synchronized(_importBuildsMOC) {
-        if (_importBuildsMOC != nil) {
-            return _importBuildsMOC;
-        }
-        
-        _importBuildsMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-        [_importBuildsMOC performBlockAndWait:^{
-            [_importBuildsMOC setUndoManager:nil];
-            [_importBuildsMOC setParentContext:self.managedObjectContext];
-        }];
-        
-        return _importBuildsMOC;
-    }
-}
-
 
 
 @end

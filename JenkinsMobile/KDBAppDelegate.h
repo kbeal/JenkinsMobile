@@ -14,6 +14,8 @@
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *masterMOC;
 @property (readonly, strong, nonatomic) NSManagedObjectContext *mainMOC;
+@property (readonly, strong, nonatomic) NSManagedObjectContext *importJobsMOC;
+@property (readonly, strong, nonatomic) NSManagedObjectContext *importBuildsMOC;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
