@@ -31,7 +31,6 @@
 @dynamic lastBuild;
 @dynamic lastCompletedBuild;
 @dynamic lastFailedBuild;
-@dynamic lastImportedBuild;
 @dynamic lastStableBuild;
 @dynamic lastSuccessfulBuild;
 @dynamic lastUnstableBuild;

@@ -28,7 +28,6 @@
 @property (nonatomic, retain) NSNumber * lastBuild;
 @property (nonatomic, retain) NSNumber * lastCompletedBuild;
 @property (nonatomic, retain) NSNumber * lastFailedBuild;
-@property (nonatomic, retain) NSNumber * lastImportedBuild;
 @property (nonatomic, retain) NSNumber * lastStableBuild;
 @property (nonatomic, retain) NSNumber * lastSuccessfulBuild;
 @property (nonatomic, retain) NSNumber * lastUnstableBuild;
