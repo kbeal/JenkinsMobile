@@ -123,19 +123,6 @@
     }
 }
 
-- (void) importDetailsForBuildsForJobs: (NSArray *) jobs
-{
-    NSArray *builds = nil;
-    for (NSDictionary *job in jobs) {
-        builds = [job objectForKey:@"builds"];
-        [self.jobsBuildsCounts setObject:[NSNumber numberWithLong:builds.count] forKey:[job objectForKey:@"url"]];
-        for (NSDictionary *build in [job objectForKey:@"builds"]) {
-            NSLog([NSString stringWithFormat:@"%@%@",@"import details for build: ",[build objectForKey:@"url"]]);
-            [self importDetailsForBuild:[build objectForKey:@"number"] forJobURL:[job objectForKey:@"url"]];
-        }
-    }
-}
-
 - (void) importDetailsForBuild: (NSNumber *) buildNumber forJobURL: (NSString *) jobURL
 {
 //    NSLog([NSString stringWithFormat:@"%@%@",@"importing details for build: ",buildNumber]);
@@ -236,6 +223,7 @@
         for (NSDictionary *job in [self.viewsJobsDetails objectForKey:viewURL]) {
             [self.importJobsMOC performBlock:^{
                 [Job createJobWithValues:job inManagedObjectContext:self.importJobsMOC forView:view];
+                [self createBuilds:[job objectForKey:@"builds"] forJobAtURL:[job objectForKey:@"url"]];
             }];
         }
         NSLog([NSString stringWithFormat:@"%@%@",@"saving job details for view: ",viewURL]);
@@ -256,6 +244,31 @@
         }];
     }
     //[self importDetailsForBuildsForJobs:[self.viewsJobsDetails objectForKey:viewURL]];
+}
+
+- (void) createBuilds: (NSArray *) builds forJobAtURL: (NSString *) jobURL
+{
+    @autoreleasepool {
+        for (NSDictionary *build in builds) {
+            [self.importBuildsMOC performBlock:^{
+                [Build createBuildWithValues:build inManagedObjectContext:self.importBuildsMOC forJobAtURL:jobURL];
+            }];
+        }
+        [self.importBuildsMOC performBlock:^{
+            NSError *importbuildserror;
+            if (![self.importBuildsMOC save:&importbuildserror]) {
+                NSLog(@"Error saving import builds context %@, %@", importbuildserror, [importbuildserror userInfo]);
+                abort();
+            }
+            [self.managedObjectContext performBlock:^{
+                NSError *masterError;
+                if (![self.managedObjectContext save:&masterError]) {
+                    NSLog(@"Error saving master context %@, %@", masterError, [masterError userInfo]);
+                    abort();
+                }
+            }];
+        }];
+    }
 }
 
 - (void) persistBuildDetailsToLocalStorageForJobAtURL: (NSString *) jobURL

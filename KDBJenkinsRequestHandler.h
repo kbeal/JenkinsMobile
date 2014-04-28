@@ -33,7 +33,6 @@
 - (void) importDetailsForJobAtURL:(NSString *)jobURL inViewAtURL:(NSString *) viewURL;
 - (void) importDetailsForJobs;
 - (void) importDetailsForBuild: (NSNumber *) buildNumber forJobURL: (NSString *) jobURL;
-- (void) importDetailsForBuildsForJobs: (NSArray *) jobs;
 - (void) persistViewsToLocalStorage: (NSArray *) views;
 - (void) persistViewDetailsToLocalStorage;
 - (void) persistJobDetailsToLocalStorageForView: (NSString *) viewURL;
