@@ -7,7 +7,6 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "KDBJenkinsRequestHandler.h"
 #import "Job.h"
 #import "View.h"
 #import "JenkinsInstance.h"
@@ -28,9 +27,9 @@
     NSManagedObjectModel *model = [NSManagedObjectModel mergedModelFromBundles: nil];
     NSPersistentStoreCoordinator *coord = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel: model];
     [coord addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:nil];
-    _context = [[NSManagedObjectContext alloc] init];
+    _context = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
     [_context setPersistentStoreCoordinator: coord];
-    
+
     NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
     NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES], nil];
     NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
@@ -118,6 +117,7 @@
     Build *build = [NSEntityDescription insertNewObjectForEntityForName:@"Build" inManagedObjectContext:_context];
     build.url = @"http://www.google.com";
     build.number = [NSNumber numberWithInt:100];
+    build.jobURL = @"http://www.google.com";
     
     Job *job = [NSEntityDescription insertNewObjectForEntityForName:@"Job" inManagedObjectContext:_context];
     job.name = @"TestJob";
@@ -126,7 +126,6 @@
     job.color = @"blue";
     job.rel_Job_JenkinsInstance = _jinstance;
     
-    build.rel_Build_Job = job;
     if (![_context save:&error]) {
         XCTFail(@"Unresolved error %@, %@", error, [error userInfo]);
     }
@@ -134,7 +133,6 @@
     NSArray *newbuilds = [_context executeFetchRequest:allBuilds error:&error];
     
     XCTAssert(newbuilds.count==origbuilds.count+1, @"Build count should incrase by 1 to %d, instead got %d",origbuilds.count+1,newbuilds.count);
-    XCTAssert([job rel_Job_Builds].count==1, @"Job's build count should be 1, instead got %d",[job rel_Job_Builds].count);
 }
 
 - (void)testCreateViewWithValues
@@ -148,7 +146,7 @@
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
 
     
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     
     NSError *error;
     NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
@@ -163,22 +161,6 @@
     
 }
 
-- (void)testPersistViewsToLocalStorage
-{
-    //pass an nsarray of views to KDBJenkinsRequestHandler.persistViewsToLocalStorage
-    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithManagedObjectContext:_context andJenkinsInstance:_jinstance];
-    
-    NSArray *views = [NSArray arrayWithObjects: [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test1",@"url1", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test2",@"url2", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test3",@"url3", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]],  [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:@"test4",@"url4", nil] forKeys:[NSArray arrayWithObjects:@"name",@"url", nil]], nil ];
-    
-    [jenkins persistViewsToLocalStorage: views];
-    
-    NSError *error;
-    NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
-    [allViews setEntity:[NSEntityDescription entityForName:@"View" inManagedObjectContext:_context]];
-    [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
-    NSArray *fetchedviews = [_context executeFetchRequest:allViews error:&error];
-    XCTAssert(fetchedviews.count==4, @"view count should be 4, instead got %d", fetchedviews.count);
-}
 
 - (void)testCreateJobWithValues
 {
@@ -194,7 +176,7 @@
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
     
     
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     
 
     Job *job = [Job createJobWithValues:[NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys] inManagedObjectContext:_context forView:view];
@@ -230,7 +212,7 @@
     NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
     NSDictionary *viewvals = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
     
-    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
     
     XCTAssert([job.name isEqualToString:@"Job1"], @"job name should be Job1, is actually %@",job.name);
@@ -290,7 +272,7 @@
     NSDictionary *viewvals = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
     
     
-    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
 
     
     [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
@@ -319,8 +301,8 @@
     NSDictionary *values2 = [NSDictionary dictionaryWithObjects:viewValues2 forKeys:viewKeys];
     
     
-    [View createViewWithValues:values1 inManagedObjectContext:_context forJenkinsInstance:_jinstance];
-    [View createViewWithValues:values2 inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    [View createViewWithValues:values1 inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
+    [View createViewWithValues:values2 inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     
     NSError *error;
     NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
@@ -346,7 +328,7 @@
     NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",@"descriptiontest1",@"",jobs,nil];
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
     
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     [_context deleteObject:view];
     NSError *saveError = nil;
     [_context save:&saveError];
@@ -377,7 +359,7 @@
     NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",@"descriptiontest1",@"",jobs,nil];
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
     
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     
     NSError *error;
     NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
@@ -413,7 +395,7 @@
     NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url",@"description",@"property",@"jobs", nil];
     NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",@"descriptiontest1",@"",jobs,nil];
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
-    [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];    
+    [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
     
     [_context deleteObject:_jinstance];
     NSError *saveError = nil;
@@ -442,22 +424,11 @@
 
 - (void) testCreateBuild
 {
-    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
-    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
-    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
-    
-    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
-    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
-    NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
-    
-    Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forView:view];
-    
     NSArray *buildkeys = [NSArray arrayWithObjects:@"description",@"building",@"builtOn",@"duration",@"estimatedDuration",@"executor",@"fullDisplayName",@"build_id",@"keepLog",@"number",@"result",@"timestamp",@"url",nil];
     NSArray *buildvalues = [NSArray arrayWithObjects:@"build 1 description",[NSNumber numberWithBool:NO],@"1/1/14",[NSNumber numberWithInt:123456],[NSNumber numberWithInt:123456],@"",@"build 1 test",@"build test id",[NSNumber numberWithBool:NO],[NSNumber numberWithInt:100],@"SUCCESS",[NSNumber numberWithDouble:139691690635],@"http://www.google.com", nil];
     NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
     
-    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJob:job];
+    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJobAtURL:@"http://www.google.com"];
     
     XCTAssert([build.build_description isEqual:@"build 1 description"], @"build description is wrong, is actually %@",build.build_description);
     XCTAssert([build.building isEqual:[NSNumber numberWithBool:NO]], @"building is wrong");
@@ -472,28 +443,29 @@
     XCTAssert([build.result isEqual:@"SUCCESS"], @"build result is wrong");
     XCTAssert([build.timestamp isEqualToDate:[NSDate dateWithTimeIntervalSince1970:139691690635]], @"build timestamp is wrong %f",[build.timestamp timeIntervalSince1970]);
     XCTAssert([build.url isEqual:@"http://www.google.com"], @"build url is wrong");
-
+    XCTAssert([build.jobURL isEqualToString:@"http://www.google.com"], @"build's job url is wrong");
 }
 
-- (void) testCreateBuildWithMinimalValues
+- (void) testCreateBuildWithoutJob
 {
-    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
-    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
-    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
-    
-    
-    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
-    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
-    NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
-
-    Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forView:view];
-    
     NSArray *buildkeys = [NSArray arrayWithObjects:@"number",@"url",nil];
     NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com", nil];
     NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
     
-    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJob:job];
+    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJobAtURL:@"http://www.google.com"];
+    
+    XCTAssert([build.number isEqualToNumber:[NSNumber numberWithInt:100]], @"build number is wrong");
+    XCTAssert([build.url isEqual:@"http://www.google.com"], @"build url is wrong");
+    XCTAssert([build.jobURL isEqualToString:@"http://www.google.com"], @"build's job url is wrong");
+}
+
+- (void) testCreateBuildWithMinimalValues
+{
+    NSArray *buildkeys = [NSArray arrayWithObjects:@"number",@"url",nil];
+    NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com", nil];
+    NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
+    
+    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJobAtURL:@"http://www.google.com"];
     
     XCTAssert([build.url isEqual:@"http://www.google.com"], @"build url is wrong");
     XCTAssert([build.number isEqualToNumber:[NSNumber numberWithInt:100]], @"build number is wrong");
@@ -501,32 +473,27 @@
 
 - (void) testDeleteBuild
 {
-    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
-    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
-    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
-    
-    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
-    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
-    NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
-    
-    
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:_jinstance];
-
-    Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context forView:view];
+    NSFetchRequest *allbuilds = [[NSFetchRequest alloc] init];
+    [allbuilds setEntity:[NSEntityDescription entityForName:@"Build" inManagedObjectContext:_context]];
+    [allbuilds setIncludesPropertyValues:NO];
+    NSError *error = nil;
     
     NSArray *buildkeys = [NSArray arrayWithObjects:@"number",@"url",nil];
     NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com", nil];
     NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
     
-    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJob:job];
+    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJobAtURL:@"http://www.google.com"];
     
-    XCTAssert(job.rel_Job_Builds.count==1, @"job's build count is wrong");
+    NSUInteger orig_cnt = [_context countForFetchRequest:allbuilds error:&error];
 
     [_context deleteObject:build];
     NSError *saveError = nil;
     [_context save:&saveError];
     
-    XCTAssert(job.rel_Job_Builds.count==0, @"job's build count is wrong");
+    NSUInteger new_cnt = [_context countForFetchRequest:allbuilds error:&error];
+    
+    XCTAssert(orig_cnt==1, @"wrong original build count");
+    XCTAssert(new_cnt==0, @"wrong build count after delete");
 }
 
 - (void) deleteAllRecordsForEntity: (NSString *) entityName

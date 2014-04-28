@@ -13,12 +13,12 @@
         <attribute name="estimatedDuration" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="executor" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="fullDisplayName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="jobURL" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="keepLog" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="number" attributeType="Integer 32" defaultValueString="0" indexed="YES" syncable="YES"/>
         <attribute name="result" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="url" attributeType="String" indexed="YES" syncable="YES"/>
-        <relationship name="rel_Build_Job" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="rel_Job_Builds" inverseEntity="Job" syncable="YES"/>
     </entity>
     <entity name="JenkinsInstance" representedClassName="JenkinsInstance">
         <attribute name="current" attributeType="Boolean" indexed="YES" syncable="YES"/>
@@ -55,7 +55,6 @@
         <attribute name="scm" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="upstreamProjects" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="url" attributeType="String" indexed="YES" syncable="YES"/>
-        <relationship name="rel_Job_Builds" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Build" inverseName="rel_Build_Job" inverseEntity="Build" syncable="YES"/>
         <relationship name="rel_Job_JenkinsInstance" maxCount="1" deletionRule="Nullify" destinationEntity="JenkinsInstance" inverseName="rel_Jobs" inverseEntity="JenkinsInstance" syncable="YES"/>
         <relationship name="rel_Job_View" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="View" inverseName="rel_View_Jobs" inverseEntity="View" syncable="YES"/>
     </entity>

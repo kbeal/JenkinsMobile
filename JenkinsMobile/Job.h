@@ -39,17 +39,11 @@
 @property (nonatomic, retain) id scm;
 @property (nonatomic, retain) id upstreamProjects;
 @property (nonatomic, retain) NSString * url;
-@property (nonatomic, retain) NSSet *rel_Job_Builds;
 @property (nonatomic, retain) JenkinsInstance *rel_Job_JenkinsInstance;
 @property (nonatomic, retain) NSSet *rel_Job_View;
 @end
 
 @interface Job (CoreDataGeneratedAccessors)
-
-- (void)addRel_Job_BuildsObject:(Build *)value;
-- (void)removeRel_Job_BuildsObject:(Build *)value;
-- (void)addRel_Job_Builds:(NSSet *)values;
-- (void)removeRel_Job_Builds:(NSSet *)values;
 
 - (void)addRel_Job_ViewObject:(View *)value;
 - (void)removeRel_Job_ViewObject:(View *)value;
