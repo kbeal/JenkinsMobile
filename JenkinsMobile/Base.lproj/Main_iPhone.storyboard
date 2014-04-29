@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="rS3-R9-Ivy">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13C1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="rS3-R9-Ivy">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
@@ -12,49 +12,50 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="OgX-2x-pwK" kind="relationship" relationship="rootViewController" id="Bbw-6i-jy3"/>
+                        <segue destination="XtX-09-bp2" kind="relationship" relationship="rootViewController" id="l0s-qY-5vZ"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eq9-QA-ai8" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-53" y="-64"/>
         </scene>
-        <!--Jenkins Views View Controller - All Jobs-->
-        <scene sceneID="66b-22-Nry">
+        <!--Master View Controller-->
+        <scene sceneID="GJf-4f-R1O">
             <objects>
-                <viewController automaticallyAdjustsScrollViewInsets="NO" id="OgX-2x-pwK" customClass="KDBJenkinsViewsViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="rt5-fo-h6G"/>
-                        <viewControllerLayoutGuide type="bottom" id="YvW-ld-2xa"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="Vdc-A7-d6i">
+                <tableViewController id="XtX-09-bp2" customClass="KDBMasterViewController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="mBa-Eb-FMe">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="exb-vO-tW6" customClass="KDBJenkinsViewsScrollView">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <connections>
-                                    <outlet property="delegate" destination="OgX-2x-pwK" id="PgA-mE-ypV"/>
-                                </connections>
-                            </scrollView>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="exb-vO-tW6" secondAttribute="trailing" id="36g-fz-Crp"/>
-                            <constraint firstItem="exb-vO-tW6" firstAttribute="top" secondItem="Vdc-A7-d6i" secondAttribute="top" id="7HI-gG-3Pp"/>
-                            <constraint firstAttribute="bottom" secondItem="exb-vO-tW6" secondAttribute="bottom" id="GZK-ln-YzL"/>
-                            <constraint firstItem="exb-vO-tW6" firstAttribute="leading" secondItem="Vdc-A7-d6i" secondAttribute="leading" id="NvR-kR-ZDq"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" title="All Jobs" id="24B-qZ-2SX"/>
-                    <connections>
-                        <outlet property="jenkinsViewsScrollView" destination="exb-vO-tW6" id="kaY-J4-clc"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="8HB-Ff-Lnp" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" textLabel="oOk-LA-lrC" style="IBUITableViewCellStyleDefault" id="edS-aI-1i7">
+                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="edS-aI-1i7" id="85b-oo-wgN">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="oOk-LA-lrC">
+                                            <rect key="frame" x="15" y="0.0" width="290" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="XtX-09-bp2" id="U34-5T-KWl"/>
+                            <outlet property="delegate" destination="XtX-09-bp2" id="M5o-eP-o4P"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="KwR-za-2Pt"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="EZ3-9s-iys" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="270" y="794"/>
+            <point key="canvasLocation" x="439" y="-59"/>
         </scene>
         <!--Detail View Controller - Detail-->
         <scene sceneID="Cn3-H9-jdl">
