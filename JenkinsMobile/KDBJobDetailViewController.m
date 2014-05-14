@@ -6,21 +6,21 @@
 //  Copyright (c) 2014 Kyle Beal. All rights reserved.
 //
 
-#import "KDBDetailViewController.h"
+#import "KDBJobDetailViewController.h"
 
-@interface KDBDetailViewController ()
+@interface KDBJobDetailViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 - (void)configureView;
 @end
 
-@implementation KDBDetailViewController
+@implementation KDBJobDetailViewController
 
 #pragma mark - Managing the detail item
 
-- (void)setDetailItem:(id)newDetailItem
+- (void)setJob:(Job *)newJob
 {
-    if (_detailItem != newDetailItem) {
-        _detailItem = newDetailItem;
+    if (_job != newJob) {
+        _job = newJob;
         
         // Update the view.
         [self configureView];
@@ -34,9 +34,8 @@
 - (void)configureView
 {
     // Update the user interface for the detail item.
-
-    if (self.detailItem) {
-        self.detailDescriptionLabel.text = [[self.detailItem valueForKey:@"timeStamp"] description];
+    if (self.job) {
+        self.navigationItem.title = self.job.name;
     }
 }
 

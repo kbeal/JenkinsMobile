@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Job.h"
 
-@interface KDBDetailViewController : UIViewController <UISplitViewControllerDelegate>
+@interface KDBJobDetailViewController : UIViewController <UISplitViewControllerDelegate>
 
-@property (strong, nonatomic) id detailItem;
+@property (strong, nonatomic) Job *job;
 
 @property (weak, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
 @end

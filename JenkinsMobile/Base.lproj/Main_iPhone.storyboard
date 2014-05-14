@@ -57,10 +57,10 @@
             </objects>
             <point key="canvasLocation" x="439" y="-59"/>
         </scene>
-        <!--Detail View Controller - Detail-->
+        <!--Job Detail View Controller - Detail-->
         <scene sceneID="Cn3-H9-jdl">
             <objects>
-                <viewController title="Detail" id="Ah7-4n-0Wa" customClass="KDBDetailViewController" sceneMemberID="viewController">
+                <viewController title="Detail" id="Ah7-4n-0Wa" customClass="KDBJobDetailViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="vHZ-kf-Clv"/>
                         <viewControllerLayoutGuide type="bottom" id="kJv-xk-lyH"/>

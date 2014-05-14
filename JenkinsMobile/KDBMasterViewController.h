@@ -10,14 +10,14 @@
 #import "KDBViewPickerViewController.h"
 #import "Job.h"
 
-@class KDBDetailViewController;
+@class KDBJobDetailViewController;
 
 @interface KDBMasterViewController : UITableViewController <ViewPickerDelegate, NSFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
-@property (strong, nonatomic) KDBDetailViewController *detailViewController;
+@property (strong, nonatomic) KDBJobDetailViewController *jobDetailViewController;
 
 @property (nonatomic, strong) KDBViewPickerViewController *viewPicker;
 @property (nonatomic, strong) UIPopoverController *viewPickerPopover;

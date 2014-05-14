@@ -7,7 +7,7 @@
 //
 
 #import "KDBMasterViewController.h"
-#import "KDBDetailViewController.h"
+#import "KDBJobDetailViewController.h"
 #import "AFNetworking.h"
 
 @interface KDBMasterViewController ()
@@ -30,7 +30,7 @@
 {
     [super viewDidLoad];
 
-    self.detailViewController = (KDBDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    self.jobDetailViewController = (KDBJobDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
 }
 
 - (void)didReceiveMemoryWarning
@@ -74,19 +74,18 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    /*
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        NSManagedObject *object = [[self fetchedResultsController] objectAtIndexPath:indexPath];
-        self.detailViewController.detailItem = object;
-    }*/
+        Job *job = [[self fetchedResultsController] objectAtIndexPath:indexPath];
+        self.jobDetailViewController.job = job;
+    }
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([[segue identifier] isEqualToString:@"showDetail"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-
-//        [[segue destinationViewController] setDetailItem: tempDictionary];
+        Job *job = [[self fetchedResultsController] objectAtIndexPath:indexPath];
+        [[segue destinationViewController] setJob:job];
     }
 }
 
