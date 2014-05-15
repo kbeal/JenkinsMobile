@@ -70,6 +70,24 @@
     return build;
 }
 
++ (Build *) fetchBuildWithNumber: (NSNumber *)number forJobAtURL: (NSString *) jobURL inContext: (NSManagedObjectContext *) context
+{
+    __block Build *build = nil;
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    
+    [context performBlockAndWait:^{
+        request.entity = [NSEntityDescription entityForName:@"Build" inManagedObjectContext:context];
+        request.predicate = [NSPredicate predicateWithFormat:@"number == %@ AND jobURL == %@", number, jobURL];
+        NSError *executeFetchError = nil;
+        build = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
+        if (executeFetchError) {
+            NSLog(@"[%@, %@] error looking up build with number: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), number, [executeFetchError localizedDescription]);
+        }
+    }];
+    
+    return build;
+}
+
 + (NSArray *) fetchAllBuildsWithJobURL: (NSString *) jobURL inContext: (NSManagedObjectContext *) context
 {
     __block NSArray *builds = nil;

@@ -77,6 +77,7 @@
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         Job *job = [[self fetchedResultsController] objectAtIndexPath:indexPath];
         self.jobDetailViewController.job = job;
+        self.jobDetailViewController.managedObjectContext = self.managedObjectContext;
     }
 }
 

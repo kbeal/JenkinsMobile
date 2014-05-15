@@ -7,7 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Build.h"
 
 @interface KDBBuildDetailViewController : UIViewController
+
+- (void)configureView;
+
+@property (strong, nonatomic) Build *build;
 
 @end

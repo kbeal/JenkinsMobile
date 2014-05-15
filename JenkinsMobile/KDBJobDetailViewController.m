@@ -7,6 +7,7 @@
 //
 
 #import "KDBJobDetailViewController.h"
+#import "KDBBuildDetailViewController.h"
 
 @interface KDBJobDetailViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -29,6 +30,13 @@
     if (self.masterPopoverController != nil) {
         [self.masterPopoverController dismissPopoverAnimated:YES];
     }        
+}
+
+- (void)setManagedObjectContext:(NSManagedObjectContext *)newManagedObjectContext
+{
+    if (_managedObjectContext != newManagedObjectContext) {
+        _managedObjectContext = newManagedObjectContext;
+    }
 }
 
 - (void)configureView
@@ -66,6 +74,35 @@
     // Called when the view is shown again in the split view, invalidating the button and popover controller.
     [self.navigationItem setLeftBarButtonItem:nil animated:YES];
     self.masterPopoverController = nil;
+}
+
+#pragma mark - Navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    KDBBuildDetailViewController *dest = [segue destinationViewController];
+    Build *build = nil;
+    if ([[segue identifier] isEqualToString:@"lastBuildSegue"]) {
+        build = [Build fetchBuildWithNumber:self.job.lastBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
+    }
+    else if ([[segue identifier] isEqualToString:@"lastSuccessfulBuildSegue"]) {
+        build = [Build fetchBuildWithNumber:self.job.lastSuccessfulBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
+    }
+    else if ([[segue identifier] isEqualToString:@"lastUnsuccessfulBuildSegue"]) {
+        build = [Build fetchBuildWithNumber:self.job.lastUnsuccessfulBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
+    }
+    else if ([[segue identifier] isEqualToString:@"lastStableBuildSegue"]) {
+        build = [Build fetchBuildWithNumber:self.job.lastStableBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
+    }
+    else if ([[segue identifier] isEqualToString:@"lastUnstableBuildSegue"]) {
+        build = [Build fetchBuildWithNumber:self.job.lastUnstableBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
+    }
+    else if ([[segue identifier] isEqualToString:@"latestTestResultSegue"]) {
+
+    }
+    
+    if (build != nil) {
+        [dest setBuild:build];
+    }
 }
 
 @end

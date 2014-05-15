@@ -23,6 +23,24 @@
     return self;
 }
 
+- (void)setBuild:(Build *)newBuild
+{
+    if (_build != newBuild) {
+        _build = newBuild;
+        
+        // Update the view.
+        [self configureView];
+    }
+}
+
+- (void)configureView
+{
+    // Update the user interface for the detail item.
+    if (self.build) {
+        self.navigationItem.title = [self.build.number stringValue];
+    }
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];

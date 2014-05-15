@@ -36,7 +36,8 @@
 - (void)setValues:(NSDictionary *) values;
 
 + (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJobAtURL:(NSString *)jobURL;
-+ (Build *)fetchBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
++ (Build *) fetchBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
++ (Build *) fetchBuildWithNumber: (NSNumber *)number forJobAtURL: (NSString *) jobURL inContext: (NSManagedObjectContext *) context;
 + (NSArray *) fetchAllBuildsWithJobURL: (NSString *) jobURL inContext: (NSManagedObjectContext *) context;
 
 @end

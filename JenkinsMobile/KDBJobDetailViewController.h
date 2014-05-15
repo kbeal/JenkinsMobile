@@ -8,9 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "Job.h"
+#import "Build.h"
 
 @interface KDBJobDetailViewController : UIViewController <UISplitViewControllerDelegate>
 
 @property (strong, nonatomic) Job *job;
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
 @end
