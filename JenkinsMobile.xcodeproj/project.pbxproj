@@ -164,6 +164,8 @@
 		8A3CBA3C18E7C57C00D0D160 /* notbuilt@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CBA3A18E7C57C00D0D160 /* notbuilt@2x.png */; };
 		8A5A224D18F20A3A001FA8EB /* JenkinsInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5A224C18F20A3A001FA8EB /* JenkinsInstance.m */; };
 		8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */; };
+		8A9B05B11924452D0019B336 /* KDBBuildDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B05B01924452D0019B336 /* KDBBuildDetailViewController.m */; };
+		8A9B05B4192449A40019B336 /* KDBTestResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B05B3192449A40019B336 /* KDBTestResultsViewController.m */; };
 		8AC329ED18E4F3A90002D106 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EC18E4F3A90002D106 /* Foundation.framework */; };
 		8AC329EF18E4F3A90002D106 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EE18E4F3A90002D106 /* CoreGraphics.framework */; };
 		8AC329F118E4F3A90002D106 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329F018E4F3A90002D106 /* UIKit.framework */; };
@@ -371,6 +373,10 @@
 		8A5A224C18F20A3A001FA8EB /* JenkinsInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JenkinsInstance.m; sourceTree = "<group>"; };
 		8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBViewPickerViewController.h; sourceTree = "<group>"; };
 		8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBViewPickerViewController.m; sourceTree = "<group>"; };
+		8A9B05AF1924452D0019B336 /* KDBBuildDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBBuildDetailViewController.h; sourceTree = "<group>"; };
+		8A9B05B01924452D0019B336 /* KDBBuildDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBBuildDetailViewController.m; sourceTree = "<group>"; };
+		8A9B05B2192449A40019B336 /* KDBTestResultsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBTestResultsViewController.h; sourceTree = "<group>"; };
+		8A9B05B3192449A40019B336 /* KDBTestResultsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBTestResultsViewController.m; sourceTree = "<group>"; };
 		8AC329E918E4F3A90002D106 /* JenkinsMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JenkinsMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AC329EC18E4F3A90002D106 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8AC329EE18E4F3A90002D106 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -643,15 +649,16 @@
 		8AC329F418E4F3A90002D106 /* JenkinsMobile */ = {
 			isa = PBXGroup;
 			children = (
-				8AE3B96918EF80D000E061C1 /* Models */,
 				8AC32A2D18E4FB6F0002D106 /* AFNetworking */,
 				8A7CDAD818E7779F0079F3F1 /* Images */,
 				8AC32A0F18E4F3A90002D106 /* Images.xcassets */,
 				8AC32A0618E4F3A90002D106 /* JenkinsMobile.xcdatamodeld */,
 				8AC329FD18E4F3A90002D106 /* KDBAppDelegate.h */,
 				8AC329FE18E4F3A90002D106 /* KDBAppDelegate.m */,
-				8AC32A0C18E4F3A90002D106 /* KDBJobDetailViewController.h */,
-				8AC32A0D18E4F3A90002D106 /* KDBJobDetailViewController.m */,
+				8A9B05AF1924452D0019B336 /* KDBBuildDetailViewController.h */,
+				8A9B05B01924452D0019B336 /* KDBBuildDetailViewController.m */,
+				8AD3B757191C684F00DB7439 /* KDBBuildsTableViewController.h */,
+				8AD3B758191C684F00DB7439 /* KDBBuildsTableViewController.m */,
 				8AE3B95A18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.h */,
 				8AE3B95B18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m */,
 				8A14345218E8857B000C2DB4 /* KDBJenkinsViewsScrollView.h */,
@@ -660,15 +667,18 @@
 				8A14345018E880A2000C2DB4 /* KDBJenkinsViewsViewController.m */,
 				8A14345518E8863E000C2DB4 /* KDBJenkinsViewTableView.h */,
 				8A14345618E8863E000C2DB4 /* KDBJenkinsViewTableView.m */,
+				8AC32A0C18E4F3A90002D106 /* KDBJobDetailViewController.h */,
+				8AC32A0D18E4F3A90002D106 /* KDBJobDetailViewController.m */,
 				8AC32A0918E4F3A90002D106 /* KDBMasterViewController.h */,
 				8AC32A0A18E4F3A90002D106 /* KDBMasterViewController.m */,
+				8A9B05B2192449A40019B336 /* KDBTestResultsViewController.h */,
+				8A9B05B3192449A40019B336 /* KDBTestResultsViewController.m */,
 				8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */,
 				8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */,
 				8AC32A0318E4F3A90002D106 /* Main_iPad.storyboard */,
 				8AC32A0018E4F3A90002D106 /* Main_iPhone.storyboard */,
+				8AE3B96918EF80D000E061C1 /* Models */,
 				8AC329F518E4F3A90002D106 /* Supporting Files */,
-				8AD3B757191C684F00DB7439 /* KDBBuildsTableViewController.h */,
-				8AD3B758191C684F00DB7439 /* KDBBuildsTableViewController.m */,
 			);
 			path = JenkinsMobile;
 			sourceTree = "<group>";
@@ -988,6 +998,7 @@
 			files = (
 				8AE4F000190B5496003EFE3D /* Build.m in Sources */,
 				8AC32A4618E4FB6F0002D106 /* AFURLConnectionOperation.m in Sources */,
+				8A9B05B11924452D0019B336 /* KDBBuildDetailViewController.m in Sources */,
 				8AF3843618FD7B9D00022254 /* Job.m in Sources */,
 				8A14345718E8863E000C2DB4 /* KDBJenkinsViewTableView.m in Sources */,
 				8AC32A4118E4FB6F0002D106 /* AFHTTPRequestOperation.m in Sources */,
@@ -1010,6 +1021,7 @@
 				8AC329FB18E4F3A90002D106 /* main.m in Sources */,
 				8AC32A0818E4F3A90002D106 /* JenkinsMobile.xcdatamodeld in Sources */,
 				8AC32A4318E4FB6F0002D106 /* AFHTTPSessionManager.m in Sources */,
+				8A9B05B4192449A40019B336 /* KDBTestResultsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

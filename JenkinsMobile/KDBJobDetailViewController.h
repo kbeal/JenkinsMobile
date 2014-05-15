@@ -13,5 +13,4 @@
 
 @property (strong, nonatomic) Job *job;
 
-@property (weak, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
 @end
