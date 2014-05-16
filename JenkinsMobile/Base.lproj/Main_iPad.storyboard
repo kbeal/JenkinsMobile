@@ -314,10 +314,10 @@
             </objects>
             <point key="canvasLocation" x="970" y="1456"/>
         </scene>
-        <!--View Controller - Test Results-->
+        <!--Test Results View Controller - Test Results-->
         <scene sceneID="Wb8-xS-GQ0">
             <objects>
-                <viewController id="klC-Ly-EQD" sceneMemberID="viewController">
+                <viewController id="klC-Ly-EQD" customClass="KDBTestResultsViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="WTc-dG-F3p"/>
                         <viewControllerLayoutGuide type="bottom" id="U8i-qV-E3r"/>

@@ -97,7 +97,7 @@
         build = [Build fetchBuildWithNumber:self.job.lastUnstableBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
     }
     else if ([[segue identifier] isEqualToString:@"latestTestResultSegue"]) {
-
+        build = [Build fetchBuildWithNumber:self.job.lastBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
     }
     
     if (build != nil) {
