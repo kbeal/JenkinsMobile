@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8A040A00192599D400B25073 /* KDBRelatedProjectsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A0409FF192599D400B25073 /* KDBRelatedProjectsViewController.m */; };
 		8A14345118E880A2000C2DB4 /* KDBJenkinsViewsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A14345018E880A2000C2DB4 /* KDBJenkinsViewsViewController.m */; };
 		8A14345418E8857B000C2DB4 /* KDBJenkinsViewsScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A14345318E8857B000C2DB4 /* KDBJenkinsViewsScrollView.m */; };
 		8A14345718E8863E000C2DB4 /* KDBJenkinsViewTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A14345618E8863E000C2DB4 /* KDBJenkinsViewTableView.m */; };
@@ -211,6 +212,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8A0409FE192599D400B25073 /* KDBRelatedProjectsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBRelatedProjectsViewController.h; sourceTree = "<group>"; };
+		8A0409FF192599D400B25073 /* KDBRelatedProjectsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBRelatedProjectsViewController.m; sourceTree = "<group>"; };
 		8A14344F18E880A2000C2DB4 /* KDBJenkinsViewsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJenkinsViewsViewController.h; sourceTree = "<group>"; };
 		8A14345018E880A2000C2DB4 /* KDBJenkinsViewsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJenkinsViewsViewController.m; sourceTree = "<group>"; };
 		8A14345218E8857B000C2DB4 /* KDBJenkinsViewsScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJenkinsViewsScrollView.h; sourceTree = "<group>"; };
@@ -671,6 +674,8 @@
 				8AC32A0D18E4F3A90002D106 /* KDBJobDetailViewController.m */,
 				8AC32A0918E4F3A90002D106 /* KDBMasterViewController.h */,
 				8AC32A0A18E4F3A90002D106 /* KDBMasterViewController.m */,
+				8A0409FE192599D400B25073 /* KDBRelatedProjectsViewController.h */,
+				8A0409FF192599D400B25073 /* KDBRelatedProjectsViewController.m */,
 				8A9B05B2192449A40019B336 /* KDBTestResultsViewController.h */,
 				8A9B05B3192449A40019B336 /* KDBTestResultsViewController.m */,
 				8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */,
@@ -1010,6 +1015,7 @@
 				8AC32A4818E4FB6F0002D106 /* AFURLResponseSerialization.m in Sources */,
 				8AC32A0B18E4F3A90002D106 /* KDBMasterViewController.m in Sources */,
 				8AD3B759191C684F00DB7439 /* KDBBuildsTableViewController.m in Sources */,
+				8A040A00192599D400B25073 /* KDBRelatedProjectsViewController.m in Sources */,
 				8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */,
 				8AC329FF18E4F3A90002D106 /* KDBAppDelegate.m in Sources */,
 				8A14345118E880A2000C2DB4 /* KDBJenkinsViewsViewController.m in Sources */,

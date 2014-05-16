@@ -8,6 +8,8 @@
 
 #import "KDBJobDetailViewController.h"
 #import "KDBBuildDetailViewController.h"
+#import "KDBRelatedProjectsViewController.h"
+#import "KDBTestResultsViewController.h"
 
 @interface KDBJobDetailViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -97,7 +99,15 @@
         build = [Build fetchBuildWithNumber:self.job.lastUnstableBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
     }
     else if ([[segue identifier] isEqualToString:@"latestTestResultSegue"]) {
+        KDBTestResultsViewController *testresultsdest = [segue destinationViewController];
         build = [Build fetchBuildWithNumber:self.job.lastBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
+        [testresultsdest setBuild:build];
+    } else if ([[segue identifier] isEqualToString:@"upstreamProjectsSegue"]) {
+        KDBRelatedProjectsViewController *relatedProjectsdest = [segue destinationViewController];
+        [relatedProjectsdest setRelatedProjects:self.job.upstreamProjects forType:UPSTREAM];
+    } else if ([[segue identifier] isEqualToString:@"downstreamProjectsSegue"]) {
+        KDBRelatedProjectsViewController *relatedProjectsdest = [segue destinationViewController];
+        [relatedProjectsdest setRelatedProjects:self.job.downstreamProjects forType:DOWNSTREAM];
     }
     
     if (build != nil) {
