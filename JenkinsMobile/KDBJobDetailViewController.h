@@ -9,10 +9,14 @@
 #import <UIKit/UIKit.h>
 #import "Job.h"
 #import "Build.h"
+#import "KDBBuildsTableViewController.h"
+#import "KDBTestResultsViewController.h"
 
 @interface KDBJobDetailViewController : UIViewController <UISplitViewControllerDelegate>
 
 @property (strong, nonatomic) Job *job;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (strong, nonatomic) KDBBuildsTableViewController *buildsVC;
+@property (strong, nonatomic) KDBTestResultsViewController *testResultsVC;
 
 @end

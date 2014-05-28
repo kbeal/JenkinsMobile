@@ -85,20 +85,15 @@
     Build *build = nil;
     if ([[segue identifier] isEqualToString:@"lastBuildSegue"]) {
         build = [Build fetchBuildWithNumber:self.job.lastBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
-    }
-    else if ([[segue identifier] isEqualToString:@"lastSuccessfulBuildSegue"]) {
+    } else if ([[segue identifier] isEqualToString:@"lastSuccessfulBuildSegue"]) {
         build = [Build fetchBuildWithNumber:self.job.lastSuccessfulBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
-    }
-    else if ([[segue identifier] isEqualToString:@"lastUnsuccessfulBuildSegue"]) {
+    } else if ([[segue identifier] isEqualToString:@"lastUnsuccessfulBuildSegue"]) {
         build = [Build fetchBuildWithNumber:self.job.lastUnsuccessfulBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
-    }
-    else if ([[segue identifier] isEqualToString:@"lastStableBuildSegue"]) {
+    } else if ([[segue identifier] isEqualToString:@"lastStableBuildSegue"]) {
         build = [Build fetchBuildWithNumber:self.job.lastStableBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
-    }
-    else if ([[segue identifier] isEqualToString:@"lastUnstableBuildSegue"]) {
+    } else if ([[segue identifier] isEqualToString:@"lastUnstableBuildSegue"]) {
         build = [Build fetchBuildWithNumber:self.job.lastUnstableBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
-    }
-    else if ([[segue identifier] isEqualToString:@"latestTestResultSegue"]) {
+    } else if ([[segue identifier] isEqualToString:@"latestTestResultSegue"]) {
         KDBTestResultsViewController *testresultsdest = [segue destinationViewController];
         build = [Build fetchBuildWithNumber:self.job.lastBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
         [testresultsdest setBuild:build];
@@ -108,6 +103,10 @@
     } else if ([[segue identifier] isEqualToString:@"downstreamProjectsSegue"]) {
         KDBRelatedProjectsViewController *relatedProjectsdest = [segue destinationViewController];
         [relatedProjectsdest setRelatedProjects:self.job.downstreamProjects forType:DOWNSTREAM];
+    } else if ([[segue identifier] isEqualToString:@"buildListSegue"]) {
+        self.buildsVC = [segue destinationViewController];
+        self.buildsVC.managedObjectContext = self.managedObjectContext;
+        self.buildsVC.job = self.job;
     }
     
     if (build != nil) {

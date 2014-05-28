@@ -9,6 +9,7 @@
 #import "KDBAppDelegate.h"
 
 #import "KDBMasterViewController.h"
+#import "KDBJobDetailViewController.h"
 #import "JenkinsInstance.h"
 #import "KDBJenkinsRequestHandler.h"
 
@@ -41,8 +42,11 @@
         splitViewController.delegate = (id)navigationController.topViewController;
         
         UINavigationController *masterNavigationController = splitViewController.viewControllers[0];
-        KDBMasterViewController *controller = (KDBMasterViewController *)masterNavigationController.topViewController;
-        controller.managedObjectContext = _mainMOC;
+        KDBMasterViewController *masterController = (KDBMasterViewController *)masterNavigationController.topViewController;
+        masterController.managedObjectContext = _mainMOC;
+        KDBJobDetailViewController *detailController = (KDBJobDetailViewController *)navigationController.topViewController;
+        detailController.managedObjectContext = _mainMOC;
+        
     } else {
         UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
         KDBMasterViewController *controller = (KDBMasterViewController *)navigationController.topViewController;

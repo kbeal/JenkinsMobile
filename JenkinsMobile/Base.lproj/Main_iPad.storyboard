@@ -39,12 +39,12 @@
                                     <segment title="Config"/>
                                 </segments>
                             </segmentedControl>
-                            <containerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a6E-7P-Zzl">
+                            <containerView tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a6E-7P-Zzl">
                                 <rect key="frame" x="351" y="384" width="352" height="384"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                 <connections>
-                                    <segue destination="XwJ-gt-M7l" kind="embed" id="7KJ-bh-4UP"/>
+                                    <segue destination="XwJ-gt-M7l" kind="embed" identifier="buildListSegue" id="7KJ-bh-4UP"/>
                                 </connections>
                             </containerView>
                             <containerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cOa-AE-0BV">
@@ -360,7 +360,7 @@
         <scene sceneID="4Qm-fT-Hmk">
             <objects>
                 <tableViewController id="XwJ-gt-M7l" customClass="KDBBuildsTableViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Woi-7D-x0y">
+                    <tableView key="view" clipsSubviews="YES" tag="1" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Woi-7D-x0y">
                         <rect key="frame" x="0.0" y="0.0" width="352" height="384"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>

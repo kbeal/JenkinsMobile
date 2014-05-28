@@ -7,7 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Job.h"
+#import "Build.h"
 
-@interface KDBBuildsTableViewController : UITableViewController
+@interface KDBBuildsTableViewController : UITableViewController <NSFetchedResultsControllerDelegate>
+
+@property (strong, nonatomic) Job *job;
+@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
 @end
