@@ -143,6 +143,8 @@
     // nil for section name key path means "no sections".
     // cacheName must be nil to workaround crash when managedObjectContext is a child context with NSMainQueueConcurrencyType
     NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:nil];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"jobURL = %@",self.job.url];
+    [aFetchedResultsController.fetchRequest setPredicate:predicate];
     aFetchedResultsController.delegate = self;
     self.fetchedResultsController = aFetchedResultsController;
     
