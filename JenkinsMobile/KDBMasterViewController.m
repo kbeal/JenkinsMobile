@@ -136,6 +136,22 @@
     // TODO: requery with predicate for view
 }
 
+#pragma mark - UIDataSourceModelAssociation
+- (NSString *) modelIdentifierForElementAtIndexPath:(NSIndexPath *)idx inView:(UIView *)view
+{
+    Job *job = [self.fetchedResultsController objectAtIndexPath:idx];
+    return job.objectID.URIRepresentation.absoluteString;
+}
+
+- (NSIndexPath *) indexPathForElementWithModelIdentifier:(NSString *)identifier inView:(UIView *)view
+{
+    NSURL *jobURL = [NSURL URLWithString:identifier];
+    NSManagedObjectID *jobID = [self.managedObjectContext.persistentStoreCoordinator managedObjectIDForURIRepresentation:jobURL];
+    Job *job = (Job *)[self.managedObjectContext objectWithID:jobID];
+    
+    return [_fetchedResultsController indexPathForObject:job];
+}
+
 #pragma mark - Fetched results controller
 
 - (NSFetchedResultsController *)fetchedResultsController

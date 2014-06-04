@@ -12,7 +12,7 @@
 
 @class KDBJobDetailViewController;
 
-@interface KDBMasterViewController : UITableViewController <ViewPickerDelegate, NSFetchedResultsControllerDelegate>
+@interface KDBMasterViewController : UITableViewController <ViewPickerDelegate, NSFetchedResultsControllerDelegate, UIDataSourceModelAssociation>
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
