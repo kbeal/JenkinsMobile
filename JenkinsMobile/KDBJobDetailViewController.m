@@ -27,6 +27,9 @@
         
         // Update the view.
         [self configureView];
+        
+        // Update the builds table view
+        [self.buildsVC setJob:newJob];
     }
 
     if (self.masterPopoverController != nil) {

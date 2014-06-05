@@ -24,6 +24,19 @@
     return self;
 }
 
+- (void)setJob:(Job *)newJob
+{
+    if (_job != newJob) {
+        _job = newJob;
+        
+        // Update the view.
+        NSError *error;
+        self.fetchedResultsController = nil;
+        [self.fetchedResultsController performFetch:&error];
+        [self.tableView reloadData];
+    }
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
