@@ -29,8 +29,28 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
     self.jobDetailViewController = (KDBJobDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    
+    //register an observer that fires when app enters foreground to ensure that a row is always selected
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ensureRowIsSelected) name:UIApplicationDidBecomeActiveNotification object:nil];
+}
+
+- (void)ensureRowIsSelected
+{
+    if ([[self.tableView indexPathForSelectedRow] row] == 0) {
+        NSIndexPath *zeroIndex = [NSIndexPath indexPathForRow:0 inSection:0];
+        [self.tableView selectRowAtIndexPath:zeroIndex animated:NO scrollPosition:UITableViewScrollPositionTop];
+        [self populateDetailViewForJobAtIndex:zeroIndex];
+    }
+}
+
+- (void) populateDetailViewForJobAtIndex: (NSIndexPath *) indexPath
+{
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        Job *job = [[self fetchedResultsController] objectAtIndexPath:indexPath];
+        self.jobDetailViewController.job = job;
+        self.jobDetailViewController.managedObjectContext = self.managedObjectContext;
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -74,11 +94,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        Job *job = [[self fetchedResultsController] objectAtIndexPath:indexPath];
-        self.jobDetailViewController.job = job;
-        self.jobDetailViewController.managedObjectContext = self.managedObjectContext;
-    }
+    [self populateDetailViewForJobAtIndex:indexPath];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
