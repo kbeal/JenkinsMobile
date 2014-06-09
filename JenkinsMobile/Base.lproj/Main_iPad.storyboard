@@ -365,13 +365,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" id="pC1-e8-ubI">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" id="pC1-e8-ubI">
                                 <rect key="frame" x="0.0" y="22" width="352" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="pC1-e8-ubI" id="bJo-Wn-hq9">
-                                    <rect key="frame" x="0.0" y="0.0" width="352" height="43"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="319" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="duW-wl-GQd" kind="push" identifier="showBuildDetailsSegue" id="eJL-dn-gME"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -485,7 +488,7 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="RZS-WP-I9u"/>
         <segue reference="wgI-hg-PMB"/>
+        <segue reference="eJL-dn-gME"/>
     </inferredMetricsTieBreakers>
 </document>

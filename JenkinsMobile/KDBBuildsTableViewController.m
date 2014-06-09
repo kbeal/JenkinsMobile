@@ -7,7 +7,7 @@
 //
 
 #import "KDBBuildsTableViewController.h"
-#import "KDBJobDetailViewController.h"
+#import "KDBBuildDetailViewController.h"
 
 @interface KDBBuildsTableViewController ()
 
@@ -120,16 +120,18 @@
 }
 */
 
-/*
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    if ([[segue identifier] isEqualToString:@"showBuildDetailsSegue"]) {
+        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+        Build *build = [[self fetchedResultsController] objectAtIndexPath:indexPath];
+        KDBBuildDetailViewController *dest = [segue destinationViewController];
+        [dest setBuild:build];
+    }
 }
-*/
 
 #pragma mark - Fetched results controller
 - (NSFetchedResultsController *)fetchedResultsController
