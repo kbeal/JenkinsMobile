@@ -81,7 +81,7 @@
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     Build *build = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    cell.textLabel.text = [build.number stringValue];
+    cell.textLabel.text = [NSString stringWithFormat:@"%@%@",@"# ",[build.number stringValue]];
 }
 
 /*
@@ -153,7 +153,7 @@
     [fetchRequest setFetchBatchSize:20];
     
     // Edit the sort key as appropriate.
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"number" ascending:YES];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"number" ascending:NO];
     NSArray *sortDescriptors = @[sortDescriptor];
     
     [fetchRequest setSortDescriptors:sortDescriptors];
