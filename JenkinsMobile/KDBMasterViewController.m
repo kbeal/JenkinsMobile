@@ -9,6 +9,7 @@
 #import "KDBMasterViewController.h"
 #import "KDBJobDetailViewController.h"
 #import "AFNetworking.h"
+#import "KDBMasterBuildListTableViewController.h"
 
 @interface KDBMasterViewController ()
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
@@ -103,6 +104,10 @@
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
         Job *job = [[self fetchedResultsController] objectAtIndexPath:indexPath];
         [[segue destinationViewController] setJob:job];
+    } else if ([[segue identifier] isEqualToString:@"BuildMasterTableSegue"]) {
+        KDBMasterBuildListTableViewController *buildlist = (KDBMasterBuildListTableViewController *)[segue destinationViewController];
+        buildlist.managedObjectContext = self.managedObjectContext;
+        buildlist.job = [[self fetchedResultsController] objectAtIndexPath:[self.tableView indexPathForSelectedRow]];
     }
 }
 

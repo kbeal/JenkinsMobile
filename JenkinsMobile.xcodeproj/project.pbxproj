@@ -199,6 +199,7 @@
 		8AE3B96218EF80CA00E061C1 /* View.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B96118EF80CA00E061C1 /* View.m */; };
 		8AE4F000190B5496003EFE3D /* Build.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE4EFFF190B5496003EFE3D /* Build.m */; };
 		8AF3843618FD7B9D00022254 /* Job.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AF3843518FD7B9D00022254 /* Job.m */; };
+		8AFBC11F19468806008EDC9D /* KDBMasterBuildListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -431,6 +432,8 @@
 		8AE4EFFF190B5496003EFE3D /* Build.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Build.m; sourceTree = "<group>"; };
 		8AF3843418FD7B9D00022254 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Job.h; sourceTree = "<group>"; };
 		8AF3843518FD7B9D00022254 /* Job.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Job.m; sourceTree = "<group>"; };
+		8AFBC11D19468806008EDC9D /* KDBMasterBuildListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBMasterBuildListTableViewController.h; sourceTree = "<group>"; };
+		8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBMasterBuildListTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -681,6 +684,8 @@
 				8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */,
 				8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */,
 				8AC32A0318E4F3A90002D106 /* Main_iPad.storyboard */,
+				8AFBC11D19468806008EDC9D /* KDBMasterBuildListTableViewController.h */,
+				8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */,
 				8AC32A0018E4F3A90002D106 /* Main_iPhone.storyboard */,
 				8AE3B96918EF80D000E061C1 /* Models */,
 				8AC329F518E4F3A90002D106 /* Supporting Files */,
@@ -1015,6 +1020,7 @@
 				8AC32A4818E4FB6F0002D106 /* AFURLResponseSerialization.m in Sources */,
 				8AC32A0B18E4F3A90002D106 /* KDBMasterViewController.m in Sources */,
 				8AD3B759191C684F00DB7439 /* KDBBuildsTableViewController.m in Sources */,
+				8AFBC11F19468806008EDC9D /* KDBMasterBuildListTableViewController.m in Sources */,
 				8A040A00192599D400B25073 /* KDBRelatedProjectsViewController.m in Sources */,
 				8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */,
 				8AC329FF18E4F3A90002D106 /* KDBAppDelegate.m in Sources */,

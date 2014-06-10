@@ -1,21 +1,19 @@
 //
-//  KDBBuildsTableViewController.m
+//  KDBMasterBuildListTableViewController.m
 //  JenkinsMobile
 //
-//  Created by Kyle Beal on 5/8/14.
+//  Created by Kyle on 6/9/14.
 //  Copyright (c) 2014 Kyle Beal. All rights reserved.
 //
 
-#import "KDBBuildsTableViewController.h"
-#import "KDBBuildDetailViewController.h"
-#import "KDBJobDetailViewController.h"
-#import "KDBMasterViewController.h"
+#import "KDBMasterBuildListTableViewController.h"
+#import "Build.h"
 
-@interface KDBBuildsTableViewController ()
+@interface KDBMasterBuildListTableViewController ()
 
 @end
 
-@implementation KDBBuildsTableViewController
+@implementation KDBMasterBuildListTableViewController
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -24,19 +22,6 @@
         // Custom initialization
     }
     return self;
-}
-
-- (void)setJob:(Job *)newJob
-{
-    if (_job != newJob) {
-        _job = newJob;
-        
-        // Update the view.
-        NSError *error;
-        self.fetchedResultsController = nil;
-        [self.fetchedResultsController performFetch:&error];
-        [self.tableView reloadData];
-    }
 }
 
 - (void)viewDidLoad
@@ -70,18 +55,18 @@
     return [sectionInfo numberOfObjects];
 }
 
+- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    Build *build = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    cell.textLabel.text = [build.number stringValue];
+}
+
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
     [self configureCell:cell atIndexPath:indexPath];
     return cell;
-}
-
-- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
-{
-    Build *build = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    cell.textLabel.text = [build.number stringValue];
 }
 
 /*
@@ -122,20 +107,16 @@
 }
 */
 
+/*
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([[segue identifier] isEqualToString:@"showBuildDetailsSegue"]) {
-        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        Build *build = [[self fetchedResultsController] objectAtIndexPath:indexPath];
-        KDBBuildDetailViewController *dest = [segue destinationViewController];
-        [dest setBuild:build];
-        KDBMasterViewController *master = (KDBMasterViewController *)[[self.splitViewController.viewControllers firstObject] topViewController];
-        [master performSegueWithIdentifier:@"BuildMasterTableSegue" sender:self];
-    }
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
 }
+*/
 
 #pragma mark - Fetched results controller
 - (NSFetchedResultsController *)fetchedResultsController
