@@ -362,7 +362,7 @@
         <!--Master Build List Table View Controller-->
         <scene sceneID="RsH-9O-wcV">
             <objects>
-                <tableViewController id="koc-HX-m24" customClass="KDBMasterBuildListTableViewController" sceneMemberID="viewController">
+                <tableViewController restorationIdentifier="BuildMasterRestoID" id="koc-HX-m24" customClass="KDBMasterBuildListTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="tmk-HI-fm7">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -408,13 +408,25 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" id="pC1-e8-ubI">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" textLabel="IQL-6E-VBE" style="IBUITableViewCellStyleDefault" id="pC1-e8-ubI">
                                 <rect key="frame" x="0.0" y="22" width="352" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="pC1-e8-ubI" id="bJo-Wn-hq9">
-                                    <rect key="frame" x="0.0" y="0.0" width="352" height="43"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="319" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="IQL-6E-VBE">
+                                            <rect key="frame" x="15" y="0.0" width="302" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="duW-wl-GQd" kind="push" identifier="showBuildDetailsSegue" id="8uK-PA-Rgv"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -528,7 +540,7 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="RZS-WP-I9u"/>
         <segue reference="wgI-hg-PMB"/>
+        <segue reference="8uK-PA-Rgv"/>
     </inferredMetricsTieBreakers>
 </document>
