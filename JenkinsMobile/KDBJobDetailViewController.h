@@ -18,5 +18,7 @@
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) KDBBuildsTableViewController *buildsVC;
 @property (strong, nonatomic) KDBTestResultsViewController *testResultsVC;
+@property (weak, nonatomic) IBOutlet UILabel *repositoryURLLabel;
+@property (weak, nonatomic) IBOutlet UILabel *repositoryBranchLabel;
 
 @end

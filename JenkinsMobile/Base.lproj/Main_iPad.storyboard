@@ -258,6 +258,10 @@
                     <navigationItem key="navigationItem" title="Detail" id="mOI-FS-AaM"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <splitViewDetailSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <connections>
+                        <outlet property="repositoryBranchLabel" destination="RJs-ph-EEM" id="1JB-9L-a8f"/>
+                        <outlet property="repositoryURLLabel" destination="DgY-m5-pXs" id="FyI-7V-HVP"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJe-Yq-33r" sceneMemberID="firstResponder"/>
             </objects>
@@ -541,6 +545,6 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="wgI-hg-PMB"/>
-        <segue reference="8uK-PA-Rgv"/>
+        <segue reference="kim-yj-VFI"/>
     </inferredMetricsTieBreakers>
 </document>
