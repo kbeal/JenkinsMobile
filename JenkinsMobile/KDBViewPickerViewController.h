@@ -7,15 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@protocol ViewPickerDelegate <NSObject>
-@required
--(void)selectedView:(NSURL *)newViewURL withName:(NSString *) name;
-@end
+#import "KDBViewPickerDelegate.h"
 
 @interface KDBViewPickerViewController : UITableViewController
 
 @property (nonatomic, strong) NSMutableArray *views;
-@property (nonatomic, weak) id<ViewPickerDelegate> delegate;
+@property (nonatomic, weak) id<KDBViewPickerDelegate> delegate;
 
 @end

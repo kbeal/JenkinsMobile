@@ -34,12 +34,23 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.navigationItem.title = [NSString stringWithFormat:@"%@%@",self.job.name,@"'s Builds"];
+    self.buildDetailDelegate = (id<KDBDetailViewControllerDelegate>)[[self.splitViewController.viewControllers lastObject] topViewController];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    // back button was pressed
+    if (self.isMovingFromParentViewController) {
+        // move back on master nav controller as well
+        [self.buildDetailDelegate popNavigationController];
+    }
 }
 
 #pragma mark - Table view data source
@@ -118,6 +129,12 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+#pragma mark - MasterViewControllerDelegate
+- (void)popNavigationController
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
 #pragma mark - Fetched results controller
 - (NSFetchedResultsController *)fetchedResultsController

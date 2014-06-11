@@ -434,6 +434,9 @@
 		8AF3843518FD7B9D00022254 /* Job.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Job.m; sourceTree = "<group>"; };
 		8AFBC11D19468806008EDC9D /* KDBMasterBuildListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBMasterBuildListTableViewController.h; sourceTree = "<group>"; };
 		8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBMasterBuildListTableViewController.m; sourceTree = "<group>"; };
+		8AFDD5131947CFCA008F2791 /* KDBMasterViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KDBMasterViewControllerDelegate.h; sourceTree = "<group>"; };
+		8AFDD5141947CFEA008F2791 /* KDBViewPickerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KDBViewPickerDelegate.h; sourceTree = "<group>"; };
+		8AFDD5151947D421008F2791 /* KDBDetailViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KDBDetailViewControllerDelegate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -655,6 +658,7 @@
 		8AC329F418E4F3A90002D106 /* JenkinsMobile */ = {
 			isa = PBXGroup;
 			children = (
+				8AFDD5121947CFA5008F2791 /* Protocols */,
 				8AC32A2D18E4FB6F0002D106 /* AFNetworking */,
 				8A7CDAD818E7779F0079F3F1 /* Images */,
 				8AC32A0F18E4F3A90002D106 /* Images.xcassets */,
@@ -751,6 +755,16 @@
 				8AE3B96118EF80CA00E061C1 /* View.m */,
 			);
 			name = Models;
+			sourceTree = "<group>";
+		};
+		8AFDD5121947CFA5008F2791 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				8AFDD5141947CFEA008F2791 /* KDBViewPickerDelegate.h */,
+				8AFDD5131947CFCA008F2791 /* KDBMasterViewControllerDelegate.h */,
+				8AFDD5151947D421008F2791 /* KDBDetailViewControllerDelegate.h */,
+			);
+			name = Protocols;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

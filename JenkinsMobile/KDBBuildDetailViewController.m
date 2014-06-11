@@ -44,13 +44,30 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    self.masterVCDelegate = (id<KDBMasterViewControllerDelegate>)[[[self.splitViewController viewControllers] firstObject] topViewController];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    // back button was pressed
+    if (self.isMovingFromParentViewController) {
+        // move back on master nav controller as well
+        [self.masterVCDelegate popNavigationController];
+    }
+}
+
+
+#pragma mark - DetailViewControllerDelegate
+- (void)popNavigationController
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 /*

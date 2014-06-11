@@ -8,11 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "Build.h"
+#import "KDBMasterViewControllerDelegate.h"
+#import "KDBDetailViewControllerDelegate.h"
 
-@interface KDBBuildDetailViewController : UIViewController
+@interface KDBBuildDetailViewController : UIViewController <KDBDetailViewControllerDelegate>
 
 - (void)configureView;
 
 @property (strong, nonatomic) Build *build;
+@property (nonatomic, weak) id<KDBMasterViewControllerDelegate> masterVCDelegate;
 
 @end

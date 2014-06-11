@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "Job.h"
-#import "KDBBuildDetailViewController.h"
+#import "KDBMasterViewControllerDelegate.h"
+#import "KDBDetailViewControllerDelegate.h"
 
-@interface KDBMasterBuildListTableViewController : UITableViewController <NSFetchedResultsControllerDelegate>
+@interface KDBMasterBuildListTableViewController : UITableViewController <KDBMasterViewControllerDelegate, NSFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) Job *job;
-@property (strong, nonatomic) KDBBuildDetailViewController *buildDetailVC;
+@property (weak, nonatomic) id<KDBDetailViewControllerDelegate> buildDetailDelegate;
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 

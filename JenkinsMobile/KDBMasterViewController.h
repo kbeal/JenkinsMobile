@@ -9,10 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "KDBViewPickerViewController.h"
 #import "Job.h"
+#import "KDBMasterViewControllerDelegate.h"
 
 @class KDBJobDetailViewController;
 
-@interface KDBMasterViewController : UITableViewController <ViewPickerDelegate, NSFetchedResultsControllerDelegate, UIDataSourceModelAssociation>
+@interface KDBMasterViewController : UITableViewController <KDBViewPickerDelegate, KDBMasterViewControllerDelegate, NSFetchedResultsControllerDelegate, UIDataSourceModelAssociation>
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;

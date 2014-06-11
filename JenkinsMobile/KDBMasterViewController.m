@@ -157,6 +157,12 @@
     // TODO: requery with predicate for view
 }
 
+#pragma mark - MasterViewControllerDelegate
+-(void) popNavigationController
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 #pragma mark - UIDataSourceModelAssociation
 - (NSString *) modelIdentifierForElementAtIndexPath:(NSIndexPath *)idx inView:(UIView *)view
 {
