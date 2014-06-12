@@ -57,6 +57,61 @@
     // Update the user interface for the detail item.
     if (self.job) {
         self.navigationItem.title = self.job.name;
+        [self populateBuildButtons];
+    }
+}
+
+- (void) populateBuildButtons
+{
+    [self populateLastBuild];
+    [self populateLastSuccessfulBuild];
+    [self populateLastUnSuccessfulBuild];
+    [self populateLastStableBuild];
+    [self populateLastUnStableBuild];
+}
+
+- (void) populateLastBuild
+{
+    if ([self.job.lastBuild intValue]!=0) {
+        [self.lastBuildButton setTitle:[NSString stringWithFormat:@"%@%d%@",@"Last Build (#",[self.job.lastBuild intValue],@")"] forState:UIControlStateNormal];
+    } else {
+        [self.lastBuildButton setTitle:@"Last Build" forState:UIControlStateNormal];
+    }
+}
+
+- (void) populateLastSuccessfulBuild
+{
+    if ([self.job.lastSuccessfulBuild intValue]!=0) {
+        [self.lastSuccessfulBuildButton setTitle:[NSString stringWithFormat:@"%@%d%@",@"Last Successful Build (#",[self.job.lastSuccessfulBuild intValue],@")"] forState:UIControlStateNormal];
+    } else {
+        [self.lastSuccessfulBuildButton setTitle:@"Last Successful Build" forState:UIControlStateNormal];
+    }
+}
+
+- (void) populateLastUnSuccessfulBuild
+{
+    if ([self.job.lastUnsuccessfulBuild intValue]!=0) {
+        [self.lastUnSuccessfulBuildButton setTitle:[NSString stringWithFormat:@"%@%d%@",@"Last Unsuccessful Build (#",[self.job.lastUnsuccessfulBuild intValue],@")"] forState:UIControlStateNormal];
+    } else {
+        [self.lastUnSuccessfulBuildButton setTitle:@"Last Unsuccessful Build" forState:UIControlStateNormal];
+    }
+}
+
+- (void) populateLastStableBuild
+{
+    if ([self.job.lastStableBuild intValue]!=0) {
+        [self.lastStableBuildButton setTitle:[NSString stringWithFormat:@"%@%d%@",@"Last Stable Build (#",[self.job.lastStableBuild intValue],@")"] forState:UIControlStateNormal];
+    } else {
+        [self.lastStableBuildButton setTitle:@"Last Stable Build" forState:UIControlStateNormal];
+    }
+}
+
+- (void) populateLastUnStableBuild
+{
+    if ([self.job.lastUnstableBuild intValue]!=0) {
+        [self.lastUnStableBuildButton setTitle:[NSString stringWithFormat:@"%@%d%@",@"Last Unstable Build (#",[self.job.lastUnstableBuild intValue],@")"] forState:UIControlStateNormal];
+    } else {
+        [self.lastUnStableBuildButton setTitle:@"Last Unstable Build" forState:UIControlStateNormal];
     }
 }
 

@@ -345,6 +345,11 @@
                         <outlet property="downstreamProjectButton3" destination="AIL-Gs-26R" id="nxM-qo-C63"/>
                         <outlet property="downstreamProjectButton4" destination="gIr-3p-Jfh" id="ZYX-Vt-GMU"/>
                         <outlet property="downstreamProjectButton5" destination="j78-du-YUE" id="985-AM-FQT"/>
+                        <outlet property="lastBuildButton" destination="Gzf-A2-OmT" id="puZ-LO-qEb"/>
+                        <outlet property="lastStableBuildButton" destination="YmA-Et-Ivg" id="2ja-e7-4uZ"/>
+                        <outlet property="lastSuccessfulBuildButton" destination="gLw-ti-vGQ" id="B2X-Lq-JkI"/>
+                        <outlet property="lastUnStableBuildButton" destination="6Or-Y7-WE5" id="FP1-Wt-gbE"/>
+                        <outlet property="lastUnSuccessfulBuildButton" destination="7UV-bC-fjY" id="LYO-Ui-4Pd"/>
                         <outlet property="upstreamProjectButton1" destination="9eP-Te-QnO" id="IKX-Ir-28J"/>
                         <outlet property="upstreamProjectButton2" destination="IEq-Xa-zva" id="ZKb-fQ-O92"/>
                         <outlet property="upstreamProjectButton3" destination="1Sm-rZ-B2i" id="B4x-tP-rtw"/>

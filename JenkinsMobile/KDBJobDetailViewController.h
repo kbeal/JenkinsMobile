@@ -22,11 +22,10 @@
 @property (strong, nonatomic) NSArray *upstreamProjectButtons;
 
 @property (weak, nonatomic) IBOutlet UIButton *lastBuildButton;
-@property (weak, nonatomic) IBOutlet UIButton *lastSuccessfullBuildButton;
+@property (weak, nonatomic) IBOutlet UIButton *lastSuccessfulBuildButton;
 @property (weak, nonatomic) IBOutlet UIButton *lastStableBuildButton;
-@property (weak, nonatomic) IBOutlet UIButton *lastUnSuccessfullBuildButton;
+@property (weak, nonatomic) IBOutlet UIButton *lastUnSuccessfulBuildButton;
 @property (weak, nonatomic) IBOutlet UIButton *lastUnStableBuildButton;
-@property (weak, nonatomic) IBOutlet UIButton *lastTestResultButton;
 
 @property (weak, nonatomic) IBOutlet UIButton *downstreamProjectButton1;
 @property (weak, nonatomic) IBOutlet UIButton *downstreamProjectButton2;
