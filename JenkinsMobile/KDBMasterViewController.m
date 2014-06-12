@@ -38,7 +38,7 @@
 
 - (void)ensureRowIsSelected
 {
-    if ([[self.tableView indexPathForSelectedRow] row] == 0) {
+    if ([[self.tableView indexPathForSelectedRow] row] == 0 && [self.fetchedResultsController.fetchedObjects count] > 0) {
         NSIndexPath *zeroIndex = [NSIndexPath indexPathForRow:0 inSection:0];
         [self.tableView selectRowAtIndexPath:zeroIndex animated:NO scrollPosition:UITableViewScrollPositionTop];
         [self populateDetailViewForJobAtIndex:zeroIndex];
