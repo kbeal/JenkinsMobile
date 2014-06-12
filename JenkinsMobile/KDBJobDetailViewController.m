@@ -18,8 +18,16 @@
 
 @implementation KDBJobDetailViewController
 
-#pragma mark - Managing the detail item
+- (void)awakeFromNib
+{
+    self.upstreamProjectButtons =
+        [NSArray arrayWithObjects:self.upstreamProjectButton1,self.upstreamProjectButton2,self.upstreamProjectButton3,self.upstreamProjectButton4,self.upstreamProjectButton5, nil];
+    self.downstreamProjectButtons =
+        [NSArray arrayWithObjects:self.downstreamProjectButton1,self.downstreamProjectButton2,self.downstreamProjectButton3,self.downstreamProjectButton4,self.downstreamProjectButton5, nil];
+    [super awakeFromNib];
+}
 
+#pragma mark - Managing the detail item
 - (void)setJob:(Job *)newJob
 {
     if (_job != newJob) {
