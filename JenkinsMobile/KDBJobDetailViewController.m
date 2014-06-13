@@ -101,7 +101,7 @@
             projectName = [project objectForKey:@"name"];
             
             if ([relatedProjects count]>5 && i==4) {
-                projectName = @"More";
+                projectName = [NSString stringWithFormat:@"%@%d%@",@"+",[relatedProjects count]-4,@" More"];
             }
             
             [buttonToUpdate setTitle:projectName forState:UIControlStateNormal];
