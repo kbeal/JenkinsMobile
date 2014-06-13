@@ -104,6 +104,8 @@
     self.lastUnstableBuild = [NULL_TO_NIL([values objectForKey:@"lastUnstableBuild"]) objectForKey:@"number"];
     self.lastUnsuccessfulBuild = [NULL_TO_NIL([values objectForKey:@"lastUnsuccessfulBuild"]) objectForKey:@"number"];
     self.nextBuildNumber = NULL_TO_NIL([values objectForKey:@"nextBuildNumber"]);
+    self.upstreamProjects = NULL_TO_NIL([values objectForKey:@"upstreamProjects"]);
+    self.downstreamProjects = NULL_TO_NIL([values objectForKey:@"downstreamProjects"]);
 }
 
 @end

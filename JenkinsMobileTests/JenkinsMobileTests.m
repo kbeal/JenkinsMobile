@@ -210,7 +210,7 @@
     XCTAssertEqualObjects(job.keepDependencies, [NSNumber numberWithBool:NO], @"keep dependencies should be false, is actually %@", [job.keepDependencies stringValue]);
     XCTAssertNotNil(job.rel_Job_JenkinsInstance, @"jenkins instance is null");
     XCTAssert([job.upstreamProjects count]==1, @"wrong number of upstream projects");
-    XCTAssert([job.upstreamProjects count]==2, @"wrong number of downstream projects");
+    XCTAssert([job.downstreamProjects count]==2, @"wrong number of downstream projects");
     XCTAssert([[[job.upstreamProjects objectAtIndex:0] objectForKey:@"color"] isEqualToString:@"blue"], @"upstream project has wrong color");
     XCTAssert([[[job.downstreamProjects objectAtIndex:0] objectForKey:@"color"] isEqualToString:@"green"], @"downstream project1 has wrong color");
     XCTAssert([[[job.downstreamProjects objectAtIndex:1] objectForKey:@"url"] isEqualToString:@"http://www.yahoo.com"], @"downstream project2 has wrong url");
