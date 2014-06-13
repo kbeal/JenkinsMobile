@@ -18,13 +18,15 @@
 
 @implementation KDBJobDetailViewController
 
-- (void)awakeFromNib
+- (void)viewDidLoad
 {
-    self.upstreamProjectButtons =
-        [NSArray arrayWithObjects:self.upstreamProjectButton1,self.upstreamProjectButton2,self.upstreamProjectButton3,self.upstreamProjectButton4,self.upstreamProjectButton5, nil];
-    self.downstreamProjectButtons =
-        [NSArray arrayWithObjects:self.downstreamProjectButton1,self.downstreamProjectButton2,self.downstreamProjectButton3,self.downstreamProjectButton4,self.downstreamProjectButton5, nil];
-    [super awakeFromNib];
+    [super viewDidLoad];
+        self.upstreamProjectButtons =
+    [NSArray arrayWithObjects:self.upstreamProjectButton1,self.upstreamProjectButton2,self.upstreamProjectButton3,self.upstreamProjectButton4,self.upstreamProjectButton5, nil];
+        self.downstreamProjectButtons =
+    [NSArray arrayWithObjects:self.downstreamProjectButton1,self.downstreamProjectButton2,self.downstreamProjectButton3,self.downstreamProjectButton4,self.downstreamProjectButton5, nil];
+	// Do any additional setup after loading the view, typically from a nib.
+    [self configureView];
 }
 
 #pragma mark - Managing the detail item
@@ -58,6 +60,54 @@
     if (self.job) {
         self.navigationItem.title = self.job.name;
         [self populateBuildButtons];
+        [self populateRelatedProjects];
+    }
+}
+
+- (void) populateRelatedProjects
+{
+    [self clearRelatedProjectButtons];
+    [self populateRelatedProjectsForDownstreamProjects:YES];
+    [self populateRelatedProjectsForDownstreamProjects:NO];
+}
+
+- (void) clearRelatedProjectButtons
+{
+    [self.upstreamProjectButton1 setTitle:@"" forState:UIControlStateNormal];
+    [self.upstreamProjectButton2 setTitle:@"" forState:UIControlStateNormal];
+    [self.upstreamProjectButton3 setTitle:@"" forState:UIControlStateNormal];
+    [self.upstreamProjectButton4 setTitle:@"" forState:UIControlStateNormal];
+    [self.upstreamProjectButton5 setTitle:@"" forState:UIControlStateNormal];
+
+    [self.downstreamProjectButton1 setTitle:@"" forState:UIControlStateNormal];
+    [self.downstreamProjectButton2 setTitle:@"" forState:UIControlStateNormal];
+    [self.downstreamProjectButton3 setTitle:@"" forState:UIControlStateNormal];
+    [self.downstreamProjectButton4 setTitle:@"" forState:UIControlStateNormal];
+    [self.downstreamProjectButton5 setTitle:@"" forState:UIControlStateNormal];
+}
+
+- (void) populateRelatedProjectsForDownstreamProjects:(BOOL) downstreamProject
+{
+    UIButton *buttonToUpdate;
+    NSString *projectName;
+    NSDictionary *project;
+    NSArray *buttonArray = downstreamProject ? self.downstreamProjectButtons : self.upstreamProjectButtons;
+    NSArray *relatedProjects = downstreamProject ? self.job.downstreamProjects : self.job.upstreamProjects;
+    
+    for (int i=0; i<[relatedProjects count]; i++) {
+        if (i<5) {
+            buttonToUpdate = [buttonArray objectAtIndex:i];
+            project = (NSDictionary *)[relatedProjects objectAtIndex:i];
+            projectName = [project objectForKey:@"name"];
+            
+            if ([relatedProjects count]>5 && i==4) {
+                projectName = @"More";
+            }
+            
+            [buttonToUpdate setTitle:projectName forState:UIControlStateNormal];
+        } else {
+            break;
+        }
     }
 }
 
@@ -113,13 +163,6 @@
     } else {
         [self.lastUnStableBuildButton setTitle:@"Last Unstable Build" forState:UIControlStateNormal];
     }
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-    [self configureView];
 }
 
 - (void)didReceiveMemoryWarning
