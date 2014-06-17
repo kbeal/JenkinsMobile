@@ -61,7 +61,16 @@
         self.navigationItem.title = self.job.name;
         [self populateBuildButtons];
         [self populateRelatedProjects];
+        [self updateJobStatusIcons];
     }
+}
+
+- (void) updateJobStatusIcons
+{
+    NSString *statusIconFileName = [NSString stringWithFormat:@"%@%@", self.job.color, @".png"];
+    //NSString *healthIconFileName = [(NSDictionary *)((NSArray *)self.job.healthReport)[0] objectForKey:@"iconURL"];
+    self.statusIcon.image = [UIImage imageNamed:statusIconFileName];
+    //self.healthIcon.image = [UIImage imageNamed:healthIconFileName];
 }
 
 - (void) populateRelatedProjects
