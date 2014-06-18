@@ -67,7 +67,7 @@
 
 - (void) updateJobStatusIcons
 {
-    NSString *statusIconFileName = [NSString stringWithFormat:@"%@%@", self.job.color, @".png"];
+    NSString *statusIconFileName = [NSString stringWithFormat:@"%@", self.job.color];
     //NSString *healthIconFileName = [(NSDictionary *)((NSArray *)self.job.healthReport)[0] objectForKey:@"iconURL"];
     self.statusIcon.image = [UIImage imageNamed:statusIconFileName];
     //self.healthIcon.image = [UIImage imageNamed:healthIconFileName];

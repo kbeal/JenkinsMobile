@@ -32,8 +32,8 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <userGuides>
                             <userLayoutGuide location="384" affinity="minY"/>
-                            <userLayoutGuide location="247" affinity="minY"/>
-                            <userLayoutGuide location="351" affinity="minX"/>
+                            <userLayoutGuide location="248" affinity="minY"/>
+                            <userLayoutGuide location="354" affinity="minX"/>
                             <userLayoutGuide location="384" affinity="minY"/>
                         </userGuides>
                         <subviews>
@@ -61,15 +61,11 @@
                                     <segue destination="Fjk-HL-gn9" kind="embed" id="O6X-eH-hqx"/>
                                 </connections>
                             </containerView>
-                            <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="blue.png" translatesAutoresizingMaskIntoConstraints="NO" id="hac-W8-jZa">
-                                <rect key="frame" x="20" y="70" width="80" height="80"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="health-80plus-80.png" translatesAutoresizingMaskIntoConstraints="NO" id="hQt-g9-0nE">
                                 <rect key="frame" x="603" y="70" width="80" height="80"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gzf-A2-OmT">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gzf-A2-OmT">
                                 <rect key="frame" x="20" y="158" width="69" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Last Build">
@@ -79,7 +75,7 @@
                                     <segue destination="duW-wl-GQd" kind="push" identifier="lastBuildSegue" id="RZS-WP-I9u"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gLw-ti-vGQ">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gLw-ti-vGQ">
                                 <rect key="frame" x="20" y="188" width="203" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Last Successful Build (#1069)">
@@ -89,8 +85,8 @@
                                     <segue destination="duW-wl-GQd" kind="push" identifier="lastSuccessfulBuildSegue" id="kim-yj-VFI"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YmA-Et-Ivg">
-                                <rect key="frame" x="20" y="218" width="117" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YmA-Et-Ivg">
+                                <rect key="frame" x="20" y="216" width="117" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Last Stable Build">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -99,7 +95,7 @@
                                     <segue destination="duW-wl-GQd" kind="push" identifier="lastStableBuildSegue" id="axK-Tz-i9I"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Iwv-7k-Vbc">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Iwv-7k-Vbc">
                                 <rect key="frame" x="20" y="308" width="122" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Latest Test Result">
@@ -109,7 +105,7 @@
                                     <segue destination="klC-Ly-EQD" kind="push" identifier="latestTestResultSegue" id="UMd-Mt-7Hg"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7UV-bC-fjY">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7UV-bC-fjY">
                                 <rect key="frame" x="20" y="248" width="220" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Last Unsuccessful Build (#1069)">
@@ -119,7 +115,7 @@
                                     <segue destination="duW-wl-GQd" kind="push" identifier="lastUnsuccessfulBuildSegue" id="WCa-B8-dIP"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Or-Y7-WE5">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Or-Y7-WE5">
                                 <rect key="frame" x="20" y="278" width="134" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Last Unstable Build">
@@ -269,6 +265,10 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="SED-UL-mDM">
+                                <rect key="frame" x="20" y="70" width="80" height="80"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
@@ -280,49 +280,51 @@
                             <constraint firstItem="gIr-3p-Jfh" firstAttribute="top" secondItem="AIL-Gs-26R" secondAttribute="bottom" id="6ex-1A-I0D"/>
                             <constraint firstItem="vdH-m1-chz" firstAttribute="top" secondItem="Z1t-ww-4wM" secondAttribute="bottom" constant="1" id="8bl-AW-Zl3"/>
                             <constraint firstItem="NoH-LS-AqH" firstAttribute="top" secondItem="g6s-Ew-9aE" secondAttribute="bottom" constant="32" id="9qb-nf-gXF"/>
-                            <constraint firstItem="6Or-Y7-WE5" firstAttribute="leading" secondItem="YmA-Et-Ivg" secondAttribute="leading" id="Aes-hx-nP9"/>
+                            <constraint firstItem="SED-UL-mDM" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leading" constant="20" id="A3n-GV-Q5d"/>
                             <constraint firstItem="1Sm-rZ-B2i" firstAttribute="leading" secondItem="IEq-Xa-zva" secondAttribute="leading" id="CAa-ay-ICg"/>
                             <constraint firstItem="9eP-Te-QnO" firstAttribute="top" secondItem="5dR-8k-2Z9" secondAttribute="bottom" id="DhR-WF-gUK"/>
                             <constraint firstItem="Yeb-SP-0uW" firstAttribute="top" secondItem="a6E-7P-Zzl" secondAttribute="bottom" id="EO6-d1-p6m"/>
+                            <constraint firstItem="SED-UL-mDM" firstAttribute="top" secondItem="g6s-Ew-9aE" secondAttribute="bottom" constant="6" id="ERC-E6-CEQ"/>
+                            <constraint firstItem="gLw-ti-vGQ" firstAttribute="leading" secondItem="7UV-bC-fjY" secondAttribute="leading" id="EcV-w1-WRi"/>
                             <constraint firstItem="j78-du-YUE" firstAttribute="leading" secondItem="8TK-4g-AW1" secondAttribute="leading" id="Eyf-uh-ibd"/>
-                            <constraint firstItem="Gzf-A2-OmT" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leading" constant="20" id="FhT-NC-mlH"/>
+                            <constraint firstItem="Iwv-7k-Vbc" firstAttribute="top" secondItem="6Or-Y7-WE5" secondAttribute="bottom" id="Ezz-LQ-Asv"/>
                             <constraint firstItem="RCP-s5-ZYE" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leading" constant="290" id="Gcb-Ia-GMY"/>
                             <constraint firstItem="KIu-hM-Gwf" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leading" constant="260" id="Gly-it-jif"/>
+                            <constraint firstItem="gLw-ti-vGQ" firstAttribute="leading" secondItem="6Or-Y7-WE5" secondAttribute="leading" id="GqM-Fs-waI"/>
                             <constraint firstItem="9eP-Te-QnO" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leading" constant="488" id="HOV-rM-g35"/>
-                            <constraint firstItem="hac-W8-jZa" firstAttribute="top" secondItem="g6s-Ew-9aE" secondAttribute="bottom" constant="6" id="IAG-B3-c7z"/>
+                            <constraint firstItem="6Or-Y7-WE5" firstAttribute="top" secondItem="7UV-bC-fjY" secondAttribute="bottom" id="HOW-zP-Qq1"/>
                             <constraint firstItem="cOa-AE-0BV" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leading" id="J61-8U-Tbf"/>
                             <constraint firstItem="hQt-g9-0nE" firstAttribute="leading" secondItem="NoH-LS-AqH" secondAttribute="trailing" constant="112" id="JFI-mO-SJB"/>
+                            <constraint firstItem="YmA-Et-Ivg" firstAttribute="top" secondItem="gLw-ti-vGQ" secondAttribute="bottom" constant="-2" id="JFV-2A-cdN"/>
                             <constraint firstItem="j78-du-YUE" firstAttribute="leading" secondItem="gIr-3p-Jfh" secondAttribute="leading" id="JwX-wO-6sm"/>
-                            <constraint firstItem="6Or-Y7-WE5" firstAttribute="leading" secondItem="Gzf-A2-OmT" secondAttribute="leading" id="LZf-T6-gvR"/>
                             <constraint firstAttribute="trailing" secondItem="vdH-m1-chz" secondAttribute="trailing" id="LhF-Vk-N7F"/>
-                            <constraint firstItem="Gzf-A2-OmT" firstAttribute="top" secondItem="hac-W8-jZa" secondAttribute="bottom" constant="8" id="Nxz-PS-MT3"/>
                             <constraint firstAttribute="trailing" secondItem="a6E-7P-Zzl" secondAttribute="trailing" id="OKt-Mu-NLM"/>
                             <constraint firstItem="vdH-m1-chz" firstAttribute="top" secondItem="bZa-VU-Js4" secondAttribute="bottom" constant="1" id="PeL-rE-SW9"/>
+                            <constraint firstItem="Gzf-A2-OmT" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leading" constant="20" id="RO8-3A-tmU"/>
                             <constraint firstItem="j78-du-YUE" firstAttribute="top" secondItem="gIr-3p-Jfh" secondAttribute="bottom" id="RZK-Vu-kxz"/>
                             <constraint firstItem="5dR-8k-2Z9" firstAttribute="top" secondItem="KIu-hM-Gwf" secondAttribute="top" id="S5n-ZJ-r1j"/>
-                            <constraint firstItem="hac-W8-jZa" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leading" constant="20" id="V9t-yC-Cni"/>
-                            <constraint firstItem="6Or-Y7-WE5" firstAttribute="leading" secondItem="Iwv-7k-Vbc" secondAttribute="leading" id="VoA-QJ-Afw"/>
+                            <constraint firstItem="gLw-ti-vGQ" firstAttribute="leading" secondItem="YmA-Et-Ivg" secondAttribute="leading" id="Tr3-BV-4Jo"/>
+                            <constraint firstItem="gLw-ti-vGQ" firstAttribute="leading" secondItem="Iwv-7k-Vbc" secondAttribute="leading" id="VOv-7a-udr"/>
                             <constraint firstItem="Z1t-ww-4wM" firstAttribute="top" secondItem="NoH-LS-AqH" secondAttribute="bottom" constant="238" id="X6J-hF-26a"/>
                             <constraint firstItem="vdH-m1-chz" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leading" id="XIM-KS-Yfi"/>
-                            <constraint firstItem="Iwv-7k-Vbc" firstAttribute="top" secondItem="6Or-Y7-WE5" secondAttribute="bottom" id="YA0-hW-f60"/>
                             <constraint firstAttribute="trailing" secondItem="hQt-g9-0nE" secondAttribute="trailing" constant="20" id="Z0O-Qu-FuG"/>
                             <constraint firstItem="hQt-g9-0nE" firstAttribute="top" secondItem="g6s-Ew-9aE" secondAttribute="bottom" constant="6" id="ZQB-E7-tBI"/>
                             <constraint firstItem="1Sm-rZ-B2i" firstAttribute="leading" secondItem="9eP-Te-QnO" secondAttribute="leading" id="a6a-fX-SSW"/>
                             <constraint firstItem="1Sm-rZ-B2i" firstAttribute="top" secondItem="IEq-Xa-zva" secondAttribute="bottom" constant="2" id="aqu-VW-Nkp"/>
-                            <constraint firstItem="YmA-Et-Ivg" firstAttribute="top" secondItem="gLw-ti-vGQ" secondAttribute="bottom" id="bZw-9Z-Ym6"/>
+                            <constraint firstItem="gLw-ti-vGQ" firstAttribute="top" secondItem="Gzf-A2-OmT" secondAttribute="bottom" id="aux-Cw-EQF"/>
                             <constraint firstItem="cOa-AE-0BV" firstAttribute="centerX" secondItem="Z1t-ww-4wM" secondAttribute="centerX" id="ckj-Tw-WGp"/>
                             <constraint firstItem="5dR-8k-2Z9" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leading" constant="458" id="co0-Bj-9cu"/>
                             <constraint firstItem="1Sm-rZ-B2i" firstAttribute="leading" secondItem="8uF-hg-jgF" secondAttribute="leading" id="dW6-0V-7uE"/>
                             <constraint firstItem="AIL-Gs-26R" firstAttribute="top" secondItem="8TK-4g-AW1" secondAttribute="bottom" constant="2" id="dY3-3M-PIv"/>
-                            <constraint firstItem="6Or-Y7-WE5" firstAttribute="leading" secondItem="7UV-bC-fjY" secondAttribute="leading" id="eKd-Tt-mN1"/>
-                            <constraint firstItem="NoH-LS-AqH" firstAttribute="leading" secondItem="hac-W8-jZa" secondAttribute="trailing" constant="111" id="fH7-mf-77E"/>
-                            <constraint firstItem="gLw-ti-vGQ" firstAttribute="top" secondItem="Gzf-A2-OmT" secondAttribute="bottom" id="gmJ-Xt-liz"/>
+                            <constraint firstItem="Gzf-A2-OmT" firstAttribute="top" secondItem="SED-UL-mDM" secondAttribute="bottom" constant="8" id="h7r-JV-bUa"/>
                             <constraint firstItem="Yeb-SP-0uW" firstAttribute="top" secondItem="cOa-AE-0BV" secondAttribute="bottom" id="hyp-9c-Kii"/>
                             <constraint firstItem="IEq-Xa-zva" firstAttribute="top" secondItem="9eP-Te-QnO" secondAttribute="bottom" constant="-2" id="jZY-FJ-Sgg"/>
+                            <constraint firstItem="7UV-bC-fjY" firstAttribute="top" secondItem="YmA-Et-Ivg" secondAttribute="bottom" constant="2" id="kCZ-Sw-sXs"/>
+                            <constraint firstItem="Yeb-SP-0uW" firstAttribute="top" secondItem="SED-UL-mDM" secondAttribute="bottom" constant="618" id="pBk-ax-8B2"/>
                             <constraint firstItem="a6E-7P-Zzl" firstAttribute="leading" secondItem="cOa-AE-0BV" secondAttribute="trailing" constant="-1" id="pd3-vb-GCZ"/>
-                            <constraint firstItem="6Or-Y7-WE5" firstAttribute="leading" secondItem="gLw-ti-vGQ" secondAttribute="leading" id="qLk-kq-tIr"/>
                             <constraint firstItem="NoH-LS-AqH" firstAttribute="top" secondItem="g6s-Ew-9aE" secondAttribute="bottom" constant="32" id="qVY-4w-RSQ"/>
-                            <constraint firstItem="7UV-bC-fjY" firstAttribute="top" secondItem="YmA-Et-Ivg" secondAttribute="bottom" id="szt-Ap-Y6X"/>
+                            <constraint firstAttribute="trailing" secondItem="SED-UL-mDM" secondAttribute="trailing" constant="603" id="t5b-ht-sAX"/>
+                            <constraint firstItem="gLw-ti-vGQ" firstAttribute="leading" secondItem="Gzf-A2-OmT" secondAttribute="leading" id="tBf-e5-cfe"/>
                             <constraint firstAttribute="centerX" secondItem="NoH-LS-AqH" secondAttribute="centerX" id="tFC-H1-NC0"/>
                             <constraint firstItem="8TK-4g-AW1" firstAttribute="top" secondItem="RCP-s5-ZYE" secondAttribute="bottom" constant="-2" id="vu3-cB-eQa"/>
                             <constraint firstItem="1Sm-rZ-B2i" firstAttribute="leading" secondItem="qCo-VB-ui5" secondAttribute="leading" id="wxe-3C-d8j"/>
@@ -331,7 +333,6 @@
                             <constraint firstItem="j78-du-YUE" firstAttribute="leading" secondItem="AIL-Gs-26R" secondAttribute="leading" id="yGs-r8-eeP"/>
                             <constraint firstItem="8uF-hg-jgF" firstAttribute="top" secondItem="1Sm-rZ-B2i" secondAttribute="bottom" id="yZr-WC-DUi"/>
                             <constraint firstItem="a6E-7P-Zzl" firstAttribute="centerX" secondItem="bZa-VU-Js4" secondAttribute="centerX" id="z9E-3Z-P21"/>
-                            <constraint firstItem="6Or-Y7-WE5" firstAttribute="top" secondItem="7UV-bC-fjY" secondAttribute="bottom" id="zrm-6n-AaH"/>
                         </constraints>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
@@ -351,7 +352,7 @@
                         <outlet property="lastSuccessfulBuildButton" destination="gLw-ti-vGQ" id="B2X-Lq-JkI"/>
                         <outlet property="lastUnStableBuildButton" destination="6Or-Y7-WE5" id="FP1-Wt-gbE"/>
                         <outlet property="lastUnSuccessfulBuildButton" destination="7UV-bC-fjY" id="LYO-Ui-4Pd"/>
-                        <outlet property="statusIcon" destination="hac-W8-jZa" id="hIW-xt-2HT"/>
+                        <outlet property="statusIcon" destination="SED-UL-mDM" id="MdM-aW-Ks5"/>
                         <outlet property="upstreamProjectButton1" destination="9eP-Te-QnO" id="IKX-Ir-28J"/>
                         <outlet property="upstreamProjectButton2" destination="IEq-Xa-zva" id="ZKb-fQ-O92"/>
                         <outlet property="upstreamProjectButton3" destination="1Sm-rZ-B2i" id="B4x-tP-rtw"/>
@@ -628,7 +629,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="blue.png" width="40" height="40"/>
         <image name="health-80plus-80.png" width="80" height="80"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
