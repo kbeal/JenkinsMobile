@@ -10,6 +10,7 @@
 #import "KDBBuildDetailViewController.h"
 #import "KDBRelatedProjectsViewController.h"
 #import "KDBTestResultsViewController.h"
+#import "UIImage+animatedGIF.h"
 
 @interface KDBJobDetailViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -67,9 +68,14 @@
 
 - (void) updateJobStatusIcons
 {
-    NSString *statusIconFileName = [NSString stringWithFormat:@"%@", self.job.color];
+    //NSString *statusIconFileName = [NSString stringWithFormat:@"%@", self.job.color];
+    
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"blue@2x_anime" withExtension:@"gif"];
+    
+    self.statusIcon.image = [UIImage animatedImageWithAnimatedGIFURL:url];
+    
     //NSString *healthIconFileName = [(NSDictionary *)((NSArray *)self.job.healthReport)[0] objectForKey:@"iconURL"];
-    self.statusIcon.image = [UIImage imageNamed:statusIconFileName];
+    //self.statusIcon.image = [UIImage imageNamed:statusIconFileName];
     //self.healthIcon.image = [UIImage imageNamed:healthIconFileName];
 }
 

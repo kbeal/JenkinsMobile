@@ -28,6 +28,7 @@
 		8A3914C7195F5665005A27DD /* red@2x_anime.gif in Resources */ = {isa = PBXBuildFile; fileRef = 8A3914BD195F5664005A27DD /* red@2x_anime.gif */; };
 		8A3914C8195F5665005A27DD /* yellow_anime.gif in Resources */ = {isa = PBXBuildFile; fileRef = 8A3914BE195F5664005A27DD /* yellow_anime.gif */; };
 		8A3914C9195F5665005A27DD /* yellow@2x_anime.gif in Resources */ = {isa = PBXBuildFile; fileRef = 8A3914BF195F5665005A27DD /* yellow@2x_anime.gif */; };
+		8A3914CD195F57B0005A27DD /* UIImage+animatedGIF.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3914CC195F57B0005A27DD /* UIImage+animatedGIF.m */; };
 		8A3CB9A918E7C39900D0D160 /* yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CB91918E7C39800D0D160 /* yellow.png */; };
 		8A3CB9AA18E7C39900D0D160 /* yellow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CB91A18E7C39800D0D160 /* yellow@2x.png */; };
 		8A3CB9AB18E7C39900D0D160 /* warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CB91B18E7C39800D0D160 /* warning.png */; };
@@ -247,6 +248,8 @@
 		8A3914BD195F5664005A27DD /* red@2x_anime.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "red@2x_anime.gif"; sourceTree = "<group>"; };
 		8A3914BE195F5664005A27DD /* yellow_anime.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = yellow_anime.gif; sourceTree = "<group>"; };
 		8A3914BF195F5665005A27DD /* yellow@2x_anime.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "yellow@2x_anime.gif"; sourceTree = "<group>"; };
+		8A3914CB195F57B0005A27DD /* UIImage+animatedGIF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+animatedGIF.h"; sourceTree = "<group>"; };
+		8A3914CC195F57B0005A27DD /* UIImage+animatedGIF.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+animatedGIF.m"; sourceTree = "<group>"; };
 		8A3CB91918E7C39800D0D160 /* yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = yellow.png; sourceTree = "<group>"; };
 		8A3CB91A18E7C39800D0D160 /* yellow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yellow@2x.png"; sourceTree = "<group>"; };
 		8A3CB91B18E7C39800D0D160 /* warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = warning.png; sourceTree = "<group>"; };
@@ -483,6 +486,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8A3914CA195F57A4005A27DD /* AnimatedUIImage */ = {
+			isa = PBXGroup;
+			children = (
+				8A3914CB195F57B0005A27DD /* UIImage+animatedGIF.h */,
+				8A3914CC195F57B0005A27DD /* UIImage+animatedGIF.m */,
+			);
+			name = AnimatedUIImage;
+			sourceTree = "<group>";
+		};
 		8A7CDAD818E7779F0079F3F1 /* Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -685,6 +697,7 @@
 		8AC329F418E4F3A90002D106 /* JenkinsMobile */ = {
 			isa = PBXGroup;
 			children = (
+				8A3914CA195F57A4005A27DD /* AnimatedUIImage */,
 				8AFDD5121947CFA5008F2791 /* Protocols */,
 				8AC32A2D18E4FB6F0002D106 /* AFNetworking */,
 				8A7CDAD818E7779F0079F3F1 /* Images */,
@@ -1067,6 +1080,7 @@
 				8AC32A4918E4FB6F0002D106 /* AFURLSessionManager.m in Sources */,
 				8AC32A4718E4FB6F0002D106 /* AFURLRequestSerialization.m in Sources */,
 				8AC32A0E18E4F3A90002D106 /* KDBJobDetailViewController.m in Sources */,
+				8A3914CD195F57B0005A27DD /* UIImage+animatedGIF.m in Sources */,
 				8AC32A4818E4FB6F0002D106 /* AFURLResponseSerialization.m in Sources */,
 				8AC32A0B18E4F3A90002D106 /* KDBMasterViewController.m in Sources */,
 				8AD3B759191C684F00DB7439 /* KDBBuildsTableViewController.m in Sources */,
