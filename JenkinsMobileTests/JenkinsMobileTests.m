@@ -510,6 +510,27 @@
     XCTAssert(new_cnt==0, @"wrong build count after delete");
 }
 
+- (void) testJobColorIsAnimated
+{
+    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"color",nil];
+    NSArray *values = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue",nil];
+    NSArray *values2 = [NSArray arrayWithObjects:@"Job2",@"www.google.com",@"blue_anime",nil];
+    NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    NSDictionary *jobvalues2 = [NSDictionary dictionaryWithObjects:values2 forKeys:keys];
+    
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
+    NSDictionary *viewvals = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
+    
+    
+    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
+    Job *job1 = [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
+    Job *job2 = [Job createJobWithValues:jobvalues2 inManagedObjectContext:_context forView:view];
+    
+    XCTAssertFalse([job1 colorIsAnimated], @"job1 returned wrong value for colorIsAnimated");
+    XCTAssertTrue([job2 colorIsAnimated], @"job2 returned wrong value for colorIsAnimated");
+}
+
 - (void) deleteAllRecordsForEntity: (NSString *) entityName
 {
     NSFetchRequest * allRecords = [[NSFetchRequest alloc] init];

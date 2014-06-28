@@ -83,6 +83,9 @@
     return job;
 }
 
+// returns TRUE if the job's current color is animated
+- (BOOL)colorIsAnimated { return [self.color rangeOfString:@"anime"].length > 0 ? true : false; }
+
 - (void)setValues:(NSDictionary *) values
 {
     self.url = NULL_TO_NIL([values objectForKey:@"url"]);

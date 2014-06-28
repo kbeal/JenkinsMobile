@@ -49,7 +49,7 @@
 - (void)removeRel_Job_ViewObject:(View *)value;
 - (void)addRel_Job_View:(NSSet *)values;
 - (void)removeRel_Job_View:(NSSet *)values;
-
+- (BOOL)colorIsAnimated;
 - (void)setValues:(NSDictionary *) values byCaller:(NSString *) caller;
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view;
