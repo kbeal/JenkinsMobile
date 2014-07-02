@@ -11,6 +11,7 @@
 #import "KDBRelatedProjectsViewController.h"
 #import "KDBTestResultsViewController.h"
 #import "UIImage+animatedGIF.h"
+#import "KDBBallScene.h"
 
 @interface KDBJobDetailViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -68,15 +69,13 @@
 
 - (void) updateJobStatusIcons
 {
-    //NSString *statusIconFileName = [NSString stringWithFormat:@"%@", self.job.color];
+    // Create and configure the scene.
+    NSString *color = [self.job colorIsAnimated] ? [self.job.color componentsSeparatedByString:@"_"][0] : self.job.color;
+    KDBBallScene *scene = [[KDBBallScene alloc] initWithSize:self.statusBallContainerView.bounds.size andColor:color withAnimation:[self.job colorIsAnimated]];
+    scene.scaleMode = SKSceneScaleModeAspectFill;
     
-    NSURL *url = [[NSBundle mainBundle] URLForResource:@"blue@2x_anime" withExtension:@"gif"];
-    
-    self.statusIcon.image = [UIImage animatedImageWithAnimatedGIFURL:url];
-    
-    //NSString *healthIconFileName = [(NSDictionary *)((NSArray *)self.job.healthReport)[0] objectForKey:@"iconURL"];
-    //self.statusIcon.image = [UIImage imageNamed:statusIconFileName];
-    //self.healthIcon.image = [UIImage imageNamed:healthIconFileName];
+    // Present the scene.
+    [self.statusBallContainerView presentScene:scene];
 }
 
 - (void) populateRelatedProjects

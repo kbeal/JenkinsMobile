@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <SpriteKit/SpriteKit.h>
 #import "Job.h"
 #import "Build.h"
 #import "KDBBuildsTableViewController.h"
@@ -41,5 +42,7 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *statusIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *healthIcon;
+
+@property (weak, nonatomic) IBOutlet SKView *statusBallContainerView;
 
 @end
