@@ -50,7 +50,7 @@
 - (void)addRel_Job_View:(NSSet *)values;
 - (void)removeRel_Job_View:(NSSet *)values;
 - (BOOL)colorIsAnimated;
-- (void)setValues:(NSDictionary *) values byCaller:(NSString *) caller;
+- (void)setValues:(NSDictionary *) values;
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view;
 + (Job *)fetchJobAtURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context;
