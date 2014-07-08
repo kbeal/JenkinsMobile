@@ -109,6 +109,7 @@
     self.nextBuildNumber = NULL_TO_NIL([values objectForKey:@"nextBuildNumber"]);
     self.upstreamProjects = NULL_TO_NIL([values objectForKey:@"upstreamProjects"]);
     self.downstreamProjects = NULL_TO_NIL([values objectForKey:@"downstreamProjects"]);
+    self.healthReport = NULL_TO_NIL([values objectForKey:@"healthReport"]);
 }
 
 @end
