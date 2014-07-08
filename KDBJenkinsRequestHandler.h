@@ -28,6 +28,8 @@
 - (id) initWithJenkinsInstance: (JenkinsInstance *) instance;
 
 - (void) importAllViews;
+- (void) importDetailsForJobAtURL:(NSString*) jobURL;
+/*
 - (void) importDetailsForView: (NSString *) viewName atURL: (NSString *) viewURL;
 - (void) importDetailsForViews: (NSArray *) views;
 - (void) importDetailsForJobAtURL:(NSString *)jobURL inViewAtURL:(NSString *) viewURL;
@@ -40,5 +42,6 @@
 - (void) appendViewDetailsWithValues: (NSDictionary *) viewValues;
 - (void) appendJobDetailsWithValues: (NSDictionary *) jobValues forViewAtURL: (NSString *) viewURL;
 - (void) appendBuildDetailsWithValues: (NSDictionary *) buildValues forJobAtURL: (NSString *) jobURL;
+ */
 
 @end

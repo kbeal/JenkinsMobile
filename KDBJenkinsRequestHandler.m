@@ -111,6 +111,28 @@
     [operation start];
 }
 
+- (void) importDetailsForJobAtURL:(NSString*) jobURL
+{
+    //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job at url: ",jobURL]);
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",jobURL,@"api/json"]];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    //AFNetworking asynchronous url request
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
+                                         initWithRequest:request];
+    
+    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self persistJobAtURL:jobURL withValues:responseObject];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        // Handle error
+        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
+    }];
+    
+    [operation start];
+}
+
 - (void) importDetailsForJobs
 {
     for (NSDictionary *view in self.viewDetails) {
@@ -226,7 +248,7 @@
                 [self createBuilds:[job objectForKey:@"builds"] forJobAtURL:[job objectForKey:@"url"]];
             }];
         }
-        NSLog([NSString stringWithFormat:@"%@%@",@"saving job details for view: ",viewURL]);
+        //NSLog([NSString stringWithFormat:@"%@%@",@"saving job details for view: ",viewURL]);
         [self.importJobsMOC performBlock:^ {
             NSError *importJobsError;
             if (![self.importJobsMOC save:&importJobsError]) {
@@ -244,6 +266,28 @@
         }];
     }
     //[self importDetailsForBuildsForJobs:[self.viewsJobsDetails objectForKey:viewURL]];
+}
+
+- (void) persistJobAtURL:(NSString*)jobURL withValues: (NSDictionary *) jobValues
+{
+    //NSLog([NSString stringWithFormat:@"persisting job at url: %@",jobURL]);
+    [self.importJobsMOC performBlock:^{
+        Job *job = [Job fetchJobAtURL:jobURL inManagedObjectContext:self.importJobsMOC];
+        [job setValues:jobValues];
+        
+        NSError *importJobsError;
+        if (![self.importJobsMOC save:&importJobsError]) {
+            NSLog(@"Error saving import jobs context %@, %@", importJobsError, [importJobsError userInfo]);
+            abort();
+        }
+        [self.managedObjectContext performBlock:^ {
+            NSError *masterError;
+            if (![self.managedObjectContext save:&masterError]) {
+                NSLog(@"Error saving master context %@, %@", masterError, [masterError userInfo]);
+                abort();
+            }
+        }];
+    }];
 }
 
 - (void) createBuilds: (NSArray *) builds forJobAtURL: (NSString *) jobURL
@@ -279,9 +323,9 @@
                 [Build createBuildWithValues:build inManagedObjectContext:self.importBuildsMOC forJobAtURL:jobURL];
             }];
         }
-        NSLog([NSString stringWithFormat:@"%@%@",@"saving details for builds for job: ",jobURL]);
+        //NSLog([NSString stringWithFormat:@"%@%@",@"saving details for builds for job: ",jobURL]);
         [self.importBuildsMOC performBlock:^ {
-            NSLog([NSString stringWithFormat:@"%@%lu",@"saving this many objs: ",(unsigned long)[[self.importBuildsMOC registeredObjects] count]]);
+            //NSLog([NSString stringWithFormat:@"%@%lu",@"saving this many objs: ",(unsigned long)[[self.importBuildsMOC registeredObjects] count]]);
             NSError *importBuildsError;
             if (![self.importBuildsMOC save:&importBuildsError]) {
                 NSLog(@"Error saving import builds context %@, %@", importBuildsError, [importBuildsError userInfo]);
