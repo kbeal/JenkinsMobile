@@ -11,6 +11,7 @@
 #import "KDBRelatedProjectsViewController.h"
 #import "KDBTestResultsViewController.h"
 #import "KDBBallScene.h"
+#import "KDBJenkinsRequestHandler.h"
 
 @interface KDBJobDetailViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -26,6 +27,8 @@
     [NSArray arrayWithObjects:self.upstreamProjectButton1,self.upstreamProjectButton2,self.upstreamProjectButton3,self.upstreamProjectButton4,self.upstreamProjectButton5, nil];
         self.downstreamProjectButtons =
     [NSArray arrayWithObjects:self.downstreamProjectButton1,self.downstreamProjectButton2,self.downstreamProjectButton3,self.downstreamProjectButton4,self.downstreamProjectButton5, nil];
+    //observe changes to model
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDataModelChange:) name:NSManagedObjectContextObjectsDidChangeNotification object:self.managedObjectContext];
 	// Do any additional setup after loading the view, typically from a nib.
     [self configureView];
 }
@@ -38,6 +41,8 @@
         
         // Update the view.
         [self configureView];
+        // Query Jenkins for updates to job
+        [self getUpdates];
         
         // Update the builds table view
         [self.buildsVC setJob:newJob];
@@ -64,6 +69,26 @@
         [self populateRelatedProjects];
         [self updateJobIcons];
     }
+}
+
+- (void)getUpdates
+{
+    View *view = [self.job.rel_Job_View anyObject];
+    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:(JenkinsInstance*)view.rel_View_JenkinsInstance];
+    jenkins.managedObjectContext = self.managedObjectContext;
+    [jenkins importDetailsForJobAtURL:self.job.url];
+}
+
+- (void) handleDataModelChange: (NSNotification *) notification
+{
+    NSSet *updatedObjects = [[notification userInfo] objectForKey:NSUpdatedObjectsKey];
+    // see if self.job was updated
+    [updatedObjects enumerateObjectsUsingBlock:^(id obj, BOOL *stop){
+        if ([[obj objectID] isEqual:[self.job objectID]]) {
+            self.job = obj;
+            [self configureView];
+        }
+    }];
 }
 
 - (void) updateJobIcons
