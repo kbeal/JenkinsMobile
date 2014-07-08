@@ -10,7 +10,6 @@
 #import "KDBBuildDetailViewController.h"
 #import "KDBRelatedProjectsViewController.h"
 #import "KDBTestResultsViewController.h"
-#import "UIImage+animatedGIF.h"
 #import "KDBBallScene.h"
 
 @interface KDBJobDetailViewController ()
