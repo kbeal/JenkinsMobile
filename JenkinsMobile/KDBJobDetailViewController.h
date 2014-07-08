@@ -40,7 +40,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *upstreamProjectButton4;
 @property (weak, nonatomic) IBOutlet UIButton *upstreamProjectButton5;
 
-@property (weak, nonatomic) IBOutlet UIImageView *statusIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *healthIcon;
 
 @property (weak, nonatomic) IBOutlet SKView *statusBallContainerView;

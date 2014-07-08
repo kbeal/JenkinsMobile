@@ -63,11 +63,17 @@
         self.navigationItem.title = self.job.name;
         [self populateBuildButtons];
         [self populateRelatedProjects];
-        [self updateJobStatusIcons];
+        [self updateJobIcons];
     }
 }
 
-- (void) updateJobStatusIcons
+- (void) updateJobIcons
+{
+    [self updateJobStatusIcon];
+    [self updateJobHealthIcon];
+}
+
+- (void) updateJobStatusIcon
 {
     // Create and configure the scene.
     NSString *color = [self.job colorIsAnimated] ? [self.job.color componentsSeparatedByString:@"_"][0] : self.job.color;
@@ -76,6 +82,15 @@
     
     // Present the scene.
     [self.statusBallContainerView presentScene:scene];
+}
+
+- (void) updateJobHealthIcon
+{
+    if ([self.job.healthReport count]>0) {
+        self.healthIcon.image = [UIImage imageNamed:[[self.job.healthReport objectAtIndex:0] objectForKey:@"iconUrl"]];
+    } else {
+        self.healthIcon.image = nil;
+    }
 }
 
 - (void) populateRelatedProjects
