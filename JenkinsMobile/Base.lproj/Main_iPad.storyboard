@@ -37,9 +37,13 @@
                             <userLayoutGuide location="384" affinity="minY"/>
                         </userGuides>
                         <subviews>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="NoH-LS-AqH">
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="NoH-LS-AqH">
                                 <rect key="frame" x="211" y="96" width="280" height="29"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="280" id="CSO-Do-I8C"/>
+                                    <constraint firstAttribute="height" constant="28" id="rW3-Jj-zUs"/>
+                                </constraints>
                                 <segments>
                                     <segment title="Status"/>
                                     <segment title="Config"/>
@@ -274,6 +278,31 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             </view>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2IK-ZF-J3n" customClass="SKView">
+                                <rect key="frame" x="260" y="216" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hPQ-SY-o9i" customClass="SKView">
+                                <rect key="frame" x="260" y="308" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gg9-hx-oPY" customClass="SKView">
+                                <rect key="frame" x="260" y="278" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleAspectFit" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9wt-jN-6d4" customClass="SKView">
+                                <rect key="frame" x="260" y="188" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JDm-4E-GVi" customClass="SKView">
+                                <rect key="frame" x="260" y="248" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
@@ -350,6 +379,11 @@
                         <outlet property="downstreamProjectButton3" destination="AIL-Gs-26R" id="nxM-qo-C63"/>
                         <outlet property="downstreamProjectButton4" destination="gIr-3p-Jfh" id="ZYX-Vt-GMU"/>
                         <outlet property="downstreamProjectButton5" destination="j78-du-YUE" id="985-AM-FQT"/>
+                        <outlet property="downstreamProjectStatusBall1" destination="9wt-jN-6d4" id="A6Q-c1-M3a"/>
+                        <outlet property="downstreamProjectStatusBall2" destination="2IK-ZF-J3n" id="zGl-eo-cXB"/>
+                        <outlet property="downstreamProjectStatusBall3" destination="JDm-4E-GVi" id="lrg-uW-D8g"/>
+                        <outlet property="downstreamProjectStatusBall4" destination="Gg9-hx-oPY" id="P3B-LO-bOG"/>
+                        <outlet property="downstreamProjectStatusBall5" destination="hPQ-SY-o9i" id="mGf-Mv-n0t"/>
                         <outlet property="healthIcon" destination="hQt-g9-0nE" id="ack-Ww-0Qu"/>
                         <outlet property="lastBuildButton" destination="Gzf-A2-OmT" id="puZ-LO-qEb"/>
                         <outlet property="lastStableBuildButton" destination="YmA-Et-Ivg" id="2ja-e7-4uZ"/>

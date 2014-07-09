@@ -21,6 +21,7 @@
 @property (strong, nonatomic) KDBTestResultsViewController *testResultsVC;
 @property (strong, nonatomic) NSArray *downstreamProjectButtons;
 @property (strong, nonatomic) NSArray *upstreamProjectButtons;
+@property (strong, nonatomic) NSArray *downstreamProjectStatusBalls;
 
 @property (weak, nonatomic) IBOutlet UIButton *lastBuildButton;
 @property (weak, nonatomic) IBOutlet UIButton *lastSuccessfulBuildButton;
@@ -33,6 +34,12 @@
 @property (weak, nonatomic) IBOutlet UIButton *downstreamProjectButton3;
 @property (weak, nonatomic) IBOutlet UIButton *downstreamProjectButton4;
 @property (weak, nonatomic) IBOutlet UIButton *downstreamProjectButton5;
+
+@property (weak, nonatomic) IBOutlet SKView *downstreamProjectStatusBall1;
+@property (weak, nonatomic) IBOutlet SKView *downstreamProjectStatusBall2;
+@property (weak, nonatomic) IBOutlet SKView *downstreamProjectStatusBall3;
+@property (weak, nonatomic) IBOutlet SKView *downstreamProjectStatusBall4;
+@property (weak, nonatomic) IBOutlet SKView *downstreamProjectStatusBall5;
 
 @property (weak, nonatomic) IBOutlet UIButton *upstreamProjectButton1;
 @property (weak, nonatomic) IBOutlet UIButton *upstreamProjectButton2;

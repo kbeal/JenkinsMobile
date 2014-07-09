@@ -23,10 +23,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-        self.upstreamProjectButtons =
-    [NSArray arrayWithObjects:self.upstreamProjectButton1,self.upstreamProjectButton2,self.upstreamProjectButton3,self.upstreamProjectButton4,self.upstreamProjectButton5, nil];
-        self.downstreamProjectButtons =
-    [NSArray arrayWithObjects:self.downstreamProjectButton1,self.downstreamProjectButton2,self.downstreamProjectButton3,self.downstreamProjectButton4,self.downstreamProjectButton5, nil];
+    self.upstreamProjectButtons =
+        [NSArray arrayWithObjects:self.upstreamProjectButton1,self.upstreamProjectButton2,self.upstreamProjectButton3,self.upstreamProjectButton4,self.upstreamProjectButton5, nil];
+    self.downstreamProjectButtons =
+        [NSArray arrayWithObjects:self.downstreamProjectButton1,self.downstreamProjectButton2,self.downstreamProjectButton3,self.downstreamProjectButton4,self.downstreamProjectButton5, nil];
+    self.downstreamProjectStatusBalls =
+        [NSArray arrayWithObjects:self.downstreamProjectStatusBall1,self.downstreamProjectStatusBall2,self.downstreamProjectStatusBall3,self.downstreamProjectStatusBall4,self.downstreamProjectStatusBall5, nil];
     //observe changes to model
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDataModelChange:) name:NSManagedObjectContextObjectsDidChangeNotification object:self.managedObjectContext];
 	// Do any additional setup after loading the view, typically from a nib.
@@ -142,19 +144,33 @@
 - (void) populateRelatedProjectsForDownstreamProjects:(BOOL) downstreamProject
 {
     UIButton *buttonToUpdate;
+    SKView *statusBallToUpdate;
     NSString *projectName;
     NSDictionary *project;
     NSArray *buttonArray = downstreamProject ? self.downstreamProjectButtons : self.upstreamProjectButtons;
+    NSArray *statusBallArray = self.downstreamProjectStatusBalls;
     NSArray *relatedProjects = downstreamProject ? self.job.downstreamProjects : self.job.upstreamProjects;
+    
+    NSString *color = [self.job colorIsAnimated] ? [self.job.color componentsSeparatedByString:@"_"][0] : self.job.color;
+    KDBBallScene *scene = [[KDBBallScene alloc] initWithSize:self.downstreamProjectStatusBall1.bounds.size andColor:color withAnimation:[self.job colorIsAnimated]];
+    scene.scaleMode = SKSceneScaleModeAspectFill;
+    
+    // Present the scene.
+    [self.statusBallContainerView presentScene:scene];
     
     for (int i=0; i<[relatedProjects count]; i++) {
         if (i<5) {
             buttonToUpdate = [buttonArray objectAtIndex:i];
+            statusBallToUpdate = [statusBallArray objectAtIndex:i];
             project = (NSDictionary *)[relatedProjects objectAtIndex:i];
             projectName = [project objectForKey:@"name"];
             
             if ([relatedProjects count]>5 && i==4) {
                 projectName = [NSString stringWithFormat:@"%@%d%@",@"+",[relatedProjects count]-4,@" More"];
+                // don't show a ball beside the +more button
+                [statusBallToUpdate setAlpha:0];
+            } else {
+                [statusBallToUpdate presentScene:scene];
             }
             
             [buttonToUpdate setTitle:projectName forState:UIControlStateNormal];
