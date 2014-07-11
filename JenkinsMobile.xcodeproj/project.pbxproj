@@ -15,7 +15,6 @@
 		8A17654E191D9E4200E108DF /* svn-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A17654D191D9E4200E108DF /* svn-icon.png */; };
 		8A176551191DA0F300E108DF /* down.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A17654F191DA0F300E108DF /* down.png */; };
 		8A176552191DA0F300E108DF /* down@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A176550191DA0F300E108DF /* down@2x.png */; };
-		8A23EF11196B77AA0001DDE3 /* balls.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8A23EF10196B77AA0001DDE3 /* balls.atlas */; };
 		8A23EF13196B7AB00001DDE3 /* yellow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A23EF12196B7AB00001DDE3 /* yellow@2x.png */; };
 		8A23EF16196B89AE0001DDE3 /* health-80plus.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A23EF14196B89AE0001DDE3 /* health-80plus.png */; };
 		8A23EF17196B89AE0001DDE3 /* health-80plus@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A23EF15196B89AE0001DDE3 /* health-80plus@2x.png */; };
@@ -168,6 +167,8 @@
 		8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A817AAE196390D700ED7075 /* KDBBallScene.m */; };
 		8A9B05B11924452D0019B336 /* KDBBuildDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B05B01924452D0019B336 /* KDBBuildDetailViewController.m */; };
 		8A9B05B4192449A40019B336 /* KDBTestResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B05B3192449A40019B336 /* KDBTestResultsViewController.m */; };
+		8A9C3B83196F82A7005A78BB /* balls30.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8A9C3B82196F82A7005A78BB /* balls30.atlas */; };
+		8A9C3B85196F8350005A78BB /* balls80.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8A9C3B84196F8350005A78BB /* balls80.atlas */; };
 		8AC329ED18E4F3A90002D106 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EC18E4F3A90002D106 /* Foundation.framework */; };
 		8AC329EF18E4F3A90002D106 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EE18E4F3A90002D106 /* CoreGraphics.framework */; };
 		8AC329F118E4F3A90002D106 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329F018E4F3A90002D106 /* UIKit.framework */; };
@@ -226,7 +227,6 @@
 		8A17654D191D9E4200E108DF /* svn-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "svn-icon.png"; sourceTree = "<group>"; };
 		8A17654F191DA0F300E108DF /* down.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = down.png; sourceTree = "<group>"; };
 		8A176550191DA0F300E108DF /* down@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "down@2x.png"; sourceTree = "<group>"; };
-		8A23EF10196B77AA0001DDE3 /* balls.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = balls.atlas; sourceTree = "<group>"; };
 		8A23EF12196B7AB00001DDE3 /* yellow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yellow@2x.png"; sourceTree = "<group>"; };
 		8A23EF14196B89AE0001DDE3 /* health-80plus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-80plus.png"; sourceTree = "<group>"; };
 		8A23EF15196B89AE0001DDE3 /* health-80plus@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-80plus@2x.png"; sourceTree = "<group>"; };
@@ -384,6 +384,8 @@
 		8A9B05B01924452D0019B336 /* KDBBuildDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBBuildDetailViewController.m; sourceTree = "<group>"; };
 		8A9B05B2192449A40019B336 /* KDBTestResultsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBTestResultsViewController.h; sourceTree = "<group>"; };
 		8A9B05B3192449A40019B336 /* KDBTestResultsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBTestResultsViewController.m; sourceTree = "<group>"; };
+		8A9C3B82196F82A7005A78BB /* balls30.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = balls30.atlas; sourceTree = "<group>"; };
+		8A9C3B84196F8350005A78BB /* balls80.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = balls80.atlas; sourceTree = "<group>"; };
 		8AC329E918E4F3A90002D106 /* JenkinsMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JenkinsMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AC329EC18E4F3A90002D106 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8AC329EE18E4F3A90002D106 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -472,13 +474,14 @@
 		8A7CDAD818E7779F0079F3F1 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				8A9C3B84196F8350005A78BB /* balls80.atlas */,
+				8A9C3B82196F82A7005A78BB /* balls30.atlas */,
 				8A3CB9A718E7C39900D0D160 /* accept-24x24.png */,
 				8A3CB9A818E7C39900D0D160 /* accept-24x24@2x.png */,
 				8A3CB9A518E7C39900D0D160 /* accept.png */,
 				8A3CB9A618E7C39900D0D160 /* accept@2x.png */,
 				8A3CB9A318E7C39900D0D160 /* application-certificate.png */,
 				8A3CB9A418E7C39900D0D160 /* application-certificate@2x.png */,
-				8A23EF10196B77AA0001DDE3 /* balls.atlas */,
 				8A24ABE9195139180094F772 /* blue.png */,
 				8A24ABE6195135500094F772 /* blue@2x.png */,
 				8A3CB99F18E7C39900D0D160 /* bookmark-new.png */,
@@ -895,6 +898,7 @@
 				8A3CBA0518E7C39900D0D160 /* health-00to19.png in Resources */,
 				8A3CB9CF18E7C39900D0D160 /* refresh.png in Resources */,
 				8A17654C191D9E3B00E108DF /* Git-Icon.png in Resources */,
+				8A9C3B85196F8350005A78BB /* balls80.atlas in Resources */,
 				8A3CB9DF18E7C39900D0D160 /* nothing.png in Resources */,
 				8A3CBA2318E7C39900D0D160 /* delete-document.png in Resources */,
 				8A3CB9BD18E7C39900D0D160 /* star-large.png in Resources */,
@@ -915,7 +919,6 @@
 				8A3CB9AF18E7C39900D0D160 /* user.png in Resources */,
 				8A3CBA1C18E7C39900D0D160 /* error@2x.png in Resources */,
 				8A3CBA2B18E7C39900D0D160 /* clipboard.png in Resources */,
-				8A23EF11196B77AA0001DDE3 /* balls.atlas in Resources */,
 				8A3CB9C018E7C39900D0D160 /* star-large-gold@2x.png in Resources */,
 				8A3CBA2118E7C39900D0D160 /* document.png in Resources */,
 				8A3CB9EE18E7C39900D0D160 /* network@2x.png in Resources */,
@@ -954,6 +957,7 @@
 				8A3CB9C918E7C39900D0D160 /* search.png in Resources */,
 				8A3CB9B318E7C39900D0D160 /* undo.png in Resources */,
 				8A3CBA2718E7C39900D0D160 /* computer.png in Resources */,
+				8A9C3B83196F82A7005A78BB /* balls30.atlas in Resources */,
 				8A3CBA3C18E7C57C00D0D160 /* notbuilt@2x.png in Resources */,
 				8A3CBA0E18E7C39900D0D160 /* green@2x.png in Resources */,
 				8A3CBA1818E7C39900D0D160 /* folder-delete@2x.png in Resources */,

@@ -141,22 +141,32 @@
     [self.downstreamProjectButton5 setTitle:@"" forState:UIControlStateNormal];
 }
 
+- (BOOL) relatedProjectColorIsAnimated:(NSString*) color { return [color rangeOfString:@"anime"].length > 0 ? true : false; }
+
+- (void) clearRelatedProjectBalls
+{
+    for (SKView *ball in self.downstreamProjectStatusBalls) {
+        //TODO: is there a better way to hide visibility?
+        [ball presentScene:nil];
+    }
+    for (SKView *ball in self.upstreamProjectButtons) {
+        [ball setAlpha:0];
+    }
+}
+
 - (void) populateRelatedProjectsForDownstreamProjects:(BOOL) downstreamProject
 {
+    //[self clearRelatedProjectBalls];
     UIButton *buttonToUpdate;
     SKView *statusBallToUpdate;
     NSString *projectName;
+    NSString *projectColor;
     NSDictionary *project;
+    KDBBallScene *scene=nil;
+    NSString *color;
     NSArray *buttonArray = downstreamProject ? self.downstreamProjectButtons : self.upstreamProjectButtons;
     NSArray *statusBallArray = self.downstreamProjectStatusBalls;
     NSArray *relatedProjects = downstreamProject ? self.job.downstreamProjects : self.job.upstreamProjects;
-    
-    NSString *color = [self.job colorIsAnimated] ? [self.job.color componentsSeparatedByString:@"_"][0] : self.job.color;
-    KDBBallScene *scene = [[KDBBallScene alloc] initWithSize:self.downstreamProjectStatusBall1.bounds.size andColor:color withAnimation:[self.job colorIsAnimated]];
-    scene.scaleMode = SKSceneScaleModeAspectFill;
-    
-    // Present the scene.
-    [self.statusBallContainerView presentScene:scene];
     
     for (int i=0; i<[relatedProjects count]; i++) {
         if (i<5) {
@@ -164,14 +174,18 @@
             statusBallToUpdate = [statusBallArray objectAtIndex:i];
             project = (NSDictionary *)[relatedProjects objectAtIndex:i];
             projectName = [project objectForKey:@"name"];
+            projectColor = [project objectForKey:@"color"];
             
             if ([relatedProjects count]>5 && i==4) {
                 projectName = [NSString stringWithFormat:@"%@%d%@",@"+",[relatedProjects count]-4,@" More"];
                 // don't show a ball beside the +more button
-                [statusBallToUpdate setAlpha:0];
             } else {
-                [statusBallToUpdate presentScene:scene];
+                color = [self relatedProjectColorIsAnimated:projectColor] ? [projectColor componentsSeparatedByString:@"_"][0] : projectColor;
+                scene = [[KDBBallScene alloc] initWithSize:statusBallToUpdate.bounds.size andColor:color withAnimation:[self.job colorIsAnimated]];
             }
+            
+            scene.scaleMode = SKSceneScaleModeAspectFill;
+            [statusBallToUpdate presentScene:scene];
             
             [buttonToUpdate setTitle:projectName forState:UIControlStateNormal];
         } else {

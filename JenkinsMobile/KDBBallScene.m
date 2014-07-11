@@ -21,7 +21,7 @@
         self.backgroundColor = [SKColor whiteColor];
         
         NSMutableArray *flashFrames = [NSMutableArray array];
-        SKTextureAtlas *ballAnimatedAtlas = [SKTextureAtlas atlasNamed:@"balls"];
+        SKTextureAtlas *ballAnimatedAtlas = [SKTextureAtlas atlasNamed:[NSString stringWithFormat:@"balls%d",(int)size.width]];
         
         for (int i=1; i<=8; i++) {
             NSString *textureName = [NSString stringWithFormat:@"%@%d",self.color, i];
