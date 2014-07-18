@@ -22,6 +22,7 @@
 @property (strong, nonatomic) NSArray *downstreamProjectButtons;
 @property (strong, nonatomic) NSArray *upstreamProjectButtons;
 @property (strong, nonatomic) NSArray *downstreamProjectStatusBalls;
+@property (strong, nonatomic) NSArray *upstreamProjectStatusBalls;
 
 @property (weak, nonatomic) IBOutlet UIButton *lastBuildButton;
 @property (weak, nonatomic) IBOutlet UIButton *lastSuccessfulBuildButton;
@@ -46,6 +47,12 @@
 @property (weak, nonatomic) IBOutlet UIButton *upstreamProjectButton3;
 @property (weak, nonatomic) IBOutlet UIButton *upstreamProjectButton4;
 @property (weak, nonatomic) IBOutlet UIButton *upstreamProjectButton5;
+
+@property (weak, nonatomic) IBOutlet SKView *upstreamProjectStatusBall1;
+@property (weak, nonatomic) IBOutlet SKView *upstreamProjectStatusBall2;
+@property (weak, nonatomic) IBOutlet SKView *upstreamProjectStatusBall3;
+@property (weak, nonatomic) IBOutlet SKView *upstreamProjectStatusBall4;
+@property (weak, nonatomic) IBOutlet SKView *upstreamProjectStatusBall5;
 
 @property (weak, nonatomic) IBOutlet UIImageView *healthIcon;
 
