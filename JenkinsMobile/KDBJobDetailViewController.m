@@ -131,29 +131,18 @@
 
 - (void) clearRelatedProjectButtons
 {
-    //TODO: combine arrays?
-    [self.upstreamProjectButton1 setTitle:@"" forState:UIControlStateNormal];
-    [self.upstreamProjectButton2 setTitle:@"" forState:UIControlStateNormal];
-    [self.upstreamProjectButton3 setTitle:@"" forState:UIControlStateNormal];
-    [self.upstreamProjectButton4 setTitle:@"" forState:UIControlStateNormal];
-    [self.upstreamProjectButton5 setTitle:@"" forState:UIControlStateNormal];
-
-    [self.downstreamProjectButton1 setTitle:@"" forState:UIControlStateNormal];
-    [self.downstreamProjectButton2 setTitle:@"" forState:UIControlStateNormal];
-    [self.downstreamProjectButton3 setTitle:@"" forState:UIControlStateNormal];
-    [self.downstreamProjectButton4 setTitle:@"" forState:UIControlStateNormal];
-    [self.downstreamProjectButton5 setTitle:@"" forState:UIControlStateNormal];
+    NSArray *allButtons = [self.upstreamProjectButtons arrayByAddingObjectsFromArray:self.downstreamProjectButtons];
+    for (UIButton *button in allButtons) {
+        [button setTitle:@"" forState:UIControlStateNormal];
+    }
 }
 
 - (BOOL) relatedProjectColorIsAnimated:(NSString*) color { return [color rangeOfString:@"anime"].length > 0 ? true : false; }
 
 - (void) clearRelatedProjectBalls
 {
-    //TODO: combine arrays?
-    for (SKView *ball in self.downstreamProjectStatusBalls) {
-        [ball setHidden:YES];
-    }
-    for (SKView *ball in self.upstreamProjectStatusBalls) {
+    NSArray *allBalls = [self.downstreamProjectStatusBalls arrayByAddingObjectsFromArray:self.upstreamProjectStatusBalls];
+    for (SKView *ball in allBalls) {
         [ball setHidden:YES];
     }
 }
