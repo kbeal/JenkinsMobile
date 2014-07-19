@@ -170,6 +170,7 @@
 		8A999497197A1439009B82DD /* health-40to59~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999492197A1439009B82DD /* health-40to59~ipad.png */; };
 		8A999498197A1439009B82DD /* health-60to79~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999493197A1439009B82DD /* health-60to79~ipad.png */; };
 		8A999499197A1439009B82DD /* health-80plus~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999494197A1439009B82DD /* health-80plus~ipad.png */; };
+		8A99949C197AB258009B82DD /* UIButton+RelatedProject.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A99949B197AB258009B82DD /* UIButton+RelatedProject.m */; };
 		8A9B05B11924452D0019B336 /* KDBBuildDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B05B01924452D0019B336 /* KDBBuildDetailViewController.m */; };
 		8A9B05B4192449A40019B336 /* KDBTestResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B05B3192449A40019B336 /* KDBTestResultsViewController.m */; };
 		8A9C3B83196F82A7005A78BB /* balls30.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8A9C3B82196F82A7005A78BB /* balls30.atlas */; };
@@ -390,6 +391,8 @@
 		8A999492197A1439009B82DD /* health-40to59~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-40to59~ipad.png"; sourceTree = "<group>"; };
 		8A999493197A1439009B82DD /* health-60to79~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-60to79~ipad.png"; sourceTree = "<group>"; };
 		8A999494197A1439009B82DD /* health-80plus~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-80plus~ipad.png"; sourceTree = "<group>"; };
+		8A99949A197AB258009B82DD /* UIButton+RelatedProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+RelatedProject.h"; sourceTree = "<group>"; };
+		8A99949B197AB258009B82DD /* UIButton+RelatedProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+RelatedProject.m"; sourceTree = "<group>"; };
 		8A9B05AF1924452D0019B336 /* KDBBuildDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBBuildDetailViewController.h; sourceTree = "<group>"; };
 		8A9B05B01924452D0019B336 /* KDBBuildDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBBuildDetailViewController.m; sourceTree = "<group>"; };
 		8A9B05B2192449A40019B336 /* KDBTestResultsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBTestResultsViewController.h; sourceTree = "<group>"; };
@@ -703,6 +706,8 @@
 				8A14345618E8863E000C2DB4 /* KDBJenkinsViewTableView.m */,
 				8AC32A0C18E4F3A90002D106 /* KDBJobDetailViewController.h */,
 				8AC32A0D18E4F3A90002D106 /* KDBJobDetailViewController.m */,
+				8A99949A197AB258009B82DD /* UIButton+RelatedProject.h */,
+				8A99949B197AB258009B82DD /* UIButton+RelatedProject.m */,
 				8AC32A0918E4F3A90002D106 /* KDBMasterViewController.h */,
 				8AC32A0A18E4F3A90002D106 /* KDBMasterViewController.m */,
 				8A0409FE192599D400B25073 /* KDBRelatedProjectsViewController.h */,
@@ -1072,6 +1077,7 @@
 				8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */,
 				8AE3B96218EF80CA00E061C1 /* View.m in Sources */,
 				8AC32A4218E4FB6F0002D106 /* AFHTTPRequestOperationManager.m in Sources */,
+				8A99949C197AB258009B82DD /* UIButton+RelatedProject.m in Sources */,
 				8AC32A4518E4FB6F0002D106 /* AFSecurityPolicy.m in Sources */,
 				8A5A224D18F20A3A001FA8EB /* JenkinsInstance.m in Sources */,
 				8AC329FB18E4F3A90002D106 /* main.m in Sources */,
