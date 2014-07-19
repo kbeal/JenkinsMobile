@@ -165,6 +165,11 @@
 		8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */; };
 		8A817A5319638D1400ED7075 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A817A5219638D1400ED7075 /* SpriteKit.framework */; };
 		8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A817AAE196390D700ED7075 /* KDBBallScene.m */; };
+		8A999495197A1439009B82DD /* health-00to19~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999490197A1439009B82DD /* health-00to19~ipad.png */; };
+		8A999496197A1439009B82DD /* health-20to39~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999491197A1439009B82DD /* health-20to39~ipad.png */; };
+		8A999497197A1439009B82DD /* health-40to59~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999492197A1439009B82DD /* health-40to59~ipad.png */; };
+		8A999498197A1439009B82DD /* health-60to79~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999493197A1439009B82DD /* health-60to79~ipad.png */; };
+		8A999499197A1439009B82DD /* health-80plus~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999494197A1439009B82DD /* health-80plus~ipad.png */; };
 		8A9B05B11924452D0019B336 /* KDBBuildDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B05B01924452D0019B336 /* KDBBuildDetailViewController.m */; };
 		8A9B05B4192449A40019B336 /* KDBTestResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B05B3192449A40019B336 /* KDBTestResultsViewController.m */; };
 		8A9C3B83196F82A7005A78BB /* balls30.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8A9C3B82196F82A7005A78BB /* balls30.atlas */; };
@@ -380,6 +385,11 @@
 		8A817A5219638D1400ED7075 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		8A817AAD196390D700ED7075 /* KDBBallScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBBallScene.h; sourceTree = "<group>"; };
 		8A817AAE196390D700ED7075 /* KDBBallScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBBallScene.m; sourceTree = "<group>"; };
+		8A999490197A1439009B82DD /* health-00to19~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-00to19~ipad.png"; sourceTree = "<group>"; };
+		8A999491197A1439009B82DD /* health-20to39~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-20to39~ipad.png"; sourceTree = "<group>"; };
+		8A999492197A1439009B82DD /* health-40to59~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-40to59~ipad.png"; sourceTree = "<group>"; };
+		8A999493197A1439009B82DD /* health-60to79~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-60to79~ipad.png"; sourceTree = "<group>"; };
+		8A999494197A1439009B82DD /* health-80plus~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-80plus~ipad.png"; sourceTree = "<group>"; };
 		8A9B05AF1924452D0019B336 /* KDBBuildDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBBuildDetailViewController.h; sourceTree = "<group>"; };
 		8A9B05B01924452D0019B336 /* KDBBuildDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBBuildDetailViewController.m; sourceTree = "<group>"; };
 		8A9B05B2192449A40019B336 /* KDBTestResultsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBTestResultsViewController.h; sourceTree = "<group>"; };
@@ -474,14 +484,14 @@
 		8A7CDAD818E7779F0079F3F1 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				8A9C3B84196F8350005A78BB /* balls80.atlas */,
-				8A9C3B82196F82A7005A78BB /* balls30.atlas */,
 				8A3CB9A718E7C39900D0D160 /* accept-24x24.png */,
 				8A3CB9A818E7C39900D0D160 /* accept-24x24@2x.png */,
 				8A3CB9A518E7C39900D0D160 /* accept.png */,
 				8A3CB9A618E7C39900D0D160 /* accept@2x.png */,
 				8A3CB9A318E7C39900D0D160 /* application-certificate.png */,
 				8A3CB9A418E7C39900D0D160 /* application-certificate@2x.png */,
+				8A9C3B82196F82A7005A78BB /* balls30.atlas */,
+				8A9C3B84196F8350005A78BB /* balls80.atlas */,
 				8A24ABE9195139180094F772 /* blue.png */,
 				8A24ABE6195135500094F772 /* blue@2x.png */,
 				8A3CB99F18E7C39900D0D160 /* bookmark-new.png */,
@@ -531,14 +541,19 @@
 				8A3CB97818E7C39800D0D160 /* headshot@2x.png */,
 				8A3CB97518E7C39800D0D160 /* health-00to19.png */,
 				8A3CB97618E7C39800D0D160 /* health-00to19@2x.png */,
+				8A999490197A1439009B82DD /* health-00to19~ipad.png */,
 				8A3CB97318E7C39800D0D160 /* health-20to39.png */,
 				8A3CB97418E7C39800D0D160 /* health-20to39@2x.png */,
+				8A999491197A1439009B82DD /* health-20to39~ipad.png */,
 				8A3CB97118E7C39800D0D160 /* health-40to59.png */,
 				8A3CB97218E7C39800D0D160 /* health-40to59@2x.png */,
+				8A999492197A1439009B82DD /* health-40to59~ipad.png */,
 				8A3CB96F18E7C39800D0D160 /* health-60to79.png */,
 				8A3CB97018E7C39800D0D160 /* health-60to79@2x.png */,
+				8A999493197A1439009B82DD /* health-60to79~ipad.png */,
 				8A23EF14196B89AE0001DDE3 /* health-80plus.png */,
 				8A23EF15196B89AE0001DDE3 /* health-80plus@2x.png */,
+				8A999494197A1439009B82DD /* health-80plus~ipad.png */,
 				8A3CB96B18E7C39800D0D160 /* help.png */,
 				8A3CB96C18E7C39800D0D160 /* help@2x.png */,
 				8A3CB96918E7C39800D0D160 /* hourglass.png */,
@@ -889,6 +904,7 @@
 				8A3CB9FA18E7C39900D0D160 /* hourglass@2x.png in Resources */,
 				8A3CB9D718E7C39900D0D160 /* plugin.png in Resources */,
 				8A3CBA0218E7C39900D0D160 /* health-40to59@2x.png in Resources */,
+				8A999498197A1439009B82DD /* health-60to79~ipad.png in Resources */,
 				8A3CB9AC18E7C39900D0D160 /* warning@2x.png in Resources */,
 				8A3CBA2818E7C39900D0D160 /* computer@2x.png in Resources */,
 				8AC32A1018E4F3A90002D106 /* Images.xcassets in Resources */,
@@ -921,6 +937,7 @@
 				8A3CBA2B18E7C39900D0D160 /* clipboard.png in Resources */,
 				8A3CB9C018E7C39900D0D160 /* star-large-gold@2x.png in Resources */,
 				8A3CBA2118E7C39900D0D160 /* document.png in Resources */,
+				8A999499197A1439009B82DD /* health-80plus~ipad.png in Resources */,
 				8A3CB9EE18E7C39900D0D160 /* network@2x.png in Resources */,
 				8A3CBA3418E7C39900D0D160 /* application-certificate@2x.png in Resources */,
 				8A3CB9B618E7C39900D0D160 /* terminal@2x.png in Resources */,
@@ -935,6 +952,7 @@
 				8A3CB9BB18E7C39900D0D160 /* star.png in Resources */,
 				8A3CB9EF18E7C39900D0D160 /* monitor.png in Resources */,
 				8A3CB9E718E7C39900D0D160 /* new-package.png in Resources */,
+				8A999497197A1439009B82DD /* health-40to59~ipad.png in Resources */,
 				8A3CB9ED18E7C39900D0D160 /* network.png in Resources */,
 				8A3CB9A918E7C39900D0D160 /* yellow.png in Resources */,
 				8A23EF17196B89AE0001DDE3 /* health-80plus@2x.png in Resources */,
@@ -983,6 +1001,7 @@
 				8A3CB9EA18E7C39900D0D160 /* new-document@2x.png in Resources */,
 				8A3CBA3318E7C39900D0D160 /* application-certificate.png in Resources */,
 				8A3CB9EB18E7C39900D0D160 /* new-computer.png in Resources */,
+				8A999495197A1439009B82DD /* health-00to19~ipad.png in Resources */,
 				8A3CB9F918E7C39900D0D160 /* hourglass.png in Resources */,
 				8A3CB9C618E7C39900D0D160 /* setting@2x.png in Resources */,
 				8A3CB9E618E7C39900D0D160 /* new-user@2x.png in Resources */,
@@ -990,6 +1009,7 @@
 				8A3CBA3B18E7C57C00D0D160 /* notbuilt.png in Resources */,
 				8A3CB9CE18E7C39900D0D160 /* save-new@2x.png in Resources */,
 				8A3CBA2418E7C39900D0D160 /* delete-document@2x.png in Resources */,
+				8A999496197A1439009B82DD /* health-20to39~ipad.png in Resources */,
 				8A3CB9B918E7C39900D0D160 /* stop.png in Resources */,
 				8A23EF16196B89AE0001DDE3 /* health-80plus.png in Resources */,
 				8A3CBA2D18E7C39900D0D160 /* certificate.png in Resources */,
