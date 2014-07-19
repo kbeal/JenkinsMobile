@@ -12,6 +12,7 @@
 #import "KDBTestResultsViewController.h"
 #import "KDBBallScene.h"
 #import "KDBJenkinsRequestHandler.h"
+#import "UIButton+RelatedProject.h"
 
 @interface KDBJobDetailViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -155,12 +156,15 @@
     
     for (int i=0; i<[relatedProjects count]; i++) {
         NSString *projectColor = nil;
+        NSString *projectName = nil;
+        NSString *projectURL = nil;
         if (i<5) {
             UIButton *buttonToUpdate = [buttonArray objectAtIndex:i];
             SKView *statusBallToUpdate = [statusBallArray objectAtIndex:i];
             NSDictionary *project = (NSDictionary *)[relatedProjects objectAtIndex:i];
-            NSString *projectName = [project objectForKey:@"name"];
+            projectName = [project objectForKey:@"name"];
             projectColor = [project objectForKey:@"color"];
+            projectURL = [project objectForKey:@"url"];
             
             if ([relatedProjects count]>5 && i==4) {
                 projectName = [NSString stringWithFormat:@"%@%d%@",@"+",[relatedProjects count]-4,@" More"];
@@ -173,6 +177,7 @@
                 [statusBallToUpdate setHidden:NO];
             }
             
+            buttonToUpdate.relatedProjectURL = projectURL;
             [buttonToUpdate setTitle:projectName forState:UIControlStateNormal];
         } else {
             break;

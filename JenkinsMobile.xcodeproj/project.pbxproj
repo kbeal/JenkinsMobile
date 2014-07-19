@@ -683,7 +683,6 @@
 		8AC329F418E4F3A90002D106 /* JenkinsMobile */ = {
 			isa = PBXGroup;
 			children = (
-				8AFDD5121947CFA5008F2791 /* Protocols */,
 				8AC32A2D18E4FB6F0002D106 /* AFNetworking */,
 				8A7CDAD818E7779F0079F3F1 /* Images */,
 				8AC32A0F18E4F3A90002D106 /* Images.xcassets */,
@@ -706,8 +705,8 @@
 				8A14345618E8863E000C2DB4 /* KDBJenkinsViewTableView.m */,
 				8AC32A0C18E4F3A90002D106 /* KDBJobDetailViewController.h */,
 				8AC32A0D18E4F3A90002D106 /* KDBJobDetailViewController.m */,
-				8A99949A197AB258009B82DD /* UIButton+RelatedProject.h */,
-				8A99949B197AB258009B82DD /* UIButton+RelatedProject.m */,
+				8AFBC11D19468806008EDC9D /* KDBMasterBuildListTableViewController.h */,
+				8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */,
 				8AC32A0918E4F3A90002D106 /* KDBMasterViewController.h */,
 				8AC32A0A18E4F3A90002D106 /* KDBMasterViewController.m */,
 				8A0409FE192599D400B25073 /* KDBRelatedProjectsViewController.h */,
@@ -717,11 +716,12 @@
 				8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */,
 				8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */,
 				8AC32A0318E4F3A90002D106 /* Main_iPad.storyboard */,
-				8AFBC11D19468806008EDC9D /* KDBMasterBuildListTableViewController.h */,
-				8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */,
 				8AC32A0018E4F3A90002D106 /* Main_iPhone.storyboard */,
 				8AE3B96918EF80D000E061C1 /* Models */,
+				8AFDD5121947CFA5008F2791 /* Protocols */,
 				8AC329F518E4F3A90002D106 /* Supporting Files */,
+				8A99949A197AB258009B82DD /* UIButton+RelatedProject.h */,
+				8A99949B197AB258009B82DD /* UIButton+RelatedProject.m */,
 			);
 			path = JenkinsMobile;
 			sourceTree = "<group>";
