@@ -135,6 +135,7 @@
     NSArray *allButtons = [self.upstreamProjectButtons arrayByAddingObjectsFromArray:self.downstreamProjectButtons];
     for (UIButton *button in allButtons) {
         [button setTitle:@"" forState:UIControlStateNormal];
+        button.relatedProjectURL=nil;
     }
 }
 
@@ -145,6 +146,18 @@
     NSArray *allBalls = [self.downstreamProjectStatusBalls arrayByAddingObjectsFromArray:self.upstreamProjectStatusBalls];
     for (SKView *ball in allBalls) {
         [ball setHidden:YES];
+    }
+}
+
+- (void) loadJobForRelatedProjectButton:(UIButton *) buttonTapped
+{
+    if ([buttonTapped.relatedProjectURL isEqualToString:@"moreDownstreamProjects"]) {
+        [self performSegueWithIdentifier:@"downstreamProjectsSegue" sender:self];
+    } else if ([buttonTapped.relatedProjectURL isEqualToString:@"moreUpstreamProjects"]) {
+        [self performSegueWithIdentifier:@"upstreamProjectsSegue" sender:self];
+    } else if (buttonTapped.relatedProjectURL != nil) {
+        self.job = [Job fetchJobAtURL:buttonTapped.relatedProjectURL inManagedObjectContext:self.managedObjectContext];
+        [self configureView];
     }
 }
 
@@ -168,6 +181,7 @@
             
             if ([relatedProjects count]>5 && i==4) {
                 projectName = [NSString stringWithFormat:@"%@%d%@",@"+",[relatedProjects count]-4,@" More"];
+                projectURL = downstreamProject ? @"moreDownstreamProjects" : @"moreUpstreamProjects";
                 // don't show a ball beside the +more button
             } else {
                 NSString *color = [self relatedProjectColorIsAnimated:projectColor] ? [projectColor componentsSeparatedByString:@"_"][0] : projectColor;
@@ -179,6 +193,7 @@
             
             buttonToUpdate.relatedProjectURL = projectURL;
             [buttonToUpdate setTitle:projectName forState:UIControlStateNormal];
+            [buttonToUpdate addTarget:self action:@selector(loadJobForRelatedProjectButton:) forControlEvents:UIControlEventTouchUpInside];
         } else {
             break;
         }
