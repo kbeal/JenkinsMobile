@@ -175,6 +175,7 @@
 		8A9B05B4192449A40019B336 /* KDBTestResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B05B3192449A40019B336 /* KDBTestResultsViewController.m */; };
 		8A9C3B83196F82A7005A78BB /* balls30.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8A9C3B82196F82A7005A78BB /* balls30.atlas */; };
 		8A9C3B85196F8350005A78BB /* balls80.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8A9C3B84196F8350005A78BB /* balls80.atlas */; };
+		8ABF12F61980920300325928 /* KDBJobConfigViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF12F51980920300325928 /* KDBJobConfigViewController.m */; };
 		8AC329ED18E4F3A90002D106 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EC18E4F3A90002D106 /* Foundation.framework */; };
 		8AC329EF18E4F3A90002D106 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EE18E4F3A90002D106 /* CoreGraphics.framework */; };
 		8AC329F118E4F3A90002D106 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329F018E4F3A90002D106 /* UIKit.framework */; };
@@ -399,6 +400,8 @@
 		8A9B05B3192449A40019B336 /* KDBTestResultsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBTestResultsViewController.m; sourceTree = "<group>"; };
 		8A9C3B82196F82A7005A78BB /* balls30.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = balls30.atlas; sourceTree = "<group>"; };
 		8A9C3B84196F8350005A78BB /* balls80.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = balls80.atlas; sourceTree = "<group>"; };
+		8ABF12F41980920300325928 /* KDBJobConfigViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJobConfigViewController.h; sourceTree = "<group>"; };
+		8ABF12F51980920300325928 /* KDBJobConfigViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJobConfigViewController.m; sourceTree = "<group>"; };
 		8AC329E918E4F3A90002D106 /* JenkinsMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JenkinsMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AC329EC18E4F3A90002D106 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8AC329EE18E4F3A90002D106 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -703,6 +706,8 @@
 				8A14345018E880A2000C2DB4 /* KDBJenkinsViewsViewController.m */,
 				8A14345518E8863E000C2DB4 /* KDBJenkinsViewTableView.h */,
 				8A14345618E8863E000C2DB4 /* KDBJenkinsViewTableView.m */,
+				8ABF12F41980920300325928 /* KDBJobConfigViewController.h */,
+				8ABF12F51980920300325928 /* KDBJobConfigViewController.m */,
 				8AC32A0C18E4F3A90002D106 /* KDBJobDetailViewController.h */,
 				8AC32A0D18E4F3A90002D106 /* KDBJobDetailViewController.m */,
 				8AFBC11D19468806008EDC9D /* KDBMasterBuildListTableViewController.h */,
@@ -1074,6 +1079,7 @@
 				8AC329FF18E4F3A90002D106 /* KDBAppDelegate.m in Sources */,
 				8A14345118E880A2000C2DB4 /* KDBJenkinsViewsViewController.m in Sources */,
 				8AE3B95C18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m in Sources */,
+				8ABF12F61980920300325928 /* KDBJobConfigViewController.m in Sources */,
 				8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */,
 				8AE3B96218EF80CA00E061C1 /* View.m in Sources */,
 				8AC32A4218E4FB6F0002D106 /* AFHTTPRequestOperationManager.m in Sources */,
