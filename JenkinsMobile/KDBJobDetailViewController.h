@@ -58,4 +58,6 @@
 
 @property (weak, nonatomic) IBOutlet SKView *statusBallContainerView;
 
+- (IBAction)jobViewSwitcherTapped:(id)sender;
+
 @end

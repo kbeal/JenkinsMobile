@@ -13,6 +13,7 @@
 #import "KDBBallScene.h"
 #import "KDBJenkinsRequestHandler.h"
 #import "UIButton+RelatedProject.h"
+#import "Constants.h"
 
 @interface KDBJobDetailViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -251,6 +252,14 @@
         [self.lastUnStableBuildButton setTitle:[NSString stringWithFormat:@"%@%d%@",@"Last Unstable Build (#",[self.job.lastUnstableBuild intValue],@")"] forState:UIControlStateNormal];
     } else {
         [self.lastUnStableBuildButton setTitle:@"Last Unstable Build" forState:UIControlStateNormal];
+    }
+}
+
+- (IBAction)jobViewSwitcherTapped:(id)sender
+{
+    UISegmentedControl *viewswitch = (UISegmentedControl*)sender;
+    if (viewswitch.selectedSegmentIndex==JobConfigIndex) {
+        [self performSegueWithIdentifier:@"jobConfigSegue" sender:self];
     }
 }
 
