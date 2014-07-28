@@ -483,6 +483,7 @@
                         <outlet property="downstreamProjectStatusBall4" destination="Gg9-hx-oPY" id="P3B-LO-bOG"/>
                         <outlet property="downstreamProjectStatusBall5" destination="hPQ-SY-o9i" id="mGf-Mv-n0t"/>
                         <outlet property="healthIcon" destination="hQt-g9-0nE" id="ack-Ww-0Qu"/>
+                        <outlet property="jobViewSwitcher" destination="NoH-LS-AqH" id="nNF-mz-c8d"/>
                         <outlet property="lastBuildButton" destination="Gzf-A2-OmT" id="puZ-LO-qEb"/>
                         <outlet property="lastStableBuildButton" destination="YmA-Et-Ivg" id="2ja-e7-4uZ"/>
                         <outlet property="lastSuccessfulBuildButton" destination="gLw-ti-vGQ" id="B2X-Lq-JkI"/>
@@ -499,7 +500,7 @@
                         <outlet property="upstreamProjectStatusBall3" destination="n9o-sk-DgL" id="LaU-65-X93"/>
                         <outlet property="upstreamProjectStatusBall4" destination="tBv-bm-St4" id="GLC-EC-GvF"/>
                         <outlet property="upstreamProjectStatusBall5" destination="gte-Vf-4Kt" id="Ufg-rk-nUM"/>
-                        <segue destination="0jn-jg-Cs6" kind="replace" identifier="jobConfigSegue" splitViewControllerTargetIndex="1" id="uHi-QV-HPf"/>
+                        <segue destination="0jn-jg-Cs6" kind="push" identifier="jobConfigSegue" id="uHi-QV-HPf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJe-Yq-33r" sceneMemberID="firstResponder"/>
@@ -788,6 +789,9 @@
                                     <segment title="Status"/>
                                     <segment title="Config"/>
                                 </segments>
+                                <connections>
+                                    <segue destination="KpH-qc-cIS" kind="unwind" unwindAction="jobViewSwitcherTapped:" id="lEw-r0-9RE"/>
+                                </connections>
                             </segmentedControl>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yZ8-ih-ayE">
                                 <rect key="frame" x="20" y="132" width="663" height="128"/>
@@ -853,11 +857,15 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
-                    <navigationItem key="navigationItem" id="5wL-uH-Apc"/>
+                    <navigationItem key="navigationItem" title="Config" id="oxi-sW-kPx"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <splitViewDetailSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <connections>
+                        <outlet property="jobViewSwitcher" destination="6WW-ze-CDI" id="6jM-pK-GHi"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DvU-xG-fFk" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="KpH-qc-cIS" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1596" y="3215"/>
         </scene>

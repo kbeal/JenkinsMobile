@@ -10,4 +10,7 @@
 
 @interface KDBJobConfigViewController : UIViewController
 
+@property (nonatomic, weak) IBOutlet UISegmentedControl *jobViewSwitcher;
+- (IBAction)jobViewSwitcherUnwind:(UIStoryboardSegue *)segue;
+
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "KDBJobConfigViewController.h"
+#import "Constants.h"
 
 @interface KDBJobConfigViewController ()
 
@@ -23,10 +24,16 @@
     return self;
 }
 
+- (void) viewWillAppear:(BOOL)willAppear
+{
+    [self.navigationController setNavigationBarHidden:NO];
+    return [super viewWillAppear:willAppear];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    [self.jobViewSwitcher setSelectedSegmentIndex:JobConfigIndex];
 }
 
 - (void)didReceiveMemoryWarning
@@ -34,6 +41,8 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+- (IBAction)jobViewSwitcherUnwind:(UIStoryboardSegue *)segue {}
 
 /*
 #pragma mark - Navigation

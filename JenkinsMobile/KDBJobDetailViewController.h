@@ -57,6 +57,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *healthIcon;
 
 @property (weak, nonatomic) IBOutlet SKView *statusBallContainerView;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *jobViewSwitcher;
 
 - (IBAction)jobViewSwitcherTapped:(id)sender;
 

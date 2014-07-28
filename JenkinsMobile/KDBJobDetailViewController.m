@@ -39,6 +39,12 @@
     [self configureView];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self.jobViewSwitcher setSelectedSegmentIndex:JobStatusIndex];
+    [super viewWillAppear:animated];
+}
+
 #pragma mark - Managing the detail item
 - (void)setJob:(Job *)newJob
 {
@@ -257,9 +263,14 @@
 
 - (IBAction)jobViewSwitcherTapped:(id)sender
 {
-    UISegmentedControl *viewswitch = (UISegmentedControl*)sender;
-    if (viewswitch.selectedSegmentIndex==JobConfigIndex) {
-        [self performSegueWithIdentifier:@"jobConfigSegue" sender:self];
+    // Make sure "sender" is the sender and not a segue
+    // workaround for this method being called after unwinding
+    // from job config view.
+    if ([sender isKindOfClass:[UISegmentedControl class]]) {
+        UISegmentedControl *viewswitch = (UISegmentedControl*)sender;
+        if (viewswitch.selectedSegmentIndex==JobConfigIndex) {
+            [self performSegueWithIdentifier:@"jobConfigSegue" sender:self];
+        }
     }
 }
 
