@@ -97,7 +97,6 @@
 {
     NSInteger links = 0;
     links += self.job.lastBuild > 0 ? 1 : 0;
-    links += self.job.lastCompletedBuild > 0 ? 1 : 0;
     links += self.job.lastFailedBuild > 0 ? 1 : 0;
     links += self.job.lastStableBuild > 0 ? 1 : 0;
     links += self.job.lastSuccessfulBuild > 0 ? 1 : 0;
@@ -115,24 +114,49 @@
 #pragma mark - Table view data source
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    NSLog(@"%d",[self numberPermalinks]);
-    return [self numberPermalinks] > 0 ? 1 : 0; //+numberUpstreamProjects>0?1:0+numberDownstreamProjects>0?1:0
+    NSInteger sections = 0;
+    self.permalinksSectionIndex=self.upstreamProjectsSectionIndex=self.downstreamProjectsSectionIndex=0;
+    
+    if ([self numberPermalinks] > 0) {
+        self.permalinksSectionIndex = sections;
+        sections += 1;
+    }
+    
+    if ([self.job.upstreamProjects count] > 0) {
+        self.upstreamProjectsSectionIndex = sections;
+        sections += 1;
+    }
+    
+    if ([self.job.downstreamProjects count] > 0) {
+        self.downstreamProjectsSectionIndex = sections;
+        sections += 1;
+    }
+
+    return sections;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    NSString *sectionName = @"";
+    if (section==self.permalinksSectionIndex) {
+        sectionName = @"Permalinks";
+    } else if (section==self.upstreamProjectsSectionIndex) {
+        sectionName = @"Upstream Projects";
+    } else if (section==self.downstreamProjectsSectionIndex) {
+        sectionName = @"Downstream Projects";
+    }
+    return sectionName;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger numRows=0;
-    switch (section) {
-        case PermalinksSectionIndex:
-            numRows = [self numberPermalinks];
-            break;
-        case UpstreamProjectsSectionIndex:
-            break;
-        case DownstreamProjectsSectionIndex:
-            break;
-            
-        default:
-            break;
+    if (section==self.permalinksSectionIndex) {
+        numRows = [self numberPermalinks];
+    } else if (section==self.upstreamProjectsSectionIndex) {
+        numRows = [self.job.upstreamProjects count];
+    } else if (section==self.downstreamProjectsSectionIndex) {
+        numRows = [self.job.downstreamProjects count];
     }
     return numRows;
 }

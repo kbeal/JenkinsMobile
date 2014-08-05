@@ -13,5 +13,8 @@
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) Job *job;
+@property (assign, nonatomic) NSInteger permalinksSectionIndex;
+@property (assign, nonatomic) NSInteger upstreamProjectsSectionIndex;
+@property (assign, nonatomic) NSInteger downstreamProjectsSectionIndex;
 
 @end
