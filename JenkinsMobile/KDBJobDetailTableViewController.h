@@ -13,6 +13,14 @@
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) Job *job;
+
+@property (assign, nonatomic) NSInteger lastBuildRowIndex;
+@property (assign, nonatomic) NSInteger lastStableBuildRowIndex;
+@property (assign, nonatomic) NSInteger lastSuccessfulBuildRowIndex;
+@property (assign, nonatomic) NSInteger lastFailedBuildRowIndex;
+@property (assign, nonatomic) NSInteger lastUnstableBuildRowIndex;
+@property (assign, nonatomic) NSInteger lastUnsuccessfulBuildRowIndex;
+
 @property (assign, nonatomic) NSInteger permalinksSectionIndex;
 @property (assign, nonatomic) NSInteger upstreamProjectsSectionIndex;
 @property (assign, nonatomic) NSInteger downstreamProjectsSectionIndex;

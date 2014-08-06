@@ -96,12 +96,30 @@
 - (NSInteger) numberPermalinks
 {
     NSInteger links = 0;
-    links += self.job.lastBuild > 0 ? 1 : 0;
-    links += self.job.lastFailedBuild > 0 ? 1 : 0;
-    links += self.job.lastStableBuild > 0 ? 1 : 0;
-    links += self.job.lastSuccessfulBuild > 0 ? 1 : 0;
-    links += self.job.lastUnstableBuild > 0 ? 1 : 0;
-    links += self.job.lastUnsuccessfulBuild > 0 ? 1 : 0;
+    if ( self.job.lastBuild ) {
+        self.lastBuildRowIndex=links;
+        links++;
+    }
+    if ( self.job.lastStableBuild ) {
+        self.lastStableBuildRowIndex=links;
+        links++;
+    }
+    if ( self.job.lastSuccessfulBuild ) {
+        self.lastSuccessfulBuildRowIndex=links;
+        links++;
+    }
+    if ( self.job.lastFailedBuild ) {
+        self.lastFailedBuildRowIndex=links;
+        links++;
+    }
+    if ( self.job.lastUnstableBuild ) {
+        self.lastUnstableBuildRowIndex=links;
+        links++;
+    }
+    if ( self.job.lastUnsuccessfulBuild ) {
+        self.lastUnsuccessfulBuildRowIndex=links;
+        links++;        
+    }
     return links;
 }
 
@@ -174,9 +192,40 @@
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     cell.textLabel.text = @"Job1";
-//    NSString *iconFileName = [NSString stringWithFormat:@"%@%@", job.color, @".png"];
-//    cell.imageView.image = [UIImage imageNamed:iconFileName];
-    cell.imageView.image = [UIImage imageNamed:@"blue"];
+    if (indexPath.section==self.permalinksSectionIndex) {
+        [self configurePermalinksCell:cell atIndexPath:indexPath];
+    } else if (indexPath.section==self.upstreamProjectsSectionIndex) {
+        [self configureUpstreamProjectsCell:cell atIndexPath:indexPath];
+    } else if (indexPath.section==self.downstreamProjectsSectionIndex) {
+        [self configureDownstreamProjectsCell:cell atIndexPath:indexPath];
+    }
+}
+
+- (void)configurePermalinksCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row==self.lastBuildRowIndex) {
+        cell.textLabel.text = [NSString stringWithFormat:@"%@%d%@",@"Last Build (#",[self.job.lastBuild intValue],@")"];
+    } else if (indexPath.row==self.lastFailedBuildRowIndex) {
+       cell.textLabel.text = [NSString stringWithFormat:@"%@%d%@",@"Last Failed Build (#",[self.job.lastFailedBuild intValue],@")"];
+    } else if (indexPath.row==self.lastStableBuildRowIndex) {
+        cell.textLabel.text = [NSString stringWithFormat:@"%@%d%@",@"Last Stable Build (#",[self.job.lastStableBuild intValue],@")"];
+    } else if (indexPath.row==self.lastSuccessfulBuildRowIndex) {
+        cell.textLabel.text = [NSString stringWithFormat:@"%@%d%@",@"Last Successful Build (#",[self.job.lastSuccessfulBuild intValue],@")"];
+    } else if (indexPath.row==self.lastUnstableBuildRowIndex) {
+        cell.textLabel.text = [NSString stringWithFormat:@"%@%d%@",@"Last Unstable Build (#",[self.job.lastUnstableBuild intValue],@")"];
+    } else if (indexPath.row==self.lastUnsuccessfulBuildRowIndex) {
+        cell.textLabel.text = [NSString stringWithFormat:@"%@%d%@",@"Last Unsuccessful Build (#",[self.job.lastUnsuccessfulBuild intValue],@")"];
+    }
+}
+
+- (void)configureUpstreamProjectsCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    
+}
+
+- (void)configureDownstreamProjectsCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    
 }
 
 /*
