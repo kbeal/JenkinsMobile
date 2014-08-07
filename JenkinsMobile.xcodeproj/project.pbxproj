@@ -173,7 +173,6 @@
 		8A999499197A1439009B82DD /* health-80plus~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999494197A1439009B82DD /* health-80plus~ipad.png */; };
 		8A99949C197AB258009B82DD /* UIButton+RelatedProject.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A99949B197AB258009B82DD /* UIButton+RelatedProject.m */; };
 		8A9B05B11924452D0019B336 /* KDBBuildDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B05B01924452D0019B336 /* KDBBuildDetailViewController.m */; };
-		8A9B05B4192449A40019B336 /* KDBTestResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B05B3192449A40019B336 /* KDBTestResultsViewController.m */; };
 		8A9C3B83196F82A7005A78BB /* balls30.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8A9C3B82196F82A7005A78BB /* balls30.atlas */; };
 		8A9C3B85196F8350005A78BB /* balls80.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8A9C3B84196F8350005A78BB /* balls80.atlas */; };
 		8AC329ED18E4F3A90002D106 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EC18E4F3A90002D106 /* Foundation.framework */; };
@@ -399,8 +398,6 @@
 		8A99949B197AB258009B82DD /* UIButton+RelatedProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+RelatedProject.m"; sourceTree = "<group>"; };
 		8A9B05AF1924452D0019B336 /* KDBBuildDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBBuildDetailViewController.h; sourceTree = "<group>"; };
 		8A9B05B01924452D0019B336 /* KDBBuildDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBBuildDetailViewController.m; sourceTree = "<group>"; };
-		8A9B05B2192449A40019B336 /* KDBTestResultsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBTestResultsViewController.h; sourceTree = "<group>"; };
-		8A9B05B3192449A40019B336 /* KDBTestResultsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBTestResultsViewController.m; sourceTree = "<group>"; };
 		8A9C3B82196F82A7005A78BB /* balls30.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = balls30.atlas; sourceTree = "<group>"; };
 		8A9C3B84196F8350005A78BB /* balls80.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = balls80.atlas; sourceTree = "<group>"; };
 		8AC329E918E4F3A90002D106 /* JenkinsMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JenkinsMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -715,8 +712,6 @@
 				8AC32A0A18E4F3A90002D106 /* KDBMasterViewController.m */,
 				8A0409FE192599D400B25073 /* KDBRelatedProjectsViewController.h */,
 				8A0409FF192599D400B25073 /* KDBRelatedProjectsViewController.m */,
-				8A9B05B2192449A40019B336 /* KDBTestResultsViewController.h */,
-				8A9B05B3192449A40019B336 /* KDBTestResultsViewController.m */,
 				8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */,
 				8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */,
 				8AC32A0318E4F3A90002D106 /* Main_iPad.storyboard */,
@@ -1091,7 +1086,6 @@
 				8AC329FB18E4F3A90002D106 /* main.m in Sources */,
 				8AC32A0818E4F3A90002D106 /* JenkinsMobile.xcdatamodeld in Sources */,
 				8AC32A4318E4FB6F0002D106 /* AFHTTPSessionManager.m in Sources */,
-				8A9B05B4192449A40019B336 /* KDBTestResultsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

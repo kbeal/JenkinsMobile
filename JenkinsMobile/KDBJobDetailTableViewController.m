@@ -7,6 +7,7 @@
 //
 
 #import "KDBJobDetailTableViewController.h"
+#import "KDBBuildDetailViewController.h"
 #import "Constants.h"
 
 @interface KDBJobDetailTableViewController ()
@@ -205,27 +206,40 @@
 {
     if (indexPath.row==self.lastBuildRowIndex) {
         cell.textLabel.text = [NSString stringWithFormat:@"%@%d%@",@"Last Build (#",[self.job.lastBuild intValue],@")"];
+        cell.tag = [self.job.lastBuild integerValue];
     } else if (indexPath.row==self.lastFailedBuildRowIndex) {
        cell.textLabel.text = [NSString stringWithFormat:@"%@%d%@",@"Last Failed Build (#",[self.job.lastFailedBuild intValue],@")"];
+       cell.tag = [self.job.lastFailedBuild integerValue];
     } else if (indexPath.row==self.lastStableBuildRowIndex) {
         cell.textLabel.text = [NSString stringWithFormat:@"%@%d%@",@"Last Stable Build (#",[self.job.lastStableBuild intValue],@")"];
+        cell.tag = [self.job.lastStableBuild integerValue];
     } else if (indexPath.row==self.lastSuccessfulBuildRowIndex) {
         cell.textLabel.text = [NSString stringWithFormat:@"%@%d%@",@"Last Successful Build (#",[self.job.lastSuccessfulBuild intValue],@")"];
+        cell.tag = [self.job.lastSuccessfulBuild integerValue];
     } else if (indexPath.row==self.lastUnstableBuildRowIndex) {
         cell.textLabel.text = [NSString stringWithFormat:@"%@%d%@",@"Last Unstable Build (#",[self.job.lastUnstableBuild intValue],@")"];
+        cell.tag = [self.job.lastUnstableBuild integerValue];
     } else if (indexPath.row==self.lastUnsuccessfulBuildRowIndex) {
         cell.textLabel.text = [NSString stringWithFormat:@"%@%d%@",@"Last Unsuccessful Build (#",[self.job.lastUnsuccessfulBuild intValue],@")"];
+        cell.tag = [self.job.lastUnsuccessfulBuild integerValue];
     }
 }
 
 - (void)configureUpstreamProjectsCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    
+
 }
 
 - (void)configureDownstreamProjectsCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section==self.permalinksSectionIndex) {
+        [self performSegueWithIdentifier:@"buildDetailSegue" sender:self];
+    }
 }
 
 /*
@@ -281,15 +295,24 @@
     [self.navigationItem setLeftBarButtonItem:nil animated:YES];
     self.masterPopoverController = nil;
 }
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    NSIndexPath *selectedIndex = [self.tableView indexPathForSelectedRow];
+    // get the selected cell
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[self.tableView indexPathForSelectedRow]];
+
+    if ([[segue identifier] isEqualToString:@"buildDetailSegue"]) {
+        Build *build = [Build fetchBuildWithNumber:[NSNumber numberWithInteger:cell.tag] forJobAtURL:self.job.url inContext:self.managedObjectContext];
+        KDBBuildDetailViewController *dest = [segue destinationViewController];
+        if (build != nil) {
+            [dest setBuild:build];
+        }
+    } 
 }
-*/
+
 
 @end
