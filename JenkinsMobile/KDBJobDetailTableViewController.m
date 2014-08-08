@@ -192,7 +192,7 @@
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    cell.textLabel.text = @"Job1";
+    cell.textLabel.text = @"";
     if (indexPath.section==self.permalinksSectionIndex) {
         [self configurePermalinksCell:cell atIndexPath:indexPath];
     } else if (indexPath.section==self.upstreamProjectsSectionIndex) {
@@ -227,7 +227,9 @@
 
 - (void)configureUpstreamProjectsCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-
+    cell.textLabel.text = [[self.job.upstreamProjects objectAtIndex:indexPath.row] objectForKey:@"name"];
+    NSString *iconFileName = [NSString stringWithFormat:@"%@%@", [[self.job.upstreamProjects objectAtIndex:indexPath.row] objectForKey:@"color"], @".png"];
+    cell.imageView.image = [UIImage imageNamed:iconFileName];
 }
 
 - (void)configureDownstreamProjectsCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
