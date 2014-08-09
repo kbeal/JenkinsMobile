@@ -9,6 +9,8 @@
 #import "KDBJobDetailTableViewController.h"
 #import "KDBBuildDetailViewController.h"
 #import "Constants.h"
+#import "KDBBallScene.h"
+#import "KDBJobTableViewCell.h"
 
 @interface KDBJobDetailTableViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -130,6 +132,8 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (BOOL) relatedProjectColorIsAnimated:(NSString*) color { return [color rangeOfString:@"anime"].length > 0 ? true : false; }
+
 #pragma mark - Table view data source
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -182,24 +186,20 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-    
+    UITableViewCell *cell=nil;
     // Configure the cell...
-    [self configureCell:cell atIndexPath:indexPath];
-    
-    return cell;
-}
-
-- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
-{
-    cell.textLabel.text = @"";
     if (indexPath.section==self.permalinksSectionIndex) {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"PermalinkCell" forIndexPath:indexPath];
         [self configurePermalinksCell:cell atIndexPath:indexPath];
     } else if (indexPath.section==self.upstreamProjectsSectionIndex) {
-        [self configureUpstreamProjectsCell:cell atIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"RelatedProjectCell" forIndexPath:indexPath];
+        [self configureUpstreamProjectsCell:(KDBJobTableViewCell*)cell atIndexPath:indexPath];
     } else if (indexPath.section==self.downstreamProjectsSectionIndex) {
-        [self configureDownstreamProjectsCell:cell atIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"RelatedProjectCell" forIndexPath:indexPath];
+        [self configureDownstreamProjectsCell:(KDBJobTableViewCell *)cell atIndexPath:indexPath];
     }
+    
+    return cell;
 }
 
 - (void)configurePermalinksCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
@@ -225,16 +225,36 @@
     }
 }
 
-- (void)configureUpstreamProjectsCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+- (void)configureUpstreamProjectsCell:(KDBJobTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    cell.textLabel.text = [[self.job.upstreamProjects objectAtIndex:indexPath.row] objectForKey:@"name"];
-    NSString *iconFileName = [NSString stringWithFormat:@"%@%@", [[self.job.upstreamProjects objectAtIndex:indexPath.row] objectForKey:@"color"], @".png"];
-    cell.imageView.image = [UIImage imageNamed:iconFileName];
+    NSString *projectColor = [[self.job.upstreamProjects objectAtIndex:indexPath.row] objectForKey:@"color"];
+    BOOL animated = [self relatedProjectColorIsAnimated:projectColor];
+    
+    // Create and configure the scene.
+    NSString *color =  animated ? [projectColor componentsSeparatedByString:@"_"][0] : projectColor;
+    KDBBallScene *scene = [[KDBBallScene alloc] initWithSize:cell.statusBallContainerView.bounds.size andColor:color withAnimation:animated];
+    scene.scaleMode = SKSceneScaleModeAspectFill;
+    
+    // Present the scene.
+    [cell.statusBallContainerView presentScene:scene];
+    
+    cell.projectNamelabel.text = [[self.job.upstreamProjects objectAtIndex:indexPath.row] objectForKey:@"name"];
 }
 
-- (void)configureDownstreamProjectsCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+- (void)configureDownstreamProjectsCell:(KDBJobTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
+    NSString *projectColor = [[self.job.downstreamProjects objectAtIndex:indexPath.row] objectForKey:@"color"];
+    BOOL animated = [self relatedProjectColorIsAnimated:projectColor];
     
+    // Create and configure the scene.
+    NSString *color =  animated ? [projectColor componentsSeparatedByString:@"_"][0] : projectColor;
+    KDBBallScene *scene = [[KDBBallScene alloc] initWithSize:cell.statusBallContainerView.bounds.size andColor:color withAnimation:animated];
+    scene.scaleMode = SKSceneScaleModeAspectFill;
+    
+    // Present the scene.
+    [cell.statusBallContainerView presentScene:scene];
+    
+    cell.projectNamelabel.text = [[self.job.downstreamProjects objectAtIndex:indexPath.row] objectForKey:@"name"];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
