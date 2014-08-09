@@ -54,6 +54,8 @@
     if (self.masterPopoverController != nil) {
         [self.masterPopoverController dismissPopoverAnimated:YES];
     }
+    // update the master view
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"SelectedJobChanged" object:self.job];
 }
 
 - (void)configureView
@@ -261,6 +263,10 @@
 {
     if (indexPath.section==self.permalinksSectionIndex) {
         [self performSegueWithIdentifier:@"buildDetailSegue" sender:self];
+    } else if (indexPath.section==self.upstreamProjectsSectionIndex || indexPath.section==self.downstreamProjectsSectionIndex) {
+        [self switchDetailToRelatedProject:indexPath];
+    } else {
+        NSLog(@"Don't how to handle selection in this section.");
     }
 }
 
@@ -323,7 +329,6 @@
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    NSIndexPath *selectedIndex = [self.tableView indexPathForSelectedRow];
     // get the selected cell
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[self.tableView indexPathForSelectedRow]];
 
@@ -334,6 +339,17 @@
             [dest setBuild:build];
         }
     } 
+}
+
+- (void)switchDetailToRelatedProject:(NSIndexPath *)indexPath
+{
+    NSString *relatedProjectURL = @"";
+    if (indexPath.section==self.upstreamProjectsSectionIndex) {
+        relatedProjectURL = [[self.job.upstreamProjects objectAtIndex:indexPath.row] objectForKey:@"url"];
+    } else if (indexPath.section==self.downstreamProjectsSectionIndex) {
+        relatedProjectURL = [[self.job.downstreamProjects objectAtIndex:indexPath.row] objectForKey:@"url"];
+    }
+    [self setJob:[Job fetchJobAtURL:relatedProjectURL inManagedObjectContext:self.managedObjectContext]];
 }
 
 

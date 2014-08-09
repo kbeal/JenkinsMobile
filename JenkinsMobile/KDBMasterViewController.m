@@ -34,6 +34,8 @@
     
     //register an observer that fires when app enters foreground to ensure that a row is always selected
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ensureRowIsSelected) name:UIApplicationDidBecomeActiveNotification object:nil];
+    //register an observer that listens to changes in job detail view
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateSelectedRow:) name:@"SelectedJobChanged" object:nil];
 }
 
 - (void)ensureRowIsSelected
@@ -43,6 +45,12 @@
         [self.tableView selectRowAtIndexPath:zeroIndex animated:NO scrollPosition:UITableViewScrollPositionTop];
         [self populateDetailViewForJobAtIndex:zeroIndex];
     }
+}
+
+- (void)updateSelectedRow: (NSNotification *) notification
+{
+    // update the selected job with the newly selected job from detail view
+    [self.tableView selectRowAtIndexPath:[self.fetchedResultsController indexPathForObject:(Job*)notification.object] animated:YES scrollPosition:UITableViewScrollPositionMiddle];
 }
 
 - (void) populateDetailViewForJobAtIndex: (NSIndexPath *) indexPath
