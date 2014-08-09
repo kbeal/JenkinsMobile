@@ -76,7 +76,6 @@
 
 - (void) updateJobStatusIcon
 {
-    /*
     // Create and configure the scene.
     NSString *color = [self.job colorIsAnimated] ? [self.job.color componentsSeparatedByString:@"_"][0] : self.job.color;
     KDBBallScene *scene = [[KDBBallScene alloc] initWithSize:self.statusBallContainerView.bounds.size andColor:color withAnimation:[self.job colorIsAnimated]];
@@ -84,7 +83,6 @@
     
     // Present the scene.
     [self.statusBallContainerView presentScene:scene];
-     */
 }
 
 - (void) updateJobHealthIcon

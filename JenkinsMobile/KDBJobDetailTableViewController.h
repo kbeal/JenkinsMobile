@@ -7,12 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <SpriteKit/SpriteKit.h>
 #import "Job.h"
 
 @interface KDBJobDetailTableViewController : UITableViewController <UISplitViewControllerDelegate>
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) Job *job;
+
+@property (weak, nonatomic) IBOutlet SKView *statusBallContainerView;
 
 @property (assign, nonatomic) NSInteger lastBuildRowIndex;
 @property (assign, nonatomic) NSInteger lastStableBuildRowIndex;

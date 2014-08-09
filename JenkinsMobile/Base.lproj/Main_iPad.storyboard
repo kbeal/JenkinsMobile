@@ -211,10 +211,6 @@
                                     <rect key="frame" x="603" y="0.0" width="80" height="80"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </imageView>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="blue.png" translatesAutoresizingMaskIntoConstraints="NO" id="m2V-jg-Atw">
-                                    <rect key="frame" x="20" y="0.0" width="80" height="80"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                </imageView>
                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F1t-BP-qPn">
                                     <rect key="frame" x="108" y="0.0" width="487" height="80"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -223,12 +219,15 @@
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                 </textView>
+                                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ct0-Qz-ibg" customClass="SKView">
+                                    <rect key="frame" x="20" y="0.0" width="80" height="80"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                </view>
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             <constraints>
                                 <constraint firstItem="Ws6-Kd-4Nq" firstAttribute="top" secondItem="QHn-wq-e6Z" secondAttribute="top" id="8Vt-tA-cgq"/>
-                                <constraint firstItem="m2V-jg-Atw" firstAttribute="top" secondItem="QHn-wq-e6Z" secondAttribute="top" id="CtA-Km-g0J"/>
-                                <constraint firstItem="m2V-jg-Atw" firstAttribute="leading" secondItem="QHn-wq-e6Z" secondAttribute="leading" constant="20" id="QT4-L1-ZQV"/>
                                 <constraint firstAttribute="trailing" secondItem="Ws6-Kd-4Nq" secondAttribute="trailing" constant="20" id="vo6-ia-AZ6"/>
                             </constraints>
                         </view>
@@ -287,6 +286,7 @@
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <splitViewDetailSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="statusBallContainerView" destination="ct0-Qz-ibg" id="ihf-eB-sJx"/>
                         <segue destination="duW-wl-GQd" kind="push" identifier="buildDetailSegue" id="IPx-Gn-eeM"/>
                     </connections>
                 </tableViewController>
@@ -296,7 +296,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="blue.png" width="40" height="40"/>
         <image name="health-00to19.png" width="80" height="80"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
