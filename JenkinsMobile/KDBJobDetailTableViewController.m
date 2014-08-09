@@ -87,13 +87,11 @@
 
 - (void) updateJobHealthIcon
 {
-    /*
     if ([self.job.healthReport count]>0) {
         self.healthIcon.image = [UIImage imageNamed:[[self.job.healthReport objectAtIndex:0] objectForKey:@"iconUrl"]];
     } else {
         self.healthIcon.image = nil;
     }
-     */
 }
 
 - (NSInteger) numberPermalinks

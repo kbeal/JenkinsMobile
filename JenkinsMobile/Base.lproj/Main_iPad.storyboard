@@ -207,9 +207,13 @@
                             <rect key="frame" x="0.0" y="64" width="703" height="80"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="health-00to19.png" translatesAutoresizingMaskIntoConstraints="NO" id="Ws6-Kd-4Nq">
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Ws6-Kd-4Nq">
                                     <rect key="frame" x="603" y="0.0" width="80" height="80"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="80" id="Ib5-qr-XH8"/>
+                                        <constraint firstAttribute="width" constant="80" id="u9B-sk-YQP"/>
+                                    </constraints>
                                 </imageView>
                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F1t-BP-qPn">
                                     <rect key="frame" x="108" y="0.0" width="487" height="80"/>
@@ -286,6 +290,7 @@
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <splitViewDetailSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="healthIcon" destination="Ws6-Kd-4Nq" id="m7p-1O-aYd"/>
                         <outlet property="statusBallContainerView" destination="ct0-Qz-ibg" id="ihf-eB-sJx"/>
                         <segue destination="duW-wl-GQd" kind="push" identifier="buildDetailSegue" id="IPx-Gn-eeM"/>
                     </connections>
@@ -295,9 +300,6 @@
             <point key="canvasLocation" x="566" y="529"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="health-00to19.png" width="80" height="80"/>
-    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackOpaque"/>
         <simulatedOrientationMetrics key="orientation"/>
