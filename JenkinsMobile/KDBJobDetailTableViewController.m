@@ -65,6 +65,7 @@
         self.navigationItem.title = self.job.name;
         [self.tableView reloadData];
         [self updateJobIcons];
+        self.jobDescriptionTextView.text = self.job.job_description;
     }
 }
 

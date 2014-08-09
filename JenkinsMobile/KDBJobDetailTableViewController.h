@@ -17,6 +17,7 @@
 
 @property (weak, nonatomic) IBOutlet SKView *statusBallContainerView;
 @property (weak, nonatomic) IBOutlet UIImageView *healthIcon;
+@property (weak, nonatomic) IBOutlet UITextView *jobDescriptionTextView;
 
 @property (assign, nonatomic) NSInteger lastBuildRowIndex;
 @property (assign, nonatomic) NSInteger lastStableBuildRowIndex;

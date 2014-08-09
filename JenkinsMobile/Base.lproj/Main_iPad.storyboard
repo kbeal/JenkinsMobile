@@ -291,6 +291,7 @@
                     <splitViewDetailSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
                         <outlet property="healthIcon" destination="Ws6-Kd-4Nq" id="m7p-1O-aYd"/>
+                        <outlet property="jobDescriptionTextView" destination="F1t-BP-qPn" id="RWx-1c-tSG"/>
                         <outlet property="statusBallContainerView" destination="ct0-Qz-ibg" id="ihf-eB-sJx"/>
                         <segue destination="duW-wl-GQd" kind="push" identifier="buildDetailSegue" id="IPx-Gn-eeM"/>
                     </connections>
