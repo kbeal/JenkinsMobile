@@ -11,6 +11,7 @@
 #import "Constants.h"
 #import "KDBBallScene.h"
 #import "KDBJobTableViewCell.h"
+#import "KDBJenkinsRequestHandler.h"
 
 @interface KDBJobDetailTableViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -32,11 +33,8 @@
 {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    //observe changes to model
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDataModelChange:) name:NSManagedObjectContextObjectsDidChangeNotification object:self.managedObjectContext];
 }
 
 #pragma mark - Managing the detail item
@@ -48,7 +46,7 @@
         // Update the view.
         [self configureView];
         // Query Jenkins for updates to job
-        //[self getUpdates];
+        [self getUpdates];
     }
     
     if (self.masterPopoverController != nil) {
@@ -67,6 +65,26 @@
         [self updateJobIcons];
         self.jobDescriptionTextView.text = self.job.job_description;
     }
+}
+
+- (void)getUpdates
+{
+    View *view = [self.job.rel_Job_View anyObject];
+    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:(JenkinsInstance*)view.rel_View_JenkinsInstance];
+    jenkins.managedObjectContext = self.managedObjectContext;
+    [jenkins importDetailsForJobAtURL:self.job.url];
+}
+
+- (void) handleDataModelChange: (NSNotification *) notification
+{
+    NSSet *updatedObjects = [[notification userInfo] objectForKey:NSUpdatedObjectsKey];
+    // see if self.job was updated
+    [updatedObjects enumerateObjectsUsingBlock:^(id obj, BOOL *stop){
+        if ([[obj objectID] isEqual:[self.job objectID]]) {
+            self.job = obj;
+            [self configureView];
+        }
+    }];
 }
 
 - (void) updateJobIcons
