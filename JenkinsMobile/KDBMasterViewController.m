@@ -10,6 +10,7 @@
 #import "KDBJobDetailViewController.h"
 #import "AFNetworking.h"
 #import "KDBMasterBuildListTableViewController.h"
+#import "Constants.h"
 
 @interface KDBMasterViewController ()
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
@@ -35,7 +36,7 @@
     //register an observer that fires when app enters foreground to ensure that a row is always selected
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ensureRowIsSelected) name:UIApplicationDidBecomeActiveNotification object:nil];
     //register an observer that listens to changes in job detail view
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateSelectedRow:) name:@"SelectedJobChanged" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateSelectedRow:) name:SelectedJobChangedNotification object:nil];
 }
 
 - (void)ensureRowIsSelected

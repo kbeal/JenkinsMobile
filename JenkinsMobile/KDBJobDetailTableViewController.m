@@ -53,7 +53,7 @@
         [self.masterPopoverController dismissPopoverAnimated:YES];
     }
     // update the master view
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"SelectedJobChanged" object:self.job];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SelectedJobChangedNotification object:self.job];
 }
 
 - (void)configureView
