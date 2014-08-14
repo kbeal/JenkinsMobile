@@ -8,6 +8,7 @@
 
 #import "KDBJenkinsRequestHandler.h"
 #import "AFNetworking.h"
+#import "Constants.h"
 
 @implementation KDBJenkinsRequestHandler
 
@@ -124,6 +125,8 @@
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"%@%@",@"response received for job at url: ",jobURL);
+        [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailResponseReceivedNotification object:self userInfo:[NSDictionary dictionaryWithObject:jobURL forKey:JobURLKey]];
         [self persistJobAtURL:jobURL withValues:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error

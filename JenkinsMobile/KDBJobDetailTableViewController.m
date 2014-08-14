@@ -35,6 +35,8 @@
     
     //observe changes to model
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDataModelChange:) name:NSManagedObjectContextObjectsDidChangeNotification object:self.managedObjectContext];
+    // observer notifications when response is returned from server
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(jobDetailResponseReceived:) name:JobDetailResponseReceivedNotification object:nil];
 }
 
 #pragma mark - Managing the detail item
@@ -75,6 +77,11 @@
     [jenkins importDetailsForJobAtURL:self.job.url];
 }
 
+-(IBAction)refresh:(id)sender
+{
+    [self getUpdates];
+}
+
 - (void) handleDataModelChange: (NSNotification *) notification
 {
     NSSet *updatedObjects = [[notification userInfo] objectForKey:NSUpdatedObjectsKey];
@@ -85,6 +92,18 @@
             [self configureView];
         }
     }];
+}
+
+- (void) jobDetailResponseReceived: (NSNotification *) notification
+{
+    // fired when receiving JobDetailResponseReceivedNotification
+    // A response to a request for job details from Jenkins API was received
+    // if it was for this job
+    if ([[[notification userInfo] objectForKey:JobURLKey] isEqualToString:self.job.url]) {
+        // hide the refresh control
+        NSLog(@"%@%@%@",@"response notification for job ",self.job.name,@" received");
+        [self.refreshControl endRefreshing];
+    }
 }
 
 - (void) updateJobIcons

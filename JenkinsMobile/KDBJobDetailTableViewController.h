@@ -30,4 +30,6 @@
 @property (assign, nonatomic) NSInteger upstreamProjectsSectionIndex;
 @property (assign, nonatomic) NSInteger downstreamProjectsSectionIndex;
 
+-(IBAction)refresh:(id)sender;
+
 @end
