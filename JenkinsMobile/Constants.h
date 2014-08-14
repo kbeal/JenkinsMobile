@@ -10,10 +10,9 @@
 
 @interface Constants : NSObject
 
-//extern NSInteger const LastBuildIndex;
+extern NSString * const SelectedJobChangedNotification;
+extern NSString * const JobDetailResponseReceivedNotification;
+
+extern NSString * const JobURLKey;
 
 @end
-
-// permalinks row indices
-//NSInteger const LastBuildRowIndex              = 0;
-
