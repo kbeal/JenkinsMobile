@@ -215,18 +215,36 @@
                                         <constraint firstAttribute="width" constant="80" id="u9B-sk-YQP"/>
                                     </constraints>
                                 </imageView>
-                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" showsHorizontalScrollIndicator="NO" editable="NO" text="This is a job description" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="F1t-BP-qPn">
-                                    <rect key="frame" x="108" y="0.0" width="487" height="80"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                </textView>
                                 <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ct0-Qz-ibg" customClass="SKView">
                                     <rect key="frame" x="20" y="0.0" width="80" height="80"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                 </view>
+                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="GFS Dev Maven Slave" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="efi-z6-4fG">
+                                    <rect key="frame" x="108" y="13" width="243" height="19"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" editable="NO" text="http://ci.kylebeal.com/view/JobView1/job/Job1" translatesAutoresizingMaskIntoConstraints="NO" id="PQn-TU-LVd">
+                                    <rect key="frame" x="108" y="40" width="243" height="40"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <accessibility key="accessibilityConfiguration">
+                                        <accessibilityTraits key="traits" none="YES" link="YES"/>
+                                    </accessibility>
+                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <dataDetectorType key="dataDetectorTypes" link="YES"/>
+                                </textView>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" showsHorizontalScrollIndicator="NO" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ef5-zo-Ta6">
+                                    <rect key="frame" x="359" y="0.0" width="236" height="80"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             <constraints>
@@ -304,7 +322,9 @@
                     </refreshControl>
                     <connections>
                         <outlet property="healthIcon" destination="Ws6-Kd-4Nq" id="m7p-1O-aYd"/>
-                        <outlet property="jobDescriptionTextView" destination="F1t-BP-qPn" id="RWx-1c-tSG"/>
+                        <outlet property="jenkinsNameJobDescriptionLabel" destination="efi-z6-4fG" id="8mr-de-AGn"/>
+                        <outlet property="jobDescriptionTextView" destination="ef5-zo-Ta6" id="2nl-Pn-7rp"/>
+                        <outlet property="jobURLTextView" destination="PQn-TU-LVd" id="LEO-gY-EIY"/>
                         <outlet property="statusBallContainerView" destination="ct0-Qz-ibg" id="ihf-eB-sJx"/>
                         <segue destination="duW-wl-GQd" kind="push" identifier="buildDetailSegue" id="IPx-Gn-eeM"/>
                     </connections>

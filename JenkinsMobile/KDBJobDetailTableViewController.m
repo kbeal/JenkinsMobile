@@ -37,6 +37,11 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDataModelChange:) name:NSManagedObjectContextObjectsDidChangeNotification object:self.managedObjectContext];
     // observer notifications when response is returned from server
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(jobDetailResponseReceived:) name:JobDetailResponseReceivedNotification object:nil];
+    // fix the padding inside the job url textview
+    self.jobURLTextView.contentInset = UIEdgeInsetsMake(0,-3,0,0);
+    // make the job url textview truncate at the end
+    self.jobURLTextView.textContainer.maximumNumberOfLines = 0;
+    self.jobURLTextView.textContainer.lineBreakMode = NSLineBreakByTruncatingTail;
 }
 
 #pragma mark - Managing the detail item
@@ -65,14 +70,22 @@
         self.navigationItem.title = self.job.name;
         [self.tableView reloadData];
         [self updateJobIcons];
+        self.jobURLTextView.text = self.job.url;
         self.jobDescriptionTextView.text = self.job.job_description;
+        self.jenkinsNameJobDescriptionLabel.text = [self getJenkinsInstance].name;
     }
+}
+
+// returns the JenkinsInstance associated with the job
+- (JenkinsInstance *) getJenkinsInstance
+{
+    View *view = [self.job.rel_Job_View anyObject];
+    return (JenkinsInstance*)view.rel_View_JenkinsInstance;
 }
 
 - (void)getUpdates
 {
-    View *view = [self.job.rel_Job_View anyObject];
-    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:(JenkinsInstance*)view.rel_View_JenkinsInstance];
+    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:[self getJenkinsInstance]];
     jenkins.managedObjectContext = self.managedObjectContext;
     [jenkins importDetailsForJobAtURL:self.job.url];
 }
