@@ -277,6 +277,10 @@
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                 </textView>
+                                <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progressViewStyle="bar" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="IMz-jB-64y">
+                                    <rect key="frame" x="0.0" y="0.0" width="703" height="3"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                </progressView>
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             <constraints>
@@ -353,6 +357,7 @@
                         </connections>
                     </refreshControl>
                     <connections>
+                        <outlet property="currentBuildProgressView" destination="IMz-jB-64y" id="8QG-KT-BgN"/>
                         <outlet property="healthIcon" destination="Ws6-Kd-4Nq" id="m7p-1O-aYd"/>
                         <outlet property="jenkinsNameJobDescriptionLabel" destination="efi-z6-4fG" id="8mr-de-AGn"/>
                         <outlet property="jobDescriptionTextView" destination="ef5-zo-Ta6" id="2nl-Pn-7rp"/>

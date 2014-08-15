@@ -36,8 +36,10 @@
     
     //observe changes to model
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDataModelChange:) name:NSManagedObjectContextObjectsDidChangeNotification object:self.managedObjectContext];
-    // observer notifications when response is returned from server
+    // observe notifications when response is returned from server
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(jobDetailResponseReceived:) name:JobDetailResponseReceivedNotification object:nil];
+    // observe notifications when build progress response is returned from server
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(buildProgressResponseReceived:) name:BuildProgressResponseReceivedNotification object:nil];
     // fix the padding inside the job url textview
     self.jobURLTextView.contentInset = UIEdgeInsetsMake(0,-3,0,0);
     // make the job url textview truncate at the end
@@ -71,6 +73,7 @@
         self.navigationItem.title = self.job.name;
         [self.tableView reloadData];
         [self updateJobIcons];
+        [self updateProgressView];
         self.jobURLTextView.text = self.job.url;
         self.jobDescriptionTextView.text = self.job.job_description;
         self.jenkinsNameJobDescriptionLabel.text = [self getJenkinsInstance].name;
@@ -84,9 +87,15 @@
     return (JenkinsInstance*)view.rel_View_JenkinsInstance;
 }
 
+// returns a JenkinsRequestHandler for this job's JenkinsInstance
+- (KDBJenkinsRequestHandler *) getJenkinsRequestHandler
+{
+    return [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:[self getJenkinsInstance]];
+}
+
 - (void)getUpdates
 {
-    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:[self getJenkinsInstance]];
+    KDBJenkinsRequestHandler *jenkins = [self getJenkinsRequestHandler];
     jenkins.managedObjectContext = self.managedObjectContext;
     [jenkins importDetailsForJobAtURL:self.job.url];
 }
@@ -120,6 +129,32 @@
     }
 }
 
+- (void) buildProgressResponseReceived: (NSNotification *) notification
+{
+    // fired when receiving BuildProgressResponseReceievedNotification
+    // A response to a request for build progress from Jenkins API was received
+    // grab the values from the notification
+    NSString *jobURL = [[notification userInfo] objectForKey:JobURLKey];
+    NSNumber *buildNumber = [[notification userInfo] objectForKey:BuildNumberKey];
+    BOOL building = (BOOL)[[notification userInfo] objectForKey:BuildBuildingKey];
+    
+    // if it is the most recent build for this job
+    if ([self.job.url isEqualToString:jobURL] && self.job.lastBuild==buildNumber) {
+        
+    }
+    
+}
+
+- (void) updateProgressView
+{
+    //only show the progress view if a build is in progress
+    self.currentBuildProgressView.hidden = YES;
+    if ([self.job colorIsAnimated]) {
+        self.currentBuildProgressView.hidden = NO;
+    }
+    KDBJenkinsRequestHandler *jenkins = [self getJenkinsRequestHandler];
+    [jenkins importProgressForBuild:self.job.lastBuild ofJobAtURL:self.job.url];
+}
 - (void) updateJobIcons
 {
     [self updateJobStatusIcon];

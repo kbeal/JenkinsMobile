@@ -20,6 +20,7 @@
 @property (weak, nonatomic) IBOutlet UITextView *jobURLTextView;
 @property (weak, nonatomic) IBOutlet UITextView *jobDescriptionTextView;
 @property (weak, nonatomic) IBOutlet UILabel *jenkinsNameJobDescriptionLabel;
+@property (weak, nonatomic) IBOutlet UIProgressView *currentBuildProgressView;
 
 @property (assign, nonatomic) NSInteger lastBuildRowIndex;
 @property (assign, nonatomic) NSInteger lastStableBuildRowIndex;

@@ -136,6 +136,36 @@
     [operation start];
 }
 
+- (void) importProgressForBuild:(NSNumber *) buildNumber ofJobAtURL:(NSString *) jobURL
+{
+    NSString *buildURL = [NSString stringWithFormat:@"%@%d",jobURL,[buildNumber intValue]];
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@%@%@%@%@",buildURL,@"/api/json?tree=",BuildBuildingKey,@",",BuildDurationKey,@",",BuildEstimatedDurationKey]];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    //AFNetworking asynchronous url request
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
+                                         initWithRequest:request];
+    
+    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"%@%@",@"response received for build progress at url: ",buildURL);
+        NSLog(@"%@%@",@"building class: ",NSStringFromClass([[responseObject objectForKey:BuildBuildingKey] class]));
+        
+
+        NSArray *keys = [NSArray arrayWithObjects:JobURLKey,BuildNumberKey,BuildBuildingKey,BuildDurationKey,BuildEstimatedDurationKey, nil];
+        NSArray *objs = [NSArray arrayWithObjects:jobURL,buildNumber,[responseObject objectForKey:BuildBuildingKey],[responseObject objectForKey:BuildDurationKey],[responseObject objectForKey:BuildEstimatedDurationKey],nil];
+        NSDictionary *userInfoDict = [NSDictionary dictionaryWithObjects:objs forKeys:keys];
+        [[NSNotificationCenter defaultCenter] postNotificationName:BuildProgressResponseReceivedNotification object:self userInfo:userInfoDict];
+//        [self persistJobAtURL:jobURL withValues:responseObject];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        // Handle error
+        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
+    }];
+    
+    [operation start];
+}
+
 - (void) importDetailsForJobs
 {
     for (NSDictionary *view in self.viewDetails) {

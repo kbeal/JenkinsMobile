@@ -29,6 +29,7 @@
 
 - (void) importAllViews;
 - (void) importDetailsForJobAtURL:(NSString*) jobURL;
+- (void) importProgressForBuild:(NSNumber *) buildNumber ofJobAtURL:(NSString *) jobURL;
 /*
 - (void) importDetailsForView: (NSString *) viewName atURL: (NSString *) viewURL;
 - (void) importDetailsForViews: (NSArray *) views;
