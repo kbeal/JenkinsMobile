@@ -12,6 +12,7 @@
 #import "KDBBallScene.h"
 #import "KDBJobTableViewCell.h"
 #import "KDBJenkinsRequestHandler.h"
+#import "KDBBuildsTableViewController.h"
 
 @interface KDBJobDetailTableViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -145,8 +146,15 @@
     }
 }
 
+- (void) clearLinkIndices
+{
+    // set the link row indices back to a number too high to be in the section
+    self.lastBuildRowIndex=self.lastFailedBuildRowIndex=self.lastStableBuildRowIndex=self.lastSuccessfulBuildRowIndex=self.lastUnstableBuildRowIndex=self.lastUnsuccessfulBuildRowIndex=100000;
+}
+
 - (NSInteger) numberPermalinks
 {
+    [self clearLinkIndices];
     NSInteger links = 0;
     if ( self.job.lastBuild ) {
         self.lastBuildRowIndex=links;
@@ -172,6 +180,9 @@
         self.lastUnsuccessfulBuildRowIndex=links;
         links++;        
     }
+    
+    self.allBuildsRowIndex = links;
+    links++; // will always have the all builds link
     return links;
 }
 
@@ -271,6 +282,8 @@
     } else if (indexPath.row==self.lastUnsuccessfulBuildRowIndex) {
         cell.textLabel.text = [NSString stringWithFormat:@"%@%d%@",@"Last Unsuccessful Build (#",[self.job.lastUnsuccessfulBuild intValue],@")"];
         cell.tag = [self.job.lastUnsuccessfulBuild integerValue];
+    }else if (indexPath.row==self.allBuildsRowIndex) {
+        cell.textLabel.text = @"All Builds";
     }
 }
 
@@ -309,11 +322,15 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section==self.permalinksSectionIndex) {
-        [self performSegueWithIdentifier:@"buildDetailSegue" sender:self];
+        if (indexPath.row==self.allBuildsRowIndex) {
+            [self performSegueWithIdentifier:@"allBuildsSegue" sender:self];
+        } else {
+            [self performSegueWithIdentifier:@"buildDetailSegue" sender:self];
+        }
     } else if (indexPath.section==self.upstreamProjectsSectionIndex || indexPath.section==self.downstreamProjectsSectionIndex) {
         [self switchDetailToRelatedProject:indexPath];
     } else {
-        NSLog(@"Don't how to handle selection in this section.");
+        NSLog(@"Don't know how to handle selection in this section.");
     }
 }
 
@@ -385,7 +402,12 @@
         if (build != nil) {
             [dest setBuild:build];
         }
-    } 
+    } else if ([[segue identifier] isEqualToString:@"allBuildsSegue"]) {
+        // set job
+        KDBBuildsTableViewController *dest = [segue destinationViewController];
+        [dest setManagedObjectContext:self.managedObjectContext];
+        [dest setJob:self.job];
+    }
 }
 
 - (void)switchDetailToRelatedProject:(NSIndexPath *)indexPath

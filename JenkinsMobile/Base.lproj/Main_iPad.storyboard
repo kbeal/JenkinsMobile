@@ -47,7 +47,39 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QOa-z8-vxe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1538" y="529"/>
+            <point key="canvasLocation" x="1850" y="257"/>
+        </scene>
+        <!--Builds Table View Controller-->
+        <scene sceneID="qYq-zL-Ddd">
+            <objects>
+                <tableViewController id="AWU-jX-ggm" customClass="KDBBuildsTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="CHB-US-FDZ">
+                        <rect key="frame" x="0.0" y="0.0" width="703" height="768"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" id="9I0-DV-1Tg">
+                                <rect key="frame" x="0.0" y="86" width="703" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9I0-DV-1Tg" id="ytt-Gs-H1R">
+                                    <rect key="frame" x="0.0" y="0.0" width="703" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="AWU-jX-ggm" id="a6B-1F-U7i"/>
+                            <outlet property="delegate" destination="AWU-jX-ggm" id="Lbz-3p-GYQ"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="pKV-W2-eca"/>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <splitViewDetailSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FPo-D0-2jB" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1850" y="1171"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="Nki-YV-4Qg">
@@ -175,7 +207,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="51F-LP-MDA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2458" y="1282"/>
+            <point key="canvasLocation" x="2698" y="-218"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="r7l-gg-dq7">
@@ -327,6 +359,7 @@
                         <outlet property="jobURLTextView" destination="PQn-TU-LVd" id="LEO-gY-EIY"/>
                         <outlet property="statusBallContainerView" destination="ct0-Qz-ibg" id="ihf-eB-sJx"/>
                         <segue destination="duW-wl-GQd" kind="push" identifier="buildDetailSegue" id="IPx-Gn-eeM"/>
+                        <segue destination="AWU-jX-ggm" kind="push" identifier="allBuildsSegue" id="RY4-uI-weA"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MuM-0f-j9t" userLabel="First Responder" sceneMemberID="firstResponder"/>
