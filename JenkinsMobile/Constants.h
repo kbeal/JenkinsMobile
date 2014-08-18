@@ -20,5 +20,6 @@ extern NSString * const BuildNumberKey;
 extern NSString * const BuildBuildingKey;
 extern NSString * const BuildDurationKey;
 extern NSString * const BuildEstimatedDurationKey;
+extern NSString * const BuildTimestampKey;
 
 @end

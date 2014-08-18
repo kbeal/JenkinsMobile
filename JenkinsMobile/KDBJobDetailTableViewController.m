@@ -136,11 +136,20 @@
     // grab the values from the notification
     NSString *jobURL = [[notification userInfo] objectForKey:JobURLKey];
     NSNumber *buildNumber = [[notification userInfo] objectForKey:BuildNumberKey];
-    BOOL building = (BOOL)[[notification userInfo] objectForKey:BuildBuildingKey];
-    
+    BOOL building = [[[notification userInfo] objectForKey:BuildBuildingKey] boolValue];
+    double timestamp = [[[notification userInfo] objectForKey:BuildTimestampKey] doubleValue];
+    double estimatedDuration = [[[notification userInfo] objectForKey:BuildEstimatedDurationKey] doubleValue];
+    double currentTime = [[NSDate date] timeIntervalSince1970] * 1000;
     // if it is the most recent build for this job
-    if ([self.job.url isEqualToString:jobURL] && self.job.lastBuild==buildNumber) {
-        
+    if ([self.job.url isEqualToString:jobURL] && [self.job.lastBuild intValue]==[buildNumber intValue]) {
+        if (building) {
+            // update the progress view's progress and make sure it isn't hidden
+            self.currentBuildProgressView.progress = (currentTime - timestamp) / estimatedDuration;
+            self.currentBuildProgressView.hidden = NO;
+        } else {
+            // hide the progress view
+            self.currentBuildProgressView.hidden = YES;
+        }
     }
     
 }

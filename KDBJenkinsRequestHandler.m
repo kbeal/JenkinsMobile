@@ -139,7 +139,7 @@
 - (void) importProgressForBuild:(NSNumber *) buildNumber ofJobAtURL:(NSString *) jobURL
 {
     NSString *buildURL = [NSString stringWithFormat:@"%@%d",jobURL,[buildNumber intValue]];
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@%@%@%@%@",buildURL,@"/api/json?tree=",BuildBuildingKey,@",",BuildDurationKey,@",",BuildEstimatedDurationKey]];
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@%@%@%@%@",buildURL,@"/api/json?tree=",BuildBuildingKey,@",",BuildTimestampKey,@",",BuildEstimatedDurationKey]];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     //AFNetworking asynchronous url request
@@ -150,13 +150,17 @@
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@%@",@"response received for build progress at url: ",buildURL);
-        NSLog(@"%@%@",@"building class: ",NSStringFromClass([[responseObject objectForKey:BuildBuildingKey] class]));
         
+        NSNumber *building = [NSNumber numberWithBool:[[responseObject objectForKey:BuildBuildingKey] boolValue]];
+        NSNumber *timestamp = [NSNumber numberWithDouble:[[responseObject objectForKey:BuildTimestampKey] doubleValue]];
+        NSNumber *estimatedDuration = [NSNumber numberWithDouble:[[responseObject objectForKey:BuildEstimatedDurationKey] doubleValue]];
 
-        NSArray *keys = [NSArray arrayWithObjects:JobURLKey,BuildNumberKey,BuildBuildingKey,BuildDurationKey,BuildEstimatedDurationKey, nil];
-        NSArray *objs = [NSArray arrayWithObjects:jobURL,buildNumber,[responseObject objectForKey:BuildBuildingKey],[responseObject objectForKey:BuildDurationKey],[responseObject objectForKey:BuildEstimatedDurationKey],nil];
+        NSArray *keys = [NSArray arrayWithObjects:JobURLKey,BuildNumberKey,BuildBuildingKey,BuildTimestampKey,BuildEstimatedDurationKey, nil];
+        NSArray *objs = [NSArray arrayWithObjects:jobURL,buildNumber,building,timestamp,estimatedDuration,nil];
+
         NSDictionary *userInfoDict = [NSDictionary dictionaryWithObjects:objs forKeys:keys];
         [[NSNotificationCenter defaultCenter] postNotificationName:BuildProgressResponseReceivedNotification object:self userInfo:userInfoDict];
+
 //        [self persistJobAtURL:jobURL withValues:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error

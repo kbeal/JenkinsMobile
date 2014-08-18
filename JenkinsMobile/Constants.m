@@ -21,6 +21,7 @@ NSString * const BuildURLKey = @"buildURL";
 NSString * const BuildNumberKey = @"number";
 NSString * const BuildBuildingKey = @"building";
 NSString * const BuildDurationKey = @"duration";
-NSString * const BuildEstimatedDurationKey = @"estimatedDuraction";
+NSString * const BuildEstimatedDurationKey = @"estimatedDuration";
+NSString * const BuildTimestampKey = @"timestamp";
 
 @end
