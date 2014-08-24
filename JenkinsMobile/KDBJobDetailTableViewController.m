@@ -53,6 +53,9 @@
     if (_job != newJob) {
         _job = newJob;
         
+//        self.lastBuild = [Build fetchBuildWithNumber:self.job.lastBuild forJobAtURL:self.job.url inContext:self.managedObjectContext];
+        self.lastBuildStartTime = -1;
+        self.isBuilding = [self.job colorIsAnimated];
         // Update the view.
         [self configureView];
         // Query Jenkins for updates to job
@@ -73,11 +76,16 @@
         self.navigationItem.title = self.job.name;
         [self.tableView reloadData];
         [self updateJobIcons];
-        [self updateProgressView];
+        [self getLastBuildProgress];
         self.jobURLTextView.text = self.job.url;
         self.jobDescriptionTextView.text = self.job.job_description;
         self.jenkinsNameJobDescriptionLabel.text = [self getJenkinsInstance].name;
     }
+}
+
+- (double) getCurrentTime
+{
+    return [[NSDate date] timeIntervalSince1970] * 1000;
 }
 
 // returns the JenkinsInstance associated with the job
@@ -134,36 +142,64 @@
     // fired when receiving BuildProgressResponseReceievedNotification
     // A response to a request for build progress from Jenkins API was received
     // grab the values from the notification
-    NSString *jobURL = [[notification userInfo] objectForKey:JobURLKey];
-    NSNumber *buildNumber = [[notification userInfo] objectForKey:BuildNumberKey];
     BOOL building = [[[notification userInfo] objectForKey:BuildBuildingKey] boolValue];
     double timestamp = [[[notification userInfo] objectForKey:BuildTimestampKey] doubleValue];
     double estimatedDuration = [[[notification userInfo] objectForKey:BuildEstimatedDurationKey] doubleValue];
-    double currentTime = [[NSDate date] timeIntervalSince1970] * 1000;
-    // if it is the most recent build for this job
-    if ([self.job.url isEqualToString:jobURL] && [self.job.lastBuild intValue]==[buildNumber intValue]) {
-        if (building) {
-            // update the progress view's progress and make sure it isn't hidden
-            self.currentBuildProgressView.progress = (currentTime - timestamp) / estimatedDuration;
-            self.currentBuildProgressView.hidden = NO;
+    
+    if (self.isBuilding!=building) {
+        // change in building status, get job updates
+        [self getUpdates];
+    }
+    
+    self.isBuilding=building;
+    // assign them to the current job's last build
+    /*
+    self.lastBuild.timestamp = [NSDate dateWithTimeIntervalSince1970:timestamp];
+    self.lastBuild.estimatedDuration = [NSNumber numberWithDouble:estimatedDuration];
+    self.lastBuild.building = [NSNumber numberWithBool:building];
+     */
+    // and update the build progressview
+    [self updateLastBuildStatusWithStartTime:timestamp andEstimatedDuration:estimatedDuration];
+}
+
+- (void) updateProgressViewProgressWithStartTime: (double)startTime andEstimatedDuration: (double)estimatedDuration
+{
+    double currentTime = [self getCurrentTime];
+    
+    if (self.lastBuildStartTime == -1) {
+        if (currentTime < startTime) {
+            // the client and jenkin's server clocks will often not be in sync;
+            // if a build's start time is "in the future", use the current time as the start time
+            self.lastBuildStartTime = currentTime;
         } else {
-            // hide the progress view
-            self.currentBuildProgressView.hidden = YES;
+            self.lastBuildStartTime = startTime;
         }
     }
     
+    self.currentBuildProgressView.progress = (currentTime - self.lastBuildStartTime) / estimatedDuration;
 }
 
-- (void) updateProgressView
+- (void) getLastBuildProgress
 {
-    //only show the progress view if a build is in progress
-    self.currentBuildProgressView.hidden = YES;
-    if ([self.job colorIsAnimated]) {
-        self.currentBuildProgressView.hidden = NO;
-    }
-    KDBJenkinsRequestHandler *jenkins = [self getJenkinsRequestHandler];
-    [jenkins importProgressForBuild:self.job.lastBuild ofJobAtURL:self.job.url];
+    [[self getJenkinsRequestHandler] importProgressForBuild:self.job.lastBuild ofJobAtURL:self.job.url];
 }
+
+- (void) updateLastBuildStatusWithStartTime:(double)startTime andEstimatedDuration:(double)estimatedDuration
+{
+    if (self.isBuilding) {
+        self.currentBuildProgressView.hidden = NO;
+        [self updateProgressViewProgressWithStartTime:startTime andEstimatedDuration:estimatedDuration];
+        if (self.lastBuildProgressUpdateTimer==nil) {
+            self.lastBuildProgressUpdateTimer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(getLastBuildProgress) userInfo:nil repeats:YES];
+            [[NSRunLoop currentRunLoop] addTimer:self.lastBuildProgressUpdateTimer forMode:NSDefaultRunLoopMode];
+        }
+    } else {
+        self.currentBuildProgressView.hidden = YES;
+        [self.lastBuildProgressUpdateTimer invalidate];
+        self.lastBuildProgressUpdateTimer = nil;
+    }
+}
+
 - (void) updateJobIcons
 {
     [self updateJobStatusIcon];
@@ -173,8 +209,7 @@
 - (void) updateJobStatusIcon
 {
     // Create and configure the scene.
-    NSString *color = [self.job colorIsAnimated] ? [self.job.color componentsSeparatedByString:@"_"][0] : self.job.color;
-    KDBBallScene *scene = [[KDBBallScene alloc] initWithSize:self.statusBallContainerView.bounds.size andColor:color withAnimation:[self.job colorIsAnimated]];
+    KDBBallScene *scene = [[KDBBallScene alloc] initWithSize:self.statusBallContainerView.bounds.size andColor:[self.job absoluteColor] withAnimation:self.isBuilding];
     scene.scaleMode = SKSceneScaleModeAspectFill;
     
     // Present the scene.

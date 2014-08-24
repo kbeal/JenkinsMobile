@@ -9,11 +9,19 @@
 #import <UIKit/UIKit.h>
 #import <SpriteKit/SpriteKit.h>
 #import "Job.h"
+#import "Build.h"
 
 @interface KDBJobDetailTableViewController : UITableViewController <UISplitViewControllerDelegate>
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) Job *job;
+//@property (strong, nonatomic) Build *lastBuild;
+@property (strong, nonatomic) NSTimer *lastBuildProgressUpdateTimer;
+// the client and jenkin's server clocks will often not be in sync;
+// if a build's start time is "in the future", use the current time as the start time
+@property (assign, nonatomic) double lastBuildStartTime;
+// true if job is currently building (self.job.lastbuild.building=true)
+@property (assign, nonatomic) BOOL isBuilding;
 
 @property (weak, nonatomic) IBOutlet SKView *statusBallContainerView;
 @property (weak, nonatomic) IBOutlet UIImageView *healthIcon;

@@ -83,6 +83,20 @@
     return job;
 }
 
+// returns the absolute color of this job
+// strips the "anime" part of color is job is building
+// ex: if job.color==blue_anime, this method returns just "blue"
+- (NSString *)absoluteColor
+{
+    NSString *color = @"";
+    if ([[self.color componentsSeparatedByString:@"_"] count] > 0) {
+        color = [self.color componentsSeparatedByString:@"_"][0];
+    } else {
+        color = self.color;
+    }
+    return color;
+}
+
 // returns TRUE if the job's current color is animated
 - (BOOL)colorIsAnimated { return [self.color rangeOfString:@"anime"].length > 0 ? true : false; }
 
