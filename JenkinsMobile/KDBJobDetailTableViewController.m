@@ -13,6 +13,7 @@
 #import "KDBJobTableViewCell.h"
 #import "KDBJenkinsRequestHandler.h"
 #import "KDBBuildsTableViewController.h"
+#import "ActiveConfiguration.h"
 
 @interface KDBJobDetailTableViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -293,6 +294,11 @@
         self.downstreamProjectsSectionIndex = sections;
         sections += 1;
     }
+    
+    if ([[self.job getActiveConfigurations] count] > 0) {
+        self.activeConfigurationsSectionIndex = sections;
+        sections += 1;
+    }
 
     return sections;
 }
@@ -306,6 +312,8 @@
         sectionName = @"Upstream Projects";
     } else if (section==self.downstreamProjectsSectionIndex) {
         sectionName = @"Downstream Projects";
+    } else if (section==self.activeConfigurationsSectionIndex) {
+        sectionName = @"Active Configurations";
     }
     return sectionName;
 }
@@ -319,6 +327,8 @@
         numRows = [self.job.upstreamProjects count];
     } else if (section==self.downstreamProjectsSectionIndex) {
         numRows = [self.job.downstreamProjects count];
+    } else if (section==self.activeConfigurationsSectionIndex) {
+        numRows = [self.job.activeConfigurations count];
     }
     return numRows;
 }
@@ -336,6 +346,9 @@
     } else if (indexPath.section==self.downstreamProjectsSectionIndex) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"RelatedProjectCell" forIndexPath:indexPath];
         [self configureDownstreamProjectsCell:(KDBJobTableViewCell *)cell atIndexPath:indexPath];
+    } else if (indexPath.section==self.activeConfigurationsSectionIndex) {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"RelatedProjectCell" forIndexPath:indexPath];
+        [self configureActiveConfigurationCell:(KDBJobTableViewCell *)cell atIndexPath:indexPath];
     }
     
     return cell;
@@ -396,6 +409,19 @@
     [cell.statusBallContainerView presentScene:scene];
     
     cell.projectNamelabel.text = [[self.job.downstreamProjects objectAtIndex:indexPath.row] objectForKey:@"name"];
+}
+
+- (void)configureActiveConfigurationCell:(KDBJobTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    ActiveConfiguration *config = [[self.job getActiveConfigurations] objectAtIndex:indexPath.row];
+    NSString *color = [self relatedProjectColorIsAnimated:config.color] ? [config.color componentsSeparatedByString:@"_"][0] : config.color;
+    KDBBallScene *scene = [[KDBBallScene alloc] initWithSize:cell.statusBallContainerView.bounds.size andColor:color withAnimation:[self relatedProjectColorIsAnimated:config.color]];
+    scene.scaleMode = SKSceneScaleModeAspectFill;
+    
+    // Present the scene.
+    [cell.statusBallContainerView presentScene:scene];
+    
+    cell.projectNamelabel.text = config.name;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

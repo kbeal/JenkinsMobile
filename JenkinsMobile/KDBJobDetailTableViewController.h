@@ -41,6 +41,7 @@
 @property (assign, nonatomic) NSInteger permalinksSectionIndex;
 @property (assign, nonatomic) NSInteger upstreamProjectsSectionIndex;
 @property (assign, nonatomic) NSInteger downstreamProjectsSectionIndex;
+@property (assign, nonatomic) NSInteger activeConfigurationsSectionIndex;
 
 -(IBAction)refresh:(id)sender;
 
