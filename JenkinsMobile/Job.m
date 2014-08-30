@@ -10,6 +10,7 @@
 #import "Build.h"
 #import "JenkinsInstance.h"
 #import "View.h"
+#import "Constants.h"
 
 // Convert any NULL values to nil. Lifted from Kevin Ballard here: http://stackoverflow.com/a/9138033
 #define NULL_TO_NIL(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
@@ -44,6 +45,7 @@
 @dynamic url;
 @dynamic rel_Job_JenkinsInstance;
 @dynamic rel_Job_View;
+@dynamic activeConfigurations;
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view
 {
@@ -124,6 +126,7 @@
     self.upstreamProjects = NULL_TO_NIL([values objectForKey:@"upstreamProjects"]);
     self.downstreamProjects = NULL_TO_NIL([values objectForKey:@"downstreamProjects"]);
     self.healthReport = NULL_TO_NIL([values objectForKey:@"healthReport"]);
+    self.activeConfigurations = NULL_TO_NIL([values objectForKey:JobActiveConfigurationsKey]);
 }
 
 @end

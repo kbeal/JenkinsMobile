@@ -41,6 +41,7 @@
 @property (nonatomic, retain) NSString * url;
 @property (nonatomic, retain) JenkinsInstance *rel_Job_JenkinsInstance;
 @property (nonatomic, retain) NSSet *rel_Job_View;
+@property (nonatomic, retain) id activeConfigurations;
 @end
 
 @interface Job (CoreDataGeneratedAccessors)

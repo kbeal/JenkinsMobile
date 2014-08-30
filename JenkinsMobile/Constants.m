@@ -16,6 +16,7 @@ NSString * const BuildProgressResponseReceivedNotification = @"BuildProgressResp
 
 // Job Keys
 NSString * const JobURLKey = @"jobURL";
+NSString * const JobActiveConfigurationsKey = @"activeConfigurations";
 // Build Keys
 NSString * const BuildURLKey = @"buildURL";
 NSString * const BuildNumberKey = @"number";
