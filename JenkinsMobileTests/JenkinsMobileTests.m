@@ -12,6 +12,7 @@
 #import "JenkinsInstance.h"
 #import "Build.h"
 #import "Constants.h"
+#import "ActiveConfiguration.h"
 
 @interface JenkinsMobileTests : XCTestCase
 @property (nonatomic, strong) NSManagedObjectContext *context;
@@ -179,7 +180,7 @@
     NSArray *healthReportKeys = [NSArray arrayWithObjects:@"description",@"iconUrl",@"score", nil];
     NSArray *healthReportValues = [NSArray arrayWithObjects:@"Build stability: No recent builds failed.",@"health-80plus.png",@"100", nil];
     NSDictionary *healthReport = [NSDictionary dictionaryWithObjects:healthReportValues forKeys:healthReportKeys];
-    NSArray *activeConfigurationsKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
+    NSArray *activeConfigurationsKeys = [NSArray arrayWithObjects:ActiveConfigurationNameKey,ActiveConfigurationURLKey,ActiveConfigurationColorKey, nil];
     NSArray *activeConfigurationsValues1 = [NSArray arrayWithObjects:@"config1",@"www.config1.com",@"blue", nil];
     NSArray *activeConfigurationsValues2 = [NSArray arrayWithObjects:@"config2",@"www.config2.com",@"red", nil];
     NSDictionary *activeConfigurations1 = [NSDictionary dictionaryWithObjects:activeConfigurationsValues1 forKeys:activeConfigurationsKeys];
@@ -227,6 +228,33 @@
     XCTAssert([[job.healthReport objectForKey:@"iconUrl"] isEqualToString:@"health-80plus.png"], @"health report is wrong %@", [job.healthReport objectForKey:@"iconUrl"]);
     XCTAssert([job.activeConfigurations count]==2, @"wrong number of active configurations");
     XCTAssert([[[job.activeConfigurations objectAtIndex:1] objectForKey:@"color"] isEqualToString:@"red"], @"active config has wrong color %@", [[job.activeConfigurations objectAtIndex:1] objectForKey:@"color"]);
+}
+
+- (void)testActiveConfigurations
+{
+    NSArray *activeConfigurationsKeys = [NSArray arrayWithObjects:ActiveConfigurationNameKey,ActiveConfigurationURLKey,ActiveConfigurationColorKey, nil];
+    NSArray *activeConfigurationsValues1 = [NSArray arrayWithObjects:@"config1",@"www.config1.com",@"blue", nil];
+    NSArray *activeConfigurationsValues2 = [NSArray arrayWithObjects:@"config2",@"www.config2.com",@"red", nil];
+    NSDictionary *activeConfigurations1 = [NSDictionary dictionaryWithObjects:activeConfigurationsValues1 forKeys:activeConfigurationsKeys];
+    NSDictionary *activeConfigurations2 = [NSDictionary dictionaryWithObjects:activeConfigurationsValues2 forKeys:activeConfigurationsKeys];
+    NSArray *activeConfigurations = [NSArray arrayWithObjects:activeConfigurations1,activeConfigurations2, nil];
+    NSArray *jobKeys = [NSArray arrayWithObjects:JobNameKey,JobColorKey,JobURLKey,JobActiveConfigurationsKey,nil ];
+    NSArray *jobValues = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",activeConfigurations, nil];
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
+    NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
+    
+    
+    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
+    Job *job = [Job createJobWithValues:[NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys] inManagedObjectContext:_context forView:view];
+    NSArray *activeConfigs = [job getActiveConfigurations];
+    ActiveConfiguration *ac1 = [activeConfigs objectAtIndex:0];
+    ActiveConfiguration *ac2 = [activeConfigs objectAtIndex:1];
+    
+    XCTAssert([activeConfigs count]==2, @"active configs has wrong count");
+    XCTAssert([ac1.name isEqualToString:@"config1"], @"ac1 has wrong name");
+    XCTAssert([ac2.color isEqualToString:@"red"], @"ac2 has wrong color");
+    
 }
 
 - (void)testCreateJobWithMinimalValues

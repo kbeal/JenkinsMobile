@@ -11,6 +11,7 @@
 #import "JenkinsInstance.h"
 #import "View.h"
 #import "Constants.h"
+#import "ActiveConfiguration.h"
 
 // Convert any NULL values to nil. Lifted from Kevin Ballard here: http://stackoverflow.com/a/9138033
 #define NULL_TO_NIL(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
@@ -97,6 +98,16 @@
         color = self.color;
     }
     return color;
+}
+
+- (NSArray *) getActiveConfigurations
+{
+    NSMutableArray *aconfigs = [[NSMutableArray alloc] initWithCapacity:[self.activeConfigurations count]];
+    for (NSDictionary *config in self.activeConfigurations) {
+        ActiveConfiguration *aconfig = [[ActiveConfiguration alloc] initWithName:[config objectForKey:ActiveConfigurationNameKey] Color:[config objectForKey:ActiveConfigurationColorKey] andURL:[config objectForKey:ActiveConfigurationURLKey]];
+        [aconfigs addObject:aconfig];
+    }
+    return aconfigs;
 }
 
 // returns TRUE if the job's current color is animated

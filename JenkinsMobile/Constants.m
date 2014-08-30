@@ -17,6 +17,8 @@ NSString * const BuildProgressResponseReceivedNotification = @"BuildProgressResp
 // Job Keys
 NSString * const JobURLKey = @"jobURL";
 NSString * const JobActiveConfigurationsKey = @"activeConfigurations";
+NSString * const JobNameKey = @"jobName";
+NSString * const JobColorKey = @"color";
 // Build Keys
 NSString * const BuildURLKey = @"buildURL";
 NSString * const BuildNumberKey = @"number";
@@ -24,5 +26,9 @@ NSString * const BuildBuildingKey = @"building";
 NSString * const BuildDurationKey = @"duration";
 NSString * const BuildEstimatedDurationKey = @"estimatedDuration";
 NSString * const BuildTimestampKey = @"timestamp";
+// Active Configuration Keys
+NSString * const ActiveConfigurationNameKey = @"name";
+NSString * const ActiveConfigurationColorKey = @"color";
+NSString * const ActiveConfigurationURLKey = @"url";
 
 @end

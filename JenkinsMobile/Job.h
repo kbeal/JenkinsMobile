@@ -53,6 +53,7 @@
 - (BOOL)colorIsAnimated;
 - (NSString *)absoluteColor;
 - (void)setValues:(NSDictionary *) values;
+- (NSArray *) getActiveConfigurations;
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view;
 + (Job *)fetchJobAtURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context;
