@@ -19,6 +19,6 @@
     return self;
 }
 
-
+- (BOOL) isBuilding { return [self.color rangeOfString:@"anime"].length > 0 ? true : false; }
 
 @end

@@ -275,6 +275,15 @@
     XCTAssert([job.url isEqualToString:@"http://www.google.com"], @"job url is wrong, is actually %@",job.url);
 }
 
+-(void) testActiveConfigurationIsBuilding
+{
+    ActiveConfiguration *ac1 = [[ActiveConfiguration alloc] initWithName:@"ac1" Color:@"blue_anime" andURL:@"http://ac1.com"];
+    ActiveConfiguration *ac2 = [[ActiveConfiguration alloc] initWithName:@"ac2" Color:@"yellow" andURL:@"http://ac1.com"];
+    
+    XCTAssertTrue([ac1 isBuilding], @"ac1 should be building, is not");
+    XCTAssertFalse([ac2 isBuilding], @"ac2 should not be building.");
+}
+
 - (void) testCreateJenkinsInstance
 {
     NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://ci.kylebeal.com",[NSNumber numberWithBool:YES], nil];

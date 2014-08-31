@@ -414,8 +414,8 @@
 - (void)configureActiveConfigurationCell:(KDBJobTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     ActiveConfiguration *config = [[self.job getActiveConfigurations] objectAtIndex:indexPath.row];
-    NSString *color = [self relatedProjectColorIsAnimated:config.color] ? [config.color componentsSeparatedByString:@"_"][0] : config.color;
-    KDBBallScene *scene = [[KDBBallScene alloc] initWithSize:cell.statusBallContainerView.bounds.size andColor:color withAnimation:[self relatedProjectColorIsAnimated:config.color]];
+    NSString *color = [config isBuilding] ? [config.color componentsSeparatedByString:@"_"][0] : config.color;
+    KDBBallScene *scene = [[KDBBallScene alloc] initWithSize:cell.statusBallContainerView.bounds.size andColor:color withAnimation:[config isBuilding]];
     scene.scaleMode = SKSceneScaleModeAspectFill;
     
     // Present the scene.

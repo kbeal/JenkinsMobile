@@ -16,5 +16,6 @@
 @property (nonatomic, retain) NSString * color;
 
 - (id) initWithName: (NSString *)name Color: (NSString *)color andURL: (NSString *)url;
+- (BOOL) isBuilding;
 
 @end
