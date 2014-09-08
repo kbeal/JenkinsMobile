@@ -14,6 +14,7 @@
 #import "KDBJenkinsRequestHandler.h"
 #import "KDBBuildsTableViewController.h"
 #import "ActiveConfiguration.h"
+#import "KDBJobTestResultsTableViewCell.h"
 
 @interface KDBJobDetailTableViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -275,6 +276,14 @@
 - (BOOL) relatedProjectColorIsAnimated:(NSString*) color { return [color rangeOfString:@"anime"].length > 0 ? true : false; }
 
 #pragma mark - Table view data source
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section==self.testResultsSectionIndex) {
+        return 200.0f;
+    } else {
+        return 44.0f;
+    }
+}
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     NSInteger sections = 0;
@@ -299,6 +308,11 @@
         self.activeConfigurationsSectionIndex = sections;
         sections += 1;
     }
+    
+    if (self.job.testResultsImage != nil) {
+        self.testResultsSectionIndex = sections;
+        sections += 1;
+    }
 
     return sections;
 }
@@ -314,6 +328,8 @@
         sectionName = @"Downstream Projects";
     } else if (section==self.activeConfigurationsSectionIndex) {
         sectionName = @"Active Configurations";
+    } else if (section==self.testResultsSectionIndex) {
+        sectionName = @"Test Results Trend";
     }
     return sectionName;
 }
@@ -329,6 +345,8 @@
         numRows = [self.job.downstreamProjects count];
     } else if (section==self.activeConfigurationsSectionIndex) {
         numRows = [self.job.activeConfigurations count];
+    } else if (section==self.testResultsSectionIndex) {
+        numRows = 1;
     }
     return numRows;
 }
@@ -349,6 +367,9 @@
     } else if (indexPath.section==self.activeConfigurationsSectionIndex) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"RelatedProjectCell" forIndexPath:indexPath];
         [self configureActiveConfigurationCell:(KDBJobTableViewCell *)cell atIndexPath:indexPath];
+    } else if (indexPath.section==self.testResultsSectionIndex) {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"TestResultsCell" forIndexPath:indexPath];
+        [self configureTestResultsCell:(KDBJobTestResultsTableViewCell *)cell atIndexPath:indexPath];
     }
     
     return cell;
@@ -422,6 +443,11 @@
     [cell.statusBallContainerView presentScene:scene];
     
     cell.projectNamelabel.text = config.name;
+}
+
+- (void)configureTestResultsCell:(KDBJobTestResultsTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    cell.testResultsTrendImageView.image = [self.job getTestResultsImage];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

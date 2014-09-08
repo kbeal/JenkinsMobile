@@ -332,6 +332,23 @@
                                     <outlet property="statusBallContainerView" destination="sFC-HP-wn7" id="cNc-hG-Qnn"/>
                                 </connections>
                             </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" restorationIdentifier="jobTestResultsCell" selectionStyle="default" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="TestResultsCell" rowHeight="200" id="cWf-Xc-gzp" customClass="KDBJobTestResultsTableViewCell">
+                                <rect key="frame" x="0.0" y="287" width="703" height="200"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="cWf-Xc-gzp" id="tZd-BO-Mj3">
+                                    <rect key="frame" x="0.0" y="0.0" width="670" height="199"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="G8t-cw-Tgg">
+                                            <rect key="frame" x="85" y="0.0" width="500" height="200"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        </imageView>
+                                    </subviews>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="testResultsTrendImageView" destination="G8t-cw-Tgg" id="FFx-hD-lVL"/>
+                                </connections>
+                            </tableViewCell>
                         </prototypes>
                         <sections/>
                         <connections>

@@ -42,6 +42,7 @@
 @property (assign, nonatomic) NSInteger upstreamProjectsSectionIndex;
 @property (assign, nonatomic) NSInteger downstreamProjectsSectionIndex;
 @property (assign, nonatomic) NSInteger activeConfigurationsSectionIndex;
+@property (assign, nonatomic) NSInteger testResultsSectionIndex;
 
 -(IBAction)refresh:(id)sender;
 

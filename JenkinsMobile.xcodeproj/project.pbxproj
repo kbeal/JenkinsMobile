@@ -210,6 +210,7 @@
 		8AE3B95C18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B95B18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m */; };
 		8AE3B96218EF80CA00E061C1 /* View.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B96118EF80CA00E061C1 /* View.m */; };
 		8AE4F000190B5496003EFE3D /* Build.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE4EFFF190B5496003EFE3D /* Build.m */; };
+		8AE904B819BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE904B719BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m */; };
 		8AF3843618FD7B9D00022254 /* Job.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AF3843518FD7B9D00022254 /* Job.m */; };
 		8AFBC11F19468806008EDC9D /* KDBMasterBuildListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */; };
 /* End PBXBuildFile section */
@@ -459,6 +460,8 @@
 		8AE3B96118EF80CA00E061C1 /* View.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = View.m; sourceTree = "<group>"; };
 		8AE4EFFE190B5496003EFE3D /* Build.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Build.h; sourceTree = "<group>"; };
 		8AE4EFFF190B5496003EFE3D /* Build.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Build.m; sourceTree = "<group>"; };
+		8AE904B619BD4C3400EE6A79 /* KDBJobTestResultsTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJobTestResultsTableViewCell.h; sourceTree = "<group>"; };
+		8AE904B719BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJobTestResultsTableViewCell.m; sourceTree = "<group>"; };
 		8AF3843418FD7B9D00022254 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Job.h; sourceTree = "<group>"; };
 		8AF3843518FD7B9D00022254 /* Job.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Job.m; sourceTree = "<group>"; };
 		8AFBC11D19468806008EDC9D /* KDBMasterBuildListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBMasterBuildListTableViewController.h; sourceTree = "<group>"; };
@@ -738,6 +741,8 @@
 				8A76B0F1199C3AE200B219C5 /* Constants.m */,
 				8A399272199455D60071CF08 /* KDBJobTableViewCell.h */,
 				8A399273199455D70071CF08 /* KDBJobTableViewCell.m */,
+				8AE904B619BD4C3400EE6A79 /* KDBJobTestResultsTableViewCell.h */,
+				8AE904B719BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m */,
 			);
 			path = JenkinsMobile;
 			sourceTree = "<group>";
@@ -1087,6 +1092,7 @@
 				8AC32A0E18E4F3A90002D106 /* KDBJobDetailViewController.m in Sources */,
 				8AC32A4818E4FB6F0002D106 /* AFURLResponseSerialization.m in Sources */,
 				8AC32A0B18E4F3A90002D106 /* KDBMasterViewController.m in Sources */,
+				8AE904B819BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m in Sources */,
 				8A399274199455D70071CF08 /* KDBJobTableViewCell.m in Sources */,
 				8AD3B759191C684F00DB7439 /* KDBBuildsTableViewController.m in Sources */,
 				8AFBC11F19468806008EDC9D /* KDBMasterBuildListTableViewController.m in Sources */,
