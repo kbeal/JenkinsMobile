@@ -10,9 +10,11 @@
 
 @implementation Constants
 
+// Notifications
 NSString * const SelectedJobChangedNotification = @"SelectedJobChanged";
 NSString * const JobDetailResponseReceivedNotification = @"JobDetailResponseReceived";
 NSString * const BuildProgressResponseReceivedNotification = @"BuildProgressResponseReceived";
+NSString * const JobTestResultsImageResponseReceivedNotification = @"JobTestResultsImageResponseReceived";
 
 // Job Keys
 NSString * const JobURLKey = @"jobURL";

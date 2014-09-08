@@ -117,6 +117,8 @@
     //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job at url: ",jobURL]);
     NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",jobURL,@"api/json"]];
     
+    [self importTestResultsImageForJobAtURL:jobURL];
+    
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     //AFNetworking asynchronous url request
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
@@ -128,6 +130,29 @@
         NSLog(@"%@%@",@"response received for job at url: ",jobURL);
         [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailResponseReceivedNotification object:self userInfo:[NSDictionary dictionaryWithObject:jobURL forKey:JobURLKey]];
         [self persistJobAtURL:jobURL withValues:responseObject];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        // Handle error
+        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
+    }];
+    
+    [operation start];
+}
+
+- (void) importTestResultsImageForJobAtURL:(NSString *) jobURL
+{
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",jobURL,@"test/trend"]];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    //AFNetworking asynchronous url request
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
+                                         initWithRequest:request];
+    
+    operation.responseSerializer = [AFImageResponseSerializer serializer];
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"%@%@",@"response received for test results image at url: ", requestURL);
+        [[NSNotificationCenter defaultCenter] postNotificationName:JobTestResultsImageResponseReceivedNotification object:self userInfo:[NSDictionary dictionaryWithObject:jobURL forKey:JobURLKey]];
+        [self persistTestResultsImage:responseObject forJobAtURL:jobURL];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
         NSLog(@"Request Failed: %@, %@", error, error.userInfo);
@@ -303,6 +328,27 @@
         }];
     }
     //[self importDetailsForBuildsForJobs:[self.viewsJobsDetails objectForKey:viewURL]];
+}
+
+- (void) persistTestResultsImage: (UIImage *)image forJobAtURL:jobURL
+{
+    [self.importJobsMOC performBlock:^{
+        Job *job = [Job fetchJobAtURL:jobURL inManagedObjectContext:self.importJobsMOC];
+        [job setTestResultsImageWithImage:image];
+        
+        NSError *importJobsError;
+        if (![self.importJobsMOC save:&importJobsError]) {
+            NSLog(@"Error saving import jobs context %@, %@", importJobsError, [importJobsError userInfo]);
+            abort();
+        }
+        [self.managedObjectContext performBlock:^ {
+            NSError *masterError;
+            if (![self.managedObjectContext save:&masterError]) {
+                NSLog(@"Error saving master context %@, %@", masterError, [masterError userInfo]);
+                abort();
+            }
+        }];
+    }];
 }
 
 - (void) persistJobAtURL:(NSString*)jobURL withValues: (NSDictionary *) jobValues

@@ -13,6 +13,7 @@
 extern NSString * const SelectedJobChangedNotification;
 extern NSString * const JobDetailResponseReceivedNotification;
 extern NSString * const BuildProgressResponseReceivedNotification;
+extern NSString * const JobTestResultsImageResponseReceivedNotification;
 
 // Job keys
 extern NSString * const JobURLKey;
