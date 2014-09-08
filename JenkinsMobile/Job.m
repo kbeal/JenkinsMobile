@@ -47,6 +47,7 @@
 @dynamic rel_Job_JenkinsInstance;
 @dynamic rel_Job_View;
 @dynamic activeConfigurations;
+@dynamic testResultsImage;
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view
 {
@@ -113,6 +114,10 @@
 // returns TRUE if the job's current color is animated
 - (BOOL)colorIsAnimated { return [self.color rangeOfString:@"anime"].length > 0 ? true : false; }
 
+- (void) setTestResultsImageWithImage:(UIImage *) image { self.testResultsImage = UIImagePNGRepresentation(image); }
+
+- (UIImage *) getTestResultsImage { return [UIImage imageWithData:self.testResultsImage]; }
+
 - (void)setValues:(NSDictionary *) values
 {
     self.url = NULL_TO_NIL([values objectForKey:@"url"]);
@@ -138,6 +143,7 @@
     self.downstreamProjects = NULL_TO_NIL([values objectForKey:@"downstreamProjects"]);
     self.healthReport = NULL_TO_NIL([values objectForKey:@"healthReport"]);
     self.activeConfigurations = NULL_TO_NIL([values objectForKey:JobActiveConfigurationsKey]);
+    [self setTestResultsImageWithImage:NULL_TO_NIL([values objectForKey:JobTestResultsImageKey])];
 }
 
 @end

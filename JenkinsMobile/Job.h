@@ -42,6 +42,7 @@
 @property (nonatomic, retain) JenkinsInstance *rel_Job_JenkinsInstance;
 @property (nonatomic, retain) NSSet *rel_Job_View;
 @property (nonatomic, retain) id activeConfigurations;
+@property (nonatomic, retain) NSData *testResultsImage;
 @end
 
 @interface Job (CoreDataGeneratedAccessors)
@@ -54,6 +55,8 @@
 - (NSString *)absoluteColor;
 - (void)setValues:(NSDictionary *) values;
 - (NSArray *) getActiveConfigurations;
+- (void) setTestResultsImageWithImage:(UIImage *) image;
+- (UIImage *) getTestResultsImage;
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view;
 + (Job *)fetchJobAtURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context;

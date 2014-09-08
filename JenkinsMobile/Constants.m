@@ -19,6 +19,7 @@ NSString * const JobURLKey = @"jobURL";
 NSString * const JobActiveConfigurationsKey = @"activeConfigurations";
 NSString * const JobNameKey = @"jobName";
 NSString * const JobColorKey = @"color";
+NSString * const JobTestResultsImageKey = @"jobTestResults";
 // Build Keys
 NSString * const BuildURLKey = @"buildURL";
 NSString * const BuildNumberKey = @"number";

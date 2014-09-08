@@ -186,10 +186,11 @@
     NSDictionary *activeConfigurations1 = [NSDictionary dictionaryWithObjects:activeConfigurationsValues1 forKeys:activeConfigurationsKeys];
     NSDictionary *activeConfigurations2 = [NSDictionary dictionaryWithObjects:activeConfigurationsValues2 forKeys:activeConfigurationsKeys];
     NSArray *activeConfigurations = [NSArray arrayWithObjects:activeConfigurations1,activeConfigurations2, nil];
+    UIImage *testImage = [UIImage imageNamed:@"blue.png"];
     
-    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"color",@"url",@"buildable",@"concurrentBuild",@"displayName",@"firstBuild",@"lastBuild",@"lastCompletedBuild",@"lastFailedBuild",@"lastStableBuild",@"lastSuccessfulBuild",@"lastUnstableBuild",@"lastUnsuccessfulBuild",@"nextBuildNumber",@"inQueue",@"description",@"keepDependencies",@"upstreamProjects",@"downstreamProjects",@"healthReport",JobActiveConfigurationsKey,nil ];
+    NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"color",@"url",@"buildable",@"concurrentBuild",@"displayName",@"firstBuild",@"lastBuild",@"lastCompletedBuild",@"lastFailedBuild",@"lastStableBuild",@"lastSuccessfulBuild",@"lastUnstableBuild",@"lastUnsuccessfulBuild",@"nextBuildNumber",@"inQueue",@"description",@"keepDependencies",@"upstreamProjects",@"downstreamProjects",@"healthReport",JobActiveConfigurationsKey,JobTestResultsImageKey,nil ];
     
-    NSArray *jobValues = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",[NSNumber numberWithInt:1],[NSNumber numberWithInt:0],@"Test1",jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,[NSNumber numberWithInt:2],[NSNumber numberWithBool:NO],@"Test1 Description",[NSNumber numberWithBool:NO],upstreamProjects,downstreamProjects,healthReport,activeConfigurations, nil];
+    NSArray *jobValues = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",[NSNumber numberWithInt:1],[NSNumber numberWithInt:0],@"Test1",jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,[NSNumber numberWithInt:2],[NSNumber numberWithBool:NO],@"Test1 Description",[NSNumber numberWithBool:NO],upstreamProjects,downstreamProjects,healthReport,activeConfigurations,testImage, nil];
     
     NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
     NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
@@ -228,6 +229,8 @@
     XCTAssert([[job.healthReport objectForKey:@"iconUrl"] isEqualToString:@"health-80plus.png"], @"health report is wrong %@", [job.healthReport objectForKey:@"iconUrl"]);
     XCTAssert([job.activeConfigurations count]==2, @"wrong number of active configurations");
     XCTAssert([[[job.activeConfigurations objectAtIndex:1] objectForKey:@"color"] isEqualToString:@"red"], @"active config has wrong color %@", [[job.activeConfigurations objectAtIndex:1] objectForKey:@"color"]);
+    XCTAssertTrue([job.getTestResultsImage isKindOfClass:[UIImage class]], @"%@%@",@"test results image is not UIImage, returned ",NSStringFromClass([job.getTestResultsImage class]));
+    XCTAssertNotNil(job.testResultsImage, @"job's test results image is nil");
 }
 
 - (void)testActiveConfigurations
@@ -273,6 +276,42 @@
     XCTAssert([job.name isEqualToString:@"Job1"], @"job name should be Job1, is actually %@",job.name);
     XCTAssert([job.color isEqualToString:@"blue"], @"job color is wrong");
     XCTAssert([job.url isEqualToString:@"http://www.google.com"], @"job url is wrong, is actually %@",job.url);
+}
+
+-(void) testJobSetTestResultsImage
+{
+    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"color",nil];
+    NSArray *values = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue",nil];
+    NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
+    NSDictionary *viewvals = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
+    
+    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
+    Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
+    
+    [job setTestResultsImageWithImage:[UIImage imageNamed:@"blue.png"]];
+    
+    XCTAssertNotNil(job.testResultsImage, @"job's test results image is nil");
+}
+
+-(void) testJobGetTestResultsImage
+{
+    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"color",nil];
+    NSArray *values = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue",nil];
+    NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    
+    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
+    NSDictionary *viewvals = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
+    
+    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
+    Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
+    [job setTestResultsImageWithImage:[UIImage imageNamed:@"blue.png"]];
+    
+    XCTAssertTrue([job.getTestResultsImage isKindOfClass:[UIImage class]], @"%@%@",@"test results image is not UIImage, returned ",NSStringFromClass([job.getTestResultsImage class]));
+    
 }
 
 -(void) testActiveConfigurationIsBuilding

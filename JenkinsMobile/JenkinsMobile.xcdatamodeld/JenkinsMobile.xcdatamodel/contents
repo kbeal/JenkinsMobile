@@ -55,6 +55,7 @@
         <attribute name="property" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="queueItem" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="scm" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="testResultsImage" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
         <attribute name="upstreamProjects" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="url" attributeType="String" indexed="YES" syncable="YES"/>
         <relationship name="rel_Job_JenkinsInstance" maxCount="1" deletionRule="Nullify" destinationEntity="JenkinsInstance" inverseName="rel_Jobs" inverseEntity="JenkinsInstance" syncable="YES"/>
@@ -71,7 +72,7 @@
     <elements>
         <element name="Build" positionX="-117" positionY="369" width="128" height="315"/>
         <element name="JenkinsInstance" positionX="-18" positionY="101" width="128" height="120"/>
-        <element name="Job" positionX="135" positionY="224" width="128" height="495"/>
+        <element name="Job" positionX="135" positionY="224" width="128" height="510"/>
         <element name="View" positionX="313" positionY="83" width="128" height="133"/>
     </elements>
 </model>

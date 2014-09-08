@@ -19,6 +19,7 @@ extern NSString * const JobURLKey;
 extern NSString * const JobActiveConfigurationsKey;
 extern NSString * const JobNameKey;
 extern NSString * const JobColorKey;
+extern NSString * const JobTestResultsImageKey;
 // Build keys
 extern NSString * const BuildURLKey;
 extern NSString * const BuildNumberKey;
