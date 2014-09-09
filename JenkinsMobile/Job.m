@@ -143,7 +143,7 @@
     self.downstreamProjects = NULL_TO_NIL([values objectForKey:@"downstreamProjects"]);
     self.healthReport = NULL_TO_NIL([values objectForKey:@"healthReport"]);
     self.activeConfigurations = NULL_TO_NIL([values objectForKey:JobActiveConfigurationsKey]);
-    [self setTestResultsImageWithImage:NULL_TO_NIL([values objectForKey:JobTestResultsImageKey])];
+    //[self setTestResultsImageWithImage:NULL_TO_NIL([values objectForKey:JobTestResultsImageKey])];
 }
 
 @end

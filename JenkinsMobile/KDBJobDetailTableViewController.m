@@ -288,6 +288,7 @@
 {
     NSInteger sections = 0;
     self.permalinksSectionIndex=self.upstreamProjectsSectionIndex=self.downstreamProjectsSectionIndex=0;
+    self.testResultsSectionIndex=10000;
     
     if ([self numberPermalinks] > 0) {
         self.permalinksSectionIndex = sections;
