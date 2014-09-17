@@ -201,6 +201,7 @@
     
 
     Job *job = [Job createJobWithValues:[NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys] inManagedObjectContext:_context forView:view];
+    [job setTestResultsImageWithImage:testImage];
     
     XCTAssert([job.name isEqualToString:@"Test1"], @"job name should be Test1, is actually %@",job.name);
     XCTAssert([job.color isEqualToString:@"blue"], @"job color is wrong");
