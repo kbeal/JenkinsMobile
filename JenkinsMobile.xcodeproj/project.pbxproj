@@ -165,11 +165,13 @@
 		8A3CBA3B18E7C57C00D0D160 /* notbuilt.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CBA3918E7C57C00D0D160 /* notbuilt.png */; };
 		8A3CBA3C18E7C57C00D0D160 /* notbuilt@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CBA3A18E7C57C00D0D160 /* notbuilt@2x.png */; };
 		8A3DA825198F2C3800C97992 /* KDBJobDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3DA824198F2C3800C97992 /* KDBJobDetailTableViewController.m */; };
+		8A56E60F19C90FD80058B0C7 /* SyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */; };
 		8A5A224D18F20A3A001FA8EB /* JenkinsInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5A224C18F20A3A001FA8EB /* JenkinsInstance.m */; };
 		8A76B0F2199C3AE200B219C5 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A76B0F1199C3AE200B219C5 /* Constants.m */; };
 		8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */; };
 		8A817A5319638D1400ED7075 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A817A5219638D1400ED7075 /* SpriteKit.framework */; };
 		8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A817AAE196390D700ED7075 /* KDBBallScene.m */; };
+		8A8B57BE19C7B98A004FA446 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8B57BD19C7B98A004FA446 /* SyncManager.swift */; };
 		8A999495197A1439009B82DD /* health-00to19~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999490197A1439009B82DD /* health-00to19~ipad.png */; };
 		8A999496197A1439009B82DD /* health-20to39~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999491197A1439009B82DD /* health-20to39~ipad.png */; };
 		8A999497197A1439009B82DD /* health-40to59~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999492197A1439009B82DD /* health-40to59~ipad.png */; };
@@ -392,6 +394,8 @@
 		8A3CBA3A18E7C57C00D0D160 /* notbuilt@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "notbuilt@2x.png"; sourceTree = "<group>"; };
 		8A3DA823198F2C3800C97992 /* KDBJobDetailTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJobDetailTableViewController.h; sourceTree = "<group>"; };
 		8A3DA824198F2C3800C97992 /* KDBJobDetailTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJobDetailTableViewController.m; sourceTree = "<group>"; };
+		8A56E60D19C90FD70058B0C7 /* JenkinsMobileTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JenkinsMobileTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManagerTests.swift; sourceTree = "<group>"; };
 		8A5A224B18F20A3A001FA8EB /* JenkinsInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JenkinsInstance.h; sourceTree = "<group>"; };
 		8A5A224C18F20A3A001FA8EB /* JenkinsInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JenkinsInstance.m; sourceTree = "<group>"; };
 		8A76B0F1199C3AE200B219C5 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
@@ -400,6 +404,8 @@
 		8A817A5219638D1400ED7075 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		8A817AAD196390D700ED7075 /* KDBBallScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBBallScene.h; sourceTree = "<group>"; };
 		8A817AAE196390D700ED7075 /* KDBBallScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBBallScene.m; sourceTree = "<group>"; };
+		8A8B57BC19C7B989004FA446 /* JenkinsMobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JenkinsMobile-Bridging-Header.h"; sourceTree = "<group>"; };
+		8A8B57BD19C7B98A004FA446 /* SyncManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
 		8A999490197A1439009B82DD /* health-00to19~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-00to19~ipad.png"; sourceTree = "<group>"; };
 		8A999491197A1439009B82DD /* health-20to39~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-20to39~ipad.png"; sourceTree = "<group>"; };
 		8A999492197A1439009B82DD /* health-40to59~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-40to59~ipad.png"; sourceTree = "<group>"; };
@@ -743,6 +749,8 @@
 				8A399273199455D70071CF08 /* KDBJobTableViewCell.m */,
 				8AE904B619BD4C3400EE6A79 /* KDBJobTestResultsTableViewCell.h */,
 				8AE904B719BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m */,
+				8A8B57BD19C7B98A004FA446 /* SyncManager.swift */,
+				8A8B57BC19C7B989004FA446 /* JenkinsMobile-Bridging-Header.h */,
 			);
 			path = JenkinsMobile;
 			sourceTree = "<group>";
@@ -762,6 +770,8 @@
 			isa = PBXGroup;
 			children = (
 				8AC32A2318E4F3A90002D106 /* JenkinsMobileTests.m */,
+				8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */,
+				8A56E60D19C90FD70058B0C7 /* JenkinsMobileTests-Bridging-Header.h */,
 			);
 			path = JenkinsMobileTests;
 			sourceTree = "<group>";
@@ -1094,6 +1104,7 @@
 				8AC32A0B18E4F3A90002D106 /* KDBMasterViewController.m in Sources */,
 				8AE904B819BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m in Sources */,
 				8A399274199455D70071CF08 /* KDBJobTableViewCell.m in Sources */,
+				8A8B57BE19C7B98A004FA446 /* SyncManager.swift in Sources */,
 				8AD3B759191C684F00DB7439 /* KDBBuildsTableViewController.m in Sources */,
 				8AFBC11F19468806008EDC9D /* KDBMasterBuildListTableViewController.m in Sources */,
 				8A040A00192599D400B25073 /* KDBRelatedProjectsViewController.m in Sources */,
@@ -1119,6 +1130,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A56E60F19C90FD80058B0C7 /* SyncManagerTests.swift in Sources */,
 				8AC32A2418E4F3A90002D106 /* JenkinsMobileTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1238,13 +1250,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JenkinsMobile/JenkinsMobile-Prefix.pch";
 				INFOPLIST_FILE = "JenkinsMobile/JenkinsMobile-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "4C2CAA08-1B8C-4C72-9180-0972EADB1ED3";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "JenkinsMobile/JenkinsMobile-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1254,13 +1270,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Kyle Beal (AN9MG58RQQ)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JenkinsMobile/JenkinsMobile-Prefix.pch";
 				INFOPLIST_FILE = "JenkinsMobile/JenkinsMobile-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "4C2CAA08-1B8C-4C72-9180-0972EADB1ED3";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "JenkinsMobile/JenkinsMobile-Bridging-Header.h";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1269,6 +1288,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/JenkinsMobile.app/JenkinsMobile";
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -1281,7 +1301,10 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "JenkinsMobileTests/JenkinsMobileTests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "JenkinsMobileTests/JenkinsMobileTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -1291,6 +1314,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/JenkinsMobile.app/JenkinsMobile";
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -1299,7 +1323,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JenkinsMobile/JenkinsMobile-Prefix.pch";
 				INFOPLIST_FILE = "JenkinsMobileTests/JenkinsMobileTests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "JenkinsMobileTests/JenkinsMobileTests-Bridging-Header.h";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
