@@ -13,6 +13,18 @@ import JenkinsMobile
 class SyncManagerTests: XCTestCase {
 
     let instance = SyncManager.sharedInstance
+    var context: NSManagedObjectContext?
+    
+    override func setUp() {
+        super.setUp()
+        
+        let modelURL = NSBundle.mainBundle().URLForResource("JenkinsMobile", withExtension: "momd")
+        let model = NSManagedObjectModel(contentsOfURL: modelURL!)
+        let coord = NSPersistentStoreCoordinator(managedObjectModel: model)
+        context = NSManagedObjectContext(concurrencyType: NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType)
+        coord.addPersistentStoreWithType(NSInMemoryStoreType, configuration: nil, URL: nil, options: nil, error: nil)
+        context!.persistentStoreCoordinator = coord
+    }
     
     func testSharedInstance() {
         XCTAssertNotNil(instance, "shared instance is nil")
@@ -21,6 +33,14 @@ class SyncManagerTests: XCTestCase {
     func testJobDetailResponseReceived() {
         let notification = NSNotification(name: JobDetailResponseReceivedNotification, object: self)
         instance.jobDetailResponseReceived(notification)
-        XCTAssert(true, "true")
+        
+        let fetchreq = NSFetchRequest()
+        fetchreq.entity = NSEntityDescription.entityForName("Job", inManagedObjectContext: context!)
+        fetchreq.predicate = NSPredicate(format: "url = %@", "http://www.google.com")
+        fetchreq.includesPropertyValues = false
+        
+        let jobs = context?.executeFetchRequest(fetchreq, error: nil)
+        
+        XCTAssertEqual(jobs!.count, 1, "jobs count is wrong. Should be 1 got: \(jobs!.count) instead")
     }
 }
