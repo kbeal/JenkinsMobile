@@ -166,6 +166,7 @@
 		8A3CBA3C18E7C57C00D0D160 /* notbuilt@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CBA3A18E7C57C00D0D160 /* notbuilt@2x.png */; };
 		8A3DA825198F2C3800C97992 /* KDBJobDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3DA824198F2C3800C97992 /* KDBJobDetailTableViewController.m */; };
 		8A56E60F19C90FD80058B0C7 /* SyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */; };
+		8A56E61119C91EB50058B0C7 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8B57BD19C7B98A004FA446 /* SyncManager.swift */; };
 		8A5A224D18F20A3A001FA8EB /* JenkinsInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5A224C18F20A3A001FA8EB /* JenkinsInstance.m */; };
 		8A76B0F2199C3AE200B219C5 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A76B0F1199C3AE200B219C5 /* Constants.m */; };
 		8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */; };
@@ -1130,6 +1131,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A56E61119C91EB50058B0C7 /* SyncManager.swift in Sources */,
 				8A56E60F19C90FD80058B0C7 /* SyncManagerTests.swift in Sources */,
 				8AC32A2418E4F3A90002D106 /* JenkinsMobileTests.m in Sources */,
 			);

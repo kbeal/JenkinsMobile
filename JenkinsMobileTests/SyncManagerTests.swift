@@ -11,8 +11,16 @@ import XCTest
 import JenkinsMobile
 
 class SyncManagerTests: XCTestCase {
+
+    let instance = SyncManager.sharedInstance
+    
     func testSharedInstance() {
-        let instance = SyncManager.sharedInstance
         XCTAssertNotNil(instance, "shared instance is nil")
+    }
+    
+    func testJobDetailResponseReceived() {
+        let notification = NSNotification(name: JobDetailResponseReceivedNotification, object: self)
+        instance.jobDetailResponseReceived(notification)
+        XCTAssert(true, "true")
     }
 }
