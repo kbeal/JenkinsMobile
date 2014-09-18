@@ -10,14 +10,13 @@ import Foundation
 import CoreData
 
 public class SyncManager {
-    /*
-    var masterMOC: NSManagedObjectContext
-    var mainMOC: NSManagedObjectContext
-    var currentJenkinsInstance: JenkinsInstance
-    var currentBuilds: NSMutableArray
-    var currentBuildsTimer: NSTimer
-    var requestHandler: KDBJenkinsRequestHandler
-    */
+    
+    var masterMOC: NSManagedObjectContext?
+    var mainMOC: NSManagedObjectContext?
+    //var currentJenkinsInstance: JenkinsInstance
+    //var currentBuilds: NSMutableArray
+    //var currentBuildsTimer: NSTimer
+    //var requestHandler: KDBJenkinsRequestHandler
     
     public class var sharedInstance : SyncManager {
         struct Static {
@@ -46,6 +45,20 @@ public class SyncManager {
     }*/
     
     func jobDetailResponseReceived(notification: NSNotification) {
+        assert(self.mainMOC != nil, "main managed object context not set")
+        let values: NSDictionary = notification.userInfo!
+        let url = values[JobURLKey] as String
+        
+        // make job.name indexed in model
+        // Rewrite Job fetch to use name instead of url
+        // Fetch job based on name
+        //let job: Job? = Job.fetchJobAtURL(url, inManagedObjectContext: self.mainMOC)
+        
+        // refactor Job.createJob to not use view
+        // if job == nil, 
+        // // assert(self.masterMOC != nil, "master managed object context not set");
+        // // Job.createJobWithValues(<#values: [NSObject : AnyObject]!#>, inManagedObjectContext: self.masterMOC, forView: <#View!#>)
+
         println("job detail response notification received")
     }
 }

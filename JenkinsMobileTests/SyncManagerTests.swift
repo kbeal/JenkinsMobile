@@ -12,7 +12,7 @@ import JenkinsMobile
 
 class SyncManagerTests: XCTestCase {
 
-    let instance = SyncManager.sharedInstance
+    let mgr = SyncManager.sharedInstance
     var context: NSManagedObjectContext?
     
     override func setUp() {
@@ -24,15 +24,19 @@ class SyncManagerTests: XCTestCase {
         context = NSManagedObjectContext(concurrencyType: NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType)
         coord.addPersistentStoreWithType(NSInMemoryStoreType, configuration: nil, URL: nil, options: nil, error: nil)
         context!.persistentStoreCoordinator = coord
+        mgr.mainMOC = context;
+        mgr.masterMOC = context;
     }
     
     func testSharedInstance() {
-        XCTAssertNotNil(instance, "shared instance is nil")
+        XCTAssertNotNil(mgr, "shared instance is nil")
     }
     
     func testJobDetailResponseReceived() {
-        let notification = NSNotification(name: JobDetailResponseReceivedNotification, object: self)
-        instance.jobDetailResponseReceived(notification)
+        let userInfo: [String: String] = [JobURLKey: "http://www.google.com"]
+        let notification = NSNotification(name: JobDetailResponseReceivedNotification, object: self, userInfo: userInfo)
+        
+        mgr.jobDetailResponseReceived(notification)
         
         let fetchreq = NSFetchRequest()
         fetchreq.entity = NSEntityDescription.entityForName("Job", inManagedObjectContext: context!)
