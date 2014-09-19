@@ -33,14 +33,14 @@ class SyncManagerTests: XCTestCase {
     }
     
     func testJobDetailResponseReceived() {
-        let userInfo: [String: String] = [JobURLKey: "http://www.google.com"]
+        let userInfo: [String: String] = [JobNameKey: "Job1"]
         let notification = NSNotification(name: JobDetailResponseReceivedNotification, object: self, userInfo: userInfo)
         
         mgr.jobDetailResponseReceived(notification)
         
         let fetchreq = NSFetchRequest()
         fetchreq.entity = NSEntityDescription.entityForName("Job", inManagedObjectContext: context!)
-        fetchreq.predicate = NSPredicate(format: "url = %@", "http://www.google.com")
+        fetchreq.predicate = NSPredicate(format: "name = %@", "Job1")
         fetchreq.includesPropertyValues = false
         
         let jobs = context?.executeFetchRequest(fetchreq, error: nil)

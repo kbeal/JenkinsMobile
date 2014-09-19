@@ -68,6 +68,22 @@
     return job;
 }
 
++ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context
+{
+    __block Job *job = [Job fetchJobWithName:[values objectForKey:JobNameKey] inManagedObjectContext:context];
+    
+    if (!job) {
+        [context performBlockAndWait:^{
+            job = [NSEntityDescription insertNewObjectForEntityForName:@"Job"
+                                                inManagedObjectContext:context];
+        }];
+    }
+    
+    [job setValues:values];
+    
+    return job;
+}
+
 + (Job *)fetchJobWithName: (NSString *) name inManagedObjectContext: (NSManagedObjectContext *) context
 {
     __block Job *job = nil;

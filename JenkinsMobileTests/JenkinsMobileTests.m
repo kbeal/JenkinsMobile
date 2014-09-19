@@ -267,12 +267,7 @@
     NSArray *values = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue",nil];
     NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     
-    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
-    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
-    NSDictionary *viewvals = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
-    
-    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
-    Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
+    Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context];
     
     XCTAssert([job.name isEqualToString:@"Job1"], @"job name should be Job1, is actually %@",job.name);
     XCTAssert([job.color isEqualToString:@"blue"], @"job color is wrong");
