@@ -11,18 +11,18 @@
 
 @implementation UIButton (RelatedProject)
 
-static char UIB_RELATEDPROJECT_URL_KEY;
+static char UIB_RELATEDPROJECT_NAME_KEY;
 
-@dynamic relatedProjectURL;
+@dynamic relatedProjectName;
 
--(void)setRelatedProjectURL:(NSString *)relatedProjectURL
+-(void)setRelatedProjectName:(NSString *)relatedProjectName
 {
-    objc_setAssociatedObject(self, &UIB_RELATEDPROJECT_URL_KEY, relatedProjectURL, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, &UIB_RELATEDPROJECT_NAME_KEY, relatedProjectName, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
--(NSString*)relatedProjectURL
+-(NSString*)relatedProjectName
 {
-    return (NSString*)objc_getAssociatedObject(self, &UIB_RELATEDPROJECT_URL_KEY);
+    return (NSString*)objc_getAssociatedObject(self, &UIB_RELATEDPROJECT_NAME_KEY);
 }
 
 @end

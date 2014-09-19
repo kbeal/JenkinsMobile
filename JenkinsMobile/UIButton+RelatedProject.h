@@ -10,6 +10,6 @@
 
 @interface UIButton (RelatedProject)
 
-@property (nonatomic, retain) NSString *relatedProjectURL;
+@property (nonatomic, retain) NSString *relatedProjectName;
 
 @end

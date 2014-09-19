@@ -367,7 +367,7 @@
 {
     NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"color",nil];
     NSArray *values = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue",nil];
-    NSArray *values2 = [NSArray arrayWithObjects:@"Job1Test",@"http://www.google.com",@"green",nil];
+    NSArray *values2 = [NSArray arrayWithObjects:@"Job1",@"http://www.google1.com",@"green",nil];
     NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSDictionary *jobvalues2 = [NSDictionary dictionaryWithObjects:values2 forKeys:keys];
     
@@ -385,14 +385,14 @@
     NSError *error;
     NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
     [allJobs setEntity:[NSEntityDescription entityForName:@"Job" inManagedObjectContext:_context]];
-    [allJobs setPredicate:[NSPredicate predicateWithFormat:@"url = %@", @"http://www.google.com"]];
+    [allJobs setPredicate:[NSPredicate predicateWithFormat:@"name = %@", @"Job1"]];
     [allJobs setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *fetchedjobs = [_context executeFetchRequest:allJobs error:&error];
     Job *fetchedjob = [fetchedjobs lastObject];
     
-    XCTAssert(fetchedjobs.count==1, @"wrong number of fetched jobs");
-    XCTAssert([fetchedjob.name isEqualToString:@"Job1Test"], @"job name is wrong");
-    XCTAssert([fetchedjob.url isEqualToString:@"http://www.google.com"], @"job url is wrong");
+    XCTAssert(fetchedjobs.count==1, @"wrong number of fetched jobs. fetched %lu",(unsigned long)fetchedjobs.count);
+    XCTAssert([fetchedjob.name isEqualToString:@"Job1"], @"job name is wrong. name is actually: %@", fetchedjob.name);
+    XCTAssert([fetchedjob.url isEqualToString:@"http://www.google1.com"], @"job url is wrong. url is actually: %@", fetchedjob.url);
     XCTAssert([fetchedjob.color isEqualToString:@"green"], @"job color is wrong");
 }
 

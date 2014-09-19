@@ -80,7 +80,7 @@
     View *view = [self.job.rel_Job_View anyObject];
     KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:(JenkinsInstance*)view.rel_View_JenkinsInstance];
     jenkins.managedObjectContext = self.managedObjectContext;
-    [jenkins importDetailsForJobAtURL:self.job.url];
+    [jenkins importDetailsForJobWithName:self.job.name];
 }
 
 - (void) handleDataModelChange: (NSNotification *) notification
@@ -134,7 +134,7 @@
     NSArray *allButtons = [self.upstreamProjectButtons arrayByAddingObjectsFromArray:self.downstreamProjectButtons];
     for (UIButton *button in allButtons) {
         [button setTitle:@"" forState:UIControlStateNormal];
-        button.relatedProjectURL=nil;
+        button.relatedProjectName=nil;
     }
 }
 
@@ -150,12 +150,12 @@
 
 - (void) loadJobForRelatedProjectButton:(UIButton *) buttonTapped
 {
-    if ([buttonTapped.relatedProjectURL isEqualToString:@"moreDownstreamProjects"]) {
+    if ([buttonTapped.relatedProjectName isEqualToString:@"moreDownstreamProjects"]) {
         [self performSegueWithIdentifier:@"downstreamProjectsSegue" sender:self];
-    } else if ([buttonTapped.relatedProjectURL isEqualToString:@"moreUpstreamProjects"]) {
+    } else if ([buttonTapped.relatedProjectName isEqualToString:@"moreUpstreamProjects"]) {
         [self performSegueWithIdentifier:@"upstreamProjectsSegue" sender:self];
-    } else if (buttonTapped.relatedProjectURL != nil) {
-        self.job = [Job fetchJobAtURL:buttonTapped.relatedProjectURL inManagedObjectContext:self.managedObjectContext];
+    } else if (buttonTapped.relatedProjectName != nil) {
+        self.job = [Job fetchJobWithName:buttonTapped.relatedProjectName inManagedObjectContext:self.managedObjectContext];
         [self configureView];
     }
 }
@@ -179,7 +179,7 @@
             projectURL = [project objectForKey:@"url"];
             
             if ([relatedProjects count]>5 && i==4) {
-                projectName = [NSString stringWithFormat:@"%@%d%@",@"+",[relatedProjects count]-4,@" More"];
+                projectName = [NSString stringWithFormat:@"%@%d%@",@"+",(int)[relatedProjects count]-4,@" More"];
                 projectURL = downstreamProject ? @"moreDownstreamProjects" : @"moreUpstreamProjects";
                 // don't show a ball beside the +more button
             } else {
@@ -190,7 +190,7 @@
                 [statusBallToUpdate setHidden:NO];
             }
             
-            buttonToUpdate.relatedProjectURL = projectURL;
+            buttonToUpdate.relatedProjectName = projectName;
             [buttonToUpdate setTitle:projectName forState:UIControlStateNormal];
             [buttonToUpdate addTarget:self action:@selector(loadJobForRelatedProjectButton:) forControlEvents:UIControlEventTouchUpInside];
         } else {

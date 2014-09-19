@@ -107,7 +107,7 @@
 {
     KDBJenkinsRequestHandler *jenkins = [self getJenkinsRequestHandler];
     jenkins.managedObjectContext = self.managedObjectContext;
-    [jenkins importDetailsForJobAtURL:self.job.url];
+    [jenkins importDetailsForJobWithName:self.job.name];
 }
 
 -(IBAction)refresh:(id)sender
@@ -544,13 +544,13 @@
 
 - (void)switchDetailToRelatedProject:(NSIndexPath *)indexPath
 {
-    NSString *relatedProjectURL = @"";
+    NSString *relatedProjectName = @"";
     if (indexPath.section==self.upstreamProjectsSectionIndex) {
-        relatedProjectURL = [[self.job.upstreamProjects objectAtIndex:indexPath.row] objectForKey:@"url"];
+        relatedProjectName = [[self.job.upstreamProjects objectAtIndex:indexPath.row] objectForKey:JobNameKey];
     } else if (indexPath.section==self.downstreamProjectsSectionIndex) {
-        relatedProjectURL = [[self.job.downstreamProjects objectAtIndex:indexPath.row] objectForKey:@"url"];
+        relatedProjectName = [[self.job.downstreamProjects objectAtIndex:indexPath.row] objectForKey:JobNameKey];
     }
-    [self setJob:[Job fetchJobAtURL:relatedProjectURL inManagedObjectContext:self.managedObjectContext]];
+    [self setJob:[Job fetchJobWithName:relatedProjectName inManagedObjectContext:self.managedObjectContext]];
 }
 
 

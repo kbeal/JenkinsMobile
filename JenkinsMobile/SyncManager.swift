@@ -49,8 +49,6 @@ public class SyncManager {
         let values: NSDictionary = notification.userInfo!
         let url = values[JobURLKey] as String
         
-        // make job.name indexed in model
-        // Rewrite Job fetch to use name instead of url
         // Fetch job based on name
         //let job: Job? = Job.fetchJobAtURL(url, inManagedObjectContext: self.mainMOC)
         

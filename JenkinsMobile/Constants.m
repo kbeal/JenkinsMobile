@@ -17,13 +17,13 @@ NSString * const BuildProgressResponseReceivedNotification = @"BuildProgressResp
 NSString * const JobTestResultsImageResponseReceivedNotification = @"JobTestResultsImageResponseReceived";
 
 // Job Keys
-NSString * const JobURLKey = @"jobURL";
+NSString * const JobURLKey = @"url";
 NSString * const JobActiveConfigurationsKey = @"activeConfigurations";
-NSString * const JobNameKey = @"jobName";
+NSString * const JobNameKey = @"name";
 NSString * const JobColorKey = @"color";
 NSString * const JobTestResultsImageKey = @"jobTestResults";
 // Build Keys
-NSString * const BuildURLKey = @"buildURL";
+NSString * const BuildURLKey = @"url";
 NSString * const BuildNumberKey = @"number";
 NSString * const BuildBuildingKey = @"building";
 NSString * const BuildDurationKey = @"duration";

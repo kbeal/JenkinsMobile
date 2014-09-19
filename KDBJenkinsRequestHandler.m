@@ -112,12 +112,12 @@
     [operation start];
 }
 
-- (void) importDetailsForJobAtURL:(NSString*) jobURL
+- (void) importDetailsForJobWithName:(NSString*) jobName
 {
     //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job at url: ",jobURL]);
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",jobURL,@"api/json"]];
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@%@",self.jinstance.url,@"/job/",jobName,@"api/json"]];
     
-    [self importTestResultsImageForJobAtURL:jobURL];
+    [self importTestResultsImageForJobWithName:jobName];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     //AFNetworking asynchronous url request
@@ -127,9 +127,9 @@
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"%@%@",@"response received for job at url: ",jobURL);
-        [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailResponseReceivedNotification object:self userInfo:[NSDictionary dictionaryWithObject:jobURL forKey:JobURLKey]];
-        [self persistJobAtURL:jobURL withValues:responseObject];
+        //NSLog(@"%@%@",@"response received for job at url: ",jobURL);
+        [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailResponseReceivedNotification object:self userInfo:[NSDictionary dictionaryWithObject:jobName forKey:JobNameKey]];
+        [self persistJobWithName:jobName withValues:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
         NSLog(@"Request Failed: %@, %@", error, error.userInfo);
@@ -138,9 +138,9 @@
     [operation start];
 }
 
-- (void) importTestResultsImageForJobAtURL:(NSString *) jobURL
+- (void) importTestResultsImageForJobWithName:(NSString *) jobName
 {
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",jobURL,@"test/trend"]];
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@%@",self.jinstance.url,@"/job/",jobName,@"test/trend"]];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     //AFNetworking asynchronous url request
@@ -151,8 +151,8 @@
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@%@",@"response received for test results image at url: ", requestURL);
-        [[NSNotificationCenter defaultCenter] postNotificationName:JobTestResultsImageResponseReceivedNotification object:self userInfo:[NSDictionary dictionaryWithObject:jobURL forKey:JobURLKey]];
-        [self persistTestResultsImage:responseObject forJobAtURL:jobURL];
+        [[NSNotificationCenter defaultCenter] postNotificationName:JobTestResultsImageResponseReceivedNotification object:self userInfo:[NSDictionary dictionaryWithObject:jobName forKey:JobNameKey]];
+        [self persistTestResultsImage:responseObject forJobWithName:jobName];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
         NSLog(@"Request Failed: %@, %@", error, error.userInfo);
@@ -330,10 +330,10 @@
     //[self importDetailsForBuildsForJobs:[self.viewsJobsDetails objectForKey:viewURL]];
 }
 
-- (void) persistTestResultsImage: (UIImage *)image forJobAtURL:jobURL
+- (void) persistTestResultsImage: (UIImage *)image forJobWithName:jobName
 {
     [self.importJobsMOC performBlock:^{
-        Job *job = [Job fetchJobAtURL:jobURL inManagedObjectContext:self.importJobsMOC];
+        Job *job = [Job fetchJobWithName:jobName inManagedObjectContext:self.importJobsMOC];
         [job setTestResultsImageWithImage:image];
         
         NSError *importJobsError;
@@ -351,11 +351,11 @@
     }];
 }
 
-- (void) persistJobAtURL:(NSString*)jobURL withValues: (NSDictionary *) jobValues
+- (void) persistJobWithName:(NSString*)jobName withValues: (NSDictionary *) jobValues
 {
     //NSLog([NSString stringWithFormat:@"persisting job at url: %@",jobURL]);
     [self.importJobsMOC performBlock:^{
-        Job *job = [Job fetchJobAtURL:jobURL inManagedObjectContext:self.importJobsMOC];
+        Job *job = [Job fetchJobWithName:jobName inManagedObjectContext:self.importJobsMOC];
         [job setValues:jobValues];
         
         NSError *importJobsError;

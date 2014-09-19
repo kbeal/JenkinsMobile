@@ -28,7 +28,7 @@
 - (id) initWithJenkinsInstance: (JenkinsInstance *) instance;
 
 - (void) importAllViews;
-- (void) importDetailsForJobAtURL:(NSString*) jobURL;
+- (void) importDetailsForJobWithName:(NSString*) jobName;
 - (void) importProgressForBuild:(NSNumber *) buildNumber ofJobAtURL:(NSString *) jobURL;
 /*
 - (void) importDetailsForView: (NSString *) viewName atURL: (NSString *) viewURL;

@@ -59,6 +59,6 @@
 - (UIImage *) getTestResultsImage;
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view;
-+ (Job *)fetchJobAtURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context;
++ (Job *)fetchJobWithName: (NSString *) name inManagedObjectContext: (NSManagedObjectContext *) context;
 
 @end
