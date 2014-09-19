@@ -47,10 +47,10 @@ public class SyncManager {
     func jobDetailResponseReceived(notification: NSNotification) {
         assert(self.mainMOC != nil, "main managed object context not set")
         let values: NSDictionary = notification.userInfo!
-        let url = values[JobURLKey] as String
+        let name = values[JobNameKey] as String
         
         // Fetch job based on name
-        //let job: Job? = Job.fetchJobAtURL(url, inManagedObjectContext: self.mainMOC)
+        let job: Job? = Job.fetchJobWithName(name, inManagedObjectContext: self.mainMOC)
         
         // refactor Job.createJob to not use view
         // if job == nil, 
