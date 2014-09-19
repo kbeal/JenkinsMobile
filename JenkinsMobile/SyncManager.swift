@@ -57,7 +57,26 @@ public class SyncManager {
             Job.createJobWithValues(values, inManagedObjectContext: self.masterMOC)
         } else {
             // update it's values
-            job!.setValues(values);
+            job!.setValues(values)
         }
+        
+        self.saveMasterContext()
+    }
+    
+    func saveMasterContext () {
+        var error: NSError? = nil
+        let moc = self.masterMOC
+        if moc == nil {
+            return
+        }
+        if !moc!.hasChanges {
+            return
+        }
+        if (moc?.save(&error) != nil) {
+            return
+        }
+        
+        println("Error saving context: \(error?.localizedDescription)\n\(error?.userInfo)")
+        abort()
     }
 }
