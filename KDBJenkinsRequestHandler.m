@@ -90,28 +90,6 @@
     [operation start];
 }
 
-- (void) importDetailsForJobAtURL:(NSString *)jobURL inViewAtURL:(NSString *) viewURL
-{
-    //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job at url: ",jobURL]);
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",jobURL,@"api/json"]];
-    
-    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
-    //AFNetworking asynchronous url request
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
-                                         initWithRequest:request];
-    
-    operation.responseSerializer = [AFJSONResponseSerializer serializer];
-    
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self appendJobDetailsWithValues:responseObject forViewAtURL:viewURL];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        // Handle error
-        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
-    }];
-    
-    [operation start];
-}
-
 - (void) importDetailsForJobWithName:(NSString*) jobName
 {
     //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job at url: ",jobURL]);
@@ -128,8 +106,7 @@
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         //NSLog(@"%@%@",@"response received for job at url: ",jobURL);
-        [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailResponseReceivedNotification object:self userInfo:[NSDictionary dictionaryWithObject:jobName forKey:JobNameKey]];
-        [self persistJobWithName:jobName withValues:responseObject];
+        [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailResponseReceivedNotification object:self userInfo:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
         NSLog(@"Request Failed: %@, %@", error, error.userInfo);
@@ -195,18 +172,6 @@
     [operation start];
 }
 
-- (void) importDetailsForJobs
-{
-    for (NSDictionary *view in self.viewDetails) {
-        NSArray *jobs = [view objectForKey:@"jobs"];
-        [self.viewsJobsCounts setObject:[NSNumber numberWithLong:jobs.count] forKey:[view objectForKey:@"url"]];
-        for (NSDictionary *job in jobs) {
-            //NSLog([NSString stringWithFormat:@"%@%@",@"import details for job: ",[job objectForKey:@"name"]]);
-            [self importDetailsForJobAtURL:[job objectForKey:@"url"] inViewAtURL:[view objectForKey:@"url"]];
-        }
-    }
-}
-
 - (void) importDetailsForBuild: (NSNumber *) buildNumber forJobURL: (NSString *) jobURL
 {
 //    NSLog([NSString stringWithFormat:@"%@%@",@"importing details for build: ",buildNumber]);
@@ -263,7 +228,6 @@
             }
         }];
     }
-    [self importDetailsForJobs];
 }
 
 - (void) appendViewDetailsWithValues: (NSDictionary *) viewValues
@@ -271,19 +235,6 @@
     [self.viewDetails addObject:viewValues];
     if ([NSNumber numberWithLong:self.viewDetails.count] == self.view_count) {
         [self persistViewDetailsToLocalStorage];
-    }
-}
-
-- (void) appendJobDetailsWithValues: (NSDictionary *) jobValues forViewAtURL: (NSString *) viewURL
-{
-    NSMutableArray *jobs = [self.viewsJobsDetails objectForKey:viewURL];
-    if (jobs==nil) {
-        jobs = [[NSMutableArray alloc] init];
-    }
-    [jobs addObject:jobValues];
-    [self.viewsJobsDetails setValue:jobs forKey:viewURL];
-    if (jobs.count==[[self.viewsJobsCounts objectForKey:viewURL] intValue]) {
-        [self persistJobDetailsToLocalStorageForView:viewURL];
     }
 }
 
@@ -300,63 +251,11 @@
     }
 }
 
-- (void) persistJobDetailsToLocalStorageForView: (NSString *) viewURL
-{
-    @autoreleasepool {
-        View *view = [View fetchViewWithURL:viewURL inContext:self.importJobsMOC];
-        for (NSDictionary *job in [self.viewsJobsDetails objectForKey:viewURL]) {
-            [self.importJobsMOC performBlock:^{
-                [Job createJobWithValues:job inManagedObjectContext:self.importJobsMOC forView:view];
-                [self createBuilds:[job objectForKey:@"builds"] forJobAtURL:[job objectForKey:@"url"]];
-            }];
-        }
-        //NSLog([NSString stringWithFormat:@"%@%@",@"saving job details for view: ",viewURL]);
-        [self.importJobsMOC performBlock:^ {
-            NSError *importJobsError;
-            if (![self.importJobsMOC save:&importJobsError]) {
-                NSLog(@"Error saving import jobs context %@, %@", importJobsError, [importJobsError userInfo]);
-                abort();
-            }
-            [self.managedObjectContext performBlock:^ {
-                NSError *masterError;
-                if (![self.managedObjectContext save:&masterError]) {
-                    NSLog(@"Error saving master context %@, %@", masterError, [masterError userInfo]);
-                    abort();
-                }
-            }];
-            [self.importJobsMOC reset];
-        }];
-    }
-    //[self importDetailsForBuildsForJobs:[self.viewsJobsDetails objectForKey:viewURL]];
-}
-
 - (void) persistTestResultsImage: (UIImage *)image forJobWithName:jobName
 {
     [self.importJobsMOC performBlock:^{
         Job *job = [Job fetchJobWithName:jobName inManagedObjectContext:self.importJobsMOC];
         [job setTestResultsImageWithImage:image];
-        
-        NSError *importJobsError;
-        if (![self.importJobsMOC save:&importJobsError]) {
-            NSLog(@"Error saving import jobs context %@, %@", importJobsError, [importJobsError userInfo]);
-            abort();
-        }
-        [self.managedObjectContext performBlock:^ {
-            NSError *masterError;
-            if (![self.managedObjectContext save:&masterError]) {
-                NSLog(@"Error saving master context %@, %@", masterError, [masterError userInfo]);
-                abort();
-            }
-        }];
-    }];
-}
-
-- (void) persistJobWithName:(NSString*)jobName withValues: (NSDictionary *) jobValues
-{
-    //NSLog([NSString stringWithFormat:@"persisting job at url: %@",jobURL]);
-    [self.importJobsMOC performBlock:^{
-        Job *job = [Job fetchJobWithName:jobName inManagedObjectContext:self.importJobsMOC];
-        [job setValues:jobValues];
         
         NSError *importJobsError;
         if (![self.importJobsMOC save:&importJobsError]) {
