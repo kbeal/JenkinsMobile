@@ -375,7 +375,6 @@
 
     
     [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
-    [Job createJobWithValues:jobvalues2 inManagedObjectContext:_context forView:view];
     
     NSError *error;
     NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
@@ -384,6 +383,8 @@
     [allJobs setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *fetchedjobs = [_context executeFetchRequest:allJobs error:&error];
     Job *fetchedjob = [fetchedjobs lastObject];
+    
+    [fetchedjob setValues:jobvalues2];
     
     XCTAssert(fetchedjobs.count==1, @"wrong number of fetched jobs. fetched %lu",(unsigned long)fetchedjobs.count);
     XCTAssert([fetchedjob.name isEqualToString:@"Job1"], @"job name is wrong. name is actually: %@", fetchedjob.name);

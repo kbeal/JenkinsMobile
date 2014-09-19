@@ -51,12 +51,13 @@ public class SyncManager {
         
         // Fetch job based on name
         let job: Job? = Job.fetchJobWithName(name, inManagedObjectContext: self.mainMOC)
-        
-        // refactor Job.createJob to not use view
-        // if job == nil, 
-        // // assert(self.masterMOC != nil, "master managed object context not set");
-        // // Job.createJobWithValues(<#values: [NSObject : AnyObject]!#>, inManagedObjectContext: self.masterMOC, forView: <#View!#>)
-
-        println("job detail response notification received")
+        // create if it doesn't exist
+        if (job==nil) {
+            assert(self.masterMOC != nil, "master managed object context not set");
+            Job.createJobWithValues(values, inManagedObjectContext: self.masterMOC)
+        } else {
+            // update it's values
+            job!.setValues(values);
+        }
     }
 }

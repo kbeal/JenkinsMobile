@@ -51,17 +51,9 @@
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view
 {
-    __block Job *job = [Job fetchJobWithName:[values objectForKey:JobNameKey] inManagedObjectContext:context];
-    
-    if (!job) {
-        [context performBlockAndWait:^{
-            job = [NSEntityDescription insertNewObjectForEntityForName:@"Job"
-                                            inManagedObjectContext:context];
-        }];
-    }
+    Job *job = [NSEntityDescription insertNewObjectForEntityForName:@"Job" inManagedObjectContext:context];
     
     [job addRel_Job_ViewObject:view];
-    
     job.rel_Job_JenkinsInstance = (JenkinsInstance *)view.rel_View_JenkinsInstance;
     [job setValues:values];
     
@@ -70,14 +62,7 @@
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    __block Job *job = [Job fetchJobWithName:[values objectForKey:JobNameKey] inManagedObjectContext:context];
-    
-    if (!job) {
-        [context performBlockAndWait:^{
-            job = [NSEntityDescription insertNewObjectForEntityForName:@"Job"
-                                                inManagedObjectContext:context];
-        }];
-    }
+    Job *job = [NSEntityDescription insertNewObjectForEntityForName:@"Job" inManagedObjectContext:context];
     
     [job setValues:values];
     
