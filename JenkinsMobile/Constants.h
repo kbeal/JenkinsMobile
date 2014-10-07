@@ -21,6 +21,22 @@ extern NSString * const JobActiveConfigurationsKey;
 extern NSString * const JobNameKey;
 extern NSString * const JobColorKey;
 extern NSString * const JobTestResultsImageKey;
+extern NSString * const JobBuildableKey;
+extern NSString * const JobConcurrentBuildKey;
+extern NSString * const JobDisplayNameKey;
+extern NSString * const JobFirstBuildKey;
+extern NSString * const JobLastBuildKey;
+extern NSString * const JobLastCompletedBuildKey;
+extern NSString * const JobLastFailedBuildKey;
+extern NSString * const JobLastStableBuildKey;
+extern NSString * const JobLastSuccessfulBuildKey;
+extern NSString * const JobLastUnstableBuildKey;
+extern NSString * const JobLastUnsucessfulBuildKey;
+extern NSString * const JobNextBuildNumberKey;
+extern NSString * const JobInQueueKey;
+extern NSString * const JobDescriptionKey;
+extern NSString * const JobKeepDependenciesKey;
+
 // Build keys
 extern NSString * const BuildURLKey;
 extern NSString * const BuildNumberKey;
@@ -28,10 +44,16 @@ extern NSString * const BuildBuildingKey;
 extern NSString * const BuildDurationKey;
 extern NSString * const BuildEstimatedDurationKey;
 extern NSString * const BuildTimestampKey;
+
 // Active Configuration Keys
 extern NSString * const ActiveConfigurationNameKey;
 extern NSString * const ActiveConfigurationColorKey;
 extern NSString * const ActiveConfigurationURLKey;
+
+// JenkinsInstance Keys
+extern NSString * const JenkinsInstanceNameKey;
+extern NSString * const JenkinsInstanceURLKey;
+extern NSString * const JenkinsInstanceCurrentKey;
 
 
 @end
