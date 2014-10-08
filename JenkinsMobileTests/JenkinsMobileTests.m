@@ -70,8 +70,8 @@
     
     NSArray *newjobs = [_context executeFetchRequest:allJobs error:&error];
     
-    XCTAssert(newjobs.count==origjobs.count+1, @"jobs count should incrase by 1 to %d, instead got %d",origjobs.count+1,newjobs.count);
-    XCTAssert([_jinstance rel_Jobs].count==1, @"jenkins instance's job count should be 1, instead got %d",[_jinstance rel_Jobs].count);
+    XCTAssert(newjobs.count==origjobs.count+1, @"jobs count should incrase by 1 to %lu, instead got %lu",origjobs.count+1,(unsigned long)newjobs.count);
+    XCTAssert([_jinstance rel_Jobs].count==1, @"jenkins instance's job count should be 1, instead got %lu",(unsigned long)[_jinstance rel_Jobs].count);
 }
 
 
@@ -102,10 +102,9 @@
     
     NSArray *newviews = [_context executeFetchRequest:allViews error:&error];
     
-    XCTAssert(newviews.count==origviews.count+1, @"views count should incrase by 1 to %d, instead got %d",origviews.count+1,newviews.count);
-    XCTAssert([view rel_View_Jobs].count==1, @"jobs count should be 1, instead it is %d",[view rel_View_Jobs].count);
-    XCTAssert([job rel_Job_View].count==1, @"job's view count should be 1, instead it is %d",[job rel_Job_View].count);
-    XCTAssert([_jinstance rel_Views].count==1, @"jenkins instance's view count should be 1, instead it is %d",[_jinstance rel_Views].count);
+    XCTAssert(newviews.count==origviews.count+1, @"views count should incrase by 1 to %lu, instead got %lu",origviews.count+1,(unsigned long)newviews.count);
+    XCTAssert([view rel_View_Jobs].count==1, @"jobs count should be 1, instead it is %lu",(unsigned long)[view rel_View_Jobs].count);
+    XCTAssert([_jinstance rel_Views].count==1, @"jenkins instance's view count should be 1, instead it is %lu",(unsigned long)[_jinstance rel_Views].count);
 }
 
 - (void)testInsertingBuilds
@@ -134,7 +133,7 @@
     
     NSArray *newbuilds = [_context executeFetchRequest:allBuilds error:&error];
     
-    XCTAssert(newbuilds.count==origbuilds.count+1, @"Build count should incrase by 1 to %d, instead got %d",origbuilds.count+1,newbuilds.count);
+    XCTAssert(newbuilds.count==origbuilds.count+1, @"Build count should incrase by 1 to %luu, instead got %lu",origbuilds.count+1,(unsigned long)newbuilds.count);
 }
 
 - (void)testCreateViewWithValues
@@ -158,8 +157,8 @@
     
     XCTAssert([view.name isEqualToString:@"test1"], @"view name wrong");
     XCTAssert([view.url isEqualToString:@"url1"], @"view name wrong");
-    XCTAssert(view.rel_View_Jobs.count==1, @"view's job count should be 1, got %d instead",view.rel_View_Jobs.count);
-    XCTAssert(views.count==1, @"view count should be 4, instead got %d", views.count);
+    XCTAssert(view.rel_View_Jobs.count==1, @"view's job count should be 1, got %lu instead",(unsigned long)view.rel_View_Jobs.count);
+    XCTAssert(views.count==1, @"view count should be 4, instead got %lu", (unsigned long)views.count);
     
 }
 
@@ -191,16 +190,9 @@
     NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"color",@"url",@"buildable",@"concurrentBuild",@"displayName",@"firstBuild",@"lastBuild",@"lastCompletedBuild",@"lastFailedBuild",@"lastStableBuild",@"lastSuccessfulBuild",@"lastUnstableBuild",@"lastUnsuccessfulBuild",@"nextBuildNumber",@"inQueue",@"description",@"keepDependencies",@"upstreamProjects",@"downstreamProjects",@"healthReport",JobActiveConfigurationsKey,JobTestResultsImageKey,nil ];
     
     NSArray *jobValues = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",[NSNumber numberWithInt:1],[NSNumber numberWithInt:0],@"Test1",jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,[NSNumber numberWithInt:2],[NSNumber numberWithBool:NO],@"Test1 Description",[NSNumber numberWithBool:NO],upstreamProjects,downstreamProjects,healthReport,activeConfigurations,testImage, nil];
-    
-    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
-    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
-    NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
-    
-    
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
-    
 
-    Job *job = [Job createJobWithValues:[NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys] inManagedObjectContext:_context forView:view];
+    Job *job = [Job createJobWithValues:[NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys] inManagedObjectContext:_context];
+    job.rel_Job_JenkinsInstance = _jinstance;
     [job setTestResultsImageWithImage:testImage];
     
     XCTAssert([job.name isEqualToString:@"Test1"], @"job name should be Test1, is actually %@",job.name);
@@ -244,13 +236,8 @@
     NSArray *activeConfigurations = [NSArray arrayWithObjects:activeConfigurations1,activeConfigurations2, nil];
     NSArray *jobKeys = [NSArray arrayWithObjects:JobNameKey,JobColorKey,JobURLKey,JobActiveConfigurationsKey,nil ];
     NSArray *jobValues = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",activeConfigurations, nil];
-    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
-    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
-    NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
     
-    
-    View *view = [View createViewWithValues:values inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
-    Job *job = [Job createJobWithValues:[NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys] inManagedObjectContext:_context forView:view];
+    Job *job = [Job createJobWithValues:[NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys] inManagedObjectContext:_context];
     NSArray *activeConfigs = [job getActiveConfigurations];
     ActiveConfiguration *ac1 = [activeConfigs objectAtIndex:0];
     ActiveConfiguration *ac2 = [activeConfigs objectAtIndex:1];
@@ -279,13 +266,8 @@
     NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"color",nil];
     NSArray *values = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue",nil];
     NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
-    
-    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
-    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
-    NSDictionary *viewvals = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
-    
-    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
-    Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
+
+    Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context];
     
     [job setTestResultsImageWithImage:[UIImage imageNamed:@"blue.png"]];
     
@@ -297,13 +279,8 @@
     NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"color",nil];
     NSArray *values = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue",nil];
     NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
-    
-    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
-    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
-    NSDictionary *viewvals = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
-    
-    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
-    Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
+
+    Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context];
     [job setTestResultsImageWithImage:[UIImage imageNamed:@"blue.png"]];
     
     XCTAssertTrue([job.getTestResultsImage isKindOfClass:[UIImage class]], @"%@%@",@"test results image is not UIImage, returned ",NSStringFromClass([job.getTestResultsImage class]));
@@ -355,7 +332,7 @@
     [allJInstances setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *fetchedinstances = [_context executeFetchRequest:allJInstances error:&error];
     
-    XCTAssert(fetchedinstances.count==2,@"too many jenkins instances, should be 2, have %d",fetchedinstances.count);
+    XCTAssert(fetchedinstances.count==2,@"too many jenkins instances, should be 2, have %lu",(unsigned long)fetchedinstances.count);
 }
 
 - (void) testUpdatingJob
@@ -365,16 +342,8 @@
     NSArray *values2 = [NSArray arrayWithObjects:@"Job1",@"http://www.google1.com",@"green",nil];
     NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSDictionary *jobvalues2 = [NSDictionary dictionaryWithObjects:values2 forKeys:keys];
-    
-    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
-    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
-    NSDictionary *viewvals = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
-    
-    
-    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
 
-    
-    [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
+    [Job createJobWithValues:jobvalues inManagedObjectContext:_context];
     
     NSError *error;
     NSFetchRequest *allJobs = [[NSFetchRequest alloc] init];
@@ -441,9 +410,6 @@
     NSArray *fetchedjobs = [_context executeFetchRequest:allJobs error:&error];
     Job *fetchedjob = [fetchedjobs lastObject];
     
-
-    
-    XCTAssert(fetchedjob.rel_Job_View.count==0, @"job's view count is wrong");
     XCTAssert(fetchedjobs.count==1, @"job count is wrong");
     XCTAssert([fetchedjob.name isEqualToString:@"Job1"], @"job name is wrong");
     XCTAssert(_jinstance.rel_Views.count==0, @"jenkins instance's view count is wrong");
@@ -470,7 +436,7 @@
     Job *fetchedjob = [fetchedjobs lastObject];
     
     XCTAssert(view.rel_View_Jobs.count==1, @"view's job count is wrong");
-    XCTAssert(fetchedjob.rel_Job_View.count==1, @"job's view count is wrong");
+    XCTAssert(fetchedjob.rel_Job_Views.count==1, @"job's view count is wrong");
     
     [_context deleteObject:fetchedjob];
     NSError *saveError = nil;
@@ -481,7 +447,7 @@
     [allBuilds setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *fetchedbuilds = [_context executeFetchRequest:allBuilds error:&error];
     
-    XCTAssert(view.rel_View_Jobs.count==0, @"view's job count is wrong");
+    XCTAssert(view.rel_View_Jobs.count==0, @"view's job count is wrong, got: %lu",(unsigned long)view.rel_View_Jobs.count);
     XCTAssert(_jinstance.rel_Jobs.count==0, @"jenkins instance's job count is wrong");
     XCTAssert(fetchedbuilds.count==0, @"build count is wrong");
 }
@@ -517,7 +483,7 @@
     [allBuilds setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *fetchedbuilds = [_context executeFetchRequest:allBuilds error:&error];
     
-    XCTAssert(fetchedjobs.count==0, @"should be no more jobs!");
+    XCTAssert(fetchedjobs.count==0, @"should be no more jobs!, but there are: %lu", fetchedjobs.count);
     XCTAssert(fetchedviews.count==0, @"should be no more views!");
     XCTAssert(fetchedbuilds.count==0, @"should be no more builds!");
 }
@@ -603,15 +569,9 @@
     NSArray *values2 = [NSArray arrayWithObjects:@"Job2",@"www.google.com",@"blue_anime",nil];
     NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     NSDictionary *jobvalues2 = [NSDictionary dictionaryWithObjects:values2 forKeys:keys];
-    
-    NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url", nil];
-    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",nil];
-    NSDictionary *viewvals = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
-    
-    
-    View *view = [View createViewWithValues:viewvals inManagedObjectContext:_context forJenkinsInstance:@"http://tomcat:8080/"];
-    Job *job1 = [Job createJobWithValues:jobvalues inManagedObjectContext:_context forView:view];
-    Job *job2 = [Job createJobWithValues:jobvalues2 inManagedObjectContext:_context forView:view];
+
+    Job *job1 = [Job createJobWithValues:jobvalues inManagedObjectContext:_context];
+    Job *job2 = [Job createJobWithValues:jobvalues2 inManagedObjectContext:_context];
     
     XCTAssertFalse([job1 colorIsAnimated], @"job1 returned wrong value for colorIsAnimated");
     XCTAssertTrue([job2 colorIsAnimated], @"job2 returned wrong value for colorIsAnimated");

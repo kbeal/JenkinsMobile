@@ -37,6 +37,7 @@ NSString * const JobNextBuildNumberKey = @"nextBuildNumber";
 NSString * const JobInQueueKey = @"inQueue";
 NSString * const JobDescriptionKey = @"description";
 NSString * const JobKeepDependenciesKey = @"keepDependencies";
+NSString * const JobJenkinsInstanceKey = @"jenkinsInstance";
 // Build Keys
 NSString * const BuildURLKey = @"url";
 NSString * const BuildNumberKey = @"number";

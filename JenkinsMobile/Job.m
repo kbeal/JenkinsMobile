@@ -131,6 +131,7 @@
     self.downstreamProjects = NULL_TO_NIL([values objectForKey:@"downstreamProjects"]);
     self.healthReport = NULL_TO_NIL([values objectForKey:@"healthReport"]);
     self.activeConfigurations = NULL_TO_NIL([values objectForKey:JobActiveConfigurationsKey]);
+    self.rel_Job_JenkinsInstance = NULL_TO_NIL([values objectForKey:JobJenkinsInstanceKey]);
     //[self setTestResultsImageWithImage:NULL_TO_NIL([values objectForKey:JobTestResultsImageKey])];
 }
 

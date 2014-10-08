@@ -42,10 +42,13 @@
 @property (nonatomic, retain) JenkinsInstance *rel_Job_JenkinsInstance;
 @property (nonatomic, retain) id activeConfigurations;
 @property (nonatomic, retain) NSData *testResultsImage;
+@property (nonatomic, retain) NSSet *rel_Job_Views;
 @end
 
 @interface Job (CoreDataGeneratedAccessors)
 
+- (void)addRel_Job_Views:(NSSet *)values;
+- (void)removeRel_Job_Views:(NSSet *)values;
 - (BOOL)colorIsAnimated;
 - (NSString *)absoluteColor;
 - (void)setValues:(NSDictionary *) values;

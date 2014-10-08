@@ -14,7 +14,7 @@ class SyncManagerTests: XCTestCase {
 
     let mgr = SyncManager.sharedInstance
     var context: NSManagedObjectContext?
-    var jenkinsInstance: JenkinsInstance
+    var jenkinsInstance: JenkinsInstance?
     
     override func setUp() {
         super.setUp()
@@ -39,7 +39,7 @@ class SyncManagerTests: XCTestCase {
     
     func testJobDetailResponseReceived() {
         let build1Obj = ["number": 1, "url": "http://www.google.com"]
-        let userInfo = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobBuildableKey: true, JobConcurrentBuildKey: false, JobDisplayNameKey: "Job1", JobFirstBuildKey: build1Obj, JobLastBuildKey: build1Obj, JobLastCompletedBuildKey: build1Obj, JobLastFailedBuildKey: build1Obj, JobLastStableBuildKey: build1Obj, JobLastSuccessfulBuildKey: build1Obj,JobLastUnstableBuildKey: build1Obj, JobLastUnsucessfulBuildKey: build1Obj, JobNextBuildNumberKey: 2, JobInQueueKey: false, JobDescriptionKey: "Job1 Description", JobKeepDependenciesKey: false]
+        let userInfo = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobBuildableKey: true, JobConcurrentBuildKey: false, JobDisplayNameKey: "Job1", JobFirstBuildKey: build1Obj, JobLastBuildKey: build1Obj, JobLastCompletedBuildKey: build1Obj, JobLastFailedBuildKey: build1Obj, JobLastStableBuildKey: build1Obj, JobLastSuccessfulBuildKey: build1Obj,JobLastUnstableBuildKey: build1Obj, JobLastUnsucessfulBuildKey: build1Obj, JobNextBuildNumberKey: 2, JobInQueueKey: false, JobDescriptionKey: "Job1 Description", JobKeepDependenciesKey: false, JobJenkinsInstanceKey: jenkinsInstance!]
         let notification = NSNotification(name: JobDetailResponseReceivedNotification, object: self, userInfo: userInfo)
         
         mgr.jobDetailResponseReceived(notification)
@@ -75,8 +75,6 @@ class SyncManagerTests: XCTestCase {
     }
     
     /*
-
-XCTAssertNotNil(job.rel_Job_JenkinsInstance, @"jenkins instance is null");
 XCTAssert([job.upstreamProjects count]==1, @"wrong number of upstream projects");
 XCTAssert([job.downstreamProjects count]==2, @"wrong number of downstream projects");
 XCTAssert([[[job.upstreamProjects objectAtIndex:0] objectForKey:@"color"] isEqualToString:@"blue"], @"upstream project has wrong color");

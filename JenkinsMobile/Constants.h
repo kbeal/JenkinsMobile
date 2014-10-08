@@ -36,6 +36,7 @@ extern NSString * const JobNextBuildNumberKey;
 extern NSString * const JobInQueueKey;
 extern NSString * const JobDescriptionKey;
 extern NSString * const JobKeepDependenciesKey;
+extern NSString * const JobJenkinsInstanceKey;
 
 // Build keys
 extern NSString * const BuildURLKey;

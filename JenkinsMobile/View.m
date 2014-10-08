@@ -8,6 +8,7 @@
 
 #import "View.h"
 #import "Job.h"
+#import "Constants.h"
 
 // Convert any NULL values to nil. Lifted from Kevin Ballard here: http://stackoverflow.com/a/9138033
 #define NULL_TO_NIL(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
@@ -76,7 +77,13 @@
     NSMutableSet *jobs = [[NSMutableSet alloc] initWithCapacity:jobsArray.count];
     for (int i=0; i<jobsArray.count; i++) {
         [self.managedObjectContext performBlockAndWait:^{
-            [jobs addObject:[Job createJobWithValues:[jobsArray objectAtIndex:i] inManagedObjectContext:self.managedObjectContext]];
+            NSMutableDictionary *jobvalues = [[jobsArray objectAtIndex:i] mutableCopy];
+            [jobvalues setObject:self.rel_View_JenkinsInstance forKey:JobJenkinsInstanceKey];
+            Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:self.managedObjectContext];
+            NSMutableSet *jobviews = (NSMutableSet *)job.rel_Job_Views;
+            [jobviews addObject:self];
+            job.rel_Job_Views = jobviews;
+            [jobs addObject:job];
         }];
     }
     return jobs;
