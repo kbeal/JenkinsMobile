@@ -9,7 +9,6 @@
 #import "Job.h"
 #import "Build.h"
 #import "JenkinsInstance.h"
-#import "View.h"
 #import "Constants.h"
 #import "ActiveConfiguration.h"
 
@@ -45,20 +44,8 @@
 @dynamic upstreamProjects;
 @dynamic url;
 @dynamic rel_Job_JenkinsInstance;
-@dynamic rel_Job_View;
 @dynamic activeConfigurations;
 @dynamic testResultsImage;
-
-+ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view
-{
-    Job *job = [NSEntityDescription insertNewObjectForEntityForName:@"Job" inManagedObjectContext:context];
-    
-    [job addRel_Job_ViewObject:view];
-    job.rel_Job_JenkinsInstance = (JenkinsInstance *)view.rel_View_JenkinsInstance;
-    [job setValues:values];
-    
-    return job;
-}
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context
 {

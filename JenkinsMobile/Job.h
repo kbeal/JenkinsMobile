@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Build, JenkinsInstance, View;
+@class Build, JenkinsInstance;
 
 @interface Job : NSManagedObject
 
@@ -40,17 +40,12 @@
 @property (nonatomic, retain) id upstreamProjects;
 @property (nonatomic, retain) NSString * url;
 @property (nonatomic, retain) JenkinsInstance *rel_Job_JenkinsInstance;
-@property (nonatomic, retain) NSSet *rel_Job_View;
 @property (nonatomic, retain) id activeConfigurations;
 @property (nonatomic, retain) NSData *testResultsImage;
 @end
 
 @interface Job (CoreDataGeneratedAccessors)
 
-- (void)addRel_Job_ViewObject:(View *)value;
-- (void)removeRel_Job_ViewObject:(View *)value;
-- (void)addRel_Job_View:(NSSet *)values;
-- (void)removeRel_Job_View:(NSSet *)values;
 - (BOOL)colorIsAnimated;
 - (NSString *)absoluteColor;
 - (void)setValues:(NSDictionary *) values;
@@ -58,7 +53,6 @@
 - (void) setTestResultsImageWithImage:(UIImage *) image;
 - (UIImage *) getTestResultsImage;
 
-+ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forView:(View *) view;
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
 + (Job *)fetchJobWithName: (NSString *) name inManagedObjectContext: (NSManagedObjectContext *) context;
 

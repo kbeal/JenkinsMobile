@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6244" systemVersion="13E28" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6244" systemVersion="13F34" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Build" representedClassName="Build" syncable="YES">
         <attribute name="actions" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="artifacts" optional="YES" attributeType="Transformable" syncable="YES"/>
@@ -59,7 +59,6 @@
         <attribute name="upstreamProjects" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="url" attributeType="String" indexed="YES" syncable="YES"/>
         <relationship name="rel_Job_JenkinsInstance" maxCount="1" deletionRule="Nullify" destinationEntity="JenkinsInstance" inverseName="rel_Jobs" inverseEntity="JenkinsInstance" syncable="YES"/>
-        <relationship name="rel_Job_View" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="View" inverseName="rel_View_Jobs" inverseEntity="View" syncable="YES"/>
     </entity>
     <entity name="View" representedClassName="View" syncable="YES">
         <attribute name="name" attributeType="String" syncable="YES"/>
@@ -67,12 +66,12 @@
         <attribute name="url" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="view_description" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="rel_View_JenkinsInstance" maxCount="1" deletionRule="Nullify" destinationEntity="JenkinsInstance" inverseName="rel_Views" inverseEntity="JenkinsInstance" syncable="YES"/>
-        <relationship name="rel_View_Jobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="rel_Job_View" inverseEntity="Job" syncable="YES"/>
+        <relationship name="rel_View_Jobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" syncable="YES"/>
     </entity>
     <elements>
         <element name="Build" positionX="-117" positionY="369" width="128" height="315"/>
         <element name="JenkinsInstance" positionX="-18" positionY="101" width="128" height="120"/>
-        <element name="Job" positionX="135" positionY="224" width="128" height="510"/>
+        <element name="Job" positionX="135" positionY="224" width="128" height="493"/>
         <element name="View" positionX="313" positionY="83" width="128" height="133"/>
     </elements>
 </model>

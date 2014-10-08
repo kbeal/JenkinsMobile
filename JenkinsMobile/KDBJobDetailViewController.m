@@ -77,8 +77,7 @@
 
 - (void)getUpdates
 {
-    View *view = [self.job.rel_Job_View anyObject];
-    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:(JenkinsInstance*)view.rel_View_JenkinsInstance];
+    KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:self.job.rel_Job_JenkinsInstance];
     jenkins.managedObjectContext = self.managedObjectContext;
     [jenkins importDetailsForJobWithName:self.job.name];
 }

@@ -81,7 +81,7 @@
         [self getLastBuildProgress];
         self.jobURLTextView.text = self.job.url;
         self.jobDescriptionTextView.text = self.job.job_description;
-        self.jenkinsNameJobDescriptionLabel.text = [self getJenkinsInstance].name;
+        self.jenkinsNameJobDescriptionLabel.text = self.job.rel_Job_JenkinsInstance.name;
     }
 }
 
@@ -90,17 +90,10 @@
     return [[NSDate date] timeIntervalSince1970] * 1000;
 }
 
-// returns the JenkinsInstance associated with the job
-- (JenkinsInstance *) getJenkinsInstance
-{
-    View *view = [self.job.rel_Job_View anyObject];
-    return (JenkinsInstance*)view.rel_View_JenkinsInstance;
-}
-
 // returns a JenkinsRequestHandler for this job's JenkinsInstance
 - (KDBJenkinsRequestHandler *) getJenkinsRequestHandler
 {
-    return [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:[self getJenkinsInstance]];
+    return [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:self.job.rel_Job_JenkinsInstance];
 }
 
 - (void)getUpdates
