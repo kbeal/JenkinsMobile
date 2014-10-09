@@ -38,6 +38,9 @@ NSString * const JobInQueueKey = @"inQueue";
 NSString * const JobDescriptionKey = @"description";
 NSString * const JobKeepDependenciesKey = @"keepDependencies";
 NSString * const JobJenkinsInstanceKey = @"jenkinsInstance";
+NSString * const JobDownstreamProjectsKey = @"downstreamProjects";
+NSString * const JobUpstreamProjectsKey = @"upstreamProjects";
+NSString * const JobHealthReportKey = @"healthReport";
 // Build Keys
 NSString * const BuildURLKey = @"url";
 NSString * const BuildNumberKey = @"number";

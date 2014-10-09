@@ -39,7 +39,18 @@ class SyncManagerTests: XCTestCase {
     
     func testJobDetailResponseReceived() {
         let build1Obj = ["number": 1, "url": "http://www.google.com"]
-        let userInfo = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobBuildableKey: true, JobConcurrentBuildKey: false, JobDisplayNameKey: "Job1", JobFirstBuildKey: build1Obj, JobLastBuildKey: build1Obj, JobLastCompletedBuildKey: build1Obj, JobLastFailedBuildKey: build1Obj, JobLastStableBuildKey: build1Obj, JobLastSuccessfulBuildKey: build1Obj,JobLastUnstableBuildKey: build1Obj, JobLastUnsucessfulBuildKey: build1Obj, JobNextBuildNumberKey: 2, JobInQueueKey: false, JobDescriptionKey: "Job1 Description", JobKeepDependenciesKey: false, JobJenkinsInstanceKey: jenkinsInstance!]
+        let downstreamObj1 = ["name": "Job2", "color": "blue", "url":"http://www.google.com"]
+        let downstreamObj2 = ["name": "Job3", "color": "green", "url":"http://www.yahoo.com"]
+        let upstreamObj1 = ["name": "Job4", "color": "red", "url":"http://www.bing.com"]
+        let downstreamProjects = [downstreamObj1, downstreamObj2]
+        let upstreamProjects = [upstreamObj1]
+        let healthReport = ["iconUrl": "health-80plus.png"]
+        let activeConf1 = ActiveConfiguration(name:"conf1",color:"blue",andURL:"http://www.google.com")
+        let activeConf2 = ActiveConfiguration(name:"conf2",color:"red",andURL:"http://www.yahoo.com")
+        let activeConfs = [activeConf1,activeConf2]
+        let testImage = UIImage(named: "blue.png")
+        
+        let userInfo = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobBuildableKey: true, JobConcurrentBuildKey: false, JobDisplayNameKey: "Job1", JobFirstBuildKey: build1Obj, JobLastBuildKey: build1Obj, JobLastCompletedBuildKey: build1Obj, JobLastFailedBuildKey: build1Obj, JobLastStableBuildKey: build1Obj, JobLastSuccessfulBuildKey: build1Obj,JobLastUnstableBuildKey: build1Obj, JobLastUnsucessfulBuildKey: build1Obj, JobNextBuildNumberKey: 2, JobInQueueKey: false, JobDescriptionKey: "Job1 Description", JobKeepDependenciesKey: false, JobJenkinsInstanceKey: jenkinsInstance!, JobDownstreamProjectsKey: downstreamProjects, JobUpstreamProjectsKey: upstreamProjects, JobHealthReportKey: healthReport, JobActiveConfigurationsKey: activeConfs]
         let notification = NSNotification(name: JobDetailResponseReceivedNotification, object: self, userInfo: userInfo)
         
         mgr.jobDetailResponseReceived(notification)
@@ -51,6 +62,7 @@ class SyncManagerTests: XCTestCase {
         
         let jobs = context?.executeFetchRequest(fetchreq, error: nil)
         let job = jobs![0] as Job
+        job.setTestResultsImageWithImage(testImage)
         
         XCTAssertEqual(jobs!.count, 1, "jobs count is wrong. Should be 1 got: \(jobs!.count) instead")
         XCTAssertEqual(job.name, "Job1", "job name is wrong. should be Job1, got: \(job.name) instead")
@@ -72,18 +84,14 @@ class SyncManagerTests: XCTestCase {
         XCTAssertEqual(job.job_description, "Job1 Description", "job description is wrong")
         XCTAssertEqual(job.keepDependencies, false, "Job keepDependencies should be false")
         XCTAssertNotNil(job.rel_Job_JenkinsInstance, "jenkins instance is nil")
+        XCTAssertEqual(job.upstreamProjects.count, 1, "upstream projects count is wrong")
+        XCTAssertEqual(job.downstreamProjects.count, 2, "downstream projects count is wrong")
+        XCTAssertEqual(job.upstreamProjects![0]["color"] as String, "red", "upstream project color is wrong")
+        XCTAssertEqual(job.downstreamProjects![0]["color"] as String, "blue", "upstream project color is wrong")
+        XCTAssertEqual(job.downstreamProjects![1]["url"] as String, "http://www.yahoo.com", "upstream project color is wrong")
+        XCTAssertEqual(job.healthReport!["iconUrl"] as String, "health-80plus.png", "healthReport iconUrl is wrong")
+        XCTAssertEqual(job.activeConfigurations.count, 2, "active configs count is wrong")
+        XCTAssertEqual(job.activeConfigurations![1].color as String, "red", "active config has wrong color")
+        XCTAssertNotNil(job.testResultsImage, "job's test results image is nill")
     }
-    
-    /*
-XCTAssert([job.upstreamProjects count]==1, @"wrong number of upstream projects");
-XCTAssert([job.downstreamProjects count]==2, @"wrong number of downstream projects");
-XCTAssert([[[job.upstreamProjects objectAtIndex:0] objectForKey:@"color"] isEqualToString:@"blue"], @"upstream project has wrong color");
-XCTAssert([[[job.downstreamProjects objectAtIndex:0] objectForKey:@"color"] isEqualToString:@"green"], @"downstream project1 has wrong color");
-XCTAssert([[[job.downstreamProjects objectAtIndex:1] objectForKey:@"url"] isEqualToString:@"http://www.yahoo.com"], @"downstream project2 has wrong url");
-XCTAssert([[job.healthReport objectForKey:@"iconUrl"] isEqualToString:@"health-80plus.png"], @"health report is wrong %@", [job.healthReport objectForKey:@"iconUrl"]);
-XCTAssert([job.activeConfigurations count]==2, @"wrong number of active configurations");
-XCTAssert([[[job.activeConfigurations objectAtIndex:1] objectForKey:@"color"] isEqualToString:@"red"], @"active config has wrong color %@", [[job.activeConfigurations objectAtIndex:1] objectForKey:@"color"]);
-XCTAssertTrue([job.getTestResultsImage isKindOfClass:[UIImage class]], @"%@%@",@"test results image is not UIImage, returned ",NSStringFromClass([job.getTestResultsImage class]));
-XCTAssertNotNil(job.testResultsImage, @"job's test results image is nil");
-*/
 }
