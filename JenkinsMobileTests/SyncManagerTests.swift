@@ -37,6 +37,71 @@ class SyncManagerTests: XCTestCase {
         XCTAssertNotNil(mgr, "shared instance is nil")
     }
     
+    func testUniqueQueuePush() {
+        let uq = UniqueQueue()
+        
+        //initial item count should be 0
+        XCTAssertEqual(uq.count(), 0, "initial uq count is wrong")
+        
+        uq.push("Job1")
+        XCTAssertEqual(uq.count(), 1, "uq count after push is wrong")
+        uq.push("job2")
+        XCTAssertEqual(uq.count(), 2, "uq count after push2 is wrong")
+        uq.push("Job1")
+        XCTAssertEqual(uq.count(), 2, "uq count after second push of Job1 is wrong")
+    }
+    
+    func testUniqueQueuePop() {
+        let uq = UniqueQueue()
+        
+        uq.push("Job1")
+        uq.push("Job2")
+        uq.push("Job3")
+        uq.push("Job3")
+        uq.push("Job5")
+        uq.push("Job1")
+        XCTAssertEqual(uq.count(), 4, "uq count is wrong")
+        //should pop in this order: 1,2,3,5
+        let pop1 = uq.pop() //1
+        XCTAssertEqual(uq.count(), 3, "uq count is wrong after pop1")
+        let pop2 = uq.pop() //2
+        XCTAssertEqual(uq.count(), 2, "uq count is wrong after pop2")
+        let pop3 = uq.pop() //3
+        XCTAssertEqual(uq.count(), 1, "uq count is wrong after pop3")
+        let pop4 = uq.pop() //5
+        XCTAssertEqual(uq.count(), 0, "uq count is wrong after pop4")
+        let pop5 = uq.pop() //empty
+        
+        XCTAssertEqual(pop1!, "Job1", "pop1 is wrong")
+        XCTAssertEqual(pop2!, "Job2", "pop2 is wrong")
+        XCTAssertEqual(pop3!, "Job3", "pop3 is wrong")
+        XCTAssertEqual(pop4!, "Job5", "pop4 is wrong")
+        XCTAssertNil(pop5, "pop5 is wrong")
+        
+        uq.push("Job1")
+        uq.push("Job2")
+        uq.push("Job3")
+        uq.pop() //Job1
+        uq.push("Job1")
+        uq.push("Job5")
+        uq.push("Job1")
+        XCTAssertEqual(uq.count(), 4, "uq count is wrong")
+        //should pop in this order: 2,3,1,5
+        let pop6 = uq.pop() //Job2
+        XCTAssertEqual(uq.count(), 3, "uq count is wrong after pop6")
+        let pop7 = uq.pop() //Job3
+        XCTAssertEqual(uq.count(), 2, "uq count is wrong after pop7")
+        let pop8 = uq.pop() //Job1
+        XCTAssertEqual(uq.count(), 1, "uq count is wrong after pop8")
+        let pop9 = uq.pop() //Job5
+        XCTAssertEqual(uq.count(), 0, "uq count is wrong after pop9")
+        
+        XCTAssertEqual(pop6!, "Job2", "pop6 is wrong")
+        XCTAssertEqual(pop7!, "Job3", "pop7 is wrong")
+        XCTAssertEqual(pop8!, "Job1", "pop8 is wrong")
+        XCTAssertEqual(pop9!, "Job5", "pop9 is wrong")
+    }
+    
     func testJobDetailResponseReceived() {
         let build1Obj = ["number": 1, "url": "http://www.google.com"]
         let downstreamObj1 = ["name": "Job2", "color": "blue", "url":"http://www.google.com"]

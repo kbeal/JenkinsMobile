@@ -15,16 +15,38 @@ public class UniqueQueue {
     
     var itemsDict = Dictionary<String,Bool>()
     var itemsArray: [String] = []
-    var itemcount: Int = 0
     
-    func count() -> Int { return itemcount }
+    init() {}
     
-    func push(newItem: String) {
-        
+    func count() -> Int {
+        assertCount()
+        return itemsArray.count
     }
     
-    func pop() -> String {
-        return "nil"
+    func push(newItem: String) {
+        if let existingItem = itemsDict[newItem] {
+            return
+        } else {
+            itemsArray.append(newItem)
+            itemsDict[newItem] = true
+        }
+        assertCount()
+    }
+    
+    func pop() -> String? {
+        if itemsArray.count == 0 {
+            return nil
+        } else {
+            let itm = itemsArray[0]
+            itemsArray.removeAtIndex(0)
+            itemsDict.removeValueForKey(itm)
+            assertCount()
+            return itm
+        }
+    }
+    
+    func assertCount() {
+        assert(itemsArray.count==itemsDict.count, "UniqueQueue array and dictionary not in Sync!!")
     }
     
 }
