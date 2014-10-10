@@ -210,6 +210,7 @@
 		8AC32A4818E4FB6F0002D106 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AC32A3E18E4FB6F0002D106 /* AFURLResponseSerialization.m */; };
 		8AC32A4918E4FB6F0002D106 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AC32A4018E4FB6F0002D106 /* AFURLSessionManager.m */; };
 		8AC464E119E6179C00AE5A76 /* UniqueQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC464E019E6179C00AE5A76 /* UniqueQueue.swift */; };
+		8AC464E219E76F3C00AE5A76 /* UniqueQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC464E019E6179C00AE5A76 /* UniqueQueue.swift */; };
 		8AD3B759191C684F00DB7439 /* KDBBuildsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AD3B758191C684F00DB7439 /* KDBBuildsTableViewController.m */; };
 		8AE3B95C18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B95B18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m */; };
 		8AE3B96218EF80CA00E061C1 /* View.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B96118EF80CA00E061C1 /* View.m */; };
@@ -1135,6 +1136,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8AC464E219E76F3C00AE5A76 /* UniqueQueue.swift in Sources */,
 				8A56E61119C91EB50058B0C7 /* SyncManager.swift in Sources */,
 				8A56E60F19C90FD80058B0C7 /* SyncManagerTests.swift in Sources */,
 				8AC32A2418E4F3A90002D106 /* JenkinsMobileTests.m in Sources */,
