@@ -10,6 +10,8 @@
 
 @implementation Constants
 
+double MaxJobSyncAge = 300; // 5 minutes in seconds
+
 // Notifications
 NSString * const SelectedJobChangedNotification = @"SelectedJobChanged";
 NSString * const JobDetailResponseReceivedNotification = @"JobDetailResponseReceived";
@@ -41,6 +43,7 @@ NSString * const JobJenkinsInstanceKey = @"jenkinsInstance";
 NSString * const JobDownstreamProjectsKey = @"downstreamProjects";
 NSString * const JobUpstreamProjectsKey = @"upstreamProjects";
 NSString * const JobHealthReportKey = @"healthReport";
+NSString * const JobLastSyncKey = @"lastSync";
 // Build Keys
 NSString * const BuildURLKey = @"url";
 NSString * const BuildNumberKey = @"number";

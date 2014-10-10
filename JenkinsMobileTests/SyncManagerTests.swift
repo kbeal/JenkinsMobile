@@ -81,25 +81,33 @@ class SyncManagerTests: XCTestCase {
         uq.push("Job1")
         uq.push("Job2")
         uq.push("Job3")
-        uq.pop() //Job1
+        let pop6 = uq.pop() //Job1
         uq.push("Job1")
         uq.push("Job5")
         uq.push("Job1")
         XCTAssertEqual(uq.count(), 4, "uq count is wrong")
         //should pop in this order: 2,3,1,5
-        let pop6 = uq.pop() //Job2
-        XCTAssertEqual(uq.count(), 3, "uq count is wrong after pop6")
-        let pop7 = uq.pop() //Job3
-        XCTAssertEqual(uq.count(), 2, "uq count is wrong after pop7")
-        let pop8 = uq.pop() //Job1
-        XCTAssertEqual(uq.count(), 1, "uq count is wrong after pop8")
-        let pop9 = uq.pop() //Job5
-        XCTAssertEqual(uq.count(), 0, "uq count is wrong after pop9")
+        let pop7 = uq.pop() //Job2
+        XCTAssertEqual(uq.count(), 3, "uq count is wrong after pop7")
+        let pop8 = uq.pop() //Job3
+        XCTAssertEqual(uq.count(), 2, "uq count is wrong after pop8")
+        let pop9 = uq.pop() //Job1
+        XCTAssertEqual(uq.count(), 1, "uq count is wrong after pop9")
+        let pop10 = uq.pop() //Job5
+        XCTAssertEqual(uq.count(), 0, "uq count is wrong after pop10")
         
-        XCTAssertEqual(pop6!, "Job2", "pop6 is wrong")
-        XCTAssertEqual(pop7!, "Job3", "pop7 is wrong")
-        XCTAssertEqual(pop8!, "Job1", "pop8 is wrong")
-        XCTAssertEqual(pop9!, "Job5", "pop9 is wrong")
+        XCTAssertEqual(pop6!, "Job1", "pop6 is wrong")
+        XCTAssertEqual(pop7!, "Job2", "pop7 is wrong")
+        XCTAssertEqual(pop8!, "Job3", "pop8 is wrong")
+        XCTAssertEqual(pop9!, "Job1", "pop9 is wrong")
+        XCTAssertEqual(pop10!, "Job5", "pop10 is wrong")
+    }
+    
+    func testJobShouldSync() {
+        let jobvals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobLastSyncKey: NSDate()]
+        let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
+        
+        XCTAssertFalse(job.shouldSync(), "shouldsync should be false")
     }
     
     func testJobDetailResponseReceived() {
@@ -115,7 +123,7 @@ class SyncManagerTests: XCTestCase {
         let activeConfs = [activeConf1,activeConf2]
         let testImage = UIImage(named: "blue.png")
         
-        let userInfo = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobBuildableKey: true, JobConcurrentBuildKey: false, JobDisplayNameKey: "Job1", JobFirstBuildKey: build1Obj, JobLastBuildKey: build1Obj, JobLastCompletedBuildKey: build1Obj, JobLastFailedBuildKey: build1Obj, JobLastStableBuildKey: build1Obj, JobLastSuccessfulBuildKey: build1Obj,JobLastUnstableBuildKey: build1Obj, JobLastUnsucessfulBuildKey: build1Obj, JobNextBuildNumberKey: 2, JobInQueueKey: false, JobDescriptionKey: "Job1 Description", JobKeepDependenciesKey: false, JobJenkinsInstanceKey: jenkinsInstance!, JobDownstreamProjectsKey: downstreamProjects, JobUpstreamProjectsKey: upstreamProjects, JobHealthReportKey: healthReport, JobActiveConfigurationsKey: activeConfs]
+        let userInfo = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobBuildableKey: true, JobConcurrentBuildKey: false, JobDisplayNameKey: "Job1", JobFirstBuildKey: build1Obj, JobLastBuildKey: build1Obj, JobLastCompletedBuildKey: build1Obj, JobLastFailedBuildKey: build1Obj, JobLastStableBuildKey: build1Obj, JobLastSuccessfulBuildKey: build1Obj,JobLastUnstableBuildKey: build1Obj, JobLastUnsucessfulBuildKey: build1Obj, JobNextBuildNumberKey: 2, JobInQueueKey: false, JobDescriptionKey: "Job1 Description", JobKeepDependenciesKey: false, JobJenkinsInstanceKey: jenkinsInstance!, JobDownstreamProjectsKey: downstreamProjects, JobUpstreamProjectsKey: upstreamProjects, JobHealthReportKey: healthReport, JobActiveConfigurationsKey: activeConfs, JobLastSyncKey: NSDate()]
         let notification = NSNotification(name: JobDetailResponseReceivedNotification, object: self, userInfo: userInfo)
         
         mgr.jobDetailResponseReceived(notification)
@@ -158,5 +166,6 @@ class SyncManagerTests: XCTestCase {
         XCTAssertEqual(job.activeConfigurations.count, 2, "active configs count is wrong")
         XCTAssertEqual(job.activeConfigurations![1].color as String, "red", "active config has wrong color")
         XCTAssertNotNil(job.testResultsImage, "job's test results image is nill")
+        XCTAssertNotNil(job.lastSync, "job lastSync is nil")
     }
 }

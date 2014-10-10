@@ -46,6 +46,8 @@
 @dynamic rel_Job_JenkinsInstance;
 @dynamic activeConfigurations;
 @dynamic testResultsImage;
+@dynamic rel_Job_Views;
+@dynamic lastSync;
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context
 {
@@ -106,6 +108,24 @@
 
 - (UIImage *) getTestResultsImage { return [UIImage imageWithData:self.testResultsImage]; }
 
+// returns true if sufficient time has passed since this job's lastSync to perform a new sync
+- (BOOL)shouldSync
+{
+    NSDate *now = [NSDate date];
+    
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDateComponents *components = [calendar components:NSSecondCalendarUnit
+                                               fromDate:self.lastSync
+                                                 toDate:now
+                                                options:0];
+    
+    if (components.second >= MaxJobSyncAge) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 - (void)setValues:(NSDictionary *) values
 {
     self.url = NULL_TO_NIL([values objectForKey:@"url"]);
@@ -132,7 +152,7 @@
     self.healthReport = NULL_TO_NIL([values objectForKey:@"healthReport"]);
     self.activeConfigurations = NULL_TO_NIL([values objectForKey:JobActiveConfigurationsKey]);
     self.rel_Job_JenkinsInstance = NULL_TO_NIL([values objectForKey:JobJenkinsInstanceKey]);
-    //[self setTestResultsImageWithImage:NULL_TO_NIL([values objectForKey:JobTestResultsImageKey])];
+    self.lastSync = NULL_TO_NIL([values objectForKey:JobLastSyncKey]);
 }
 
 @end

@@ -10,6 +10,8 @@
 
 @interface Constants : NSObject
 
+extern double MaxJobSyncAge;
+
 extern NSString * const SelectedJobChangedNotification;
 extern NSString * const JobDetailResponseReceivedNotification;
 extern NSString * const BuildProgressResponseReceivedNotification;
@@ -40,6 +42,7 @@ extern NSString * const JobJenkinsInstanceKey;
 extern NSString * const JobDownstreamProjectsKey;
 extern NSString * const JobUpstreamProjectsKey;
 extern NSString * const JobHealthReportKey;
+extern NSString * const JobLastSyncKey;
 
 // Build keys
 extern NSString * const BuildURLKey;

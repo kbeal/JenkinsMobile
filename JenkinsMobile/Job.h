@@ -43,6 +43,7 @@
 @property (nonatomic, retain) id activeConfigurations;
 @property (nonatomic, retain) NSData *testResultsImage;
 @property (nonatomic, retain) NSSet *rel_Job_Views;
+@property (nonatomic, retain) NSDate *lastSync;
 @end
 
 @interface Job (CoreDataGeneratedAccessors)
@@ -55,6 +56,7 @@
 - (NSArray *) getActiveConfigurations;
 - (void) setTestResultsImageWithImage:(UIImage *) image;
 - (UIImage *) getTestResultsImage;
+- (BOOL)shouldSync;
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
 + (Job *)fetchJobWithName: (NSString *) name inManagedObjectContext: (NSManagedObjectContext *) context;

@@ -48,6 +48,7 @@
         <attribute name="lastImportedBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="lastStableBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="lastSuccessfulBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="lastSync" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="lastUnstableBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="lastUnsuccessfulBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
@@ -72,7 +73,7 @@
     <elements>
         <element name="Build" positionX="-117" positionY="369" width="128" height="315"/>
         <element name="JenkinsInstance" positionX="-18" positionY="101" width="128" height="120"/>
-        <element name="Job" positionX="135" positionY="224" width="128" height="510"/>
+        <element name="Job" positionX="135" positionY="224" width="128" height="525"/>
         <element name="View" positionX="313" positionY="83" width="128" height="135"/>
     </elements>
 </model>
