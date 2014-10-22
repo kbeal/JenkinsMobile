@@ -50,3 +50,9 @@ public class UniqueQueue {
     }
     
 }
+
+extension UniqueQueue: SequenceType {
+    public func generate() -> IndexingGenerator<[String]> {
+        return itemsArray.generate()
+    }
+}

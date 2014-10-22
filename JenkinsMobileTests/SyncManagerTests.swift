@@ -37,6 +37,22 @@ class SyncManagerTests: XCTestCase {
         XCTAssertNotNil(mgr, "shared instance is nil")
     }
     
+    func testUniqueQueueIter() {
+        let uq = UniqueQueue()
+        
+        uq.push("Job1")
+        uq.push("Job2")
+        uq.push("Job3")
+        uq.push("Job3")
+        uq.push("Job5")
+        uq.push("Job1")
+        
+        for item in uq {
+            println(item)
+            XCTAssertNotNil(item, "item is nil")
+        }
+    }
+    
     func testUniqueQueuePush() {
         let uq = UniqueQueue()
         

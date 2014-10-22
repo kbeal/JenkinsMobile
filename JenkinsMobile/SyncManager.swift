@@ -13,7 +13,8 @@ public class SyncManager {
     
     var masterMOC: NSManagedObjectContext?
     var mainMOC: NSManagedObjectContext?
-    //var currentJenkinsInstance: JenkinsInstance
+    private var jobsToSync: UniqueQueue?
+    private var currentJenkinsInstance: JenkinsInstance?
     //var currentBuilds: NSMutableArray
     //var currentBuildsTimer: NSTimer
     //var requestHandler: KDBJenkinsRequestHandler
@@ -38,11 +39,18 @@ public class SyncManager {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "jobDetailResponseReceived", name: JobDetailResponseReceivedNotification, object: nil)
     }
     
-    /*
-    func syncJob(name: NSString) {
-        let url = self.currentJenkinsInstance.url + "/" + name
-        self.requestHandler.importDetailsForJobAtURL(url)
-    }*/
+    func syncJobs() {
+        assert(self.jobsToSync != nil, "sync manager's jobsToSync is nil!!")
+        for index in 1...self.jobsToSync!.count() {
+            syncJob(self.jobsToSync?.pop())
+        }
+    }
+    
+    func syncJob(name: String?) {
+        assert(self.currentJenkinsInstance != nil, "sync manager's currentJenkinsInstance is nil!!")
+        //let url = self.currentJenkinsInstance.url + "/" + name
+        //self.requestHandler.importDetailsForJobAtURL(url)
+    }
     
     func jobDetailResponseReceived(notification: NSNotification) {
         assert(self.mainMOC != nil, "main managed object context not set")
