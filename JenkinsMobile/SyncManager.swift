@@ -13,11 +13,15 @@ public class SyncManager {
     
     var masterMOC: NSManagedObjectContext?
     var mainMOC: NSManagedObjectContext?
-    private var jobsToSync: UniqueQueue?
-    private var currentJenkinsInstance: JenkinsInstance?
+    private var jobSyncQueue = UniqueQueue()
+    var currentJenkinsInstance: JenkinsInstance? {
+        willSet {
+            jobSyncQueue.removeAll()
+        }
+    }
     //var currentBuilds: NSMutableArray
     //var currentBuildsTimer: NSTimer
-    //var requestHandler: KDBJenkinsRequestHandler
+    var requestHandler: KDBJenkinsRequestHandler?
     
     public class var sharedInstance : SyncManager {
         struct Static {
@@ -39,17 +43,25 @@ public class SyncManager {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "jobDetailResponseReceived", name: JobDetailResponseReceivedNotification, object: nil)
     }
     
-    func syncJobs() {
-        assert(self.jobsToSync != nil, "sync manager's jobsToSync is nil!!")
-        for index in 1...self.jobsToSync!.count() {
-            syncJob(self.jobsToSync?.pop())
+    public func jobSyncQueueSize() -> Int { return jobSyncQueue.count() }
+    
+    func syncAllJobs() {
+        // queue all jobs for current Jenkins Instance to sync
+        assert(self.currentJenkinsInstance != nil, "sync managers currentJenkinsInstance is nil!!")
+
+        let allJobs = currentJenkinsInstance!.rel_Jobs
+        for job in allJobs {
+            jobSyncQueue.push(job.name)
         }
     }
     
-    func syncJob(name: String?) {
-        assert(self.currentJenkinsInstance != nil, "sync manager's currentJenkinsInstance is nil!!")
-        //let url = self.currentJenkinsInstance.url + "/" + name
-        //self.requestHandler.importDetailsForJobAtURL(url)
+    func syncView(viewName: String) {
+        // sync view details and queue all jobs in view for sync
+    }
+    
+    func syncJob(name: String) {
+        assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
+        self.requestHandler!.importDetailsForJobWithName(name)
     }
     
     func jobDetailResponseReceived(notification: NSNotification) {

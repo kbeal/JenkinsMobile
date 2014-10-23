@@ -31,6 +31,7 @@ class SyncManagerTests: XCTestCase {
         let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://tomcat:8080/", JenkinsInstanceCurrentKey: false]
         jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: context)
 
+
     }
     
     func testSharedInstance() {
@@ -48,9 +49,78 @@ class SyncManagerTests: XCTestCase {
         uq.push("Job1")
         
         for item in uq {
-            println(item)
+            //println(item)
             XCTAssertNotNil(item, "item is nil")
         }
+    }
+    
+    func testUniqueQueueRemoveAll() {
+        let uq = UniqueQueue()
+        
+        uq.push("Job1")
+        uq.push("Job2")
+        uq.push("Job3")
+        uq.push("Job3")
+        uq.push("Job5")
+        uq.push("Job1")
+        XCTAssertEqual(uq.count(), 4, "uq count is wrong")
+        
+        uq.removeAll()
+        XCTAssertEqual(uq.count(), 0, "uq count is wrong")
+    }
+    
+    func testSyncAllJobs() {
+        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com"]
+        let job2vals = [JobNameKey: "Job2", JobColorKey: "green", JobURLKey: "http://www.weather.com"]
+        let job3vals = [JobNameKey: "Job3", JobColorKey: "red", JobURLKey: "http://www.bing.com"]
+        let job4vals = [JobNameKey: "Job4", JobColorKey: "yellow", JobURLKey: "http://www.google.com"]
+        let job5vals = [JobNameKey: "Job5", JobColorKey: "blue", JobURLKey: "http://www.yahoo.com"]
+        
+        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: self.mgr.mainMOC)
+        let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: self.mgr.mainMOC)
+        let job3 = Job.createJobWithValues(job3vals, inManagedObjectContext: self.mgr.mainMOC)
+        let job4 = Job.createJobWithValues(job4vals, inManagedObjectContext: self.mgr.mainMOC)
+        let job5 = Job.createJobWithValues(job5vals, inManagedObjectContext: self.mgr.mainMOC)
+        
+        self.jenkinsInstance?.addRel_JobsObject(job1)
+        self.jenkinsInstance?.addRel_JobsObject(job2)
+        self.jenkinsInstance?.addRel_JobsObject(job3)
+        self.jenkinsInstance?.addRel_JobsObject(job4)
+        self.jenkinsInstance?.addRel_JobsObject(job5)
+
+        mgr.currentJenkinsInstance = self.jenkinsInstance
+        mgr.syncAllJobs()
+        XCTAssertEqual(mgr.jobSyncQueueSize(), 5, "sync manager's jobSyncQueueSize is wrong")
+    }
+    
+    func testSwitchJenkinsInstance() {
+        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com"]
+        let job2vals = [JobNameKey: "Job2", JobColorKey: "green", JobURLKey: "http://www.weather.com"]
+        let job3vals = [JobNameKey: "Job3", JobColorKey: "red", JobURLKey: "http://www.bing.com"]
+        let job4vals = [JobNameKey: "Job4", JobColorKey: "yellow", JobURLKey: "http://www.google.com"]
+        let job5vals = [JobNameKey: "Job5", JobColorKey: "blue", JobURLKey: "http://www.yahoo.com"]
+        
+        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: self.mgr.mainMOC)
+        let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: self.mgr.mainMOC)
+        let job3 = Job.createJobWithValues(job3vals, inManagedObjectContext: self.mgr.mainMOC)
+        let job4 = Job.createJobWithValues(job4vals, inManagedObjectContext: self.mgr.mainMOC)
+        let job5 = Job.createJobWithValues(job5vals, inManagedObjectContext: self.mgr.mainMOC)
+        
+        self.jenkinsInstance?.addRel_JobsObject(job1)
+        self.jenkinsInstance?.addRel_JobsObject(job2)
+        self.jenkinsInstance?.addRel_JobsObject(job3)
+        self.jenkinsInstance?.addRel_JobsObject(job4)
+        self.jenkinsInstance?.addRel_JobsObject(job5)
+        
+        mgr.currentJenkinsInstance = self.jenkinsInstance
+        mgr.syncAllJobs()
+        XCTAssertEqual(mgr.jobSyncQueueSize(), 5, "sync manager's jobSyncQueueSize is wrong")
+        
+        let jenkinsInstanceValues2 = [JenkinsInstanceNameKey: "TestInstance2", JenkinsInstanceURLKey: "http://tomcat2:8080/", JenkinsInstanceCurrentKey: false]
+        let jenkinsInstance2 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues2, inManagedObjectContext: context)
+        mgr.currentJenkinsInstance = jenkinsInstance2
+        mgr.syncAllJobs()
+        XCTAssertEqual(mgr.jobSyncQueueSize(), 0, "sync manager's jobSyncQueueSize is wrong")
     }
     
     func testUniqueQueuePush() {
