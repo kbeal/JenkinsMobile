@@ -15,6 +15,7 @@ double MaxJobSyncAge = 300; // 5 minutes in seconds
 // Notifications
 NSString * const SelectedJobChangedNotification = @"SelectedJobChanged";
 NSString * const JobDetailResponseReceivedNotification = @"JobDetailResponseReceived";
+NSString * const JobDetailRequestFailedNotification = @"JobDetailRequestFailed";
 NSString * const BuildProgressResponseReceivedNotification = @"BuildProgressResponseReceived";
 NSString * const JobTestResultsImageResponseReceivedNotification = @"JobTestResultsImageResponseReceived";
 
@@ -44,6 +45,7 @@ NSString * const JobDownstreamProjectsKey = @"downstreamProjects";
 NSString * const JobUpstreamProjectsKey = @"upstreamProjects";
 NSString * const JobHealthReportKey = @"healthReport";
 NSString * const JobLastSyncKey = @"lastSync";
+NSString * const JobRequestErrorKey = @"jobRequestError";
 // Build Keys
 NSString * const BuildURLKey = @"url";
 NSString * const BuildNumberKey = @"number";
