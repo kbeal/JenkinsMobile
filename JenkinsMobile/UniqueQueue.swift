@@ -2,6 +2,9 @@
 //  UniqueQueue.swift
 //  JenkinsMobile
 //
+//  Worst class name ever?
+//  Just alias it! swift is cool and does that
+//
 //  Q: How do you catch an UniqueQueue?
 //  A: Unique up on 'em!
 //
