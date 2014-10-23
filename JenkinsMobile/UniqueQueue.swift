@@ -49,6 +49,11 @@ public class UniqueQueue {
         assert(itemsArray.count==itemsDict.count, "UniqueQueue array and dictionary not in Sync!!")
     }
     
+    func removeAll() {
+        itemsArray.removeAll(keepCapacity: false)
+        itemsDict.removeAll(keepCapacity: false)
+    }
+    
 }
 
 extension UniqueQueue: SequenceType {
