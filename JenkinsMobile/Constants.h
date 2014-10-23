@@ -14,6 +14,7 @@ extern double MaxJobSyncAge;
 
 extern NSString * const SelectedJobChangedNotification;
 extern NSString * const JobDetailResponseReceivedNotification;
+extern NSString * const JobDetailRequestFailedNotification;
 extern NSString * const BuildProgressResponseReceivedNotification;
 extern NSString * const JobTestResultsImageResponseReceivedNotification;
 
@@ -43,6 +44,7 @@ extern NSString * const JobDownstreamProjectsKey;
 extern NSString * const JobUpstreamProjectsKey;
 extern NSString * const JobHealthReportKey;
 extern NSString * const JobLastSyncKey;
+extern NSString * const JobRequestErrorKey;
 
 // Build keys
 extern NSString * const BuildURLKey;

@@ -41,6 +41,7 @@ public class SyncManager {
     // set up any NSNotificationCenter observers
     func initObservers() {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "jobDetailResponseReceived", name: JobDetailResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "jobDetailRequestFailed", name: JobDetailRequestFailedNotification, object: nil)
     }
     
     public func jobSyncQueueSize() -> Int { return jobSyncQueue.count() }
@@ -81,6 +82,14 @@ public class SyncManager {
         }
         
         self.saveMasterContext()
+    }
+    
+    func jobDetailRequestFailed(notification: NSNotification) {
+        // check the error
+        println(notification)
+        // get the jenkins instance and job name from the notification
+        // fetch job via the jenkins instance
+        // delete the job
     }
     
     func saveMasterContext () {
