@@ -12,6 +12,7 @@
 #import "KDBJobDetailViewController.h"
 #import "JenkinsInstance.h"
 #import "KDBJenkinsRequestHandler.h"
+#import "JenkinsMobile-Swift.h"
 
 @implementation KDBAppDelegate
 
@@ -26,10 +27,15 @@
     [notificationCenter addObserver:self selector:@selector(contextChanged:) name:NSManagedObjectContextDidSaveNotification object:self.masterMOC];
     [self mainMOC];
     NSArray *jenkinskeys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
-    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES], nil];
+    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",@"https://jenkins.qa.ubuntu.com",[NSNumber numberWithBool:YES], nil];
     NSDictionary *jenkins = [NSDictionary dictionaryWithObjects:jenkinsvalues forKeys:jenkinskeys];
     JenkinsInstance *jinstance = [JenkinsInstance createJenkinsInstanceWithValues:jenkins inManagedObjectContext:self.masterMOC];
     [self saveContext];
+    
+    SyncManager *mgr = [SyncManager sharedInstance];
+    [mgr setCurrentJenkinsInstance:jinstance];
+    mgr.masterMOC = self.masterMOC;
+    mgr.mainMOC = self.mainMOC;
     
     /*
     KDBJenkinsRequestHandler *handler = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:jinstance];

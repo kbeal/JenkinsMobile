@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-public class SyncManager {
+@objc public class SyncManager {
     
     var masterMOC: NSManagedObjectContext?
     var mainMOC: NSManagedObjectContext?
@@ -30,7 +30,7 @@ public class SyncManager {
         return Static.instance
     }
     
-    init() {
+    public init() {
         /*
         self.masterMOC = masterManagedObjectContext
         self.currentJenkinsInstance = currentJenkinsInstance
@@ -42,6 +42,8 @@ public class SyncManager {
     func initObservers() {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "jobDetailResponseReceived", name: JobDetailResponseReceivedNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "jobDetailRequestFailed", name: JobDetailRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "jenkinsInstanceDetailResponseReceived", name: JenkinsInstanceDetailResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "jenkinsInstanceDetailRequestFailed", name: JenkinsInstanceDetailRequestFailedNotification, object: nil)
     }
     
     public func jobSyncQueueSize() -> Int { return jobSyncQueue.count() }
@@ -77,7 +79,7 @@ public class SyncManager {
             assert(self.masterMOC != nil, "master managed object context not set");
             Job.createJobWithValues(values, inManagedObjectContext: self.masterMOC)
         } else {
-            // update it's values
+            // update it\s values
             job!.setValues(values)
         }
         
@@ -90,6 +92,29 @@ public class SyncManager {
         // get the jenkins instance and job name from the notification
         // fetch job via the jenkins instance
         // delete the job
+    }
+    
+    func jenkinsInstanceDetailResponseReceived(notification: NSNotification) {
+        assert(self.mainMOC != nil, "main managed object context not set")
+        let values: NSDictionary = notification.userInfo!
+        let url = values[JenkinsInstanceURLKey] as String
+        
+        // Fetch instance based on url
+        let jenkinsInstance: JenkinsInstance? = JenkinsInstance.fetchJenkinsInstanceWithURL(url, fromManagedObjectContext: self.mainMOC)
+        //create if it doesn't exist
+        if (jenkinsInstance==nil) {
+            assert(self.masterMOC != nil, "master managed object context not set")
+            JenkinsInstance.createJenkinsInstanceWithValues(values, inManagedObjectContext: self.masterMOC)
+        } else {
+            // update its values
+            jenkinsInstance!.setValues(values)
+        }
+        
+        self.saveMasterContext()
+    }
+    
+    func jenkinsInstanceDetailRequestFailed(notification: NSNotification) {
+        
     }
     
     func saveMasterContext () {

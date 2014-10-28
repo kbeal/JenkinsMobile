@@ -18,6 +18,8 @@ NSString * const JobDetailResponseReceivedNotification = @"JobDetailResponseRece
 NSString * const JobDetailRequestFailedNotification = @"JobDetailRequestFailed";
 NSString * const BuildProgressResponseReceivedNotification = @"BuildProgressResponseReceived";
 NSString * const JobTestResultsImageResponseReceivedNotification = @"JobTestResultsImageResponseReceived";
+NSString * const JenkinsInstanceDetailResponseReceivedNotification = @"JenkinsInstanceDetailResponseReceived";
+NSString * const JenkinsInstanceDetailRequestFailedNotification = @"JenkinsInstanceDetailRequestFailed";
 
 // Job Keys
 NSString * const JobURLKey = @"url";
@@ -61,5 +63,6 @@ NSString * const ActiveConfigurationURLKey = @"url";
 NSString * const JenkinsInstanceNameKey = @"name";
 NSString * const JenkinsInstanceURLKey = @"url";
 NSString * const JenkinsInstanceCurrentKey = @"current";
+NSString * const JenkinsInstanceJobsKey = @"jobs";
 
 @end

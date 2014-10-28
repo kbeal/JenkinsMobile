@@ -314,27 +314,6 @@
     XCTAssertEqualObjects(current, _jinstance, @"instances aren't equal");
 }
 
-- (void) testNoDuplicateJenkinsInstances
-{
-    NSArray *values1 = [NSArray arrayWithObjects:@"TestInstance",@"http://ci.kylebeal.com",[NSNumber numberWithBool:YES], nil];
-    NSArray *values2 = [NSArray arrayWithObjects:@"TestInstance2",@"http://ci.kylebeal.com",[NSNumber numberWithBool:NO], nil];
-    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
-
-    NSDictionary *instancevalues1 = [NSDictionary dictionaryWithObjects:values1 forKeys:keys];
-    NSDictionary *instancevalues2 = [NSDictionary dictionaryWithObjects:values2 forKeys:keys];
-    
-    [JenkinsInstance createJenkinsInstanceWithValues:instancevalues1 inManagedObjectContext:_context];
-    [JenkinsInstance createJenkinsInstanceWithValues:instancevalues2 inManagedObjectContext:_context];
-    
-    NSError *error;
-    NSFetchRequest *allJInstances = [[NSFetchRequest alloc] init];
-    [allJInstances setEntity:[NSEntityDescription entityForName:@"JenkinsInstance" inManagedObjectContext:_context]];
-    [allJInstances setIncludesPropertyValues:NO]; //only fetch the managedObjectID
-    NSArray *fetchedinstances = [_context executeFetchRequest:allJInstances error:&error];
-    
-    XCTAssert(fetchedinstances.count==2,@"too many jenkins instances, should be 2, have %lu",(unsigned long)fetchedinstances.count);
-}
-
 - (void) testUpdatingJob
 {
     NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"color",nil];

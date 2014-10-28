@@ -118,6 +118,33 @@
     [operation start];
 }
 
+- (void) importDetailsForJenkinsAtURL:(NSString *) url
+{
+    //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job at url: ",jobURL]);
+    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",url,@"/api/json"]];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    //AFNetworking asynchronous url request
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
+                                         initWithRequest:request];
+    
+    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        //NSLog(@"%@%@",@"response received for jenkins at url: ",url);
+        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailResponseReceivedNotification object:self userInfo:responseObject];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        //NSDictionary *info = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:jobName,self.jinstance.url,error, nil] forKeys:[NSArray arrayWithObjects:JobNameKey, JenkinsInstanceURLKey, JobRequestErrorKey, nil]];
+        
+        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
+        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailRequestFailedNotification object:self userInfo:error.userInfo];
+
+    }];
+    
+    [operation start];
+}
+
 - (void) importTestResultsImageForJobWithName:(NSString *) jobName
 {
     NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@%@",self.jinstance.url,@"/job/",jobName,@"test/trend"]];

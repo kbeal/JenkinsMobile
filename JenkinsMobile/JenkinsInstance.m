@@ -9,7 +9,7 @@
 #import "JenkinsInstance.h"
 #import "Job.h"
 #import "View.h"
-
+#import "Constants.h"
 
 @implementation JenkinsInstance
 
@@ -21,14 +21,7 @@
 
 + (JenkinsInstance *)createJenkinsInstanceWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    __block JenkinsInstance *instance = [JenkinsInstance fetchJenkinsInstanceWithURL:[values objectForKey:@"url"] fromManagedObjectContext:context];
-    
-    if (!instance) {
-        [context performBlockAndWait:^{
-            instance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance"
-                                             inManagedObjectContext:context];
-        }];
-    }
+    JenkinsInstance *instance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:context];
     
     [instance setValues:values];
     
@@ -71,9 +64,23 @@
 
 - (void)setValues:(NSDictionary *) values
 {
-    self.name = [values objectForKey:@"name"];
-    self.url = [values objectForKey:@"url"];
-    self.current = [values objectForKey:@"current"];
+    self.name = [values objectForKey:JenkinsInstanceNameKey];
+    self.url = [values objectForKey:JenkinsInstanceURLKey];
+    self.current = [values objectForKey:JenkinsInstanceCurrentKey];
+    [self createJobs:[values objectForKey:JenkinsInstanceJobsKey]];
+}
+
+// your local delegate's favorite method!
+- (void)createJobs:(NSArray *) jobValues
+{
+    NSMutableSet *currentJobs = (NSMutableSet*)self.rel_Jobs;
+    for (NSDictionary *job in jobValues) {
+        Job *fetchedJob = [Job fetchJobWithName:[job objectForKey:JobNameKey] inManagedObjectContext:self.managedObjectContext];
+        if (fetchedJob==nil) {
+            Job *newJob = [Job createJobWithValues:job inManagedObjectContext:self.managedObjectContext];
+            [currentJobs addObject:newJob];
+        }
+    }
 }
 
 @end

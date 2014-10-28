@@ -13,6 +13,8 @@
 extern double MaxJobSyncAge;
 
 extern NSString * const SelectedJobChangedNotification;
+extern NSString * const JenkinsInstanceDetailResponseReceivedNotification;
+extern NSString * const JenkinsInstanceDetailRequestFailedNotification;
 extern NSString * const JobDetailResponseReceivedNotification;
 extern NSString * const JobDetailRequestFailedNotification;
 extern NSString * const BuildProgressResponseReceivedNotification;
@@ -63,6 +65,7 @@ extern NSString * const ActiveConfigurationURLKey;
 extern NSString * const JenkinsInstanceNameKey;
 extern NSString * const JenkinsInstanceURLKey;
 extern NSString * const JenkinsInstanceCurrentKey;
+extern NSString * const JenkinsInstanceJobsKey;
 
 
 @end

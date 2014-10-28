@@ -21,7 +21,7 @@ class SyncManagerTests: XCTestCase {
         
         let modelURL = NSBundle.mainBundle().URLForResource("JenkinsMobile", withExtension: "momd")
         let model = NSManagedObjectModel(contentsOfURL: modelURL!)
-        let coord = NSPersistentStoreCoordinator(managedObjectModel: model)
+        let coord = NSPersistentStoreCoordinator(managedObjectModel: model!)
         context = NSManagedObjectContext(concurrencyType: NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType)
         coord.addPersistentStoreWithType(NSInMemoryStoreType, configuration: nil, URL: nil, options: nil, error: nil)
         context!.persistentStoreCoordinator = coord
@@ -194,6 +194,32 @@ class SyncManagerTests: XCTestCase {
         let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
         
         XCTAssertFalse(job.shouldSync(), "shouldsync should be false")
+    }
+    
+    func testJenkinsInstanceDetailResponseReceived() {
+        let jobObj1 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com"]
+        let jobObj2 = [JobNameKey: "Job2", JobColorKey: "red", JobURLKey: "http://www.yahoo.com"]
+        let jobObj3 = [JobNameKey: "Job3", JobColorKey: "green", JobURLKey: "http://www.bing.com"]
+        let jobObj4 = [JobNameKey: "Job4", JobColorKey: "grey", JobURLKey: "http://www.amazon.com"]
+        let jobs = [jobObj1, jobObj2, jobObj3, jobObj4]
+        
+        let userInfo = [JenkinsInstanceNameKey: "QA Ubuntu", JenkinsInstanceURLKey: "https://jenkins.qa.ubuntu.com/", JenkinsInstanceJobsKey: jobs]
+        let notification = NSNotification(name: JenkinsInstanceDetailResponseReceivedNotification, object: self, userInfo: userInfo)
+        
+        mgr.jenkinsInstanceDetailResponseReceived(notification)
+        
+        
+        let fetchreq = NSFetchRequest()
+        fetchreq.entity = NSEntityDescription.entityForName("JenkinsInstance", inManagedObjectContext: context!)
+        fetchreq.predicate = NSPredicate(format: "name = %@", "QA Ubuntu")
+        fetchreq.includesPropertyValues = false
+        
+        let jenkinss = context?.executeFetchRequest(fetchreq, error: nil)
+        let ji = jenkinss![0] as JenkinsInstance
+
+        XCTAssertEqual(jenkinss!.count, 1, "jenkinss count is wrong. Should be 1 got: \(jenkinss!.count) instead")
+        XCTAssertEqual(ji.name, "QA Ubuntu", "jenkins instance name is wrong. should be QA Ubuntu, got: \(ji.name) instead")
+        XCTAssertEqual(ji.rel_Jobs.count, 4, "jenkins instance job count is wrong. should be 4, got:\(ji.rel_Jobs.count) instead")
     }
     
     func testJobDetailResponseReceived() {
