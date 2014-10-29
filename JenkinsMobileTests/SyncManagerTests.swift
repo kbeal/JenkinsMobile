@@ -21,7 +21,7 @@ class SyncManagerTests: XCTestCase {
         
         let modelURL = NSBundle.mainBundle().URLForResource("JenkinsMobile", withExtension: "momd")
         let model = NSManagedObjectModel(contentsOfURL: modelURL!)
-        let coord = NSPersistentStoreCoordinator(managedObjectModel: model!)
+        let coord = NSPersistentStoreCoordinator(managedObjectModel: model)
         context = NSManagedObjectContext(concurrencyType: NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType)
         coord.addPersistentStoreWithType(NSInMemoryStoreType, configuration: nil, URL: nil, options: nil, error: nil)
         context!.persistentStoreCoordinator = coord
@@ -221,6 +221,46 @@ class SyncManagerTests: XCTestCase {
         XCTAssertEqual(ji.name, "QA Ubuntu", "jenkins instance name is wrong. should be QA Ubuntu, got: \(ji.name) instead")
         XCTAssertEqual(ji.rel_Jobs.count, 4, "jenkins instance job count is wrong. should be 4, got:\(ji.rel_Jobs.count) instead")
     }
+    
+    func testJenkinsInstanceRequestFailed() {
+        let expectation = expectationWithDescription("JenkinsInstance will be deleted")
+        let url = NSURL(string: "https://www.google.com/api/json")
+        let request = NSURLRequest(URL: url)
+        let operation = AFHTTPRequestOperation(request: request)
+        operation.responseSerializer = AFJSONResponseSerializer()
+        
+        operation.setCompletionBlockWithSuccess(
+            { operation, response in
+                println("jenkins request received")
+            },
+            failure: { operation, error in
+                let userinfo = error.userInfo! as Dictionary
+                let failurl = userinfo["NSErrorFailingURLKey"]
+                println("jenkins request failed \(failurl!)")
+                expectation.fulfill()
+        })
+        
+        operation.start()
+        
+        waitForExpectationsWithTimeout(10, handler: { error in
+            
+        })
+    }
+
+    /*
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailResponseReceivedNotification object:self userInfo:responseObject];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    
+    
+    NSLog(@"Request Failed: %@, %@", error, error.userInfo);
+    [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailRequestFailedNotification object:self userInfo:error.userInfo];
+    }];
+    
+    [operation start];
+    }*/
+    
     
     func testJobDetailResponseReceived() {
         let build1Obj = ["number": 1, "url": "http://www.google.com"]
