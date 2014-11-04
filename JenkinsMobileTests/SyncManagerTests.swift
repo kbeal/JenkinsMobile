@@ -21,17 +21,16 @@ class SyncManagerTests: XCTestCase {
         
         let modelURL = NSBundle.mainBundle().URLForResource("JenkinsMobile", withExtension: "momd")
         let model = NSManagedObjectModel(contentsOfURL: modelURL!)
-        let coord = NSPersistentStoreCoordinator(managedObjectModel: model)
+        let coord = NSPersistentStoreCoordinator(managedObjectModel: model!)
         context = NSManagedObjectContext(concurrencyType: NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType)
         coord.addPersistentStoreWithType(NSInMemoryStoreType, configuration: nil, URL: nil, options: nil, error: nil)
         context!.persistentStoreCoordinator = coord
         mgr.mainMOC = context;
         mgr.masterMOC = context;
         
-        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://tomcat:8080/", JenkinsInstanceCurrentKey: false]
-        jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: context)
-
-
+        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json", JenkinsInstanceCurrentKey: false]
+        
+        context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: self.context)})
     }
     
     func testSharedInstance() {
@@ -223,21 +222,29 @@ class SyncManagerTests: XCTestCase {
     }
     
     func testJenkinsInstanceRequestFailed() {
-        let expectation = expectationWithDescription("JenkinsInstance will be deleted")
-        let url = NSURL(string: "https://www.google.com/api/json")
-        let request = NSURLRequest(URL: url)
+        let requestFailureExpectation = expectationWithDescription("JenkinsInstance will be deleted")
+        let url = NSURL(string: "http://www.google.com/api/json")
+        let request = NSURLRequest(URL: url!)
         let operation = AFHTTPRequestOperation(request: request)
-        operation.responseSerializer = AFJSONResponseSerializer()
+        let serializer = AFJSONResponseSerializer()
+        operation.responseSerializer = serializer
+        
+        let fetchreq = NSFetchRequest()
+        fetchreq.entity = NSEntityDescription.entityForName("JenkinsInstance", inManagedObjectContext: context!)
+        fetchreq.includesPropertyValues = false
+        let jenkinss = context?.executeFetchRequest(fetchreq, error: nil)
+        XCTAssertEqual(jenkinss!.count, 1, "jenkinss count is wrong. should  be 1 got: \(jenkinss!.count) instead")
         
         operation.setCompletionBlockWithSuccess(
             { operation, response in
                 println("jenkins request received")
             },
             failure: { operation, error in
-                let userinfo = error.userInfo! as Dictionary
-                let failurl = userinfo["NSErrorFailingURLKey"]
-                println("jenkins request failed \(failurl!)")
-                expectation.fulfill()
+                var userInfo: Dictionary = error.userInfo!
+                userInfo[StatusCodeKey] = operation.response.statusCode
+                let notification = NSNotification(name: JenkinsInstanceDetailRequestFailedNotification, object: self, userInfo: userInfo)
+                self.mgr.jenkinsInstanceDetailRequestFailed(notification)
+                requestFailureExpectation.fulfill()
         })
         
         operation.start()
@@ -245,6 +252,13 @@ class SyncManagerTests: XCTestCase {
         waitForExpectationsWithTimeout(10, handler: { error in
             
         })
+        
+        let fetchreq2 = NSFetchRequest()
+        fetchreq2.entity = NSEntityDescription.entityForName("JenkinsInstance", inManagedObjectContext: context!)
+        fetchreq2.includesPropertyValues = false
+        let jenkinss2 = context?.executeFetchRequest(fetchreq2, error: nil)        
+        XCTAssertEqual(jenkinss2!.count, 0, "jenkinss count is wrong. should  be 0 got: \(jenkinss2!.count) instead")
+        
     }
 
     /*

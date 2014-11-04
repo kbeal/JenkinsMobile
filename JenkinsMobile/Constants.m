@@ -64,5 +64,8 @@ NSString * const JenkinsInstanceNameKey = @"name";
 NSString * const JenkinsInstanceURLKey = @"url";
 NSString * const JenkinsInstanceCurrentKey = @"current";
 NSString * const JenkinsInstanceJobsKey = @"jobs";
+// AFNetworking Keys
+NSString * const StatusCodeKey = @"statusCode";
+NSString * const NSErrorFailingURLKey = @"NSErrorFailingURLKey";
 
 @end

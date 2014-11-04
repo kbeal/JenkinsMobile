@@ -137,8 +137,10 @@
         
         //NSDictionary *info = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:jobName,self.jinstance.url,error, nil] forKeys:[NSArray arrayWithObjects:JobNameKey, JenkinsInstanceURLKey, JobRequestErrorKey, nil]];
         
-        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
-        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailRequestFailedNotification object:self userInfo:error.userInfo];
+//        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
+        NSMutableDictionary *info = (NSMutableDictionary*)error.userInfo;
+        [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailRequestFailedNotification object:self userInfo:info];
     }];
     
     [operation start];

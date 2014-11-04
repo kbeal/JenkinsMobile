@@ -114,7 +114,27 @@ import CoreData
     }
     
     func jenkinsInstanceDetailRequestFailed(notification: NSNotification) {
+        assert(self.masterMOC != nil, "master managed object context not set")
+        // parse the error for the jenkins url and status code
+        let userInfo: Dictionary = notification.userInfo!
+        let status: Int = userInfo[StatusCodeKey] as Int
+        let url: NSURL = userInfo[NSErrorFailingURLKey] as NSURL
         
+        // if the error is 404
+        if (status==404) {
+            // find the jenkins instance
+            var jenkins: JenkinsInstance?
+            self.masterMOC?.performBlockAndWait({
+                jenkins = JenkinsInstance.fetchJenkinsInstanceWithURL(url.absoluteString, fromManagedObjectContext: self.masterMOC)
+            })
+            // if it exists delete it
+            if jenkins != nil {
+                self.masterMOC?.performBlockAndWait({
+                    self.masterMOC!.deleteObject(jenkins!)
+                    self.saveMasterContext()
+                })
+            } 
+        }
     }
     
     func saveMasterContext () {

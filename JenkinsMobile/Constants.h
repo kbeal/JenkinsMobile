@@ -67,5 +67,8 @@ extern NSString * const JenkinsInstanceURLKey;
 extern NSString * const JenkinsInstanceCurrentKey;
 extern NSString * const JenkinsInstanceJobsKey;
 
+// AFNetworking Keys
+extern NSString * const StatusCodeKey;
+extern NSString * const NSErrorFailingURLKey;
 
 @end
