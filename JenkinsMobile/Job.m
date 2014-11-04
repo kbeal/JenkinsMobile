@@ -126,6 +126,25 @@
     }
 }
 
++ (NSString *)jobNameFromURL: (NSURL *) jobURL
+{
+    NSArray *pathComponents = [jobURL pathComponents];
+    bool isJobName = false;
+    NSString *jobName = nil;
+    for (NSString *component in pathComponents) {
+        if (isJobName) {
+            jobName = component;
+            break;
+        }
+        if ([component isEqualToString:@"job"]) {
+            isJobName = true;
+        } else {
+            isJobName = false;
+        }
+    }
+    return jobName;
+}
+
 - (void)setValues:(NSDictionary *) values
 {
     self.url = NULL_TO_NIL([values objectForKey:@"url"]);

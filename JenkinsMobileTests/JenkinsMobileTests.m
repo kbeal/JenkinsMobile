@@ -556,6 +556,17 @@
     XCTAssertTrue([job2 colorIsAnimated], @"job2 returned wrong value for colorIsAnimated");
 }
 
+- (void) testJobNameFromJobURL
+{
+    NSString *url1str = @"http://www.google.com/view/Release/view/Release1/job/Job1/api/json";
+    NSString *url2str = @"http://www.google.com/job/Job2/api/json";
+    NSURL *url1 = [NSURL URLWithString:url1str];
+    NSURL *url2 = [NSURL URLWithString:url2str];
+    
+    XCTAssertEqualObjects(@"Job1", [Job jobNameFromURL:url1]);
+    XCTAssertEqualObjects(@"Job2", [Job jobNameFromURL:url2]);
+}
+
 - (void) deleteAllRecordsForEntity: (NSString *) entityName
 {
     NSFetchRequest * allRecords = [[NSFetchRequest alloc] init];

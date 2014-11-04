@@ -60,5 +60,6 @@
 
 + (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
 + (Job *)fetchJobWithName: (NSString *) name inManagedObjectContext: (NSManagedObjectContext *) context;
++ (NSString *)jobNameFromURL: (NSURL *) jobURL;
 
 @end
