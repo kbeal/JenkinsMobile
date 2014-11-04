@@ -21,9 +21,12 @@
 
 + (JenkinsInstance *)createJenkinsInstanceWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    JenkinsInstance *instance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:context];
+    __block JenkinsInstance *instance = nil;
     
-    [instance setValues:values];
+    [context performBlockAndWait:^{
+        instance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:context];
+        [instance setValues:values];
+    }];
     
     return instance;
 }
