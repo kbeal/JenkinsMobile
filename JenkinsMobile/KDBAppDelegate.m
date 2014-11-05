@@ -26,13 +26,10 @@
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter addObserver:self selector:@selector(contextChanged:) name:NSManagedObjectContextDidSaveNotification object:self.masterMOC];
     [self mainMOC];
-    NSArray *jenkinskeys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
-    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",@"https://jenkins.qa.ubuntu.com",[NSNumber numberWithBool:YES], nil];
-    NSDictionary *jenkins = [NSDictionary dictionaryWithObjects:jenkinsvalues forKeys:jenkinskeys];
-    JenkinsInstance *jinstance = [JenkinsInstance createJenkinsInstanceWithValues:jenkins inManagedObjectContext:self.masterMOC];
-    [self saveContext];
     
+    JenkinsInstance *jinstance = [self createJenkinsInstance];
     SyncManager *mgr = [SyncManager sharedInstance];
+    mgr.requestHandler = [[KDBJenkinsRequestHandler alloc] init];
     [mgr setCurrentJenkinsInstance:jinstance];
     mgr.masterMOC = self.masterMOC;
     mgr.mainMOC = self.mainMOC;
@@ -62,6 +59,23 @@
     }
     
     return YES;
+}
+
+- (JenkinsInstance *) createJenkinsInstance
+{
+    NSString *jenkinsURL = @"https://jenkins.qa.ubuntu.com";
+    NSArray *jenkinskeys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
+    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",jenkinsURL,[NSNumber numberWithBool:YES], nil];
+    NSDictionary *jenkins = [NSDictionary dictionaryWithObjects:jenkinsvalues forKeys:jenkinskeys];
+    
+    JenkinsInstance *jinstance = [JenkinsInstance fetchJenkinsInstanceWithURL:jenkinsURL fromManagedObjectContext:self.mainMOC];
+    if (jinstance == nil) {
+        jinstance = [JenkinsInstance createJenkinsInstanceWithValues:jenkins inManagedObjectContext:self.masterMOC];
+    }
+    
+    [self saveContext];
+    
+    return jinstance;
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
