@@ -16,6 +16,7 @@
 		8A176551191DA0F300E108DF /* down.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A17654F191DA0F300E108DF /* down.png */; };
 		8A176552191DA0F300E108DF /* down@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A176550191DA0F300E108DF /* down@2x.png */; };
 		8A2216791A09AE000008CF53 /* UniqueQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2216781A09AE000008CF53 /* UniqueQueueTests.swift */; };
+		8A22167B1A09C8B10008CF53 /* TestAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A22167A1A09C8B10008CF53 /* TestAppDelegate.m */; };
 		8A23EF13196B7AB00001DDE3 /* yellow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A23EF12196B7AB00001DDE3 /* yellow@2x.png */; };
 		8A23EF16196B89AE0001DDE3 /* health-80plus.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A23EF14196B89AE0001DDE3 /* health-80plus.png */; };
 		8A23EF17196B89AE0001DDE3 /* health-80plus@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A23EF15196B89AE0001DDE3 /* health-80plus@2x.png */; };
@@ -245,6 +246,8 @@
 		8A17654F191DA0F300E108DF /* down.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = down.png; sourceTree = "<group>"; };
 		8A176550191DA0F300E108DF /* down@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "down@2x.png"; sourceTree = "<group>"; };
 		8A2216781A09AE000008CF53 /* UniqueQueueTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueQueueTests.swift; sourceTree = "<group>"; };
+		8A22167A1A09C8B10008CF53 /* TestAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestAppDelegate.m; sourceTree = "<group>"; };
+		8A22167C1A09C8D80008CF53 /* TestAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestAppDelegate.h; sourceTree = "<group>"; };
 		8A23EF12196B7AB00001DDE3 /* yellow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "yellow@2x.png"; sourceTree = "<group>"; };
 		8A23EF14196B89AE0001DDE3 /* health-80plus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-80plus.png"; sourceTree = "<group>"; };
 		8A23EF15196B89AE0001DDE3 /* health-80plus@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-80plus@2x.png"; sourceTree = "<group>"; };
@@ -780,6 +783,8 @@
 				8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */,
 				8A56E60D19C90FD70058B0C7 /* JenkinsMobileTests-Bridging-Header.h */,
 				8A2216781A09AE000008CF53 /* UniqueQueueTests.swift */,
+				8A22167A1A09C8B10008CF53 /* TestAppDelegate.m */,
+				8A22167C1A09C8D80008CF53 /* TestAppDelegate.h */,
 			);
 			path = JenkinsMobileTests;
 			sourceTree = "<group>";
@@ -1139,6 +1144,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A22167B1A09C8B10008CF53 /* TestAppDelegate.m in Sources */,
 				8A2216791A09AE000008CF53 /* UniqueQueueTests.swift in Sources */,
 				8AC464E219E76F3C00AE5A76 /* UniqueQueue.swift in Sources */,
 				8A56E61119C91EB50058B0C7 /* SyncManager.swift in Sources */,

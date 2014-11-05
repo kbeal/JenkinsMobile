@@ -13,6 +13,11 @@
 int main(int argc, char * argv[])
 {
     @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([KDBAppDelegate class]));
+        BOOL runningTests = NSClassFromString(@"XCTestCase") != nil;
+        if(!runningTests) {
+            return UIApplicationMain(argc, argv, nil, NSStringFromClass([KDBAppDelegate class]));
+        } else {
+            return UIApplicationMain(argc, argv, nil, @"TestAppDelegate");
+        }
     }
 }
