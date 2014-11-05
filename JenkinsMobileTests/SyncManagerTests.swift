@@ -260,21 +260,52 @@ class SyncManagerTests: XCTestCase {
         XCTAssertEqual(jenkinss2!.count, 0, "jenkinss count is wrong. should  be 0 got: \(jenkinss2!.count) instead")
         
     }
-
-    /*
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailResponseReceivedNotification object:self userInfo:responseObject];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
     
-    
-    NSLog(@"Request Failed: %@, %@", error, error.userInfo);
-    [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailRequestFailedNotification object:self userInfo:error.userInfo];
-    }];
-    
-    [operation start];
-    }*/
-    
+    func testJobDetailRequestFailed() {
+        let requestFailureExpectation = expectationWithDescription("Job1 will be deleted")
+        let jobURL = "http://www.google.com/job/Job1/api/json"
+        let url = NSURL(string: jobURL)
+        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
+        
+        let request = NSURLRequest(URL: url!)
+        let operation = AFHTTPRequestOperation(request: request)
+        let serializer = AFJSONResponseSerializer()
+        operation.responseSerializer = serializer
+        
+        let fetchreq = NSFetchRequest()
+        fetchreq.entity = NSEntityDescription.entityForName("Job", inManagedObjectContext: context!)
+        fetchreq.includesPropertyValues = false
+        let jobs = context?.executeFetchRequest(fetchreq, error: nil)
+        XCTAssertEqual(jobs!.count, 1, "jobs count is wrong. should  be 1 got: \(jobs!.count) instead")
+        
+        operation.setCompletionBlockWithSuccess(
+            { operation, response in
+                println("jenkins request received")
+            },
+            failure: { operation, error in
+                var userInfo: Dictionary = error.userInfo!
+                userInfo[StatusCodeKey] = operation.response.statusCode
+                let url: NSURL = userInfo[NSErrorFailingURLKey] as NSURL
+                let jobName = url.relativeString
+                let notification = NSNotification(name: JobDetailRequestFailedNotification, object: self, userInfo: userInfo)
+                self.mgr.jobDetailRequestFailed(notification)
+                requestFailureExpectation.fulfill()
+        })
+        
+        operation.start()
+        
+        waitForExpectationsWithTimeout(10, handler: { error in
+            
+        })
+        
+        let fetchreq2 = NSFetchRequest()
+        fetchreq2.entity = NSEntityDescription.entityForName("Job", inManagedObjectContext: context!)
+        fetchreq2.includesPropertyValues = false
+        let jobs2 = context?.executeFetchRequest(fetchreq2, error: nil)
+        XCTAssertEqual(jobs2!.count, 0, "jobs count is wrong. should  be 0 got: \(jobs2!.count) instead")
+        
+    }
     
     func testJobDetailResponseReceived() {
         let build1Obj = ["number": 1, "url": "http://www.google.com"]
@@ -323,6 +354,7 @@ class SyncManagerTests: XCTestCase {
         XCTAssertEqual(job.job_description, "Job1 Description", "job description is wrong")
         XCTAssertEqual(job.keepDependencies, false, "Job keepDependencies should be false")
         XCTAssertNotNil(job.rel_Job_JenkinsInstance, "jenkins instance is nil")
+        XCTAssertEqual(job.rel_Job_JenkinsInstance.name, jenkinsInstance!.name, "job's jenkins instance's name is wrong")
         XCTAssertEqual(job.upstreamProjects.count, 1, "upstream projects count is wrong")
         XCTAssertEqual(job.downstreamProjects.count, 2, "downstream projects count is wrong")
         XCTAssertEqual(job.upstreamProjects![0]["color"] as String, "red", "upstream project color is wrong")

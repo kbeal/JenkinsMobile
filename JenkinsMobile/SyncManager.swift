@@ -87,11 +87,28 @@ import CoreData
     }
     
     func jobDetailRequestFailed(notification: NSNotification) {
-        // check the error
-        println(notification)
-        // get the jenkins instance and job name from the notification
-        // fetch job via the jenkins instance
-        // delete the job
+        assert(self.masterMOC != nil, "master managed object context not set!!")
+        // parse the error for the jenkins url and status code
+        let userInfo: Dictionary = notification.userInfo!
+        let status: Int = userInfo[StatusCodeKey] as Int
+        let url: NSURL = userInfo[NSErrorFailingURLKey] as NSURL
+        let jobName = Job.jobNameFromURL(url)
+        
+        // if the error is 404
+        if (status==404) {
+            // find the job instance
+            var job: Job?
+            self.masterMOC?.performBlockAndWait({
+                job = Job.fetchJobWithName(jobName, inManagedObjectContext: self.masterMOC!)
+            })
+            // if it exists delete it
+            if job != nil {
+                self.masterMOC?.performBlockAndWait({
+                    self.masterMOC!.deleteObject(job!)
+                    self.saveMasterContext()
+                })
+            }
+        }
     }
     
     func jenkinsInstanceDetailResponseReceived(notification: NSNotification) {
