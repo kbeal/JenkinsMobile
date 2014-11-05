@@ -29,7 +29,25 @@ class UniqueQueueTests: XCTestCase {
     }
     
     func testUniqueQueueIterPop() {
+        let uq = UniqueQueue()
         
+        uq.push("Job1")
+        uq.push("Job2")
+        uq.push("Job3")
+        uq.push("Job3")
+        uq.push("Job5")
+        uq.push("Job1")
+        
+        var itmcnt = 0
+        
+        for item in uq {
+            var popped = uq.pop()
+            XCTAssertEqual(popped!, item, "popped item is not correct")
+            itmcnt = itmcnt + 1
+        }
+        
+        XCTAssertEqual(itmcnt, 4, "item count is wrong after iterating and popping")
+        XCTAssertEqual(uq.count(), 0, "uq count is wrong")
     }
     
     func testUniqueQueueRemoveAll() {
