@@ -14,9 +14,11 @@ import CoreData
     var masterMOC: NSManagedObjectContext?
     var mainMOC: NSManagedObjectContext?
     private var jobSyncQueue = UniqueQueue()
+    private var jobSyncTimer: NSTimer?
     var currentJenkinsInstance: JenkinsInstance? {
         willSet {
             jobSyncQueue.removeAll()
+            self.syncCurrentJenkinsInstance()
         }
     }
     //var currentBuilds: NSMutableArray
@@ -31,6 +33,7 @@ import CoreData
     }
     
     public init() {
+        jobSyncTimer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: Selector("jobSyncTimerTick"), userInfo: nil, repeats: true)
         /*
         self.masterMOC = masterManagedObjectContext
         self.currentJenkinsInstance = currentJenkinsInstance
@@ -46,6 +49,12 @@ import CoreData
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "jenkinsInstanceDetailRequestFailed", name: JenkinsInstanceDetailRequestFailedNotification, object: nil)
     }
     
+    func jobSyncTimerTick() {
+        if (jobSyncQueue.count() > 0) {
+            syncJob(NSURL(string: jobSyncQueue.pop()!)!)
+        }
+    }
+    
     public func jobSyncQueueSize() -> Int { return jobSyncQueue.count() }
     
     func syncAllJobs() {
@@ -58,13 +67,18 @@ import CoreData
         }
     }
     
+    func syncCurrentJenkinsInstance() {
+        assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
+        requestHandler!.importDetailsForJenkinsAtURL(currentJenkinsInstance?.url)
+    }
+    
     func syncView(viewName: String) {
         // sync view details and queue all jobs in view for sync
     }
     
-    func syncJob(name: String) {
+    func syncJob(url: NSURL) {
         assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
-        self.requestHandler!.importDetailsForJobWithName(name)
+        self.requestHandler!.importDetailsForJobWithURL(url)
     }
     
     func jobDetailResponseReceived(notification: NSNotification) {

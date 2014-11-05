@@ -19,6 +19,7 @@ class SyncManagerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
+        let requestHandler = KDBJenkinsRequestHandler()
         let modelURL = NSBundle.mainBundle().URLForResource("JenkinsMobile", withExtension: "momd")
         let model = NSManagedObjectModel(contentsOfURL: modelURL!)
         let coord = NSPersistentStoreCoordinator(managedObjectModel: model!)
@@ -27,6 +28,7 @@ class SyncManagerTests: XCTestCase {
         context!.persistentStoreCoordinator = coord
         mgr.mainMOC = context;
         mgr.masterMOC = context;
+        mgr.requestHandler = requestHandler
         
         let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json", JenkinsInstanceCurrentKey: false]
         

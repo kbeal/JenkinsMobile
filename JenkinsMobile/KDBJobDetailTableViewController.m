@@ -90,17 +90,13 @@
     return [[NSDate date] timeIntervalSince1970] * 1000;
 }
 
-// returns a JenkinsRequestHandler for this job's JenkinsInstance
-- (KDBJenkinsRequestHandler *) getJenkinsRequestHandler
-{
-    return [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:self.job.rel_Job_JenkinsInstance];
-}
-
 - (void)getUpdates
 {
+    //TODO: update this method for syncmanager
+    /*
     KDBJenkinsRequestHandler *jenkins = [self getJenkinsRequestHandler];
     jenkins.managedObjectContext = self.managedObjectContext;
-    [jenkins importDetailsForJobWithName:self.job.name];
+    [jenkins importDetailsForJobWithName:self.job.name];*/
 }
 
 -(IBAction)refresh:(id)sender
@@ -176,7 +172,8 @@
 
 - (void) getLastBuildProgress
 {
-    [[self getJenkinsRequestHandler] importProgressForBuild:self.job.lastBuild ofJobAtURL:self.job.url];
+    //TODO: update to use syncmanager
+    //[[self getJenkinsRequestHandler] importProgressForBuild:self.job.lastBuild ofJobAtURL:self.job.url];
 }
 
 - (void) updateLastBuildStatusWithStartTime:(double)startTime andEstimatedDuration:(double)estimatedDuration

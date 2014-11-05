@@ -17,7 +17,7 @@
 
 - (id) initWithJenkinsInstance: (JenkinsInstance *) instance
 {
-    self.jinstance = instance;
+    //self.jinstance = instance;
     self.view_count = 0;
     self.viewDetails = [[NSMutableArray alloc] init];
     self.viewsJobsCounts = [[NSMutableDictionary alloc] init];
@@ -28,6 +28,7 @@
     return self;
 }
 
+/*
 - (void) importAllViews
 {
     //NSLog(@"Starting view import...");
@@ -48,15 +49,9 @@
     }];
     
     [operation start];
-}
+}*/
 
-- (void) importDetailsForViews: (NSArray *) views
-{
-    for (NSDictionary *view in views) {
-        [self importDetailsForView:[view objectForKey:@"name"] atURL:[view objectForKey:@"url"]];
-    }
-}
-
+/*
 - (void) importDetailsForView: (NSString *) viewName atURL: (NSString *) viewURL
 {
     //NSLog([NSString stringWithFormat:@"%@%@",@"import details for view: ",viewName]);
@@ -88,14 +83,42 @@
     }];
     
     [operation start];
-}
+}*/
 
+/*
 - (void) importDetailsForJobWithName:(NSString*) jobName
 {
     //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job at url: ",jobURL]);
     NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@%@",self.jinstance.url,@"/job/",jobName,@"api/json"]];
     
     [self importTestResultsImageForJobWithName:jobName];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    //AFNetworking asynchronous url request
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
+                                         initWithRequest:request];
+    
+    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        //NSLog(@"%@%@",@"response received for job at url: ",jobURL);
+        [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailResponseReceivedNotification object:self userInfo:responseObject];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        //NSDictionary *info = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:jobName,self.jinstance.url,error, nil] forKeys:[NSArray arrayWithObjects:JobNameKey, JenkinsInstanceURLKey, JobRequestErrorKey, nil]];
+        
+        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
+        [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailRequestFailedNotification object:self userInfo:error.userInfo];
+    }];
+    
+    [operation start];
+}*/
+
+- (void) importDetailsForJobWithURL:(NSURL *) jobURL
+{
+    // TODO: fix and uncomment importTestResultsImage
+    //[self importTestResultsImageForJobWithName:[Job jobNameFromURL:jobURL]];
+    NSURL *requestURL = [jobURL URLByAppendingPathComponent:@"/api/json"];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     //AFNetworking asynchronous url request
@@ -134,21 +157,20 @@
         //NSLog(@"%@%@",@"response received for jenkins at url: ",url);
         [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailResponseReceivedNotification object:self userInfo:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
-        //NSDictionary *info = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:jobName,self.jinstance.url,error, nil] forKeys:[NSArray arrayWithObjects:JobNameKey, JenkinsInstanceURLKey, JobRequestErrorKey, nil]];
-        
-//        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
-        NSMutableDictionary *info = (NSMutableDictionary*)error.userInfo;
-        [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
-        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailRequestFailedNotification object:self userInfo:info];
+        if (operation.response) {
+            NSMutableDictionary *info = (NSMutableDictionary*)error.userInfo;
+            [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
+            [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailRequestFailedNotification object:self userInfo:info];
+        }
     }];
     
     [operation start];
 }
 
-- (void) importTestResultsImageForJobWithName:(NSString *) jobName
+/*
+- (void) importTestResultsImageForJobAtURL:(NSURL *) jobURL
 {
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@%@",self.jinstance.url,@"/job/",jobName,@"test/trend"]];
+    NSURL *requestURL = [jobURL URLByAppendingPathComponent:@"test/trend"];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     //AFNetworking asynchronous url request
@@ -159,7 +181,7 @@
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@%@",@"response received for test results image at url: ", requestURL);
-        [[NSNotificationCenter defaultCenter] postNotificationName:JobTestResultsImageResponseReceivedNotification object:self userInfo:[NSDictionary dictionaryWithObject:jobName forKey:JobNameKey]];
+        [[NSNotificationCenter defaultCenter] postNotificationName:JobTestResultsImageResponseReceivedNotification object:self userInfo:[NSDictionary dictionaryWithObject:jobURL forKey:JobURLKey]];
         [self persistTestResultsImage:responseObject forJobWithName:jobName];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
@@ -167,7 +189,7 @@
     }];
     
     [operation start];
-}
+}*/
 
 - (void) importProgressForBuild:(NSNumber *) buildNumber ofJobAtURL:(NSString *) jobURL
 {
@@ -225,6 +247,7 @@
     [operation start];
 }
 
+/*
 - (void) persistViewsToLocalStorage: (NSArray *) views
 {
     @autoreleasepool {
@@ -267,7 +290,7 @@
     if ([NSNumber numberWithLong:self.viewDetails.count] == self.view_count) {
         [self persistViewDetailsToLocalStorage];
     }
-}
+}*/
 
 - (void) appendBuildDetailsWithValues: (NSDictionary *) buildValues forJobAtURL: (NSString *) jobURL
 {

@@ -77,9 +77,11 @@
 
 - (void)getUpdates
 {
+    //TODO: correct this to work with syncmanager
+    /*
     KDBJenkinsRequestHandler *jenkins = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:self.job.rel_Job_JenkinsInstance];
     jenkins.managedObjectContext = self.managedObjectContext;
-    [jenkins importDetailsForJobWithName:self.job.name];
+    [jenkins importDetailsForJobWithName:self.job.name];*/
 }
 
 - (void) handleDataModelChange: (NSNotification *) notification
