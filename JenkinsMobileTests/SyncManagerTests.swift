@@ -107,7 +107,7 @@ class SyncManagerTests: XCTestCase {
         let jobObj4 = [JobNameKey: "Job4", JobColorKey: "grey", JobURLKey: "http://www.amazon.com"]
         let jobs = [jobObj1, jobObj2, jobObj3, jobObj4]
         
-        let userInfo = [JenkinsInstanceNameKey: "QA Ubuntu", JenkinsInstanceURLKey: "https://jenkins.qa.ubuntu.com/", JenkinsInstanceJobsKey: jobs]
+        let userInfo = [JenkinsInstanceNameKey: "QA Ubuntu", JenkinsInstanceURLKey: "https://jenkins.qa.ubuntu.com/", JenkinsInstanceJobsKey: jobs, JenkinsInstanceCurrentKey: false]
         let notification = NSNotification(name: JenkinsInstanceDetailResponseReceivedNotification, object: self, userInfo: userInfo)
         
         mgr.jenkinsInstanceDetailResponseReceived(notification)
@@ -124,6 +124,7 @@ class SyncManagerTests: XCTestCase {
         XCTAssertEqual(jenkinss!.count, 1, "jenkinss count is wrong. Should be 1 got: \(jenkinss!.count) instead")
         XCTAssertEqual(ji.name, "QA Ubuntu", "jenkins instance name is wrong. should be QA Ubuntu, got: \(ji.name) instead")
         XCTAssertEqual(ji.rel_Jobs.count, 4, "jenkins instance job count is wrong. should be 4, got:\(ji.rel_Jobs.count) instead")
+        XCTAssertEqual(ji.current, 0, "jenkins current should be false")
     }
     
     func testJenkinsInstanceRequestFailed() {

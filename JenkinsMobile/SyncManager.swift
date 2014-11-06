@@ -18,7 +18,9 @@ import CoreData
     var currentJenkinsInstance: JenkinsInstance? {
         willSet {
             jobSyncQueue.removeAll()
-            self.syncCurrentJenkinsInstance()
+        }
+        didSet {
+            syncCurrentJenkinsInstance()   
         }
     }
     //var currentBuilds: NSMutableArray
@@ -34,6 +36,7 @@ import CoreData
     
     public init() {
         jobSyncTimer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: Selector("jobSyncTimerTick"), userInfo: nil, repeats: true)
+        initObservers()
         /*
         self.masterMOC = masterManagedObjectContext
         self.currentJenkinsInstance = currentJenkinsInstance
@@ -43,10 +46,10 @@ import CoreData
     
     // set up any NSNotificationCenter observers
     func initObservers() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "jobDetailResponseReceived", name: JobDetailResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "jobDetailRequestFailed", name: JobDetailRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "jenkinsInstanceDetailResponseReceived", name: JenkinsInstanceDetailResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "jenkinsInstanceDetailRequestFailed", name: JenkinsInstanceDetailRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jobDetailResponseReceived:"), name: JobDetailResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jobDetailRequestFailed:"), name: JobDetailRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceDetailResponseReceived:"), name: JenkinsInstanceDetailResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceDetailRequestFailed:"), name: JenkinsInstanceDetailRequestFailedNotification, object: nil)
     }
     
     func jobSyncTimerTick() {
@@ -69,7 +72,9 @@ import CoreData
     
     func syncCurrentJenkinsInstance() {
         assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
-        requestHandler!.importDetailsForJenkinsAtURL(currentJenkinsInstance?.url)
+        if (currentJenkinsInstance != nil) {
+            requestHandler!.importDetailsForJenkinsAtURL(currentJenkinsInstance!.url, withName: currentJenkinsInstance!.name)
+        }
     }
     
     func syncView(viewName: String) {
@@ -126,22 +131,25 @@ import CoreData
     }
     
     func jenkinsInstanceDetailResponseReceived(notification: NSNotification) {
-        assert(self.mainMOC != nil, "main managed object context not set")
-        let values: NSDictionary = notification.userInfo!
+        assert(self.masterMOC != nil, "main managed object context not set")
+        var values: Dictionary = notification.userInfo!
         let url = values[JenkinsInstanceURLKey] as String
+
+        values[JenkinsInstanceCurrentKey] = false
         
-        // Fetch instance based on url
-        let jenkinsInstance: JenkinsInstance? = JenkinsInstance.fetchJenkinsInstanceWithURL(url, fromManagedObjectContext: self.mainMOC)
-        //create if it doesn't exist
-        if (jenkinsInstance==nil) {
-            assert(self.masterMOC != nil, "master managed object context not set")
-            JenkinsInstance.createJenkinsInstanceWithValues(values, inManagedObjectContext: self.masterMOC)
-        } else {
-            // update its values
-            jenkinsInstance!.setValues(values)
-        }
-        
-        self.saveMasterContext()
+        self.masterMOC?.performBlockAndWait({
+            // Fetch instance based on url
+            let jenkinsInstance: JenkinsInstance? = JenkinsInstance.fetchJenkinsInstanceWithURL(url, fromManagedObjectContext: self.masterMOC)
+            //create if it doesn't exist
+            if (jenkinsInstance==nil) {
+                JenkinsInstance.createJenkinsInstanceWithValues(values, inManagedObjectContext: self.masterMOC)
+            } else {
+                // update its values
+                jenkinsInstance!.setValues(values)
+            }
+            
+            self.saveMasterContext()
+        })
     }
     
     func jenkinsInstanceDetailRequestFailed(notification: NSNotification) {
@@ -177,11 +185,13 @@ import CoreData
         if !moc!.hasChanges {
             return
         }
-        if (moc?.save(&error) != nil) {
-            return
-        }
+        let saveResult: Bool = moc!.save(&error)
         
-        println("Error saving context: \(error?.localizedDescription)\n\(error?.userInfo)")
-        abort()
+        if (!saveResult) {
+            println("Error saving context: \(error?.localizedDescription)\n\(error?.userInfo)")
+            abort()
+        } else {
+            println("Successfully saved master managed object context")
+        }
     }
 }

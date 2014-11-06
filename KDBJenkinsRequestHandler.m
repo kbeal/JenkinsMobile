@@ -141,7 +141,7 @@
     [operation start];
 }
 
-- (void) importDetailsForJenkinsAtURL:(NSString *) url
+- (void) importDetailsForJenkinsAtURL:(NSString *) url withName:(NSString *) name
 {
     //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job at url: ",jobURL]);
     NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",url,@"/api/json"]];
@@ -154,9 +154,13 @@
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        //NSLog(@"%@%@",@"response received for jenkins at url: ",url);
-        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailResponseReceivedNotification object:self userInfo:responseObject];
+        // jenkinsRoot/api/json doesn't have url, so add it
+        NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:responseObject];
+        [userInfo setObject:url forKey:JenkinsInstanceURLKey];
+        [userInfo setObject:name forKey:JenkinsInstanceNameKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailResponseReceivedNotification object:self userInfo:userInfo];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"%@%@",@"failed to receive response for jenkins at url: ",url);
         if (operation.response) {
             NSMutableDictionary *info = (NSMutableDictionary*)error.userInfo;
             [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
