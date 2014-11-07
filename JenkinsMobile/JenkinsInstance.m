@@ -77,11 +77,15 @@
 - (void)createJobs:(NSArray *) jobValues
 {
     NSMutableSet *currentJobs = (NSMutableSet*)self.rel_Jobs;
+    NSMutableArray *currentJobNames = [[NSMutableArray alloc] init];
+    for (Job *job in currentJobs) {
+        [currentJobNames addObject:job.name];
+    }
+    
     for (NSDictionary *job in jobValues) {
-        NSMutableDictionary *mutjob = [NSMutableDictionary dictionaryWithDictionary:job];
-        [mutjob setObject:self forKey:JobJenkinsInstanceKey];
-        Job *fetchedJob = [Job fetchJobWithName:[mutjob objectForKey:JobNameKey] inManagedObjectContext:self.managedObjectContext];
-        if (fetchedJob==nil) {
+        if (![currentJobNames containsObject:[job objectForKey:JobNameKey]]) {
+            NSMutableDictionary *mutjob = [NSMutableDictionary dictionaryWithDictionary:job];
+            [mutjob setObject:self forKey:JobJenkinsInstanceKey];
             Job *newJob = [Job createJobWithValues:mutjob inManagedObjectContext:self.managedObjectContext];
             [currentJobs addObject:newJob];
         }

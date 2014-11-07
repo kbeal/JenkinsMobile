@@ -130,7 +130,7 @@ class SyncManagerTests: XCTestCase {
     func testJenkinsInstanceSaveValues() {
         var jobs: [Dictionary<String, String>] = []
         
-        for i in 1...3000 {
+        for i in 1...10000 {
             let uuid = NSUUID().UUIDString
             jobs.append([JobNameKey: uuid, JobColorKey: "blue", JobURLKey: "http://www.google.com"])
         }
@@ -147,7 +147,7 @@ class SyncManagerTests: XCTestCase {
           ji.setValues(newvalues)
         })
         
-        XCTAssertEqual(ji.rel_Jobs.count, 3000, "jenkins instance's jobs count is wrong")
+        XCTAssertEqual(ji.rel_Jobs.count, 10000, "jenkins instance's jobs count is wrong")
     }
     
     func testJenkinsInstanceRequestFailed() {
