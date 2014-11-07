@@ -145,6 +145,7 @@
 {
     //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job at url: ",jobURL]);
     NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",url,@"/api/json"]];
+    NSLog(@"%@%@",@"Requesting details for Jenkins at URL: ",[requestURL absoluteString]);
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     //AFNetworking asynchronous url request

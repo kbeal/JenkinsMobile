@@ -134,6 +134,8 @@ import CoreData
         assert(self.masterMOC != nil, "main managed object context not set")
         var values: Dictionary = notification.userInfo!
         let url = values[JenkinsInstanceURLKey] as String
+        
+        NSLog("%@%@","Response received for Jenkins at URL: ",url)
 
         values[JenkinsInstanceCurrentKey] = false
         

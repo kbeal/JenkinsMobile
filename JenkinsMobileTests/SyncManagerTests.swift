@@ -135,11 +135,17 @@ class SyncManagerTests: XCTestCase {
             jobs.append([JobNameKey: uuid, JobColorKey: "blue", JobURLKey: "http://www.google.com"])
         }
         
-        let values = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json", JenkinsInstanceCurrentKey: false]
+        let values = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json", JenkinsInstanceCurrentKey: false, JenkinsInstanceJobsKey: jobs]
         
         let ji = JenkinsInstance.createJenkinsInstanceWithValues(values, inManagedObjectContext: context)
         
-        XCTAssertEqual(ji.rel_Jobs.count, 0, "jenkins instance's jobs count is wrong")
+        XCTAssertEqual(ji.rel_Jobs.count, 10000, "jenkins instance's jobs count is wrong")
+        
+        jobs.removeAll(keepCapacity: true)
+        for i in 1...10000 {
+            let uuid = NSUUID().UUIDString
+            jobs.append([JobNameKey: uuid, JobColorKey: "blue", JobURLKey: "http://www.google.com"])
+        }
         
         let newvalues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json", JenkinsInstanceCurrentKey: false, JenkinsInstanceJobsKey: jobs]
         
@@ -147,7 +153,7 @@ class SyncManagerTests: XCTestCase {
           ji.setValues(newvalues)
         })
         
-        XCTAssertEqual(ji.rel_Jobs.count, 10000, "jenkins instance's jobs count is wrong")
+        XCTAssertEqual(ji.rel_Jobs.count, 20000, "jenkins instance's jobs count is wrong")
     }
     
     func testJenkinsInstanceRequestFailed() {

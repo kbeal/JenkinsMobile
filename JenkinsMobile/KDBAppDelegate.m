@@ -64,6 +64,7 @@
 - (JenkinsInstance *) createJenkinsInstance
 {
     NSString *jenkinsURL = @"https://jenkins.qa.ubuntu.com";
+//    NSString *jenkinsURL = @"https://tomcat:8080/jenkins";
     NSArray *jenkinskeys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
     NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",jenkinsURL,[NSNumber numberWithBool:YES], nil];
     NSDictionary *jenkins = [NSDictionary dictionaryWithObjects:jenkinsvalues forKeys:jenkinskeys];
