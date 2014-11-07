@@ -127,6 +127,29 @@ class SyncManagerTests: XCTestCase {
         XCTAssertEqual(ji.current, 0, "jenkins current should be false")
     }
     
+    func testJenkinsInstanceSaveValues() {
+        var jobs: [Dictionary<String, String>] = []
+        
+        for i in 1...3000 {
+            let uuid = NSUUID().UUIDString
+            jobs.append([JobNameKey: uuid, JobColorKey: "blue", JobURLKey: "http://www.google.com"])
+        }
+        
+        let values = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json", JenkinsInstanceCurrentKey: false]
+        
+        let ji = JenkinsInstance.createJenkinsInstanceWithValues(values, inManagedObjectContext: context)
+        
+        XCTAssertEqual(ji.rel_Jobs.count, 0, "jenkins instance's jobs count is wrong")
+        
+        let newvalues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json", JenkinsInstanceCurrentKey: false, JenkinsInstanceJobsKey: jobs]
+        
+        self.measureBlock({
+          ji.setValues(newvalues)
+        })
+        
+        XCTAssertEqual(ji.rel_Jobs.count, 3000, "jenkins instance's jobs count is wrong")
+    }
+    
     func testJenkinsInstanceRequestFailed() {
         let requestFailureExpectation = expectationWithDescription("JenkinsInstance will be deleted")
         let url = NSURL(string: "http://www.google.com/api/json")
