@@ -83,6 +83,7 @@ import CoreData
     
     func syncJob(url: NSURL) {
         assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
+        NSLog("%@%@", "Sending request for details for Job at URL: ",url.absoluteString!)
         self.requestHandler!.importDetailsForJobWithURL(url)
     }
     
@@ -90,6 +91,9 @@ import CoreData
         assert(self.mainMOC != nil, "main managed object context not set")
         let values: NSDictionary = notification.userInfo!
         let name = values[JobNameKey] as String
+        let url = values[JobURLKey] as String
+        
+        NSLog("%@%@", "Response received for Job at URL: ",url)
         
         // Fetch job based on name
         let job: Job? = Job.fetchJobWithName(name, inManagedObjectContext: self.mainMOC)
@@ -152,6 +156,8 @@ import CoreData
             
             self.saveMasterContext()
         })
+        
+        syncAllJobs()
     }
     
     func jenkinsInstanceDetailRequestFailed(notification: NSNotification) {
