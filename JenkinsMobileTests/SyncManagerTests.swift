@@ -33,6 +33,8 @@ class SyncManagerTests: XCTestCase {
         let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json", JenkinsInstanceCurrentKey: false]
         
         context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: self.context)})
+        
+        mgr.currentJenkinsInstance = jenkinsInstance
     }
     
     func testSharedInstance() {
@@ -161,7 +163,7 @@ class SyncManagerTests: XCTestCase {
         let fetchreq2 = NSFetchRequest()
         fetchreq2.entity = NSEntityDescription.entityForName("JenkinsInstance", inManagedObjectContext: context!)
         fetchreq2.includesPropertyValues = false
-        let jenkinss2 = context?.executeFetchRequest(fetchreq2, error: nil)        
+        let jenkinss2 = context?.executeFetchRequest(fetchreq2, error: nil) 
         XCTAssertEqual(jenkinss2!.count, 0, "jenkinss count is wrong. should  be 0 got: \(jenkinss2!.count) instead")
         
     }

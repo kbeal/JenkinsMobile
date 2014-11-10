@@ -163,7 +163,7 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"%@%@",@"failed to receive response for jenkins at url: ",url);
         if (operation.response) {
-            NSMutableDictionary *info = (NSMutableDictionary*)error.userInfo;
+            NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
             [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
             [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailRequestFailedNotification object:self userInfo:info];
         }
