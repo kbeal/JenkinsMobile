@@ -27,12 +27,15 @@
     [notificationCenter addObserver:self selector:@selector(contextChanged:) name:NSManagedObjectContextDidSaveNotification object:self.masterMOC];
     [self mainMOC];
     
-    JenkinsInstance *jinstance = [self createJenkinsInstance];
     SyncManager *mgr = [SyncManager sharedInstance];
+    
+    NSURL *jenkinsURL = [NSURL URLWithString:@"https://jenkins.qa.ubuntu.com"];
+    
+    [self createJenkinsInstanceWithURL:jenkinsURL];
     mgr.requestHandler = [[KDBJenkinsRequestHandler alloc] init];
-    [mgr setCurrentJenkinsInstance:jinstance];
     mgr.masterMOC = self.masterMOC;
     mgr.mainMOC = self.mainMOC;
+    mgr.currentJenkinsInstanceURL = jenkinsURL;
     
     /*
     KDBJenkinsRequestHandler *handler = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:jinstance];
@@ -61,21 +64,17 @@
     return YES;
 }
 
-- (JenkinsInstance *) createJenkinsInstance
+- (void) createJenkinsInstanceWithURL:(NSURL *) url
 {
-    NSString *jenkinsURL = @"https://jenkins.qa.ubuntu.com";
-//    NSString *jenkinsURL = @"https://tomcat:8080/jenkins";
     NSArray *jenkinskeys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
-    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",jenkinsURL,[NSNumber numberWithBool:YES], nil];
+    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",[url absoluteString],[NSNumber numberWithBool:YES], nil];
     NSDictionary *jenkins = [NSDictionary dictionaryWithObjects:jenkinsvalues forKeys:jenkinskeys];
     
-    JenkinsInstance *jinstance = [JenkinsInstance fetchJenkinsInstanceWithURL:jenkinsURL fromManagedObjectContext:self.mainMOC];
+    JenkinsInstance *jinstance = [JenkinsInstance fetchJenkinsInstanceWithURL:[url absoluteString] fromManagedObjectContext:self.mainMOC];
     if (jinstance == nil) {
         jinstance = [JenkinsInstance createJenkinsInstanceWithValues:jenkins inManagedObjectContext:self.mainMOC];
         [self saveMainContext];
     }
-    
-    return jinstance;
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions

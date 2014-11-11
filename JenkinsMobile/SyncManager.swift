@@ -15,12 +15,10 @@ import CoreData
     var mainMOC: NSManagedObjectContext?
     private var jobSyncQueue = UniqueQueue()
     private var jobSyncTimer: NSTimer?
-    var currentJenkinsInstance: JenkinsInstance? {
-        willSet {
-            jobSyncQueue.removeAll()
-        }
+    private var currentJenkinsInstance: JenkinsInstance?
+    var currentJenkinsInstanceURL: NSURL? {
         didSet {
-            syncCurrentJenkinsInstance()   
+            fetchNewJenkinsInstance()
         }
     }
     //var currentBuilds: NSMutableArray
@@ -35,7 +33,7 @@ import CoreData
     }
     
     public init() {
-        jobSyncTimer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: Selector("jobSyncTimerTick"), userInfo: nil, repeats: true)
+        jobSyncTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("jobSyncTimerTick"), userInfo: nil, repeats: true)
         initObservers()
         /*
         self.masterMOC = masterManagedObjectContext
@@ -52,9 +50,26 @@ import CoreData
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceDetailRequestFailed:"), name: JenkinsInstanceDetailRequestFailedNotification, object: nil)
     }
     
+    // called after setting a new currentJenkinsInstanceURL
+    // fetches the JenkinsInstance with this URL into the masterMOC
+    func fetchNewJenkinsInstance() {
+        assert(self.masterMOC != nil, "master MOC is nil!!")
+        if currentJenkinsInstanceURL != nil {
+            self.masterMOC?.performBlockAndWait({
+                self.currentJenkinsInstance = JenkinsInstance.fetchJenkinsInstanceWithURL(self.currentJenkinsInstanceURL!.absoluteString, fromManagedObjectContext: self.masterMOC)
+                self.jobSyncQueue.removeAll()
+                self.syncAllJobs()
+            })
+        }
+    }
+    
     func jobSyncTimerTick() {
         if (jobSyncQueue.count() > 0) {
-            syncJob(NSURL(string: jobSyncQueue.pop()!)!)
+            // Build the job's URL from the currentJenkinsInstance and jobName
+            // Kick off a sync for that job
+            self.masterMOC?.performBlock({
+                self.syncJob(NSURL(string: self.currentJenkinsInstance!.url + "/job/" + self.jobSyncQueue.pop()!)!)
+            })
         }
     }
     
@@ -88,25 +103,30 @@ import CoreData
     }
     
     func jobDetailResponseReceived(notification: NSNotification) {
-        assert(self.mainMOC != nil, "main managed object context not set")
-        let values: NSDictionary = notification.userInfo!
+        assert(self.masterMOC != nil, "master managed object context not set")
+        var values: Dictionary = notification.userInfo!
         let name = values[JobNameKey] as String
         let url = values[JobURLKey] as String
         
         NSLog("%@%@", "Response received for Job at URL: ",url)
         
-        // Fetch job based on name
-        let job: Job? = Job.fetchJobWithName(name, inManagedObjectContext: self.mainMOC)
-        // create if it doesn't exist
-        if (job==nil) {
-            assert(self.masterMOC != nil, "master managed object context not set");
-            Job.createJobWithValues(values, inManagedObjectContext: self.masterMOC)
-        } else {
-            // update it\s values
-            job!.setValues(values)
-        }
+        //TODO: re-think this. What if notification comes in after
+        // current instance is swapped?
+        values[JobJenkinsInstanceKey] = currentJenkinsInstance
         
-        self.saveMasterContext()
+        self.masterMOC?.performBlockAndWait({
+            // Fetch job based on name
+            let job: Job? = Job.fetchJobWithName(name, inManagedObjectContext: self.masterMOC)
+            // create if it doesn't exist
+            if (job==nil) {
+                println(values)
+                Job.createJobWithValues(values, inManagedObjectContext: self.masterMOC)
+            } else {
+                // update it\s values
+                job!.setValues(values)
+            }
+            self.saveMasterContext()
+        })        
     }
     
     func jobDetailRequestFailed(notification: NSNotification) {

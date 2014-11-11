@@ -34,7 +34,7 @@ class SyncManagerTests: XCTestCase {
         
         context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: self.context)})
         
-        mgr.currentJenkinsInstance = jenkinsInstance
+        mgr.currentJenkinsInstanceURL = NSURL(string: jenkinsInstance!.url)
     }
     
     func testSharedInstance() {
@@ -60,7 +60,7 @@ class SyncManagerTests: XCTestCase {
         self.jenkinsInstance?.addRel_JobsObject(job4)
         self.jenkinsInstance?.addRel_JobsObject(job5)
 
-        mgr.currentJenkinsInstance = self.jenkinsInstance
+        mgr.currentJenkinsInstanceURL = NSURL(string: self.jenkinsInstance!.url)
         mgr.syncAllJobs()
         XCTAssertEqual(mgr.jobSyncQueueSize(), 5, "sync manager's jobSyncQueueSize is wrong")
     }
@@ -215,19 +215,19 @@ class SyncManagerTests: XCTestCase {
     }
     
     func testJobDetailResponseReceived() {
-        let build1Obj = ["number": 1, "url": "http://www.google.com"]
-        let downstreamObj1 = ["name": "Job2", "color": "blue", "url":"http://www.google.com"]
+        let build1Obj = ["number": 1, "url": "http://www.google.com/job/Job1/build/1"]
+        let downstreamObj1 = ["name": "Job2", "color": "blue", "url":"http://www.ask.com"]
         let downstreamObj2 = ["name": "Job3", "color": "green", "url":"http://www.yahoo.com"]
         let upstreamObj1 = ["name": "Job4", "color": "red", "url":"http://www.bing.com"]
         let downstreamProjects = [downstreamObj1, downstreamObj2]
         let upstreamProjects = [upstreamObj1]
         let healthReport = ["iconUrl": "health-80plus.png"]
-        let activeConf1 = ActiveConfiguration(name:"conf1",color:"blue",andURL:"http://www.google.com")
+        let activeConf1 = ActiveConfiguration(name:"conf1",color:"blue",andURL:"http://www.altavista.com")
         let activeConf2 = ActiveConfiguration(name:"conf2",color:"red",andURL:"http://www.yahoo.com")
         let activeConfs = [activeConf1,activeConf2]
         let testImage = UIImage(named: "blue.png")
         
-        let userInfo = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobBuildableKey: true, JobConcurrentBuildKey: false, JobDisplayNameKey: "Job1", JobFirstBuildKey: build1Obj, JobLastBuildKey: build1Obj, JobLastCompletedBuildKey: build1Obj, JobLastFailedBuildKey: build1Obj, JobLastStableBuildKey: build1Obj, JobLastSuccessfulBuildKey: build1Obj,JobLastUnstableBuildKey: build1Obj, JobLastUnsucessfulBuildKey: build1Obj, JobNextBuildNumberKey: 2, JobInQueueKey: false, JobDescriptionKey: "Job1 Description", JobKeepDependenciesKey: false, JobJenkinsInstanceKey: jenkinsInstance!, JobDownstreamProjectsKey: downstreamProjects, JobUpstreamProjectsKey: upstreamProjects, JobHealthReportKey: healthReport, JobActiveConfigurationsKey: activeConfs, JobLastSyncKey: NSDate()]
+        let userInfo = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/Job1", JobBuildableKey: true, JobConcurrentBuildKey: false, JobDisplayNameKey: "Job1", JobFirstBuildKey: build1Obj, JobLastBuildKey: build1Obj, JobLastCompletedBuildKey: build1Obj, JobLastFailedBuildKey: build1Obj, JobLastStableBuildKey: build1Obj, JobLastSuccessfulBuildKey: build1Obj,JobLastUnstableBuildKey: build1Obj, JobLastUnsucessfulBuildKey: build1Obj, JobNextBuildNumberKey: 2, JobInQueueKey: false, JobDescriptionKey: "Job1 Description", JobKeepDependenciesKey: false, JobJenkinsInstanceKey: jenkinsInstance!, JobDownstreamProjectsKey: downstreamProjects, JobUpstreamProjectsKey: upstreamProjects, JobHealthReportKey: healthReport, JobActiveConfigurationsKey: activeConfs, JobLastSyncKey: NSDate()]
         let notification = NSNotification(name: JobDetailResponseReceivedNotification, object: self, userInfo: userInfo)
         
         mgr.jobDetailResponseReceived(notification)
@@ -244,7 +244,7 @@ class SyncManagerTests: XCTestCase {
         XCTAssertEqual(jobs!.count, 1, "jobs count is wrong. Should be 1 got: \(jobs!.count) instead")
         XCTAssertEqual(job.name, "Job1", "job name is wrong. should be Job1, got: \(job.name) instead")
         XCTAssertEqual(job.color, "blue", "job color is wrong. should be blue, got: \(job.color) instead")
-        XCTAssertEqual(job.url, "http://www.google.com", "job url is wrong. should be http://www.google.com, got: \(job.url) instead")
+        XCTAssertEqual(job.url, "http://www.google.com/job/Job1", "job url is wrong. should be http://www.google.com, got: \(job.url) instead")
         XCTAssertEqual(job.buildable, true, "job should be buildable")
         XCTAssertEqual(job.concurrentBuild, false, "job should not be a concurrent build")
         XCTAssertEqual(job.displayName, "Job1", "job displayName is wrong")
