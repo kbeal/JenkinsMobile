@@ -22,7 +22,7 @@ public class UniqueQueue {
     init() {}
     
     func count() -> Int {
-        assertCount()
+        assertCount("count")
         return itemsArray.count
     }
     
@@ -33,7 +33,7 @@ public class UniqueQueue {
             itemsArray.append(newItem)
             itemsDict[newItem] = true
         }
-        assertCount()
+        assertCount("push")
     }
     
     func pop() -> String? {
@@ -43,13 +43,13 @@ public class UniqueQueue {
             let itm = itemsArray[0]
             itemsArray.removeAtIndex(0)
             itemsDict.removeValueForKey(itm)
-            assertCount()
+            assertCount("pop")
             return itm
         }
     }
     
-    func assertCount() {
-        assert(itemsArray.count==itemsDict.count, "UniqueQueue array and dictionary not in Sync!!")
+    func assertCount(caller: String) {
+        assert(itemsArray.count==itemsDict.count, "\(caller) UniqueQueue array \(itemsArray.count) and dictionary \(itemsDict.count) not in Sync!!")
     }
     
     func removeAll() {

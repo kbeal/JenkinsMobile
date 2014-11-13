@@ -72,17 +72,16 @@ class SyncManagerTests: XCTestCase {
         XCTAssertFalse(job.shouldSync(), "shouldsync should be false")
     }
     
-    func testJenkinsInstanceDetailResponseReceived() {
+    func testJenkinsInstanceFindOrCreated() {
         let jobObj1 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com"]
         let jobObj2 = [JobNameKey: "Job2", JobColorKey: "red", JobURLKey: "http://www.yahoo.com"]
         let jobObj3 = [JobNameKey: "Job3", JobColorKey: "green", JobURLKey: "http://www.bing.com"]
         let jobObj4 = [JobNameKey: "Job4", JobColorKey: "grey", JobURLKey: "http://www.amazon.com"]
         let jobs = [jobObj1, jobObj2, jobObj3, jobObj4]
         
-        let userInfo = [JenkinsInstanceNameKey: "QA Ubuntu", JenkinsInstanceURLKey: "https://jenkins.qa.ubuntu.com/", JenkinsInstanceJobsKey: jobs, JenkinsInstanceCurrentKey: false]
-        let notification = NSNotification(name: JenkinsInstanceDetailResponseReceivedNotification, object: self, userInfo: userInfo)
-        
-        mgr.jenkinsInstanceDetailResponseReceived(notification)
+        let values = [JenkinsInstanceNameKey: "QA Ubuntu", JenkinsInstanceURLKey: "https://jenkins.qa.ubuntu.com/", JenkinsInstanceJobsKey: jobs, JenkinsInstanceCurrentKey: false]
+
+        JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values, inManagedObjectContext: context!)
         
         
         let fetchreq = NSFetchRequest()

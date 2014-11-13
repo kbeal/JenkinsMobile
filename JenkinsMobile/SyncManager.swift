@@ -33,7 +33,7 @@ import CoreData
     }
     
     public init() {
-        jobSyncTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("jobSyncTimerTick"), userInfo: nil, repeats: true)
+        //jobSyncTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("jobSyncTimerTick"), userInfo: nil, repeats: true)
         initObservers()
         /*
         self.masterMOC = masterManagedObjectContext
@@ -58,7 +58,7 @@ import CoreData
             self.masterMOC?.performBlockAndWait({
                 self.currentJenkinsInstance = JenkinsInstance.fetchJenkinsInstanceWithURL(self.currentJenkinsInstanceURL!.absoluteString, fromManagedObjectContext: self.masterMOC)
                 self.jobSyncQueue.removeAll()
-                self.syncAllJobs()
+                self.syncCurrentJenkinsInstance()
             })
         }
     }
@@ -70,6 +70,8 @@ import CoreData
             self.masterMOC?.performBlock({
                 self.syncJob(NSURL(string: self.currentJenkinsInstance!.url + "/job/" + self.jobSyncQueue.pop()!)!)
             })
+        } else {
+            println("No more jobs to sync!!")
         }
     }
     
@@ -163,7 +165,10 @@ import CoreData
 
         values[JenkinsInstanceCurrentKey] = false
         
-        self.masterMOC?.performBlockAndWait({
+        self.masterMOC?.performBlock({
+            JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values, inManagedObjectContext: self.masterMOC)
+            
+            /* TODO: This will need deleted
             // Fetch instance based on url
             let jenkinsInstance: JenkinsInstance? = JenkinsInstance.fetchJenkinsInstanceWithURL(url, fromManagedObjectContext: self.masterMOC)
             //create if it doesn't exist
@@ -172,12 +177,11 @@ import CoreData
             } else {
                 // update its values
                 jenkinsInstance!.setValues(values)
-            }
+            }*/
             
             self.saveMasterContext()
+            NSLog("%@%@","Saved details for Jenkins at URL: ",url)
         })
-        
-        syncAllJobs()
     }
     
     func jenkinsInstanceDetailRequestFailed(notification: NSNotification) {

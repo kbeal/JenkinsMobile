@@ -19,33 +19,39 @@
 @dynamic rel_Jobs;
 @dynamic rel_Views;
 
++ (JenkinsInstance *)findOrCreateJenkinsInstanceWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context
+{
+    JenkinsInstance *instance = [JenkinsInstance fetchJenkinsInstanceWithURL:[values objectForKey:JenkinsInstanceURLKey] fromManagedObjectContext:context];
+    if (instance==nil) {
+        instance = [JenkinsInstance createJenkinsInstanceWithValues:values inManagedObjectContext:context];
+    } else {
+        [instance setValues:values];
+    }
+    
+    return instance;
+}
+
 + (JenkinsInstance *)createJenkinsInstanceWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    __block JenkinsInstance *instance = nil;
-    
-    [context performBlockAndWait:^{
-        instance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:context];
-        [instance setValues:values];
-    }];
+    JenkinsInstance *instance = [NSEntityDescription insertNewObjectForEntityForName:@"JenkinsInstance" inManagedObjectContext:context];
+
+    [instance setValues:values];
     
     return instance;
 }
 
 + (JenkinsInstance *)fetchJenkinsInstanceWithURL: (NSString *) url fromManagedObjectContext: (NSManagedObjectContext *) context
 {
-    __block JenkinsInstance *instance = nil;
+    JenkinsInstance *instance = nil;
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    
-    [context performBlockAndWait:^{
-        request.entity = [NSEntityDescription entityForName:@"JenkinsInstance" inManagedObjectContext:context];
-        request.predicate = [NSPredicate predicateWithFormat:@"url = %@", url];
-        NSError *executeFetchError = nil;
-        instance = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
+    request.entity = [NSEntityDescription entityForName:@"JenkinsInstance" inManagedObjectContext:context];
+    request.predicate = [NSPredicate predicateWithFormat:@"url = %@", url];
+    NSError *executeFetchError = nil;
+    instance = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
         
-        if (executeFetchError) {
-            NSLog(@"[%@, %@] error looking up JenkinsInstance with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), url, [executeFetchError localizedDescription]);
-        }
-    }];
+    if (executeFetchError) {
+        NSLog(@"[%@, %@] error looking up JenkinsInstance with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), url, [executeFetchError localizedDescription]);
+    }
     
     return instance;
 }
