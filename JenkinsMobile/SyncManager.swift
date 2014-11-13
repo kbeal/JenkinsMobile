@@ -68,7 +68,9 @@ import CoreData
             // Build the job's URL from the currentJenkinsInstance and jobName
             // Kick off a sync for that job
             self.masterMOC?.performBlock({
-                self.syncJob(NSURL(string: self.currentJenkinsInstance!.url + "/job/" + self.jobSyncQueue.pop()!)!)
+                let jobname = self.jobSyncQueue.pop()!.stringByAddingPercentEncodingWithAllowedCharacters(.URLPathAllowedCharacterSet())
+                let fullurl = self.currentJenkinsInstance!.url + "/job/" + jobname!
+                self.syncJob(NSURL(string: fullurl)!)
             })
         } else {
             println("No more jobs to sync!!")
