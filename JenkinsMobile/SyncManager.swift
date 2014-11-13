@@ -33,7 +33,7 @@ import CoreData
     }
     
     public init() {
-        //jobSyncTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("jobSyncTimerTick"), userInfo: nil, repeats: true)
+        jobSyncTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("jobSyncTimerTick"), userInfo: nil, repeats: true)
         initObservers()
         /*
         self.masterMOC = masterManagedObjectContext
@@ -81,10 +81,12 @@ import CoreData
         // queue all jobs for current Jenkins Instance to sync
         assert(self.currentJenkinsInstance != nil, "sync managers currentJenkinsInstance is nil!!")
 
-        let allJobs = currentJenkinsInstance!.rel_Jobs
-        for job in allJobs {
-            jobSyncQueue.push(job.name)
-        }
+        masterMOC?.performBlock({
+            let allJobs = self.currentJenkinsInstance!.rel_Jobs
+            for job in allJobs {
+                self.jobSyncQueue.push(job.name)
+            }
+        })
     }
     
     func syncCurrentJenkinsInstance() {
@@ -167,21 +169,11 @@ import CoreData
         
         self.masterMOC?.performBlock({
             JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values, inManagedObjectContext: self.masterMOC)
-            
-            /* TODO: This will need deleted
-            // Fetch instance based on url
-            let jenkinsInstance: JenkinsInstance? = JenkinsInstance.fetchJenkinsInstanceWithURL(url, fromManagedObjectContext: self.masterMOC)
-            //create if it doesn't exist
-            if (jenkinsInstance==nil) {
-                JenkinsInstance.createJenkinsInstanceWithValues(values, inManagedObjectContext: self.masterMOC)
-            } else {
-                // update its values
-                jenkinsInstance!.setValues(values)
-            }*/
-            
             self.saveMasterContext()
             NSLog("%@%@","Saved details for Jenkins at URL: ",url)
         })
+        
+        syncAllJobs()
     }
     
     func jenkinsInstanceDetailRequestFailed(notification: NSNotification) {

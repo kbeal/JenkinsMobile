@@ -41,30 +41,6 @@ class SyncManagerTests: XCTestCase {
         XCTAssertNotNil(mgr, "shared instance is nil")
     }
     
-    func testSyncAllJobs() {
-        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com"]
-        let job2vals = [JobNameKey: "Job2", JobColorKey: "green", JobURLKey: "http://www.weather.com"]
-        let job3vals = [JobNameKey: "Job3", JobColorKey: "red", JobURLKey: "http://www.bing.com"]
-        let job4vals = [JobNameKey: "Job4", JobColorKey: "yellow", JobURLKey: "http://www.google.com"]
-        let job5vals = [JobNameKey: "Job5", JobColorKey: "blue", JobURLKey: "http://www.yahoo.com"]
-        
-        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: self.mgr.mainMOC)
-        let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: self.mgr.mainMOC)
-        let job3 = Job.createJobWithValues(job3vals, inManagedObjectContext: self.mgr.mainMOC)
-        let job4 = Job.createJobWithValues(job4vals, inManagedObjectContext: self.mgr.mainMOC)
-        let job5 = Job.createJobWithValues(job5vals, inManagedObjectContext: self.mgr.mainMOC)
-        
-        self.jenkinsInstance?.addRel_JobsObject(job1)
-        self.jenkinsInstance?.addRel_JobsObject(job2)
-        self.jenkinsInstance?.addRel_JobsObject(job3)
-        self.jenkinsInstance?.addRel_JobsObject(job4)
-        self.jenkinsInstance?.addRel_JobsObject(job5)
-
-        mgr.currentJenkinsInstanceURL = NSURL(string: self.jenkinsInstance!.url)
-        mgr.syncAllJobs()
-        XCTAssertEqual(mgr.jobSyncQueueSize(), 5, "sync manager's jobSyncQueueSize is wrong")
-    }
-    
     func testJobShouldSync() {
         let jobvals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobLastSyncKey: NSDate()]
         let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
@@ -98,6 +74,7 @@ class SyncManagerTests: XCTestCase {
         XCTAssertEqual(ji.current, 0, "jenkins current should be false")
     }
     
+    /*
     func testJenkinsInstanceSaveValues() {
         var jobs: [Dictionary<String, String>] = []
         
@@ -125,7 +102,7 @@ class SyncManagerTests: XCTestCase {
         })
         
         XCTAssertEqual(ji.rel_Jobs.count, 20000, "jenkins instance's jobs count is wrong")
-    }
+    }*/
     
     func testJenkinsInstanceRequestFailed() {
         let requestFailureExpectation = expectationWithDescription("JenkinsInstance will be deleted")
