@@ -131,11 +131,12 @@
         //NSLog(@"%@%@",@"response received for job at url: ",jobURL);
         [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailResponseReceivedNotification object:self userInfo:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
-        //NSDictionary *info = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:jobName,self.jinstance.url,error, nil] forKeys:[NSArray arrayWithObjects:JobNameKey, JenkinsInstanceURLKey, JobRequestErrorKey, nil]];
-        
-        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
-        [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailRequestFailedNotification object:self userInfo:error.userInfo];
+        NSLog(@"%@%@",@"failed to receive response for job at url: ",[jobURL absoluteString]);
+        if (operation.response) {
+            NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
+            [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
+            [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailRequestFailedNotification object:self userInfo:info];
+        }
     }];
     
     [operation start];
