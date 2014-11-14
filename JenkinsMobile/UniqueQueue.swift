@@ -18,43 +18,55 @@ public class UniqueQueue {
     
     var itemsDict = Dictionary<String,Bool>()
     var itemsArray: [String] = []
+    let lockQueue = dispatch_queue_create("com.kylebeal.JenkinsMobile.UniqueQueue.LockQueue", DISPATCH_QUEUE_SERIAL)
     
     init() {}
     
     func count() -> Int {
-        assertCount("count")
-        return itemsArray.count
+        var cnt: Int?
+        dispatch_sync(lockQueue, {
+            self.assertCount("count")
+            cnt = self.itemsArray.count
+        })
+        return cnt!
     }
     
     func push(newItem: String) {
-        if let existingItem = itemsDict[newItem] {
-            return
-        } else {
-            itemsArray.append(newItem)
-            itemsDict[newItem] = true
-        }
-        assertCount("push")
+        dispatch_sync(lockQueue, {
+            if let existingItem = self.itemsDict[newItem] {
+                return
+            } else {
+                self.itemsArray.append(newItem)
+                self.itemsDict[newItem] = true
+            }
+            self.assertCount("push")
+        })
     }
     
     func pop() -> String? {
-        if itemsArray.count == 0 {
-            return nil
-        } else {
-            let itm = itemsArray[0]
-            itemsArray.removeAtIndex(0)
-            itemsDict.removeValueForKey(itm)
-            assertCount("pop")
-            return itm
-        }
+        var itm: String?
+        dispatch_sync(lockQueue, {
+            if self.itemsArray.count == 0 {
+                itm = nil
+            } else {
+                itm = self.itemsArray[0]
+                self.itemsArray.removeAtIndex(0)
+                self.itemsDict.removeValueForKey(itm!)
+                self.assertCount("pop")
+            }
+        })
+        return itm
     }
     
     func assertCount(caller: String) {
-        assert(itemsArray.count==itemsDict.count, "\(caller) UniqueQueue array \(itemsArray.count) and dictionary \(itemsDict.count) not in Sync!!")
+        assert(self.itemsArray.count==self.itemsDict.count, "\(caller) UniqueQueue array \(self.itemsArray.count) and dictionary \(self.itemsDict.count) not in Sync!!")
     }
     
     func removeAll() {
-        itemsArray.removeAll(keepCapacity: false)
-        itemsDict.removeAll(keepCapacity: false)
+        dispatch_sync(lockQueue, {
+            self.itemsArray.removeAll(keepCapacity: false)
+            self.itemsDict.removeAll(keepCapacity: false)
+        })
     }
     
 }
