@@ -190,7 +190,7 @@ import CoreData
             // find the jenkins instance
             var jenkins: JenkinsInstance?
             self.masterMOC?.performBlockAndWait({
-                jenkins = JenkinsInstance.fetchJenkinsInstanceWithURL(url.absoluteString, fromManagedObjectContext: self.masterMOC)
+                jenkins = JenkinsInstance.fetchJenkinsInstanceWithURL(JenkinsInstance.removeApiFromURL(url), fromManagedObjectContext: self.masterMOC)
             })
             // if it exists delete it
             if jenkins != nil {

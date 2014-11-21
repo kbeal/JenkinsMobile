@@ -30,7 +30,7 @@ class SyncManagerTests: XCTestCase {
         mgr.masterMOC = context;
         mgr.requestHandler = requestHandler
         
-        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json", JenkinsInstanceCurrentKey: false]
+        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com", JenkinsInstanceCurrentKey: false]
         
         context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: self.context)})
         
@@ -106,8 +106,8 @@ class SyncManagerTests: XCTestCase {
     
     func testJenkinsInstanceRequestFailed() {
         let requestFailureExpectation = expectationWithDescription("JenkinsInstance will be deleted")
-        let url = NSURL(string: "http://www.google.com/api/json")
-        let request = NSURLRequest(URL: url!)
+        let url = NSURL(string: "http://www.google.com")
+        let request = NSURLRequest(URL: NSURL(string: "/api/json", relativeToURL: url)!)
         let operation = AFHTTPRequestOperation(request: request)
         let serializer = AFJSONResponseSerializer()
         operation.responseSerializer = serializer

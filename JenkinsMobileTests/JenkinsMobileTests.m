@@ -567,6 +567,16 @@
     XCTAssertEqualObjects(@"Job2", [Job jobNameFromURL:url2]);
 }
 
+- (void) testRemoveApiFromJenkinsURL
+{
+    NSString *url1str = @"http://www.google.com/api/json";
+    NSString *url2str = @"http://www.google.com/ci/jenkins/api/json";
+    NSURL *url1 = [NSURL URLWithString:url1str];
+    NSURL *url2 = [NSURL URLWithString:url2str];
+    XCTAssertEqualObjects(@"http://www.google.com", [JenkinsInstance removeApiFromURL:url1]);
+    XCTAssertEqualObjects(@"http://www.google.com/ci/jenkins", [JenkinsInstance removeApiFromURL:url2]);
+}
+
 - (void) deleteAllRecordsForEntity: (NSString *) entityName
 {
     NSFetchRequest * allRecords = [[NSFetchRequest alloc] init];
