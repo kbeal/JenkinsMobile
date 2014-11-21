@@ -18,7 +18,7 @@ import CoreData
     private var currentJenkinsInstance: JenkinsInstance?
     var currentJenkinsInstanceURL: NSURL? {
         didSet {
-            fetchNewJenkinsInstance()
+            switchJenkinsInstance()
         }
     }
     //var currentBuilds: NSMutableArray
@@ -52,7 +52,7 @@ import CoreData
     
     // called after setting a new currentJenkinsInstanceURL
     // fetches the JenkinsInstance with this URL into the masterMOC
-    func fetchNewJenkinsInstance() {
+    func switchJenkinsInstance() {
         assert(self.masterMOC != nil, "master MOC is nil!!")
         if currentJenkinsInstanceURL != nil {
             self.masterMOC?.performBlockAndWait({
