@@ -21,6 +21,7 @@
 @dynamic view_description;
 @dynamic rel_View_JenkinsInstance;
 @dynamic rel_View_Jobs;
+@dynamic rel_View_Views;
 
 + (View *)createViewWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forJenkinsInstance:(NSString *) jenkinsURL
 {
@@ -70,6 +71,26 @@
     self.view_description = NULL_TO_NIL([values objectForKey:@"description"]);
     self.rel_View_JenkinsInstance = NULL_TO_NIL([values objectForKey:@"jenkinsInstance"]);
     [self setRel_View_Jobs:[self createJobsFromViewValues:[values objectForKey:@"jobs"]]];
+    [self createChildViews:[values objectForKey:ViewViewsKey]];
+}
+
+- (void) createChildViews: (NSArray *) viewsArray
+{
+    NSMutableSet *currentChildViews = (NSMutableSet*)self.rel_View_Views;
+    NSMutableArray *currentChildViewsURLs = [[NSMutableArray alloc] init];
+    for (View *view in currentChildViews) {
+        [currentChildViewsURLs addObject:view.url];
+    }
+    
+    for (NSDictionary *childView in viewsArray) {
+        if (![currentChildViewsURLs containsObject:[childView objectForKey:ViewURLKey]]) {
+            NSMutableDictionary *mutchildView = [NSMutableDictionary dictionaryWithDictionary:childView];
+            [mutchildView setObject:self.rel_View_JenkinsInstance forKey:ViewJenkinsInstanceKey];
+            JenkinsInstance *ji = (JenkinsInstance*)self.rel_View_JenkinsInstance;
+            View *newView = [View createViewWithValues:mutchildView inManagedObjectContext:self.managedObjectContext forJenkinsInstance:ji.url];
+            [currentChildViews addObject:newView];
+        }
+    }
 }
 
 - (NSSet *) createJobsFromViewValues: (NSArray *) jobsArray

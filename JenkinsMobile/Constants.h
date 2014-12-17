@@ -20,6 +20,15 @@ extern NSString * const JobDetailRequestFailedNotification;
 extern NSString * const BuildProgressResponseReceivedNotification;
 extern NSString * const JobTestResultsImageResponseReceivedNotification;
 
+// View keys
+extern NSString * const ViewURLKey;
+extern NSString * const ViewNameKey;
+extern NSString * const ViewDescriptionKey;
+extern NSString * const ViewPropertyKey;
+extern NSString * const ViewJobsKey;
+extern NSString * const ViewViewsKey;
+extern NSString * const ViewJenkinsInstanceKey;
+
 // Job keys
 extern NSString * const JobURLKey;
 extern NSString * const JobActiveConfigurationsKey;

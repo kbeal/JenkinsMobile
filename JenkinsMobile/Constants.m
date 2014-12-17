@@ -21,6 +21,15 @@ NSString * const JobTestResultsImageResponseReceivedNotification = @"JobTestResu
 NSString * const JenkinsInstanceDetailResponseReceivedNotification = @"JenkinsInstanceDetailResponseReceived";
 NSString * const JenkinsInstanceDetailRequestFailedNotification = @"JenkinsInstanceDetailRequestFailed";
 
+// View Keys
+NSString * const ViewURLKey = @"url";
+NSString * const ViewNameKey = @"name";
+NSString * const ViewDescriptionKey = @"description";
+NSString * const ViewPropertyKey = @"property";
+NSString * const ViewJobsKey = @"jobs";
+NSString * const ViewViewsKey = @"views";
+NSString * const ViewJenkinsInstanceKey = @"jenkinsInstance";
+
 // Job Keys
 NSString * const JobURLKey = @"url";
 NSString * const JobActiveConfigurationsKey = @"activeConfigurations";
