@@ -58,12 +58,13 @@
     self.view_description = NULL_TO_NIL([values objectForKey:@"description"]);
     self.rel_View_JenkinsInstance = NULL_TO_NIL([values objectForKey:@"jenkinsInstance"]);
     [self setRel_View_Jobs:[self createJobsFromViewValues:[values objectForKey:@"jobs"]]];
-    [self createChildViews:[values objectForKey:ViewViewsKey]];
+    [self createChildViews:NULL_TO_NIL([values objectForKey:ViewViewsKey])];
 }
 
 - (void) createChildViews: (NSArray *) viewsArray
 {
     NSMutableSet *currentChildViews = (NSMutableSet*)self.rel_View_Views;
+    
     NSMutableArray *currentChildViewsURLs = [[NSMutableArray alloc] init];
     for (View *view in currentChildViews) {
         [currentChildViewsURLs addObject:view.url];
@@ -75,6 +76,7 @@
             [mutchildView setObject:self.rel_View_JenkinsInstance forKey:ViewJenkinsInstanceKey];
             View *newView = [View createViewWithValues:mutchildView inManagedObjectContext:self.managedObjectContext];
             [currentChildViews addObject:newView];
+            [currentChildViewsURLs addObject:newView.url];
         }
     }
 }

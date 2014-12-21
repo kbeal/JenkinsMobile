@@ -542,7 +542,6 @@
     XCTAssert(new_cnt==0, @"wrong build count after delete");
 }
 
-/*
 - (void) testNestedViews
 {
     NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
@@ -552,9 +551,9 @@
     
     NSArray *viewKeys = [NSArray arrayWithObjects:ViewNameKey,ViewURLKey,ViewPropertyKey,ViewDescriptionKey,ViewJobsKey,ViewViewsKey,ViewJenkinsInstanceKey, nil];
     
-    NSArray *childView1Values = [NSArray arrayWithObjects:@"test1",@"url1",[NSNull null],@"descriptiontest1",[NSNull null],[NSNull null],[NSNull null],nil];
-    NSArray *childView2Values = [NSArray arrayWithObjects:@"test2",@"url2",[NSNull null],@"descriptiontest2",[NSNull null],[NSNull null],[NSNull null],nil];
-    NSArray *childView3Values = [NSArray arrayWithObjects:@"test3",@"url3",[NSNull null],@"descriptiontest3",[NSNull null],[NSNull null],[NSNull null],nil];
+    NSArray *childView1Values = [NSArray arrayWithObjects:@"test1",@"url1",[NSNull null],@"descriptiontest1",jobs,[NSNull null],_jinstance,nil];
+    NSArray *childView2Values = [NSArray arrayWithObjects:@"test2",@"url2",[NSNull null],@"descriptiontest2",jobs,[NSNull null],_jinstance,nil];
+    NSArray *childView3Values = [NSArray arrayWithObjects:@"test3",@"url3",[NSNull null],@"descriptiontest3",jobs,[NSNull null],_jinstance,nil];
     
     NSDictionary *childView1 = [NSDictionary dictionaryWithObjects:childView1Values forKeys:viewKeys];
     NSDictionary *childView2 = [NSDictionary dictionaryWithObjects:childView2Values forKeys:viewKeys];
@@ -563,7 +562,7 @@
     
     NSArray *childViews = [NSArray arrayWithObjects:childView1,childView2,childView3,childView4,nil];
 
-    NSArray *parentViewValues = [NSArray arrayWithObjects:@"parent",@"parent.com",@"property",@"parent view",jobs,childViews,[NSNull null],nil];
+    NSArray *parentViewValues = [NSArray arrayWithObjects:@"parent",@"parent.com",@"property",@"parent view",jobs,childViews,_jinstance,nil];
     NSDictionary *parentViewDict = [NSDictionary dictionaryWithObjects:parentViewValues forKeys:viewKeys];
     View *parentView = [View createViewWithValues:parentViewDict inManagedObjectContext:_context];
     
@@ -576,7 +575,7 @@
     XCTAssert(parentView.rel_View_Views.count==3, @"parentView's views count should be 3, got %lu instead",(unsigned long)parentView.rel_View_Views.count);
     XCTAssert(views.count==4, @"view count should be 4, instead got %lu", (unsigned long)views.count);
     
-}*/
+}
 
 - (void) testJobColorIsAnimated
 {

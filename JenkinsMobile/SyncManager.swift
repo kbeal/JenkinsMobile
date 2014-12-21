@@ -114,7 +114,7 @@ import CoreData
         let name = values[JobNameKey] as String
         let url = values[JobURLKey] as String
         
-        NSLog("%@%@", "Response received for Job at URL: ",url)
+        //NSLog("%@%@", "Response received for Job at URL: ",url)
         
         //TODO: re-think this. What if notification comes in after
         // current instance is swapped?
