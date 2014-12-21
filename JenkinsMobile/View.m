@@ -57,7 +57,7 @@
     self.property = NULL_TO_NIL([values objectForKey:@"property"]);
     self.view_description = NULL_TO_NIL([values objectForKey:@"description"]);
     self.rel_View_JenkinsInstance = NULL_TO_NIL([values objectForKey:@"jenkinsInstance"]);
-    [self setRel_View_Jobs:[self createJobsFromViewValues:[values objectForKey:@"jobs"]]];
+    [self createJobsFromViewValues:[values objectForKey:@"jobs"]];
     [self createChildViews:NULL_TO_NIL([values objectForKey:ViewViewsKey])];
 }
 
@@ -89,9 +89,51 @@
     }
 }
 
-- (NSSet *) createJobsFromViewValues: (NSArray *) jobsArray
+- (Job *) findOrCreateJobWithValues: (NSDictionary *) jobDict
 {
-    NSMutableSet *jobs = [[NSMutableSet alloc] initWithCapacity:jobsArray.count];
+    Job *job;
+    // fetch job
+    job = [Job fetchJobWithName:[jobDict objectForKey:JobNameKey] inManagedObjectContext:self.managedObjectContext];
+    // if it doesn't exist
+    if (job==nil) {
+        // create it
+        job = [Job createJobWithValues:jobDict inManagedObjectContext:self.managedObjectContext];
+    }
+    return job;
+}
+
+- (void) createJobsFromViewValues: (NSArray *) jobsArray
+{
+    JenkinsInstance *ji = (JenkinsInstance *)self.rel_View_JenkinsInstance;
+    NSSet *allJobs = ji.rel_Jobs;
+    NSMutableArray *allJobsNames = [[NSMutableArray alloc] initWithCapacity:allJobs.count];
+    for (Job *job in allJobs) {
+        [allJobsNames addObject:job.name];
+    }
+    
+    NSSet *viewsJobs = self.rel_View_Jobs;
+    NSMutableArray *viewsJobsNames = [[NSMutableArray alloc] initWithCapacity:viewsJobs.count];
+    for (Job *job in viewsJobs) {
+        [viewsJobsNames addObject:job.name];
+    }
+    
+    for (NSDictionary *jobDict in jobsArray) {
+        NSMutableDictionary *jobvalues = [jobDict mutableCopy];
+        [jobvalues setObject:self.rel_View_JenkinsInstance forKey:JobJenkinsInstanceKey];
+        
+        // if the job doesn't exist create it
+        Job *job = [self findOrCreateJobWithValues:jobDict];
+        
+        // if there is no relation between this job and this view, create it
+        if (![viewsJobsNames containsObject:[jobDict objectForKey:JobNameKey]]) {
+            NSMutableSet *viewjobs = (NSMutableSet *)self.rel_View_Jobs;
+            [viewjobs addObject:job];
+        }
+    }
+
+    
+    
+   /*
     for (int i=0; i<jobsArray.count; i++) {
         [self.managedObjectContext performBlockAndWait:^{
             NSMutableDictionary *jobvalues = [[jobsArray objectAtIndex:i] mutableCopy];
@@ -103,7 +145,7 @@
             [jobs addObject:job];
         }];
     }
-    return jobs;
+    return jobs;*/
 }
 
 @end

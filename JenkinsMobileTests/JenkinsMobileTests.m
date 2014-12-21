@@ -140,8 +140,10 @@
 {
     NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
     NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
+    NSArray *jobValues2 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
     NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
-    NSArray *jobs = [NSArray arrayWithObjects:job1,nil];
+    NSDictionary *job2 = [NSDictionary dictionaryWithObjects:jobValues2 forKeys:jobKeys];
+    NSArray *jobs = [NSArray arrayWithObjects:job1,job2,nil];
     NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url",@"description",@"property",@"jobs",ViewJenkinsInstanceKey, nil];
     NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",@"descriptiontest1",@"",jobs,_jinstance,nil];
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
@@ -159,6 +161,7 @@
     XCTAssert([view.url isEqualToString:@"url1"], @"view name wrong");
     XCTAssert(view.rel_View_Jobs.count==1, @"view's job count should be 1, got %lu instead",(unsigned long)view.rel_View_Jobs.count);
     XCTAssert(views.count==1, @"view count should be 4, instead got %lu", (unsigned long)views.count);
+    XCTAssert(_jinstance.rel_Jobs.count==1, @"jenkins instance's related job count should be 1, got %lu instead",(unsigned long)_jinstance.rel_Jobs.count);
     
 }
 
@@ -579,7 +582,7 @@
     XCTAssert(parentView.rel_View_Views.count==3, @"parentView's views count should be 3, got %lu instead",(unsigned long)parentView.rel_View_Views.count);
     XCTAssert(parentView2.rel_View_Views.count==2, @"parentView2's views count should be 2, got %lu instead",(unsigned long)parentView2.rel_View_Views.count);
     XCTAssert(views.count==5, @"view count should be 4, instead got %lu", (unsigned long)views.count);
-    
+    XCTAssert(_jinstance.rel_Views.count==5, @"jenkins instance should be related to 5 views, instead related to %lu",(unsigned long)_jinstance.rel_Views.count);
 }
 
 - (void) testJobColorIsAnimated
