@@ -70,11 +70,19 @@
         [currentChildViewsURLs addObject:view.url];
     }
     
-    for (NSDictionary *childView in viewsArray) {
-        if (![currentChildViewsURLs containsObject:[childView objectForKey:ViewURLKey]]) {
-            NSMutableDictionary *mutchildView = [NSMutableDictionary dictionaryWithDictionary:childView];
-            [mutchildView setObject:self.rel_View_JenkinsInstance forKey:ViewJenkinsInstanceKey];
-            View *newView = [View createViewWithValues:mutchildView inManagedObjectContext:self.managedObjectContext];
+    for (NSDictionary *childViewDict in viewsArray) {
+        if (![currentChildViewsURLs containsObject:[childViewDict objectForKey:ViewURLKey]]) {
+            View *newView;
+            // find existing view with url
+            newView = [View fetchViewWithURL:[childViewDict objectForKey:ViewURLKey] inContext:self.managedObjectContext];
+            if (newView==nil) {
+                // or create new view with url
+                NSMutableDictionary *mutchildView = [NSMutableDictionary dictionaryWithDictionary:childViewDict];
+                [mutchildView setObject:self.rel_View_JenkinsInstance forKey:ViewJenkinsInstanceKey];
+                newView = [View createViewWithValues:mutchildView inManagedObjectContext:self.managedObjectContext];
+            }
+            
+            // add child view to relation
             [currentChildViews addObject:newView];
             [currentChildViewsURLs addObject:newView.url];
         }

@@ -561,10 +561,14 @@
     NSDictionary *childView4 = [NSDictionary dictionaryWithObjects:childView3Values forKeys:viewKeys];
     
     NSArray *childViews = [NSArray arrayWithObjects:childView1,childView2,childView3,childView4,nil];
+    NSArray *childViews2 = [NSArray arrayWithObjects:childView1,childView2, nil];
 
     NSArray *parentViewValues = [NSArray arrayWithObjects:@"parent",@"parent.com",@"property",@"parent view",jobs,childViews,_jinstance,nil];
+    NSArray *parentView2Values = [NSArray arrayWithObjects:@"parent2",@"parent2.com",@"property",@"parent view",jobs,childViews2,_jinstance,nil];
     NSDictionary *parentViewDict = [NSDictionary dictionaryWithObjects:parentViewValues forKeys:viewKeys];
+    NSDictionary *parentView2Dict = [NSDictionary dictionaryWithObjects:parentView2Values forKeys:viewKeys];
     View *parentView = [View createViewWithValues:parentViewDict inManagedObjectContext:_context];
+    View *parentView2 = [View createViewWithValues:parentView2Dict inManagedObjectContext:_context];
     
     NSError *error;
     NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
@@ -573,7 +577,8 @@
     NSArray *views = [_context executeFetchRequest:allViews error:&error];
     
     XCTAssert(parentView.rel_View_Views.count==3, @"parentView's views count should be 3, got %lu instead",(unsigned long)parentView.rel_View_Views.count);
-    XCTAssert(views.count==4, @"view count should be 4, instead got %lu", (unsigned long)views.count);
+    XCTAssert(parentView2.rel_View_Views.count==2, @"parentView2's views count should be 2, got %lu instead",(unsigned long)parentView2.rel_View_Views.count);
+    XCTAssert(views.count==5, @"view count should be 4, instead got %lu", (unsigned long)views.count);
     
 }
 
