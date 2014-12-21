@@ -37,7 +37,7 @@
 
 - (void)setValues:(NSDictionary *) values;
 
-+ (View *)createViewWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forJenkinsInstance:(NSString *) jenkinsURL;
++ (View *)createViewWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
 + (View *)fetchViewWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
 
 @end

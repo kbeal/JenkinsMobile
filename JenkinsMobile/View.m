@@ -23,24 +23,11 @@
 @dynamic rel_View_Jobs;
 @dynamic rel_View_Views;
 
-+ (View *)createViewWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context forJenkinsInstance:(NSString *) jenkinsURL
++ (View *)createViewWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    __block View *view = [View fetchViewWithURL:[values objectForKey:@"url"] inContext:context];
-    if (!view) {
-        [context performBlockAndWait:^{
-            view = [NSEntityDescription insertNewObjectForEntityForName:@"View"
-                                            inManagedObjectContext:context];
-        }];
-    }
+    View *view = [NSEntityDescription insertNewObjectForEntityForName:@"View" inManagedObjectContext:context];
     
-    JenkinsInstance *jinstance = [JenkinsInstance fetchJenkinsInstanceWithURL:jenkinsURL fromManagedObjectContext:context];
-    if (jinstance==nil) {
-        NSLog(@"PROBLEM!!!!! JenkinsInstance not found");
-    }
-    
-    NSMutableDictionary *valuesWithJenkinsInstance = [NSMutableDictionary dictionaryWithDictionary:values];
-    [valuesWithJenkinsInstance setObject:jinstance forKey:@"jenkinsInstance"];
-    [view setValues:valuesWithJenkinsInstance];
+    [view setValues:values];
     
     return view;
 }
@@ -86,8 +73,7 @@
         if (![currentChildViewsURLs containsObject:[childView objectForKey:ViewURLKey]]) {
             NSMutableDictionary *mutchildView = [NSMutableDictionary dictionaryWithDictionary:childView];
             [mutchildView setObject:self.rel_View_JenkinsInstance forKey:ViewJenkinsInstanceKey];
-            JenkinsInstance *ji = (JenkinsInstance*)self.rel_View_JenkinsInstance;
-            View *newView = [View createViewWithValues:mutchildView inManagedObjectContext:self.managedObjectContext forJenkinsInstance:ji.url];
+            View *newView = [View createViewWithValues:mutchildView inManagedObjectContext:self.managedObjectContext];
             [currentChildViews addObject:newView];
         }
     }
