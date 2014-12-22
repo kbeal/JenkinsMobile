@@ -122,12 +122,14 @@
         [jobvalues setObject:self.rel_View_JenkinsInstance forKey:JobJenkinsInstanceKey];
         
         // if the job doesn't exist create it
-        Job *job = [self findOrCreateJobWithValues:jobDict];
+        Job *job = [self findOrCreateJobWithValues:jobvalues];
         
         // if there is no relation between this job and this view, create it
         if (![viewsJobsNames containsObject:[jobDict objectForKey:JobNameKey]]) {
             NSMutableSet *viewjobs = (NSMutableSet *)self.rel_View_Jobs;
             [viewjobs addObject:job];
+            NSMutableSet *jobviews = (NSMutableSet *)job.rel_Job_Views;
+            [jobviews addObject:self];
         }
     }
 
