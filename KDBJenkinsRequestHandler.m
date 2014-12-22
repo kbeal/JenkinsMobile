@@ -114,6 +114,31 @@
     [operation start];
 }*/
 
+- (void) importDetailsForViewWithURL: (NSURL *) viewURL
+{
+    NSURL *requestURL = [viewURL URLByAppendingPathComponent:@"/api/json"];
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    //AFNetworking asynchronous url request
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
+                                         initWithRequest:request];
+    
+    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"%@%@",@"response received for view at url: ",viewURL);
+        [[NSNotificationCenter defaultCenter] postNotificationName:ViewDetailResponseReceivedNotification object:self userInfo:responseObject];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"%@%@",@"failed to receive response for view at url: ",[viewURL absoluteString]);
+        if (operation.response) {
+            NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
+            [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
+            [[NSNotificationCenter defaultCenter] postNotificationName:ViewDetailRequestFailedNotification object:self userInfo:info];
+        }
+    }];
+    
+    [operation start];
+}
+
 - (void) importDetailsForJobWithURL:(NSURL *) jobURL
 {
     // TODO: fix and uncomment importTestResultsImage

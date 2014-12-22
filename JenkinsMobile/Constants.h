@@ -17,6 +17,8 @@ extern NSString * const JenkinsInstanceDetailResponseReceivedNotification;
 extern NSString * const JenkinsInstanceDetailRequestFailedNotification;
 extern NSString * const JobDetailResponseReceivedNotification;
 extern NSString * const JobDetailRequestFailedNotification;
+extern NSString * const ViewDetailResponseReceivedNotification;
+extern NSString * const ViewDetailRequestFailedNotification;
 extern NSString * const BuildProgressResponseReceivedNotification;
 extern NSString * const JobTestResultsImageResponseReceivedNotification;
 

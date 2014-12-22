@@ -132,22 +132,6 @@
             [jobviews addObject:self];
         }
     }
-
-    
-    
-   /*
-    for (int i=0; i<jobsArray.count; i++) {
-        [self.managedObjectContext performBlockAndWait:^{
-            NSMutableDictionary *jobvalues = [[jobsArray objectAtIndex:i] mutableCopy];
-            [jobvalues setObject:self.rel_View_JenkinsInstance forKey:JobJenkinsInstanceKey];
-            Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:self.managedObjectContext];
-            NSMutableSet *jobviews = (NSMutableSet *)job.rel_Job_Views;
-            [jobviews addObject:self];
-            job.rel_Job_Views = jobviews;
-            [jobs addObject:job];
-        }];
-    }
-    return jobs;*/
 }
 
 @end

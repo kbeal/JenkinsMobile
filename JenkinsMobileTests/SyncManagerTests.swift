@@ -190,6 +190,42 @@ class SyncManagerTests: XCTestCase {
         
     }
     
+    func testViewDetailResponseReceived() {
+        let jobvals1 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/Job1"]
+        let jobvals2 = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/Job2"]
+        let jobvals3 = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/Job3"]
+        let jobs1 = [jobvals1,jobvals2,jobvals3]
+        let jobs2 = [jobvals2,jobvals3]
+        
+        let childViewVals1 = [ViewNameKey: "child1", ViewURLKey: "http://www.google.com/jenkins/view/child1"]
+        let childViewVals2 = [ViewNameKey: "child2", ViewURLKey: "http://www.google.com/jenkins/view/child2"]
+        let childViews = [childViewVals1,childViewVals2]
+        
+        let userInfo = [ViewNameKey: "ParentView", ViewURLKey: "http://www.google.com/jenkins/view/Parent", ViewDescriptionKey: "this is the parent view", ViewJenkinsInstanceKey: jenkinsInstance!, ViewJobsKey: jobs1, ViewViewsKey: childViews]
+        let notification = NSNotification(name: ViewDetailResponseReceivedNotification, object: self, userInfo: userInfo)
+        
+        mgr.viewDetailResponseReceived(notification)
+        
+        let fetchreq = NSFetchRequest()
+        fetchreq.entity = NSEntityDescription.entityForName("View", inManagedObjectContext: context!)
+        fetchreq.predicate = NSPredicate(format: "name = %@", "ParentView")
+
+        let views = context?.executeFetchRequest(fetchreq, error: nil)
+        let view  = views![0] as View
+        
+        XCTAssertEqual(views!.count, 1, "parent view count is wrong.")
+        XCTAssertEqual(view.name, "ParentView", "view name is wrong")
+        XCTAssertEqual(view.view_description, "this is the parent view", "parent view description is wrong")
+        XCTAssertEqual(view.rel_View_JenkinsInstance, jenkinsInstance!, "parent view's jenkinsInstance is wrong")
+        XCTAssertEqual(view.rel_View_Views.count, 2, "parent view's child view count is wrong")
+        
+        let allviewsfetchreq = NSFetchRequest()
+        allviewsfetchreq.entity = NSEntityDescription.entityForName("View", inManagedObjectContext: context!)
+        
+        let allviews = context?.executeFetchRequest(allviewsfetchreq, error: nil)
+        XCTAssertEqual(allviews!.count, 3, "all views count is wrong")
+    }
+    
     func testJobDetailResponseReceived() {
         let build1Obj = ["number": 1, "url": "http://www.google.com/job/Job1/build/1"]
         let downstreamObj1 = ["name": "Job2", "color": "blue", "url":"http://www.ask.com"]

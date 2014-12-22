@@ -98,8 +98,11 @@ import CoreData
         }
     }
     
-    func syncView(viewName: String) {
+    func syncView(url: NSURL) {
         // sync view details and queue all jobs in view for sync
+        assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!!")
+        NSLog("%@%@", "Sending request for details for View at URL: ",url.absoluteString!)
+        self.requestHandler!.importDetailsForViewWithURL(url)
     }
     
     func syncJob(url: NSURL) {
@@ -108,11 +111,34 @@ import CoreData
         self.requestHandler!.importDetailsForJobWithURL(url)
     }
     
+    func viewDetailResponseReceived(notification: NSNotification) {
+        assert(self.masterMOC != nil, "master managed object context not set")
+        var values: Dictionary = notification.userInfo!
+        let url = values[ViewURLKey] as String
+        
+        //TODO: re-think this. What if notification comes in after
+        // current instance is swapped?
+        values[ViewJenkinsInstanceKey] = currentJenkinsInstance
+        
+        self.masterMOC?.performBlockAndWait({
+            // Fetch view based on url
+            let view: View? = View.fetchViewWithURL(url, inContext: self.masterMOC)
+            // create if it doesn't exist
+            if (view==nil) {
+                View.createViewWithValues(values, inManagedObjectContext: self.masterMOC)
+            } else {
+                // update it\s values
+                view!.setValues(values)
+            }
+            self.saveMasterContext()
+        })
+    }
+    
     func jobDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
         let name = values[JobNameKey] as String
-        let url = values[JobURLKey] as String
+//        let url = values[JobURLKey] as String
         
         //NSLog("%@%@", "Response received for Job at URL: ",url)
         
@@ -125,7 +151,6 @@ import CoreData
             let job: Job? = Job.fetchJobWithName(name, inManagedObjectContext: self.masterMOC)
             // create if it doesn't exist
             if (job==nil) {
-                println(values)
                 Job.createJobWithValues(values, inManagedObjectContext: self.masterMOC)
             } else {
                 // update it\s values

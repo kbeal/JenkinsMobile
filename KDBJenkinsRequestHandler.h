@@ -29,10 +29,10 @@
 
 //- (void) importAllViews;
 - (void) importDetailsForJobWithURL:(NSURL *) jobURL;
+- (void) importDetailsForViewWithURL: (NSURL *) viewURL;
 - (void) importProgressForBuild:(NSNumber *) buildNumber ofJobAtURL:(NSString *) jobURL;
 - (void) importDetailsForJenkinsAtURL:(NSString *) url withName:(NSString *) name;
 /*
-- (void) importDetailsForView: (NSString *) viewName atURL: (NSString *) viewURL;
 - (void) importDetailsForViews: (NSArray *) views;
 - (void) importDetailsForJobAtURL:(NSString *)jobURL inViewAtURL:(NSString *) viewURL;
 - (void) importDetailsForJobs;
