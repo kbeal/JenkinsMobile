@@ -33,13 +33,16 @@ import CoreData
     }
     
     public init() {
-        jobSyncTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("jobSyncTimerTick"), userInfo: nil, repeats: true)
+        initTimer()
         initObservers()
-        /*
-        self.masterMOC = masterManagedObjectContext
-        self.currentJenkinsInstance = currentJenkinsInstance
-        self.requestHandler = KDBJenkinsRequestHandler(jenkinsInstance: self.currentJenkinsInstance)
-        */
+    }
+    
+    func initTimer() {
+        let runningTests = NSClassFromString("XCTestCase") != nil
+        if !runningTests {
+            // only start the timer if we aren't running unit tests
+            jobSyncTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("jobSyncTimerTick"), userInfo: nil, repeats: true)
+        }
     }
     
     // set up any NSNotificationCenter observers
@@ -134,6 +137,10 @@ import CoreData
         })
     }
     
+    func viewDetailRequestFailed(notification: NSNotification) {
+        
+    }
+    
     func jobDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
@@ -167,7 +174,7 @@ import CoreData
         let status: Int = userInfo[StatusCodeKey] as Int
         let url: NSURL = userInfo[NSErrorFailingURLKey] as NSURL
         let jobName = Job.jobNameFromURL(url)
-        
+
         // if the error is 404
         if (status==404) {
             // find the job instance

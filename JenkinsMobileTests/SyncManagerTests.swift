@@ -106,6 +106,22 @@ class SyncManagerTests: XCTestCase {
     
     func testJenkinsInstanceRequestFailed() {
         let requestFailureExpectation = expectationWithDescription("JenkinsInstance will be deleted")
+        let jInstanceDeletedNotificationExpectionat = expectationForNotification(NSManagedObjectContextObjectsDidChangeNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
+            if deletedObjects != nil {
+                for obj in deletedObjects! {
+                    if let ji = obj as? JenkinsInstance {
+                        if ji.url == "http://www.google.com" {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
         let url = NSURL(string: "http://www.google.com")
         let request = NSURLRequest(URL: NSURL(string: "/api/json", relativeToURL: url)!)
         let operation = AFHTTPRequestOperation(request: request)
@@ -135,17 +151,26 @@ class SyncManagerTests: XCTestCase {
         waitForExpectationsWithTimeout(10, handler: { error in
             
         })
-        
-        let fetchreq2 = NSFetchRequest()
-        fetchreq2.entity = NSEntityDescription.entityForName("JenkinsInstance", inManagedObjectContext: context!)
-        fetchreq2.includesPropertyValues = false
-        let jenkinss2 = context?.executeFetchRequest(fetchreq2, error: nil) 
-        XCTAssertEqual(jenkinss2!.count, 0, "jenkinss count is wrong. should  be 0 got: \(jenkinss2!.count) instead")
-        
     }
     
     func testJobDetailRequestFailed() {
         let requestFailureExpectation = expectationWithDescription("Job1 will be deleted")
+        let jobDeletedNotificationExpectionat = expectationForNotification(NSManagedObjectContextObjectsDidChangeNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+                var expectationFulfilled = false
+                let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
+                if deletedObjects != nil {
+                    for obj in deletedObjects! {
+                        if let job1 = obj as? Job {
+                            if job1.name == "Job1" {
+                                expectationFulfilled=true
+                            }
+                        }
+                    }
+                }
+                return expectationFulfilled
+        })
+
         let jobURL = "http://www.google.com/job/Job1/api/json"
         let url = NSURL(string: jobURL)
         let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobJenkinsInstanceKey: jenkinsInstance!]
@@ -178,16 +203,64 @@ class SyncManagerTests: XCTestCase {
         
         operation.start()
         
+        waitForExpectationsWithTimeout(5, handler: { error in
+            
+        })
+    }
+    
+    func testViewDetailRequestFailed() {
+        let requestFailureExpectation = expectationWithDescription("View1 will be deleted")
+        let viewDeletedNotificationExpectionat = expectationForNotification(NSManagedObjectContextObjectsDidChangeNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
+            if deletedObjects != nil {
+                for obj in deletedObjects! {
+                    if let view = obj as? View {
+                        if view.url == "http://www.google.com/view/View1/api/json" {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        let viewURL = "http://www.google.com/view/View1/api/json"
+        let url = NSURL(string: viewURL)
+        let viewVals = [ViewNameKey: "View1", ViewURLKey: viewURL, ViewJenkinsInstanceKey: jenkinsInstance!]
+        let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context)
+        
+        let request = NSURLRequest(URL: url!)
+        let operation = AFHTTPRequestOperation(request: request)
+        let serializer = AFJSONResponseSerializer()
+        operation.responseSerializer = serializer
+        
+        let fetchreq = NSFetchRequest()
+        fetchreq.entity = NSEntityDescription.entityForName("View", inManagedObjectContext: context!)
+        fetchreq.includesPropertyValues = false
+        let views = context?.executeFetchRequest(fetchreq, error: nil)
+        XCTAssertEqual(views!.count, 1, "views count is wrong. should  be 1 got: \(views!.count) instead")
+        
+        
+        operation.setCompletionBlockWithSuccess(
+            { operation, response in
+                println("jenkins request received")
+            },
+            failure: { operation, error in
+                var userInfo: Dictionary = error.userInfo!
+                userInfo[StatusCodeKey] = operation.response.statusCode
+                let url: NSURL = userInfo[NSErrorFailingURLKey] as NSURL
+                let notification = NSNotification(name: ViewDetailRequestFailedNotification, object: self, userInfo: userInfo)
+                self.mgr.viewDetailRequestFailed(notification)
+                requestFailureExpectation.fulfill()
+        })
+        
+        operation.start()
+        
         waitForExpectationsWithTimeout(10, handler: { error in
             
         })
-        
-        let fetchreq2 = NSFetchRequest()
-        fetchreq2.entity = NSEntityDescription.entityForName("Job", inManagedObjectContext: context!)
-        fetchreq2.includesPropertyValues = false
-        let jobs2 = context?.executeFetchRequest(fetchreq2, error: nil)
-        XCTAssertEqual(jobs2!.count, 0, "jobs count is wrong. should  be 0 got: \(jobs2!.count) instead")
-        
     }
     
     func testViewDetailResponseReceived() {
