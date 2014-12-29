@@ -209,6 +209,7 @@ class SyncManagerTests: XCTestCase {
     }
     
     func testViewDetailRequestFailed() {
+        //TODO: this is passing because JenkinsInstance is being deleted, taking related views with it. 
         let requestFailureExpectation = expectationWithDescription("View1 will be deleted")
         let viewDeletedNotificationExpectionat = expectationForNotification(NSManagedObjectContextObjectsDidChangeNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
