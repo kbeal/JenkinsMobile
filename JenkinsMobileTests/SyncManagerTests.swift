@@ -30,11 +30,35 @@ class SyncManagerTests: XCTestCase {
         mgr.masterMOC = context;
         mgr.requestHandler = requestHandler
         
-        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com", JenkinsInstanceCurrentKey: false]
+        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://ci.thermofisher.com/jenkins", JenkinsInstanceCurrentKey: false]
         
         context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: self.context)})
         
         mgr.currentJenkinsInstanceURL = NSURL(string: jenkinsInstance!.url)
+        
+        saveContext()
+    }
+    
+    override func tearDown() {
+        saveContext()
+    }
+    
+    func saveContext () {
+        var error: NSError? = nil
+        if context == nil {
+            return
+        }
+        if context!.hasChanges {
+            return
+        }
+        let saveResult: Bool = context!.save(&error)
+        
+        if (!saveResult) {
+            println("Error saving context: \(error?.localizedDescription)\n\(error?.userInfo)")
+            abort()
+        } else {
+            println("Successfully saved master managed object context")
+        }
     }
     
     func testSharedInstance() {
@@ -122,7 +146,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let url = NSURL(string: "http://www.google.com")
+        let url = NSURL(string: "http://ci.thermofisher.com/jenkins")
         let request = NSURLRequest(URL: NSURL(string: "/api/json", relativeToURL: url)!)
         let operation = AFHTTPRequestOperation(request: request)
         let serializer = AFJSONResponseSerializer()
