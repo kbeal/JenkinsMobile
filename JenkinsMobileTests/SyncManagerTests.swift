@@ -30,7 +30,7 @@ class SyncManagerTests: XCTestCase {
         mgr.masterMOC = context;
         mgr.requestHandler = requestHandler
         
-        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://ci.thermofisher.com/jenkins", JenkinsInstanceCurrentKey: false]
+        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceCurrentKey: false]
         
         context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: self.context)})
         
@@ -48,7 +48,7 @@ class SyncManagerTests: XCTestCase {
         if context == nil {
             return
         }
-        if context!.hasChanges {
+        if !context!.hasChanges {
             return
         }
         let saveResult: Bool = context!.save(&error)
@@ -57,7 +57,7 @@ class SyncManagerTests: XCTestCase {
             println("Error saving context: \(error?.localizedDescription)\n\(error?.userInfo)")
             abort()
         } else {
-            println("Successfully saved master managed object context")
+            println("Successfully saved test managed object context")
         }
     }
     
@@ -66,7 +66,7 @@ class SyncManagerTests: XCTestCase {
     }
     
     func testJobShouldSync() {
-        let jobvals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobLastSyncKey: NSDate()]
+        let jobvals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
         
         XCTAssertFalse(job.shouldSync(), "shouldsync should be false")
@@ -130,14 +130,14 @@ class SyncManagerTests: XCTestCase {
     
     func testJenkinsInstanceRequestFailed() {
         let requestFailureExpectation = expectationWithDescription("JenkinsInstance will be deleted")
-        let jInstanceDeletedNotificationExpectionat = expectationForNotification(NSManagedObjectContextObjectsDidChangeNotification, object: self.context, handler: {
+        let jInstanceDeletedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
             if deletedObjects != nil {
                 for obj in deletedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.url == "http://www.google.com" {
+                        if ji.url == self.jenkinsInstance!.url {
                             expectationFulfilled=true
                         }
                     }
@@ -146,8 +146,9 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let url = NSURL(string: "http://ci.thermofisher.com/jenkins")
-        let request = NSURLRequest(URL: NSURL(string: "/api/json", relativeToURL: url)!)
+        // set up a request to a url that doesn't exist
+        let url = NSURL(string: self.jenkinsInstance!.url)
+        let request = NSURLRequest(URL: NSURL(string: "/404", relativeToURL: url)!)
         let operation = AFHTTPRequestOperation(request: request)
         let serializer = AFJSONResponseSerializer()
         operation.responseSerializer = serializer
@@ -161,10 +162,13 @@ class SyncManagerTests: XCTestCase {
         operation.setCompletionBlockWithSuccess(
             { operation, response in
                 println("jenkins request received")
+                abort()
             },
             failure: { operation, error in
                 var userInfo: Dictionary = error.userInfo!
                 userInfo[StatusCodeKey] = operation.response.statusCode
+                // since the JenkinsInstance actually exists, we need to inject it's url so that coredata can find it.
+                userInfo[NSErrorFailingURLKey] = NSURL(string: self.jenkinsInstance!.url)
                 let notification = NSNotification(name: JenkinsInstanceDetailRequestFailedNotification, object: self, userInfo: userInfo)
                 self.mgr.jenkinsInstanceDetailRequestFailed(notification)
                 requestFailureExpectation.fulfill()
@@ -172,14 +176,14 @@ class SyncManagerTests: XCTestCase {
         
         operation.start()
         
-        waitForExpectationsWithTimeout(10, handler: { error in
+        waitForExpectationsWithTimeout(5, handler: { error in
             
         })
     }
     
     func testJobDetailRequestFailed() {
         let requestFailureExpectation = expectationWithDescription("Job1 will be deleted")
-        let jobDeletedNotificationExpectionat = expectationForNotification(NSManagedObjectContextObjectsDidChangeNotification, object: self.context, handler: {
+        let jobDeletedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
                 var expectationFulfilled = false
                 let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
@@ -214,12 +218,11 @@ class SyncManagerTests: XCTestCase {
         operation.setCompletionBlockWithSuccess(
             { operation, response in
                 println("jenkins request received")
+                abort()
             },
             failure: { operation, error in
                 var userInfo: Dictionary = error.userInfo!
                 userInfo[StatusCodeKey] = operation.response.statusCode
-                let url: NSURL = userInfo[NSErrorFailingURLKey] as NSURL
-                let jobName = url.relativeString
                 let notification = NSNotification(name: JobDetailRequestFailedNotification, object: self, userInfo: userInfo)
                 self.mgr.jobDetailRequestFailed(notification)
                 requestFailureExpectation.fulfill()
@@ -233,9 +236,8 @@ class SyncManagerTests: XCTestCase {
     }
     
     func testViewDetailRequestFailed() {
-        //TODO: this is passing because JenkinsInstance is being deleted, taking related views with it. 
         let requestFailureExpectation = expectationWithDescription("View1 will be deleted")
-        let viewDeletedNotificationExpectionat = expectationForNotification(NSManagedObjectContextObjectsDidChangeNotification, object: self.context, handler: {
+        let viewDeletedNotificationExpectionat = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
