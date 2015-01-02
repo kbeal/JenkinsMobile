@@ -138,7 +138,27 @@ import CoreData
     }
     
     func viewDetailRequestFailed(notification: NSNotification) {
+        assert(self.masterMOC != nil, "master managed object context not set")
+        // parse the error for the view url and status code
+        let userInfo: Dictionary = notification.userInfo!
+        let status: Int = userInfo[StatusCodeKey] as Int
+        let url: NSURL = userInfo[NSErrorFailingURLKey] as NSURL
         
+        // if the error is 404
+        if (status==404) {
+            // find the view
+            var view: View?
+            self.masterMOC?.performBlockAndWait({
+                view = View.fetchViewWithURL(url.absoluteString, inContext: self.masterMOC)
+            })
+            // if it exists delete it
+            if view != nil {
+                self.masterMOC?.performBlockAndWait({
+                    self.masterMOC!.deleteObject(view!)
+                    self.saveMasterContext()
+                })
+            }
+        }
     }
     
     func jobDetailResponseReceived(notification: NSNotification) {
