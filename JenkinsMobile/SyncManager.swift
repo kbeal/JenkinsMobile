@@ -94,6 +94,35 @@ import CoreData
         })
     }
     
+    func syncAllViews() {
+        // sync all the views for current Jenkins Instance
+        assert(self.currentJenkinsInstance != nil, "sync managers currentJenkinsInstance is nil!!")
+        masterMOC?.performBlock({
+            let allViews = self.currentJenkinsInstance!.rel_Views
+            for view in allViews {
+                self.syncView(NSURL(string: view.url)!)
+            }
+        })
+    }
+    
+    func syncAllJobsForView(view: View) {
+        masterMOC?.performBlock({
+            let viewjobs = view.rel_View_Jobs
+            for job in viewjobs {
+                self.jobSyncQueue.push(job.name)
+            }
+        })
+    }
+    
+    func syncSubViewsForView(view: View) {
+        masterMOC?.performBlock({
+            let subviews = view.rel_View_Views.allObjects
+            for subview in subviews {
+                self.syncView(NSURL(string: subview.url)!)
+            }
+        })
+    }
+    
     func syncCurrentJenkinsInstance() {
         assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
         if (currentJenkinsInstance != nil) {
@@ -118,6 +147,7 @@ import CoreData
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
         let url = values[ViewURLKey] as String
+        var view: View?
         
         //TODO: re-think this. What if notification comes in after
         // current instance is swapped?
@@ -125,7 +155,7 @@ import CoreData
         
         self.masterMOC?.performBlockAndWait({
             // Fetch view based on url
-            let view: View? = View.fetchViewWithURL(url, inContext: self.masterMOC)
+            view = View.fetchViewWithURL(url, inContext: self.masterMOC)
             // create if it doesn't exist
             if (view==nil) {
                 View.createViewWithValues(values, inManagedObjectContext: self.masterMOC)
@@ -135,6 +165,8 @@ import CoreData
             }
             self.saveMasterContext()
         })
+        
+        self.syncAllJobsForView(view!)
     }
     
     func viewDetailRequestFailed(notification: NSNotification) {
@@ -229,6 +261,7 @@ import CoreData
         })
         
         syncAllJobs()
+        syncAllViews()
     }
     
     func jenkinsInstanceDetailRequestFailed(notification: NSNotification) {
