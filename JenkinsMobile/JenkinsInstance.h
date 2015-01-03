@@ -16,6 +16,7 @@
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * url;
 @property (nonatomic, retain) NSNumber * current;
+@property (nonatomic, retain) NSNumber * enabled;
 @property (nonatomic, retain) NSSet *rel_Jobs;
 @property (nonatomic, retain) NSSet *rel_Views;
 @end

@@ -220,6 +220,7 @@ import CoreData
         NSLog("%@%@","Response received for Jenkins at URL: ",url)
 
         values[JenkinsInstanceCurrentKey] = false
+        values[JenkinsInstanceEnabledKey] = true
         
         self.masterMOC?.performBlock({
             JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values, inManagedObjectContext: self.masterMOC)
@@ -246,8 +247,8 @@ import CoreData
             })
             // if it exists delete it
             if jenkins != nil {
+                jenkins!.enabled = false
                 self.masterMOC?.performBlockAndWait({
-                    self.masterMOC!.deleteObject(jenkins!)
                     self.saveMasterContext()
                 })
             } 

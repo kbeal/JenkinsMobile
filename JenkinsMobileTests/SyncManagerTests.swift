@@ -30,7 +30,7 @@ class SyncManagerTests: XCTestCase {
         mgr.masterMOC = context;
         mgr.requestHandler = requestHandler
         
-        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceCurrentKey: false]
+        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true]
         
         context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: self.context)})
         
@@ -79,7 +79,7 @@ class SyncManagerTests: XCTestCase {
         let jobObj4 = [JobNameKey: "Job4", JobColorKey: "grey", JobURLKey: "http://www.amazon.com"]
         let jobs = [jobObj1, jobObj2, jobObj3, jobObj4]
         
-        let values = [JenkinsInstanceNameKey: "QA Ubuntu", JenkinsInstanceURLKey: "https://jenkins.qa.ubuntu.com/", JenkinsInstanceJobsKey: jobs, JenkinsInstanceCurrentKey: false]
+        let values = [JenkinsInstanceNameKey: "QA Ubuntu", JenkinsInstanceURLKey: "https://jenkins.qa.ubuntu.com/", JenkinsInstanceJobsKey: jobs, JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true]
 
         JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values, inManagedObjectContext: context!)
         
@@ -129,15 +129,15 @@ class SyncManagerTests: XCTestCase {
     }*/
     
     func testJenkinsInstanceRequestFailed() {
-        let requestFailureExpectation = expectationWithDescription("JenkinsInstance will be deleted")
-        let jInstanceDeletedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+        let requestFailureExpectation = expectationWithDescription("JenkinsInstance will be disabled")
+        let jInstanceDisabledNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
-            if deletedObjects != nil {
-                for obj in deletedObjects! {
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            if updatedObjects != nil {
+                for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.url == self.jenkinsInstance!.url {
+                        if ji.url == self.jenkinsInstance!.url && !ji.enabled.boolValue {
                             expectationFulfilled=true
                         }
                     }

@@ -22,6 +22,7 @@
     </entity>
     <entity name="JenkinsInstance" representedClassName="JenkinsInstance">
         <attribute name="current" attributeType="Boolean" indexed="YES" syncable="YES"/>
+        <attribute name="enabled" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="url" attributeType="String" syncable="YES"/>
         <relationship name="rel_Jobs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Job" inverseName="rel_Job_JenkinsInstance" inverseEntity="Job" syncable="YES"/>
@@ -73,7 +74,7 @@
     </entity>
     <elements>
         <element name="Build" positionX="-117" positionY="369" width="128" height="315"/>
-        <element name="JenkinsInstance" positionX="-18" positionY="101" width="128" height="120"/>
+        <element name="JenkinsInstance" positionX="-18" positionY="101" width="128" height="135"/>
         <element name="Job" positionX="135" positionY="224" width="128" height="525"/>
         <element name="View" positionX="313" positionY="83" width="128" height="150"/>
     </elements>

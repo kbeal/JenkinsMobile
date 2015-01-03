@@ -16,6 +16,7 @@
 @dynamic name;
 @dynamic url;
 @dynamic current;
+@dynamic enabled;
 @dynamic rel_Jobs;
 @dynamic rel_Views;
 
@@ -88,6 +89,7 @@
     self.name = [values objectForKey:JenkinsInstanceNameKey];
     self.url = [values objectForKey:JenkinsInstanceURLKey];
     self.current = [values objectForKey:JenkinsInstanceCurrentKey];
+    self.enabled = [values objectForKey:JenkinsInstanceEnabledKey];
     [self createJobs:[values objectForKey:JenkinsInstanceJobsKey]];
 }
 
