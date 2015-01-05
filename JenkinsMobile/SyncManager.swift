@@ -73,7 +73,7 @@ import CoreData
             self.masterMOC?.performBlock({
                 let jobname = self.jobSyncQueue.pop()!.stringByAddingPercentEncodingWithAllowedCharacters(.URLPathAllowedCharacterSet())
                 let fullurl = self.currentJenkinsInstance!.url + "/job/" + jobname!
-                self.syncJob(NSURL(string: fullurl)!)
+                self.syncJob(NSURL(string: fullurl)!, jenkinsInstance: self.currentJenkinsInstance!)
             })
         } else {
             println("No more jobs to sync!!")
@@ -137,10 +137,10 @@ import CoreData
         self.requestHandler!.importDetailsForViewWithURL(url)
     }
     
-    func syncJob(url: NSURL) {
+    func syncJob(url: NSURL, jenkinsInstance: JenkinsInstance) {
         assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
         NSLog("%@%@", "Sending request for details for Job at URL: ",url.absoluteString!)
-        self.requestHandler!.importDetailsForJobWithURL(url)
+        self.requestHandler!.importDetailsForJobWithURL(url, andJenkinsInstance: jenkinsInstance)
     }
     
     func viewDetailResponseReceived(notification: NSNotification) {
@@ -197,17 +197,11 @@ import CoreData
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
         let name = values[JobNameKey] as String
-//        let url = values[JobURLKey] as String
-        
-        //NSLog("%@%@", "Response received for Job at URL: ",url)
-        
-        //TODO: re-think this. What if notification comes in after
-        // current instance is swapped?
-        values[JobJenkinsInstanceKey] = currentJenkinsInstance
+        let jenkinsInstance: JenkinsInstance = values[JobJenkinsInstanceKey] as JenkinsInstance
         
         self.masterMOC?.performBlockAndWait({
             // Fetch job based on name
-            let job: Job? = Job.fetchJobWithName(name, inManagedObjectContext: self.masterMOC)
+            let job: Job? = Job.fetchJobWithName(name, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
             // create if it doesn't exist
             if (job==nil) {
                 Job.createJobWithValues(values, inManagedObjectContext: self.masterMOC)
@@ -221,27 +215,28 @@ import CoreData
     
     func jobDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set!!")
-        // parse the error for the jenkins url and status code
         let userInfo: Dictionary = notification.userInfo!
-        let status: Int = userInfo[StatusCodeKey] as Int
-        let url: NSURL = userInfo[NSErrorFailingURLKey] as NSURL
+        let jenkinsInstance: JenkinsInstance = userInfo[JobJenkinsInstanceKey] as JenkinsInstance
+        let requestError: NSError = userInfo[RequestErrorKey] as NSError
+        let errorUserInfo: Dictionary = requestError.userInfo!
+        let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
         let jobName = Job.jobNameFromURL(url)
-
-        // if the error is 404
-        if (status==404) {
-            // find the job instance
-            var job: Job?
-            self.masterMOC?.performBlockAndWait({
-                job = Job.fetchJobWithName(jobName, inManagedObjectContext: self.masterMOC!)
+        
+        if requestError.code == NSURLErrorCannotFindHost {
+            masterMOC!.performBlockAndWait({
+                Job.fetchAndDeleteJobWithName(jobName, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
             })
-            // if it exists delete it
-            if job != nil {
+        } else {
+            let status: Int = userInfo[StatusCodeKey] as Int            
+            // if the error is 404
+            if (status==404) {
                 self.masterMOC?.performBlockAndWait({
-                    self.masterMOC!.deleteObject(job!)
-                    self.saveMasterContext()
+                    Job.fetchAndDeleteJobWithName(jobName, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
                 })
             }
         }
+        
+        saveMasterContext()
     }
     
     func jenkinsInstanceDetailResponseReceived(notification: NSNotification) {
