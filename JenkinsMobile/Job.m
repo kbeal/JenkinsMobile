@@ -58,23 +58,30 @@
     return job;
 }
 
-+ (Job *)fetchJobWithName: (NSString *) name inManagedObjectContext: (NSManagedObjectContext *) context
++ (Job *)fetchJobWithName: (NSString *) name inManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) jinstance
 {
-    __block Job *job = nil;
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    Job *job = nil;
     
-    [context performBlockAndWait:^{
-        request.entity = [NSEntityDescription entityForName:@"Job" inManagedObjectContext:context];
-        request.predicate = [NSPredicate predicateWithFormat:@"name = %@", name];
-        NSError *executeFetchError = nil;
-        job = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    request.entity = [NSEntityDescription entityForName:@"Job" inManagedObjectContext:context];
+    request.predicate = [NSPredicate predicateWithFormat:@"name = %@ && rel_Job_JenkinsInstance.url = %@", name, jinstance.url];
+    NSError *executeFetchError = nil;
+    
+    job = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
         
-        if (executeFetchError) {
-            NSLog(@"[%@, %@] error looking up job with name: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), name, [executeFetchError localizedDescription]);
-        }
-    }];
+    if (executeFetchError) {
+        NSLog(@"[%@, %@] error looking up job with name: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), name, [executeFetchError localizedDescription]);
+    }
     
     return job;
+}
+
++ (void)fetchAndDeleteJobWithName: (NSString *) name inManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) jinstance
+{
+    Job *job = [Job fetchJobWithName:name inManagedObjectContext:context andJenkinsInstance:jinstance];
+    if (job != nil) {
+        [context deleteObject:job];
+    }
 }
 
 // returns the absolute color of this job

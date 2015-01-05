@@ -540,7 +540,8 @@
     } else if (indexPath.section==self.downstreamProjectsSectionIndex) {
         relatedProjectName = [[self.job.downstreamProjects objectAtIndex:indexPath.row] objectForKey:JobNameKey];
     }
-    [self setJob:[Job fetchJobWithName:relatedProjectName inManagedObjectContext:self.managedObjectContext]];
+    //TODO: fix to include jenkins instance in fetch
+    //[self setJob:[Job fetchJobWithName:relatedProjectName inManagedObjectContext:self.managedObjectContext]];
 }
 
 

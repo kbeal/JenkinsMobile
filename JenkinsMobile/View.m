@@ -93,7 +93,7 @@
 {
     Job *job;
     // fetch job
-    job = [Job fetchJobWithName:[jobDict objectForKey:JobNameKey] inManagedObjectContext:self.managedObjectContext];
+    job = [Job fetchJobWithName:[jobDict objectForKey:JobNameKey] inManagedObjectContext:self.managedObjectContext andJenkinsInstance:(JenkinsInstance *)self.rel_View_JenkinsInstance];
     // if it doesn't exist
     if (job==nil) {
         // create it

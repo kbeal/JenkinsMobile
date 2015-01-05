@@ -156,7 +156,8 @@
     } else if ([buttonTapped.relatedProjectName isEqualToString:@"moreUpstreamProjects"]) {
         [self performSegueWithIdentifier:@"upstreamProjectsSegue" sender:self];
     } else if (buttonTapped.relatedProjectName != nil) {
-        self.job = [Job fetchJobWithName:buttonTapped.relatedProjectName inManagedObjectContext:self.managedObjectContext];
+        // TODO: fix to include jenkins instance in fetch
+        //self.job = [Job fetchJobWithName:buttonTapped.relatedProjectName inManagedObjectContext:self.managedObjectContext];
         [self configureView];
     }
 }

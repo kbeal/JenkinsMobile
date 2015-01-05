@@ -139,7 +139,7 @@
     [operation start];
 }
 
-- (void) importDetailsForJobWithURL:(NSURL *) jobURL
+- (void) importDetailsForJobWithURL:(NSURL *) jobURL andJenkinsInstance:(JenkinsInstance *) jinstance
 {
     // TODO: fix and uncomment importTestResultsImage
     //[self importTestResultsImageForJobWithName:[Job jobNameFromURL:jobURL]];
@@ -153,13 +153,16 @@
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        //NSLog(@"%@%@",@"response received for job at url: ",jobURL);
-        [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailResponseReceivedNotification object:self userInfo:responseObject];
+        NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:responseObject];
+        [info setObject:jinstance forKey:JobJenkinsInstanceKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailResponseReceivedNotification object:self userInfo:info];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"%@%@",@"failed to receive response for job at url: ",[jobURL absoluteString]);
+        // TODO: fix so that operation.response isn't required to send notification (DNS doesn't resolve, etc)
         if (operation.response) {
             NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
             [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
+            [info setObject:jinstance forKey:JobJenkinsInstanceKey];
             [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailRequestFailedNotification object:self userInfo:info];
         }
     }];
@@ -339,8 +342,9 @@
 - (void) persistTestResultsImage: (UIImage *)image forJobWithName:jobName
 {
     [self.importJobsMOC performBlock:^{
-        Job *job = [Job fetchJobWithName:jobName inManagedObjectContext:self.importJobsMOC];
-        [job setTestResultsImageWithImage:image];
+        // TODO: fix to include jenkins instance in fetch
+        //Job *job = [Job fetchJobWithName:jobName inManagedObjectContext:self.importJobsMOC];
+        //[job setTestResultsImageWithImage:image];
         
         NSError *importJobsError;
         if (![self.importJobsMOC save:&importJobsError]) {

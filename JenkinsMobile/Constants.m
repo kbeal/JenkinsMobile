@@ -79,5 +79,6 @@ NSString * const JenkinsInstanceEnabledKey = @"enabled";
 // AFNetworking Keys
 NSString * const StatusCodeKey = @"statusCode";
 NSString * const NSErrorFailingURLKey = @"NSErrorFailingURLKey";
+NSString * const RequestErrorKey = @"requestError";
 
 @end
