@@ -39,5 +39,6 @@
 
 + (View *)createViewWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
 + (View *)fetchViewWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
++ (void)fetchAndDeleteViewWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
 
 @end

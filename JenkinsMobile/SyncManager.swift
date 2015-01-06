@@ -166,31 +166,8 @@ import CoreData
             self.saveMasterContext()
         })
         
-        self.syncAllJobsForView(view!)
-    }
-    
-    func viewDetailRequestFailed(notification: NSNotification) {
-        assert(self.masterMOC != nil, "master managed object context not set")
-        // parse the error for the view url and status code
-        let userInfo: Dictionary = notification.userInfo!
-        let status: Int = userInfo[StatusCodeKey] as Int
-        let url: NSURL = userInfo[NSErrorFailingURLKey] as NSURL
-        
-        // if the error is 404
-        if (status==404) {
-            // find the view
-            var view: View?
-            self.masterMOC?.performBlockAndWait({
-                view = View.fetchViewWithURL(url.absoluteString, inContext: self.masterMOC)
-            })
-            // if it exists delete it
-            if view != nil {
-                self.masterMOC?.performBlockAndWait({
-                    self.masterMOC!.deleteObject(view!)
-                    self.saveMasterContext()
-                })
-            }
-        }
+        // TODO: fix so that this works
+        //self.syncAllJobsForView(view!)
     }
     
     func jobDetailResponseReceived(notification: NSNotification) {
@@ -232,6 +209,31 @@ import CoreData
             if (status==404) {
                 self.masterMOC?.performBlockAndWait({
                     Job.fetchAndDeleteJobWithName(jobName, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
+                })
+            }
+        }
+        
+        saveMasterContext()
+    }
+    
+    func viewDetailRequestFailed(notification: NSNotification) {
+        assert(self.masterMOC != nil, "master managed object context not set")
+        // parse the error for the view url and status code
+        let userInfo: Dictionary = notification.userInfo!
+        let requestError: NSError = userInfo[RequestErrorKey] as NSError
+        let errorUserInfo: Dictionary = requestError.userInfo!
+        let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
+        
+        if requestError.code == NSURLErrorCannotFindHost {
+            masterMOC!.performBlockAndWait({
+                View.fetchAndDeleteViewWithURL(url.absoluteString, inContext: self.masterMOC)
+            })
+        } else {
+            let status: Int = userInfo[StatusCodeKey] as Int
+            // if the error is 404
+            if (status==404) {
+                self.masterMOC?.performBlockAndWait({
+                    View.fetchAndDeleteViewWithURL(url.absoluteString, inContext: self.masterMOC)
                 })
             }
         }

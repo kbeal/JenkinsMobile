@@ -129,6 +129,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:ViewDetailResponseReceivedNotification object:self userInfo:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"%@%@",@"failed to receive response for view at url: ",[viewURL absoluteString]);
+        // TODO: fix so that operation.response isn't required to send notification (DNS doesn't resolve, etc)
         if (operation.response) {
             NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
             [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];

@@ -324,6 +324,65 @@ class SyncManagerTests: XCTestCase {
         
     }
     
+    func testViewDetailRequestServerNotFound() {
+        let requestFailureExpectation = expectationWithDescription("View1 will be deleted")
+        let viewDeletedNotificationExpectionat = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
+            if deletedObjects != nil {
+                for obj in deletedObjects! {
+                    if let view = obj as? View {
+                        if view.url == "http://www.yourmomdoesnotexist.com/view/View1/api/json" {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        let viewURL = "http://www.yourmomdoesnotexist.com/view/View1/api/json"
+        let url = NSURL(string: viewURL)
+        let viewVals = [ViewNameKey: "View1", ViewURLKey: viewURL, ViewJenkinsInstanceKey: jenkinsInstance!]
+        let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context)
+        
+        saveContext()
+        
+        let request = NSURLRequest(URL: url!)
+        let operation = AFHTTPRequestOperation(request: request)
+        let serializer = AFJSONResponseSerializer()
+        operation.responseSerializer = serializer
+        
+        let fetchreq = NSFetchRequest()
+        fetchreq.entity = NSEntityDescription.entityForName("View", inManagedObjectContext: context!)
+        fetchreq.includesPropertyValues = false
+        let views = context?.executeFetchRequest(fetchreq, error: nil)
+        XCTAssertEqual(views!.count, 1, "views count is wrong. should  be 1 got: \(views!.count) instead")
+        
+        
+        operation.setCompletionBlockWithSuccess(
+            { operation, response in
+                println("jenkins request received")
+                abort()
+            },
+            failure: { operation, error in
+                var userInfo: [NSObject : AnyObject] = [RequestErrorKey: error]
+                if let response = operation.response {
+                    userInfo[StatusCodeKey] = response.statusCode
+                }
+                let notification = NSNotification(name: ViewDetailRequestFailedNotification, object: self, userInfo: userInfo)
+                self.mgr.viewDetailRequestFailed(notification)
+                requestFailureExpectation.fulfill()
+        })
+        
+        operation.start()
+        
+        waitForExpectationsWithTimeout(10, handler: { error in
+            
+        })
+    }
+    
     func testViewDetailRequestFailed() {
         let requestFailureExpectation = expectationWithDescription("View1 will be deleted")
         let viewDeletedNotificationExpectionat = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
@@ -364,9 +423,10 @@ class SyncManagerTests: XCTestCase {
                 println("jenkins request received")
             },
             failure: { operation, error in
-                var userInfo: Dictionary = error.userInfo!
-                userInfo[StatusCodeKey] = operation.response.statusCode
-                let url: NSURL = userInfo[NSErrorFailingURLKey] as NSURL
+                var userInfo: [NSObject : AnyObject] = [RequestErrorKey: error]
+                if let response = operation.response {
+                    userInfo[StatusCodeKey] = response.statusCode
+                }
                 let notification = NSNotification(name: ViewDetailRequestFailedNotification, object: self, userInfo: userInfo)
                 self.mgr.viewDetailRequestFailed(notification)
                 requestFailureExpectation.fulfill()

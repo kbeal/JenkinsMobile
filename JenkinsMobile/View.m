@@ -34,20 +34,26 @@
 
 + (View *)fetchViewWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context
 {
-    __block View *view = nil;
+    View *view = nil;
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     
-    [context performBlockAndWait:^{
-        request.entity = [NSEntityDescription entityForName:@"View" inManagedObjectContext:context];
-        request.predicate = [NSPredicate predicateWithFormat:@"url = %@", url];
-        NSError *executeFetchError = nil;
-        view = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
-        if (executeFetchError) {
-            NSLog(@"[%@, %@] error looking up view with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), url, [executeFetchError localizedDescription]);
-        }
-    }];
+    request.entity = [NSEntityDescription entityForName:@"View" inManagedObjectContext:context];
+    request.predicate = [NSPredicate predicateWithFormat:@"url = %@", url];
+    NSError *executeFetchError = nil;
+    view = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
+    if (executeFetchError) {
+       NSLog(@"[%@, %@] error looking up view with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), url, [executeFetchError localizedDescription]);
+    }
     
     return view;
+}
+
++ (void)fetchAndDeleteViewWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context
+{
+    View *view = [View fetchViewWithURL:url inContext:context];
+    if (view != nil) {
+        [context deleteObject:view];
+    }
 }
 
 - (void)setValues:(NSDictionary *) values
