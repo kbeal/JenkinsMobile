@@ -263,25 +263,32 @@ import CoreData
     
     func jenkinsInstanceDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
-        // parse the error for the jenkins url and status code
         let userInfo: Dictionary = notification.userInfo!
-        let status: Int = userInfo[StatusCodeKey] as Int
-        let url: NSURL = userInfo[NSErrorFailingURLKey] as NSURL
+        let requestError: NSError = userInfo[RequestErrorKey] as NSError
+        let errorUserInfo: Dictionary = requestError.userInfo!
+        let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
+        var jenkins: JenkinsInstance?
         
-        // if the error is 404
-        if (status==404) {
-            // find the jenkins instance
-            var jenkins: JenkinsInstance?
-            self.masterMOC?.performBlockAndWait({
+        if requestError.code == NSURLErrorCannotFindHost {
+            masterMOC!.performBlockAndWait({
                 jenkins = JenkinsInstance.fetchJenkinsInstanceWithURL(JenkinsInstance.removeApiFromURL(url), fromManagedObjectContext: self.masterMOC)
-            })
-            // if it exists delete it
-            if jenkins != nil {
-                jenkins!.enabled = false
-                self.masterMOC?.performBlockAndWait({
+                if jenkins != nil {
+                    jenkins!.enabled = false
                     self.saveMasterContext()
+                }
+            })
+        } else {
+            let status: Int = userInfo[StatusCodeKey] as Int
+            // if the error is 404
+            if (status==404) {
+                masterMOC!.performBlockAndWait({
+                    jenkins = JenkinsInstance.fetchJenkinsInstanceWithURL(JenkinsInstance.removeApiFromURL(url), fromManagedObjectContext: self.masterMOC)
+                    if jenkins != nil {
+                        jenkins!.enabled = false
+                        self.saveMasterContext()
+                    }
                 })
-            } 
+            }
         }
     }
     

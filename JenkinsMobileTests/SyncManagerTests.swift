@@ -173,10 +173,14 @@ class SyncManagerTests: XCTestCase {
                 abort()
             },
             failure: { operation, error in
-                var userInfo: Dictionary = error.userInfo!
-                userInfo[StatusCodeKey] = operation.response.statusCode
+                var errUserInfo: [NSObject : AnyObject] = error.userInfo!
                 // since the JenkinsInstance actually exists, we need to inject it's url so that coredata can find it.
-                userInfo[NSErrorFailingURLKey] = NSURL(string: self.jenkinsInstance!.url)
+                errUserInfo[NSErrorFailingURLKey] = NSURL(string: self.jenkinsInstance!.url)
+                let newError = NSError(domain: error.domain, code: error.code, userInfo: errUserInfo)
+                var userInfo: [NSObject : AnyObject] = [RequestErrorKey: newError]
+                if let response = operation.response {
+                    userInfo[StatusCodeKey] = response.statusCode
+                }                
                 let notification = NSNotification(name: JenkinsInstanceDetailRequestFailedNotification, object: self, userInfo: userInfo)
                 self.mgr.jenkinsInstanceDetailRequestFailed(notification)
                 requestFailureExpectation.fulfill()
