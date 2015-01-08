@@ -273,7 +273,7 @@
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self appendBuildDetailsWithValues:responseObject forJobAtURL:jobURL];
+        //[self appendBuildDetailsWithValues:responseObject forJobAtURL:jobURL];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         // Handle error
         NSLog(@"Request Failed: %@, %@", error, error.userInfo);
@@ -327,6 +327,7 @@
     }
 }*/
 
+/*
 - (void) appendBuildDetailsWithValues: (NSDictionary *) buildValues forJobAtURL: (NSString *) jobURL
 {
     NSMutableArray *builds = [self.jobsBuildsDetails objectForKey:jobURL];
@@ -338,7 +339,7 @@
     if (builds.count==[[self.jobsBuildsCounts objectForKey:jobURL] intValue]) {
         [self persistBuildDetailsToLocalStorageForJobAtURL:jobURL];
     }
-}
+}*/
 
 - (void) persistTestResultsImage: (UIImage *)image forJobWithName:jobName
 {
@@ -362,6 +363,7 @@
     }];
 }
 
+/*
 - (void) createBuilds: (NSArray *) builds forJobAtURL: (NSString *) jobURL
 {
     @autoreleasepool {
@@ -385,8 +387,9 @@
             }];
         }];
     }
-}
+}*/
 
+/*
 - (void) persistBuildDetailsToLocalStorageForJobAtURL: (NSString *) jobURL
 {
     @autoreleasepool {
@@ -413,7 +416,7 @@
             [self.importBuildsMOC reset];
         }];
     }
-}
+} */
 
 // This context is for import jobs in a background thread
 // If the context doesn't already exist, it is created and bound to the master managed object context

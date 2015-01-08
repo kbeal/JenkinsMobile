@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 #import "JenkinsInstance.h"
+#import "Constants.h"
 
 @class Job;
 
@@ -31,13 +32,13 @@
 @property (nonatomic, retain) NSString * result;
 @property (nonatomic, retain) NSDate * timestamp;
 @property (nonatomic, retain) NSString * url;
-@property (nonatomic, retain) NSString * jobURL;
+@property (nonatomic, retain) Job *rel_Build_Job;
 
 - (void)setValues:(NSDictionary *) values;
 
-+ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJobAtURL:(NSString *)jobURL;
++ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJob:(Job *)job;
 + (Build *) fetchBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
-+ (Build *) fetchBuildWithNumber: (NSNumber *)number forJobAtURL: (NSString *) jobURL inContext: (NSManagedObjectContext *) context;
-+ (NSArray *) fetchAllBuildsWithJobURL: (NSString *) jobURL inContext: (NSManagedObjectContext *) context;
+
+- (BOOL) shouldSync;
 
 @end

@@ -66,6 +66,7 @@ extern NSString * const BuildBuildingKey;
 extern NSString * const BuildDurationKey;
 extern NSString * const BuildEstimatedDurationKey;
 extern NSString * const BuildTimestampKey;
+extern NSString * const BuildJobKey;
 
 // Active Configuration Keys
 extern NSString * const ActiveConfigurationNameKey;

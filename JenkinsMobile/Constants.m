@@ -66,6 +66,7 @@ NSString * const BuildBuildingKey = @"building";
 NSString * const BuildDurationKey = @"duration";
 NSString * const BuildEstimatedDurationKey = @"estimatedDuration";
 NSString * const BuildTimestampKey = @"timestamp";
+NSString * const BuildJobKey = @"job";
 // Active Configuration Keys
 NSString * const ActiveConfigurationNameKey = @"name";
 NSString * const ActiveConfigurationColorKey = @"color";

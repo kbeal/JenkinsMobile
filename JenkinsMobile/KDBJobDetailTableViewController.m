@@ -519,11 +519,12 @@
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[self.tableView indexPathForSelectedRow]];
 
     if ([[segue identifier] isEqualToString:@"buildDetailSegue"]) {
-        Build *build = [Build fetchBuildWithNumber:[NSNumber numberWithInteger:cell.tag] forJobAtURL:self.job.url inContext:self.managedObjectContext];
+        //TODO: work with udpated Build API
+/*        Build *build = [Build fetchBuildWithNumber:[NSNumber numberWithInteger:cell.tag] forJobAtURL:self.job.url inContext:self.managedObjectContext];
         KDBBuildDetailViewController *dest = [segue destinationViewController];
         if (build != nil) {
             [dest setBuild:build];
-        }
+        } */
     } else if ([[segue identifier] isEqualToString:@"allBuildsSegue"]) {
         // set job
         KDBBuildsTableViewController *dest = [segue destinationViewController];
