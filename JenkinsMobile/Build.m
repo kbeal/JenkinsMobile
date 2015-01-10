@@ -61,7 +61,18 @@
 
 - (BOOL) shouldSync
 {
-    return false;
+    bool shouldSync = false;
+    if ([self.building boolValue]) {
+        double now = [[NSDate date] timeIntervalSince1970];
+        double currentBuildDuration = now - self.timestamp.timeIntervalSince1970;
+        if (self.estimatedDuration != 0) {
+            double progress = fabs(currentBuildDuration / [self.estimatedDuration doubleValue]);
+            if (progress >= 0.8) {
+                shouldSync = true;
+            }
+        }
+    }
+    return shouldSync;
 }
 
 - (void)setValues:(NSDictionary *) values
@@ -82,7 +93,7 @@
     self.number = NULL_TO_NIL([values objectForKey:@"number"]);
     self.result = NULL_TO_NIL([values objectForKey:@"result"]);
     NSNumber *timestamp = NULL_TO_NIL([values objectForKey:@"timestamp"]);
-    self.timestamp = [NSDate dateWithTimeIntervalSince1970:[timestamp doubleValue]];
+    self.timestamp = [NSDate dateWithTimeIntervalSince1970:([timestamp doubleValue] / 1000)];
     self.url = NULL_TO_NIL([values objectForKey:@"url"]);
     self.rel_Build_Job = NULL_TO_NIL([values objectForKey:BuildJobKey]);
 }

@@ -80,6 +80,31 @@ class SyncManagerTests: XCTestCase {
         XCTAssertFalse(job.shouldSync(), "shouldsync should be false")
     }
     
+    func testBuildShouldSync() {
+        let now = (NSDate().timeIntervalSince1970) * 1000
+        let fourSecondsAgo = now - 4000000
+        let tenSecondsAgo = now - 10000000
+        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/TestJob", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        
+        // should only sync 
+        // if building and duration (currentTime - build.timestamp) is within 80% of estimatedDuration
+        let buildVals1 = [BuildBuildingKey: false, BuildEstimatedDurationKey: 120000, BuildTimestampKey: now, BuildJobKey: job, BuildNumberKey: 100, BuildURLKey: "http://jenkins:8080/job/TestJob/100"]
+        let buildVals2 = [BuildBuildingKey: true, BuildEstimatedDurationKey: 120000, BuildTimestampKey: now, BuildJobKey: job, BuildNumberKey: 101, BuildURLKey: "http://jenkins:8080/job/TestJob/101"]
+        let buildVals3 = [BuildBuildingKey: true, BuildEstimatedDurationKey: 5000, BuildTimestampKey: fourSecondsAgo, BuildJobKey: job, BuildNumberKey: 102, BuildURLKey: "http://jenkins:8080/job/TestJob/102"]
+        let buildVals4 = [BuildBuildingKey: true, BuildEstimatedDurationKey: 5000, BuildTimestampKey: tenSecondsAgo, BuildJobKey: job, BuildNumberKey: 103, BuildURLKey: "http://jenkins:8080/job/TestJob/103"]
+        
+        let build1 = Build.createBuildWithValues(buildVals1, inManagedObjectContext: context)
+        let build2 = Build.createBuildWithValues(buildVals2, inManagedObjectContext: context)
+        let build3 = Build.createBuildWithValues(buildVals3, inManagedObjectContext: context)
+        let build4 = Build.createBuildWithValues(buildVals4, inManagedObjectContext: context)
+        
+        XCTAssertFalse(build1.shouldSync(), "build1 should not sync because its building value is false")
+        XCTAssertFalse(build2.shouldSync(), "build2 should not sync because it was just kicked off")
+        XCTAssertTrue(build3.shouldSync(), "build3 should sync because it's close to completion time")
+        XCTAssertTrue(build4.shouldSync(), "build4 should sync because it's after estimated completion time and it's still building")
+    }
+    
     func testJenkinsInstanceFindOrCreated() {
         let jobObj1 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com"]
         let jobObj2 = [JobNameKey: "Job2", JobColorKey: "red", JobURLKey: "http://www.yahoo.com"]

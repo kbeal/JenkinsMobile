@@ -480,7 +480,7 @@
     Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context];
     
     NSArray *buildkeys = [NSArray arrayWithObjects:@"description",@"building",@"builtOn",@"duration",@"estimatedDuration",@"executor",@"fullDisplayName",@"build_id",@"keepLog",@"number",@"result",@"timestamp",@"url",BuildJobKey,nil];
-    NSArray *buildvalues = [NSArray arrayWithObjects:@"build 1 description",[NSNumber numberWithBool:NO],@"1/1/14",[NSNumber numberWithInt:123456],[NSNumber numberWithInt:123456],@"",@"build 1 test",@"build test id",[NSNumber numberWithBool:NO],[NSNumber numberWithInt:100],@"SUCCESS",[NSNumber numberWithDouble:139691690635],@"http://www.google.com",job, nil];
+    NSArray *buildvalues = [NSArray arrayWithObjects:@"build 1 description",[NSNumber numberWithBool:NO],@"1/1/14",[NSNumber numberWithInt:123456],[NSNumber numberWithInt:123456],@"",@"build 1 test",@"build test id",[NSNumber numberWithBool:NO],[NSNumber numberWithInt:100],@"SUCCESS",[NSNumber numberWithDouble:528823830000],@"http://www.google.com",job, nil];
     NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
     
     Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context];
@@ -496,7 +496,7 @@
     XCTAssert([build.keepLog isEqualToNumber:[NSNumber numberWithBool:NO]], @"keep log is wrong");
     XCTAssert([build.number isEqualToNumber:[NSNumber numberWithInt:100]], @"build number is wrong");
     XCTAssert([build.result isEqual:@"SUCCESS"], @"build result is wrong");
-    XCTAssert([build.timestamp isEqualToDate:[NSDate dateWithTimeIntervalSince1970:139691690635]], @"build timestamp is wrong %f",[build.timestamp timeIntervalSince1970]);
+    XCTAssert([build.timestamp isEqualToDate:[NSDate dateWithTimeIntervalSince1970:528823830]], @"build timestamp is wrong %f",[build.timestamp timeIntervalSince1970]);
     XCTAssert([build.url isEqual:@"http://www.google.com"], @"build url is wrong");
     XCTAssert([build.rel_Build_Job.url isEqualToString:@"http://www.google.com"], @"build's job url is wrong");
 }
