@@ -36,7 +36,7 @@
 
 - (void)setValues:(NSDictionary *) values;
 
-+ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJob:(Job *)job;
++ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context;
 + (Build *) fetchBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
 
 - (BOOL) shouldSync;

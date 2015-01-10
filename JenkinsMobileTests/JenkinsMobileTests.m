@@ -479,11 +479,11 @@
     NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
     Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context];
     
-    NSArray *buildkeys = [NSArray arrayWithObjects:@"description",@"building",@"builtOn",@"duration",@"estimatedDuration",@"executor",@"fullDisplayName",@"build_id",@"keepLog",@"number",@"result",@"timestamp",@"url",nil];
-    NSArray *buildvalues = [NSArray arrayWithObjects:@"build 1 description",[NSNumber numberWithBool:NO],@"1/1/14",[NSNumber numberWithInt:123456],[NSNumber numberWithInt:123456],@"",@"build 1 test",@"build test id",[NSNumber numberWithBool:NO],[NSNumber numberWithInt:100],@"SUCCESS",[NSNumber numberWithDouble:139691690635],@"http://www.google.com", nil];
+    NSArray *buildkeys = [NSArray arrayWithObjects:@"description",@"building",@"builtOn",@"duration",@"estimatedDuration",@"executor",@"fullDisplayName",@"build_id",@"keepLog",@"number",@"result",@"timestamp",@"url",BuildJobKey,nil];
+    NSArray *buildvalues = [NSArray arrayWithObjects:@"build 1 description",[NSNumber numberWithBool:NO],@"1/1/14",[NSNumber numberWithInt:123456],[NSNumber numberWithInt:123456],@"",@"build 1 test",@"build test id",[NSNumber numberWithBool:NO],[NSNumber numberWithInt:100],@"SUCCESS",[NSNumber numberWithDouble:139691690635],@"http://www.google.com",job, nil];
     NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
     
-    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJob:job];
+    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context];
     
     XCTAssert([build.build_description isEqual:@"build 1 description"], @"build description is wrong, is actually %@",build.build_description);
     XCTAssert([build.building isEqual:[NSNumber numberWithBool:NO]], @"building is wrong");
@@ -508,11 +508,11 @@
     NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
     Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context];
     
-    NSArray *buildkeys = [NSArray arrayWithObjects:@"number",@"url",nil];
-    NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com", nil];
+    NSArray *buildkeys = [NSArray arrayWithObjects:@"number",@"url",BuildJobKey,nil];
+    NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com",job, nil];
     NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
     
-    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJob:job];
+    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context];
     
     XCTAssert([build.url isEqual:@"http://www.google.com"], @"build url is wrong");
     XCTAssert([build.number isEqualToNumber:[NSNumber numberWithInt:100]], @"build number is wrong");
@@ -530,11 +530,11 @@
     NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
     Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context];
     
-    NSArray *buildkeys = [NSArray arrayWithObjects:@"number",@"url",nil];
-    NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com", nil];
+    NSArray *buildkeys = [NSArray arrayWithObjects:@"number",@"url",BuildJobKey,nil];
+    NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com",job, nil];
     NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
     
-    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context forJob:job];
+    Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context];
     
     NSUInteger orig_cnt = [_context countForFetchRequest:allbuilds error:&error];
 

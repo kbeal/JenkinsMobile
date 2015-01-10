@@ -34,13 +34,11 @@
 @dynamic rel_Build_Job;
 
 // Creates a build that does not yet have a job relation.
-+ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context forJob:(Job *)job
++ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context;
 {
-    NSMutableDictionary *valsWithJob = [NSMutableDictionary dictionaryWithDictionary:values];
-    [valsWithJob setObject:job forKey:BuildJobKey];
     Build *build = [NSEntityDescription insertNewObjectForEntityForName:@"Build" inManagedObjectContext:context];
     
-    [build setValues:valsWithJob];
+    [build setValues:values];
     
     return build;
 }
