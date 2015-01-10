@@ -93,16 +93,19 @@ class SyncManagerTests: XCTestCase {
         let buildVals2 = [BuildBuildingKey: true, BuildEstimatedDurationKey: 120000, BuildTimestampKey: now, BuildJobKey: job, BuildNumberKey: 101, BuildURLKey: "http://jenkins:8080/job/TestJob/101"]
         let buildVals3 = [BuildBuildingKey: true, BuildEstimatedDurationKey: 5000, BuildTimestampKey: fourSecondsAgo, BuildJobKey: job, BuildNumberKey: 102, BuildURLKey: "http://jenkins:8080/job/TestJob/102"]
         let buildVals4 = [BuildBuildingKey: true, BuildEstimatedDurationKey: 5000, BuildTimestampKey: tenSecondsAgo, BuildJobKey: job, BuildNumberKey: 103, BuildURLKey: "http://jenkins:8080/job/TestJob/103"]
+        let buildVals5 = [BuildJobKey: job, BuildNumberKey: 103, BuildURLKey: "http://jenkins:8080/job/TestJob/103"]
         
         let build1 = Build.createBuildWithValues(buildVals1, inManagedObjectContext: context)
         let build2 = Build.createBuildWithValues(buildVals2, inManagedObjectContext: context)
         let build3 = Build.createBuildWithValues(buildVals3, inManagedObjectContext: context)
         let build4 = Build.createBuildWithValues(buildVals4, inManagedObjectContext: context)
+        let build5 = Build.createBuildWithValues(buildVals5, inManagedObjectContext: context)
         
         XCTAssertFalse(build1.shouldSync(), "build1 should not sync because its building value is false")
         XCTAssertFalse(build2.shouldSync(), "build2 should not sync because it was just kicked off")
         XCTAssertTrue(build3.shouldSync(), "build3 should sync because it's close to completion time")
         XCTAssertTrue(build4.shouldSync(), "build4 should sync because it's after estimated completion time and it's still building")
+        XCTAssertTrue(build5.shouldSync(), "build5 should sync because it hasn't synced yet")
     }
     
     func testJenkinsInstanceFindOrCreated() {

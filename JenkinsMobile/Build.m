@@ -72,6 +72,11 @@
             }
         }
     }
+    
+    if (self.building == nil) {
+        shouldSync = true;
+    }
+    
     return shouldSync;
 }
 
