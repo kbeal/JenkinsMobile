@@ -22,6 +22,8 @@ NSString * const BuildProgressResponseReceivedNotification = @"BuildProgressResp
 NSString * const JobTestResultsImageResponseReceivedNotification = @"JobTestResultsImageResponseReceived";
 NSString * const JenkinsInstanceDetailResponseReceivedNotification = @"JenkinsInstanceDetailResponseReceived";
 NSString * const JenkinsInstanceDetailRequestFailedNotification = @"JenkinsInstanceDetailRequestFailed";
+NSString * const BuildDetailResponseReceivedNotification = @"BuildDetailResponseReceived";
+NSString * const BuildDetailRequestFailedNotification = @"BuildDetailRequestFailed";
 
 // View Keys
 NSString * const ViewURLKey = @"url";
@@ -67,6 +69,19 @@ NSString * const BuildDurationKey = @"duration";
 NSString * const BuildEstimatedDurationKey = @"estimatedDuration";
 NSString * const BuildTimestampKey = @"timestamp";
 NSString * const BuildJobKey = @"job";
+NSString * const BuildCausesShortDescriptionKey = @"shortDescription";
+NSString * const BuildCausesUserIDKey = @"userId";
+NSString * const BuildCausesUserNameKey = @"userName";
+NSString * const BuildChangeSetItemsKey = @"items";
+NSString * const BuildChangeSetKindKey = @"kind";
+NSString * const BuildActionsKey = @"actions";
+NSString * const BuildCausesKey = @"causes";
+NSString * const BuildChangeSetKey = @"changeSet";
+NSString * const BuildResultKey = @"result";
+NSString * const BuildDescriptionKey = @"description";
+NSString * const BuildKeepLogKey = @"keepLog";
+NSString * const BuildIDKey = @"id";
+NSString * const BuildFullDisplayNameKey = @"fullDisplayName";
 // Active Configuration Keys
 NSString * const ActiveConfigurationNameKey = @"name";
 NSString * const ActiveConfigurationColorKey = @"color";

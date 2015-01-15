@@ -19,6 +19,8 @@ extern NSString * const JobDetailResponseReceivedNotification;
 extern NSString * const JobDetailRequestFailedNotification;
 extern NSString * const ViewDetailResponseReceivedNotification;
 extern NSString * const ViewDetailRequestFailedNotification;
+extern NSString * const BuildDetailResponseReceivedNotification;
+extern NSString * const BuildDetailRequestFailedNotification;
 extern NSString * const BuildProgressResponseReceivedNotification;
 extern NSString * const JobTestResultsImageResponseReceivedNotification;
 
@@ -67,6 +69,19 @@ extern NSString * const BuildDurationKey;
 extern NSString * const BuildEstimatedDurationKey;
 extern NSString * const BuildTimestampKey;
 extern NSString * const BuildJobKey;
+extern NSString * const BuildActionsKey;
+extern NSString * const BuildCausesKey;
+extern NSString * const BuildChangeSetKey;
+extern NSString * const BuildCausesShortDescriptionKey;
+extern NSString * const BuildCausesUserIDKey;
+extern NSString * const BuildCausesUserNameKey;
+extern NSString * const BuildChangeSetItemsKey;
+extern NSString * const BuildChangeSetKindKey;
+extern NSString * const BuildResultKey;
+extern NSString * const BuildDescriptionKey;
+extern NSString * const BuildKeepLogKey;
+extern NSString * const BuildIDKey;
+extern NSString * const BuildFullDisplayNameKey;
 
 // Active Configuration Keys
 extern NSString * const ActiveConfigurationNameKey;

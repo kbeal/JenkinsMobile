@@ -143,33 +143,6 @@ import CoreData
         self.requestHandler!.importDetailsForJobWithURL(url, andJenkinsInstance: jenkinsInstance)
     }
     
-    func viewDetailResponseReceived(notification: NSNotification) {
-        assert(self.masterMOC != nil, "master managed object context not set")
-        var values: Dictionary = notification.userInfo!
-        let url = values[ViewURLKey] as String
-        var view: View?
-        
-        //TODO: re-think this. What if notification comes in after
-        // current instance is swapped?
-        values[ViewJenkinsInstanceKey] = currentJenkinsInstance
-        
-        self.masterMOC?.performBlockAndWait({
-            // Fetch view based on url
-            view = View.fetchViewWithURL(url, inContext: self.masterMOC)
-            // create if it doesn't exist
-            if (view==nil) {
-                View.createViewWithValues(values, inManagedObjectContext: self.masterMOC)
-            } else {
-                // update it\s values
-                view!.setValues(values)
-            }
-            self.saveMasterContext()
-        })
-        
-        // TODO: fix so that this works
-        //self.syncAllJobsForView(view!)
-    }
-    
     func jobDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
@@ -214,6 +187,33 @@ import CoreData
         }
         
         saveMasterContext()
+    }
+    
+    func viewDetailResponseReceived(notification: NSNotification) {
+        assert(self.masterMOC != nil, "master managed object context not set")
+        var values: Dictionary = notification.userInfo!
+        let url = values[ViewURLKey] as String
+        var view: View?
+        
+        //TODO: re-think this. What if notification comes in after
+        // current instance is swapped?
+        values[ViewJenkinsInstanceKey] = currentJenkinsInstance
+        
+        self.masterMOC?.performBlockAndWait({
+            // Fetch view based on url
+            view = View.fetchViewWithURL(url, inContext: self.masterMOC)
+            // create if it doesn't exist
+            if (view==nil) {
+                View.createViewWithValues(values, inManagedObjectContext: self.masterMOC)
+            } else {
+                // update it\s values
+                view!.setValues(values)
+            }
+            self.saveMasterContext()
+        })
+        
+        // TODO: fix so that this works
+        //self.syncAllJobsForView(view!)
     }
     
     func viewDetailRequestFailed(notification: NSNotification) {
@@ -290,6 +290,26 @@ import CoreData
                 })
             }
         }
+    }
+    
+    func buildDetailResponseReceived(notification: NSNotification) {
+        assert(self.masterMOC != nil, "master managed object context not set")
+        var values: Dictionary = notification.userInfo!
+        let url = values[BuildURLKey] as String
+        var build: Build?
+        
+        self.masterMOC?.performBlockAndWait({
+            // Fetch build based on url
+            build = Build.fetchBuildWithURL(url, inContext: self.masterMOC)
+            // create if it doesn't exist
+            if (build==nil) {
+                Build.createBuildWithValues(values, inManagedObjectContext: self.masterMOC)
+            } else {
+                // update it's values
+                build!.setValues(values)
+            }
+            self.saveMasterContext()
+        })
     }
     
     func saveMasterContext () {

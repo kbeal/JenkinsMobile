@@ -87,13 +87,13 @@
     self.build_description = NULL_TO_NIL([values objectForKey:@"description"]);
     self.building = NULL_TO_NIL([values objectForKey:@"building"]);
     self.builtOn = NULL_TO_NIL([values objectForKey:@"builtOn"]);
-    self.changeset = NULL_TO_NIL([values objectForKey:@"changeset"]);
+    self.changeset = NULL_TO_NIL([values objectForKey:BuildChangeSetKey]);
     self.culprits = NULL_TO_NIL([values objectForKey:@"culprits"]);
     self.duration = NULL_TO_NIL([values objectForKey:@"duration"]);
     self.estimatedDuration = NULL_TO_NIL([values objectForKey:@"estimatedDuration"]);
     self.executor = NULL_TO_NIL([values objectForKey:@"executor"]);
     self.fullDisplayName = NULL_TO_NIL([values objectForKey:@"fullDisplayName"]);
-    self.build_id = NULL_TO_NIL([values objectForKey:@"build_id"]);
+    self.build_id = NULL_TO_NIL([values objectForKey:BuildIDKey]);
     self.keepLog = NULL_TO_NIL([values objectForKey:@"keepLog"]);
     self.number = NULL_TO_NIL([values objectForKey:@"number"]);
     self.result = NULL_TO_NIL([values objectForKey:@"result"]);
