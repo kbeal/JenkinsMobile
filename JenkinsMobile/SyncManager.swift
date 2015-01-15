@@ -312,6 +312,31 @@ import CoreData
         })
     }
     
+    func buildDetailRequestFailed(notification: NSNotification) {
+        assert(self.masterMOC != nil, "master managed object context not set")
+        // parse the error for the view url and status code
+        let userInfo: Dictionary = notification.userInfo!
+        let requestError: NSError = userInfo[RequestErrorKey] as NSError
+        let errorUserInfo: Dictionary = requestError.userInfo!
+        let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
+        
+        if requestError.code == NSURLErrorCannotFindHost {
+            masterMOC!.performBlockAndWait({
+                Build.fetchAndDeleteBuildWithURL(url.absoluteString, inContext: self.masterMOC)
+            })
+        } else {
+            let status: Int = userInfo[StatusCodeKey] as Int
+            // if the error is 404
+            if (status==404) {
+                self.masterMOC?.performBlockAndWait({
+                    Build.fetchAndDeleteBuildWithURL(url.absoluteString, inContext: self.masterMOC)
+                })
+            }
+        }
+        
+        saveMasterContext()
+    }
+    
     func saveMasterContext () {
         var error: NSError? = nil
         let moc = self.masterMOC

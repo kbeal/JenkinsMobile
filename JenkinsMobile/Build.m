@@ -59,6 +59,14 @@
     return build;
 }
 
++ (void)fetchAndDeleteBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context
+{
+    Build *build = [Build fetchBuildWithURL:url inContext:context];
+    if (build != nil) {
+        [context deleteObject:build];
+    }
+}
+
 - (BOOL) shouldSync
 {
     bool shouldSync = false;

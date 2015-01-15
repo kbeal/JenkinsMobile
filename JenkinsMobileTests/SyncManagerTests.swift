@@ -587,6 +587,67 @@ class SyncManagerTests: XCTestCase {
 
     }
     
+    func testBuildDetailRequestFailed() {
+        let requestFailureExpectation = expectationWithDescription("Build will be deleted")
+        let buildDeletedNotificationExpection = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
+            if deletedObjects != nil {
+                for obj in deletedObjects! {
+                    if let build = obj as? Build {
+                        if build.url == "http://www.google.com/TestJob/1" {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/TestJob", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        
+        let buildURL = "http://www.google.com/TestJob/1"
+        let url = NSURL(string: buildURL)
+
+        let buildVals = [BuildJobKey: job, BuildURLKey: buildURL, BuildNumberKey: 1]
+        let build1 = Build.createBuildWithValues(buildVals, inManagedObjectContext: self.context)
+        
+        let request = NSURLRequest(URL: url!)
+        let operation = AFHTTPRequestOperation(request: request)
+        let serializer = AFJSONResponseSerializer()
+        operation.responseSerializer = serializer
+        
+        let fetchreq = NSFetchRequest()
+        fetchreq.entity = NSEntityDescription.entityForName("Build", inManagedObjectContext: context!)
+        fetchreq.includesPropertyValues = false
+        let builds = context?.executeFetchRequest(fetchreq, error: nil)
+        XCTAssertEqual(builds!.count, 1, "builds count is wrong. should  be 1 got: \(builds!.count) instead")
+        
+        
+        operation.setCompletionBlockWithSuccess(
+            { operation, response in
+                println("jenkins request received")
+                abort()
+            },
+            failure: { operation, error in
+                var userInfo: [NSObject : AnyObject] = [RequestErrorKey: error]
+                if let response = operation.response {
+                    userInfo[StatusCodeKey] = response.statusCode
+                }
+                let notification = NSNotification(name: BuildDetailRequestFailedNotification, object: self, userInfo: userInfo)
+                self.mgr.buildDetailRequestFailed(notification)
+                requestFailureExpectation.fulfill()
+        })
+        
+        operation.start()
+        
+        waitForExpectationsWithTimeout(5, handler: { error in
+            
+        })
+    }
+    
     func testBuildShouldSync() {
         let now = (NSDate().timeIntervalSince1970) * 1000
         let fourSecondsAgo = now - 4000000
