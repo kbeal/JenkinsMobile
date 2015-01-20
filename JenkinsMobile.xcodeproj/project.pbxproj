@@ -24,7 +24,6 @@
 		8A24ABEA195139180094F772 /* blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A24ABE9195139180094F772 /* blue.png */; };
 		8A399274199455D70071CF08 /* KDBJobTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A399273199455D70071CF08 /* KDBJobTableViewCell.m */; };
 		8A39927619945AE90071CF08 /* balls40.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8A39927519945AE90071CF08 /* balls40.atlas */; };
-		8A3C475919B16A8D00008BB6 /* ActiveConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3C475819B16A8D00008BB6 /* ActiveConfiguration.m */; };
 		8A3CB9A918E7C39900D0D160 /* yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CB91918E7C39800D0D160 /* yellow.png */; };
 		8A3CB9AB18E7C39900D0D160 /* warning.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CB91B18E7C39800D0D160 /* warning.png */; };
 		8A3CB9AC18E7C39900D0D160 /* warning@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CB91C18E7C39800D0D160 /* warning@2x.png */; };
@@ -170,6 +169,8 @@
 		8A56E60F19C90FD80058B0C7 /* SyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */; };
 		8A56E61119C91EB50058B0C7 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8B57BD19C7B98A004FA446 /* SyncManager.swift */; };
 		8A5A224D18F20A3A001FA8EB /* JenkinsInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5A224C18F20A3A001FA8EB /* JenkinsInstance.m */; };
+		8A6D73131A6F22CA00BFA0A5 /* Job.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6D73121A6F22CA00BFA0A5 /* Job.m */; };
+		8A6D73161A6F230A00BFA0A5 /* ActiveConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6D73151A6F230A00BFA0A5 /* ActiveConfiguration.m */; };
 		8A76B0F2199C3AE200B219C5 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A76B0F1199C3AE200B219C5 /* Constants.m */; };
 		8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */; };
 		8A817A5319638D1400ED7075 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A817A5219638D1400ED7075 /* SpriteKit.framework */; };
@@ -218,7 +219,6 @@
 		8AE3B96218EF80CA00E061C1 /* View.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B96118EF80CA00E061C1 /* View.m */; };
 		8AE4F000190B5496003EFE3D /* Build.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE4EFFF190B5496003EFE3D /* Build.m */; };
 		8AE904B819BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE904B719BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m */; };
-		8AF3843618FD7B9D00022254 /* Job.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AF3843518FD7B9D00022254 /* Job.m */; };
 		8AFBC11F19468806008EDC9D /* KDBMasterBuildListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -257,8 +257,6 @@
 		8A399272199455D60071CF08 /* KDBJobTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJobTableViewCell.h; sourceTree = "<group>"; };
 		8A399273199455D70071CF08 /* KDBJobTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJobTableViewCell.m; sourceTree = "<group>"; };
 		8A39927519945AE90071CF08 /* balls40.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = balls40.atlas; sourceTree = "<group>"; };
-		8A3C475719B16A8D00008BB6 /* ActiveConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveConfiguration.h; sourceTree = "<group>"; };
-		8A3C475819B16A8D00008BB6 /* ActiveConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveConfiguration.m; sourceTree = "<group>"; };
 		8A3CB91918E7C39800D0D160 /* yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = yellow.png; sourceTree = "<group>"; };
 		8A3CB91B18E7C39800D0D160 /* warning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = warning.png; sourceTree = "<group>"; };
 		8A3CB91C18E7C39800D0D160 /* warning@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "warning@2x.png"; sourceTree = "<group>"; };
@@ -406,6 +404,10 @@
 		8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManagerTests.swift; sourceTree = "<group>"; };
 		8A5A224B18F20A3A001FA8EB /* JenkinsInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JenkinsInstance.h; sourceTree = "<group>"; };
 		8A5A224C18F20A3A001FA8EB /* JenkinsInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JenkinsInstance.m; sourceTree = "<group>"; };
+		8A6D73111A6F22CA00BFA0A5 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Job.h; sourceTree = "<group>"; };
+		8A6D73121A6F22CA00BFA0A5 /* Job.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Job.m; sourceTree = "<group>"; };
+		8A6D73141A6F230A00BFA0A5 /* ActiveConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveConfiguration.h; sourceTree = "<group>"; };
+		8A6D73151A6F230A00BFA0A5 /* ActiveConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveConfiguration.m; sourceTree = "<group>"; };
 		8A76B0F1199C3AE200B219C5 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBViewPickerViewController.h; sourceTree = "<group>"; };
 		8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBViewPickerViewController.m; sourceTree = "<group>"; };
@@ -477,8 +479,6 @@
 		8AE4EFFF190B5496003EFE3D /* Build.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Build.m; sourceTree = "<group>"; };
 		8AE904B619BD4C3400EE6A79 /* KDBJobTestResultsTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJobTestResultsTableViewCell.h; sourceTree = "<group>"; };
 		8AE904B719BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJobTestResultsTableViewCell.m; sourceTree = "<group>"; };
-		8AF3843418FD7B9D00022254 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Job.h; sourceTree = "<group>"; };
-		8AF3843518FD7B9D00022254 /* Job.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Job.m; sourceTree = "<group>"; };
 		8AFBC11D19468806008EDC9D /* KDBMasterBuildListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBMasterBuildListTableViewController.h; sourceTree = "<group>"; };
 		8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBMasterBuildListTableViewController.m; sourceTree = "<group>"; };
 		8AFDD5131947CFCA008F2791 /* KDBMasterViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KDBMasterViewControllerDelegate.h; sourceTree = "<group>"; };
@@ -818,16 +818,16 @@
 		8AE3B96918EF80D000E061C1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				8A6D73141A6F230A00BFA0A5 /* ActiveConfiguration.h */,
+				8A6D73151A6F230A00BFA0A5 /* ActiveConfiguration.m */,
+				8A6D73111A6F22CA00BFA0A5 /* Job.h */,
+				8A6D73121A6F22CA00BFA0A5 /* Job.m */,
 				8AE4EFFE190B5496003EFE3D /* Build.h */,
 				8AE4EFFF190B5496003EFE3D /* Build.m */,
-				8AF3843418FD7B9D00022254 /* Job.h */,
-				8AF3843518FD7B9D00022254 /* Job.m */,
 				8A5A224B18F20A3A001FA8EB /* JenkinsInstance.h */,
 				8A5A224C18F20A3A001FA8EB /* JenkinsInstance.m */,
 				8AE3B96018EF80CA00E061C1 /* View.h */,
 				8AE3B96118EF80CA00E061C1 /* View.m */,
-				8A3C475719B16A8D00008BB6 /* ActiveConfiguration.h */,
-				8A3C475819B16A8D00008BB6 /* ActiveConfiguration.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -1105,11 +1105,11 @@
 				8AC32A4618E4FB6F0002D106 /* AFURLConnectionOperation.m in Sources */,
 				8A3DA825198F2C3800C97992 /* KDBJobDetailTableViewController.m in Sources */,
 				8A9B05B11924452D0019B336 /* KDBBuildDetailViewController.m in Sources */,
-				8AF3843618FD7B9D00022254 /* Job.m in Sources */,
 				8A14345718E8863E000C2DB4 /* KDBJenkinsViewTableView.m in Sources */,
 				8AC32A4118E4FB6F0002D106 /* AFHTTPRequestOperation.m in Sources */,
 				8A14345418E8857B000C2DB4 /* KDBJenkinsViewsScrollView.m in Sources */,
 				8AC32A4418E4FB6F0002D106 /* AFNetworkReachabilityManager.m in Sources */,
+				8A6D73161A6F230A00BFA0A5 /* ActiveConfiguration.m in Sources */,
 				8AC32A4918E4FB6F0002D106 /* AFURLSessionManager.m in Sources */,
 				8AC32A4718E4FB6F0002D106 /* AFURLRequestSerialization.m in Sources */,
 				8AC32A0E18E4F3A90002D106 /* KDBJobDetailViewController.m in Sources */,
@@ -1122,12 +1122,12 @@
 				8AFBC11F19468806008EDC9D /* KDBMasterBuildListTableViewController.m in Sources */,
 				8A040A00192599D400B25073 /* KDBRelatedProjectsViewController.m in Sources */,
 				8AC464E119E6179C00AE5A76 /* UniqueQueue.swift in Sources */,
+				8A6D73131A6F22CA00BFA0A5 /* Job.m in Sources */,
 				8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */,
 				8AC329FF18E4F3A90002D106 /* KDBAppDelegate.m in Sources */,
 				8A14345118E880A2000C2DB4 /* KDBJenkinsViewsViewController.m in Sources */,
 				8AE3B95C18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m in Sources */,
 				8A76B0F2199C3AE200B219C5 /* Constants.m in Sources */,
-				8A3C475919B16A8D00008BB6 /* ActiveConfiguration.m in Sources */,
 				8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */,
 				8AE3B96218EF80CA00E061C1 /* View.m in Sources */,
 				8AC32A4218E4FB6F0002D106 /* AFHTTPRequestOperationManager.m in Sources */,
