@@ -12,7 +12,7 @@
 #import "JenkinsInstance.h"
 #import "Build.h"
 #import "Constants.h"
-#import "ActiveConfiguration.h"
+#import "ActiveConfiguration+More.h"
 
 @interface JenkinsMobileTests : XCTestCase
 @property (nonatomic, strong) NSManagedObjectContext *context;
@@ -230,28 +230,6 @@
     XCTAssertNotNil(job.testResultsImage, @"job's test results image is nil");
 }
 
-- (void)testActiveConfigurations
-{
-    NSArray *activeConfigurationsKeys = [NSArray arrayWithObjects:ActiveConfigurationNameKey,ActiveConfigurationURLKey,ActiveConfigurationColorKey, nil];
-    NSArray *activeConfigurationsValues1 = [NSArray arrayWithObjects:@"config1",@"www.config1.com",@"blue", nil];
-    NSArray *activeConfigurationsValues2 = [NSArray arrayWithObjects:@"config2",@"www.config2.com",@"red", nil];
-    NSDictionary *activeConfigurations1 = [NSDictionary dictionaryWithObjects:activeConfigurationsValues1 forKeys:activeConfigurationsKeys];
-    NSDictionary *activeConfigurations2 = [NSDictionary dictionaryWithObjects:activeConfigurationsValues2 forKeys:activeConfigurationsKeys];
-    NSArray *activeConfigurations = [NSArray arrayWithObjects:activeConfigurations1,activeConfigurations2, nil];
-    NSArray *jobKeys = [NSArray arrayWithObjects:JobNameKey,JobColorKey,JobURLKey,JobActiveConfigurationsKey,nil ];
-    NSArray *jobValues = [NSArray arrayWithObjects:@"Test1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/",activeConfigurations, nil];
-    
-    Job *job = [Job createJobWithValues:[NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys] inManagedObjectContext:_context];
-    NSArray *activeConfigs = [job getActiveConfigurations];
-    ActiveConfiguration *ac1 = [activeConfigs objectAtIndex:0];
-    ActiveConfiguration *ac2 = [activeConfigs objectAtIndex:1];
-    
-    XCTAssert([activeConfigs count]==2, @"active configs has wrong count");
-    XCTAssert([ac1.name isEqualToString:@"config1"], @"ac1 has wrong name");
-    XCTAssert([ac2.color isEqualToString:@"red"], @"ac2 has wrong color");
-    
-}
-
 - (void)testCreateJobWithMinimalValues
 {
     NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"color",nil];
@@ -289,15 +267,6 @@
     
     XCTAssertTrue([job.getTestResultsImage isKindOfClass:[UIImage class]], @"%@%@",@"test results image is not UIImage, returned ",NSStringFromClass([job.getTestResultsImage class]));
     
-}
-
--(void) testActiveConfigurationIsBuilding
-{
-    ActiveConfiguration *ac1 = [[ActiveConfiguration alloc] initWithName:@"ac1" Color:@"blue_anime" andURL:@"http://ac1.com"];
-    ActiveConfiguration *ac2 = [[ActiveConfiguration alloc] initWithName:@"ac2" Color:@"yellow" andURL:@"http://ac1.com"];
-    
-    XCTAssertTrue([ac1 isBuilding], @"ac1 should be building, is not");
-    XCTAssertFalse([ac2 isBuilding], @"ac2 should not be building.");
 }
 
 - (void) testCreateJenkinsInstance
@@ -612,6 +581,27 @@
     
     XCTAssertEqualObjects(@"Job1", [Job jobNameFromURL:url1]);
     XCTAssertEqualObjects(@"Job2", [Job jobNameFromURL:url2]);
+}
+
+- (void) testCreateActiveConfigurationWithValues
+{
+    
+}
+
+- (void) testActiveConfigurationSimplifyURL
+{
+    NSArray *jobkeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobJenkinsInstanceKey, nil];
+    NSArray *jobvals = [NSArray arrayWithObjects:@"TestJob", @"http://jenkins:8080/job/TestJob", _jinstance, nil];
+    NSDictionary *jobdict = [NSDictionary dictionaryWithObjects:jobvals forKeys:jobkeys];
+    Job *job = [Job createJobWithValues:jobdict inManagedObjectContext:_context];
+    
+    NSArray *ackeys = [NSArray arrayWithObjects:ActiveConfigurationColorKey, ActiveConfigurationJobKey, ActiveConfigurationNameKey, ActiveConfigurationURLKey, nil];
+    NSArray *acvals = [NSArray arrayWithObjects:@"blue", job, @"port=4502,server=test", @"http://jenkins:8080/view/Project1/view/Dev2/job/Dev2%20Deploy%20Bundle/port=4503,server=mycqserver/", nil];
+    NSDictionary *acdict = [NSDictionary dictionaryWithObjects:acvals forKeys:ackeys];
+    ActiveConfiguration *ac = [ActiveConfiguration createActiveConfigurationWithValues:acdict inManagedObjectContext:_context];
+    
+    NSURL *simplifiedURL = [ac simplifiedURL];
+    XCTAssertEqualObjects(simplifiedURL.absoluteString, @"http://jenkins:8080/job/Dev2%20Deploy%20Bundle/port=4503,server=mycqserver", @"simplified url is incorrect");
 }
 
 - (void) testRemoveApiFromJenkinsURL

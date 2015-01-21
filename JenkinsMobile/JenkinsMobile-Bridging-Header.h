@@ -7,4 +7,4 @@
 #import "Job.h"
 #import "KDBJenkinsRequestHandler.h"
 #import "Constants.h"
-#import "ActiveConfiguration.h"
+#import "ActiveConfiguration+More.h"

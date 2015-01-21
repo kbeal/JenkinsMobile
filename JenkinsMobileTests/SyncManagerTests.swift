@@ -279,8 +279,15 @@ class SyncManagerTests: XCTestCase {
         let downstreamProjects = [downstreamObj1, downstreamObj2]
         let upstreamProjects = [upstreamObj1]
         let healthReport = ["iconUrl": "health-80plus.png"]
-        let activeConf1 = ActiveConfiguration(name:"conf1",color:"blue",andURL:"http://www.altavista.com")
-        let activeConf2 = ActiveConfiguration(name:"conf2",color:"red",andURL:"http://www.yahoo.com")
+        let jobObj1 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobObj2 = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job1 = Job.createJobWithValues(jobObj1, inManagedObjectContext: context!)
+        let job2 = Job.createJobWithValues(jobObj2, inManagedObjectContext: context!)
+        
+        let ac1 = [ActiveConfigurationColorKey:"blue",ActiveConfigurationNameKey:"config=1",ActiveConfigurationJobKey:job1,ActiveConfigurationURLKey:"http://www.google.com/job/Job1/config=1"]
+        let ac2 = [ActiveConfigurationColorKey:"blue",ActiveConfigurationNameKey:"config=1",ActiveConfigurationJobKey:job2,ActiveConfigurationURLKey:"http://www.google.com/job/Job2/config=1"]
+        let activeConf1 = ActiveConfiguration.createActiveConfigurationWithValues(ac1, inManagedObjectContext: context!)
+        let activeConf2 = ActiveConfiguration.createActiveConfigurationWithValues(ac2, inManagedObjectContext: context!)
         let activeConfs = [activeConf1,activeConf2]
         let testImage = UIImage(named: "blue.png")
         
@@ -326,7 +333,7 @@ class SyncManagerTests: XCTestCase {
         XCTAssertEqual(job.downstreamProjects![1]["url"] as String, "http://www.yahoo.com", "upstream project color is wrong")
         XCTAssertEqual(job.healthReport!["iconUrl"] as String, "health-80plus.png", "healthReport iconUrl is wrong")
         XCTAssertEqual(job.activeConfigurations.count, 2, "active configs count is wrong")
-        XCTAssertEqual(job.activeConfigurations![1].color as String, "red", "active config has wrong color")
+        XCTAssertEqual(job.activeConfigurations![1].color as String, "blue", "active config has wrong color")
         XCTAssertNotNil(job.testResultsImage, "job's test results image is nill")
         XCTAssertNotNil(job.lastSync, "job lastSync is nil")
     }

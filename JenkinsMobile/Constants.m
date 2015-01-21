@@ -12,7 +12,7 @@
 
 double MaxJobSyncAge = 300; // 5 minutes in seconds
 
-// Notifications
+#pragma mark - Notifications
 NSString * const SelectedJobChangedNotification = @"SelectedJobChanged";
 NSString * const JobDetailResponseReceivedNotification = @"JobDetailResponseReceived";
 NSString * const JobDetailRequestFailedNotification = @"JobDetailRequestFailed";
@@ -25,7 +25,7 @@ NSString * const JenkinsInstanceDetailRequestFailedNotification = @"JenkinsInsta
 NSString * const BuildDetailResponseReceivedNotification = @"BuildDetailResponseReceived";
 NSString * const BuildDetailRequestFailedNotification = @"BuildDetailRequestFailed";
 
-// View Keys
+#pragma mark - View Keys
 NSString * const ViewURLKey = @"url";
 NSString * const ViewNameKey = @"name";
 NSString * const ViewDescriptionKey = @"description";
@@ -34,7 +34,7 @@ NSString * const ViewJobsKey = @"jobs";
 NSString * const ViewViewsKey = @"views";
 NSString * const ViewJenkinsInstanceKey = @"jenkinsInstance";
 
-// Job Keys
+#pragma mark - Job Keys
 NSString * const JobURLKey = @"url";
 NSString * const JobActiveConfigurationsKey = @"activeConfigurations";
 NSString * const JobNameKey = @"name";
@@ -61,7 +61,36 @@ NSString * const JobUpstreamProjectsKey = @"upstreamProjects";
 NSString * const JobHealthReportKey = @"healthReport";
 NSString * const JobLastSyncKey = @"lastSync";
 NSString * const JobRequestErrorKey = @"jobRequestError";
-// Build Keys
+
+#pragma mark - Active Configuration Keys
+NSString * const ActiveConfigurationURLKey = @"url";
+NSString * const ActiveConfigurationJobKey = @"job";
+NSString * const ActiveConfigurationNameKey = @"name";
+NSString * const ActiveConfigurationColorKey = @"color";
+NSString * const ActiveConfigurationTestResultsImageKey = @"ActiveConfigurationTestResults";
+NSString * const ActiveConfigurationBuildableKey = @"buildable";
+NSString * const ActiveConfigurationConcurrentBuildKey = @"concurrentBuild";
+NSString * const ActiveConfigurationDisplayNameKey = @"displayName";
+NSString * const ActiveConfigurationFirstBuildKey = @"firstBuild";
+NSString * const ActiveConfigurationLastBuildKey = @"lastBuild";
+NSString * const ActiveConfigurationLastCompletedBuildKey = @"lastCompletedBuild";
+NSString * const ActiveConfigurationLastFailedBuildKey = @"lastFailedBuild";
+NSString * const ActiveConfigurationLastStableBuildKey = @"lastStableBuild";
+NSString * const ActiveConfigurationLastSuccessfulBuildKey = @"lastSuccessfulBuild";
+NSString * const ActiveConfigurationLastUnstableBuildKey = @"lastUnstableBuild";
+NSString * const ActiveConfigurationLastUnsucessfulBuildKey = @"lastUnsuccessfulBuild";
+NSString * const ActiveConfigurationNextBuildNumberKey = @"nextBuildNumber";
+NSString * const ActiveConfigurationInQueueKey = @"inQueue";
+NSString * const ActiveConfigurationDescriptionKey = @"description";
+NSString * const ActiveConfigurationKeepDependenciesKey = @"keepDependencies";
+NSString * const ActiveConfigurationJenkinsInstanceKey = @"jenkinsInstance";
+NSString * const ActiveConfigurationDownstreamProjectsKey = @"downstreamProjects";
+NSString * const ActiveConfigurationUpstreamProjectsKey = @"upstreamProjects";
+NSString * const ActiveConfigurationHealthReportKey = @"healthReport";
+NSString * const ActiveConfigurationLastSyncKey = @"lastSync";
+NSString * const ActiveConfigurationRequestErrorKey = @"ActiveConfigurationRequestError";
+
+#pragma mark - Build Keys
 NSString * const BuildURLKey = @"url";
 NSString * const BuildNumberKey = @"number";
 NSString * const BuildBuildingKey = @"building";
@@ -82,17 +111,15 @@ NSString * const BuildDescriptionKey = @"description";
 NSString * const BuildKeepLogKey = @"keepLog";
 NSString * const BuildIDKey = @"id";
 NSString * const BuildFullDisplayNameKey = @"fullDisplayName";
-// Active Configuration Keys
-NSString * const ActiveConfigurationNameKey = @"name";
-NSString * const ActiveConfigurationColorKey = @"color";
-NSString * const ActiveConfigurationURLKey = @"url";
-// JenkinsInstance Keys
+
+#pragma mark - JenkinsInstance Keys
 NSString * const JenkinsInstanceNameKey = @"name";
 NSString * const JenkinsInstanceURLKey = @"url";
 NSString * const JenkinsInstanceCurrentKey = @"current";
 NSString * const JenkinsInstanceJobsKey = @"jobs";
 NSString * const JenkinsInstanceEnabledKey = @"enabled";
-// AFNetworking Keys
+
+#pragma mark - AFNetworking Keys
 NSString * const StatusCodeKey = @"statusCode";
 NSString * const NSErrorFailingURLKey = @"NSErrorFailingURLKey";
 NSString * const RequestErrorKey = @"requestError";

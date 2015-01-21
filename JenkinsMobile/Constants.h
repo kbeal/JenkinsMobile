@@ -12,6 +12,7 @@
 
 extern double MaxJobSyncAge;
 
+#pragma mark - Notifications
 extern NSString * const SelectedJobChangedNotification;
 extern NSString * const JenkinsInstanceDetailResponseReceivedNotification;
 extern NSString * const JenkinsInstanceDetailRequestFailedNotification;
@@ -24,7 +25,7 @@ extern NSString * const BuildDetailRequestFailedNotification;
 extern NSString * const BuildProgressResponseReceivedNotification;
 extern NSString * const JobTestResultsImageResponseReceivedNotification;
 
-// View keys
+#pragma mark - View keys
 extern NSString * const ViewURLKey;
 extern NSString * const ViewNameKey;
 extern NSString * const ViewDescriptionKey;
@@ -33,7 +34,7 @@ extern NSString * const ViewJobsKey;
 extern NSString * const ViewViewsKey;
 extern NSString * const ViewJenkinsInstanceKey;
 
-// Job keys
+#pragma mark - Job keys
 extern NSString * const JobURLKey;
 extern NSString * const JobActiveConfigurationsKey;
 extern NSString * const JobNameKey;
@@ -61,7 +62,34 @@ extern NSString * const JobHealthReportKey;
 extern NSString * const JobLastSyncKey;
 extern NSString * const JobRequestErrorKey;
 
-// Build keys
+#pragma mark - ActiveConfiguration keys
+extern NSString * const ActiveConfigurationURLKey;
+extern NSString * const ActiveConfigurationNameKey;
+extern NSString * const ActiveConfigurationColorKey;
+extern NSString * const ActiveConfigurationTestResultsImageKey;
+extern NSString * const ActiveConfigurationBuildableKey;
+extern NSString * const ActiveConfigurationConcurrentBuildKey;
+extern NSString * const ActiveConfigurationDisplayNameKey;
+extern NSString * const ActiveConfigurationFirstBuildKey;
+extern NSString * const ActiveConfigurationLastBuildKey;
+extern NSString * const ActiveConfigurationLastCompletedBuildKey;
+extern NSString * const ActiveConfigurationLastFailedBuildKey;
+extern NSString * const ActiveConfigurationLastStableBuildKey;
+extern NSString * const ActiveConfigurationLastSuccessfulBuildKey;
+extern NSString * const ActiveConfigurationLastUnstableBuildKey;
+extern NSString * const ActiveConfigurationLastUnsucessfulBuildKey;
+extern NSString * const ActiveConfigurationNextBuildNumberKey;
+extern NSString * const ActiveConfigurationInQueueKey;
+extern NSString * const ActiveConfigurationDescriptionKey;
+extern NSString * const ActiveConfigurationKeepDependenciesKey;
+extern NSString * const ActiveConfigurationJobKey;
+extern NSString * const ActiveConfigurationDownstreamProjectsKey;
+extern NSString * const ActiveConfigurationUpstreamProjectsKey;
+extern NSString * const ActiveConfigurationHealthReportKey;
+extern NSString * const ActiveConfigurationLastSyncKey;
+extern NSString * const ActiveConfigurationRequestErrorKey;
+
+#pragma mark - Build keys
 extern NSString * const BuildURLKey;
 extern NSString * const BuildNumberKey;
 extern NSString * const BuildBuildingKey;
@@ -83,19 +111,14 @@ extern NSString * const BuildKeepLogKey;
 extern NSString * const BuildIDKey;
 extern NSString * const BuildFullDisplayNameKey;
 
-// Active Configuration Keys
-extern NSString * const ActiveConfigurationNameKey;
-extern NSString * const ActiveConfigurationColorKey;
-extern NSString * const ActiveConfigurationURLKey;
-
-// JenkinsInstance Keys
+#pragma mark - JenkinsInstance Keys
 extern NSString * const JenkinsInstanceNameKey;
 extern NSString * const JenkinsInstanceURLKey;
 extern NSString * const JenkinsInstanceCurrentKey;
 extern NSString * const JenkinsInstanceJobsKey;
 extern NSString * const JenkinsInstanceEnabledKey;
 
-// AFNetworking Keys
+#pragma mark - AFNetworking Keys
 extern NSString * const StatusCodeKey;
 extern NSString * const NSErrorFailingURLKey;
 extern NSString * const RequestErrorKey;
