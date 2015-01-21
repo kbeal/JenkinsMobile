@@ -425,6 +425,8 @@
 
 - (void)configureActiveConfigurationCell:(KDBJobTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
+    // TODO: make work with new ActiveConfiguration
+    /*
     ActiveConfiguration *config = [[self.job getActiveConfigurations] objectAtIndex:indexPath.row];
     NSString *color = [config isBuilding] ? [config.color componentsSeparatedByString:@"_"][0] : config.color;
     KDBBallScene *scene = [[KDBBallScene alloc] initWithSize:cell.statusBallContainerView.bounds.size andColor:color withAnimation:[config isBuilding]];
@@ -433,7 +435,7 @@
     // Present the scene.
     [cell.statusBallContainerView presentScene:scene];
     
-    cell.projectNamelabel.text = config.name;
+    cell.projectNamelabel.text = config.name;*/
 }
 
 - (void)configureTestResultsCell:(KDBJobTestResultsTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath

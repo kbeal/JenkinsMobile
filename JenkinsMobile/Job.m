@@ -100,11 +100,13 @@
 
 - (NSArray *) getActiveConfigurations
 {
+    // TODO: make work with new ActiveConfigurations.
     NSMutableArray *aconfigs = [[NSMutableArray alloc] initWithCapacity:[self.activeConfigurations count]];
+    /*
     for (NSDictionary *config in self.activeConfigurations) {
         ActiveConfiguration *aconfig = [[ActiveConfiguration alloc] initWithName:[config objectForKey:ActiveConfigurationNameKey] Color:[config objectForKey:ActiveConfigurationColorKey] andURL:[config objectForKey:ActiveConfigurationURLKey]];
         [aconfigs addObject:aconfig];
-    }
+    }*/
     return aconfigs;
 }
 
