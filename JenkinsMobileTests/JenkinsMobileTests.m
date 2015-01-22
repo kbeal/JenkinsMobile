@@ -583,9 +583,60 @@
     XCTAssertEqualObjects(@"Job2", [Job jobNameFromURL:url2]);
 }
 
-- (void) testCreateActiveConfigurationWithValues
+- (void)testCreateActiveConfigurationWithValues
 {
     
+    NSDictionary *jobbuilddict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:1] forKey:@"number"];
+    NSArray *relatedProjectsKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];
+    NSArray *upstreamProjectValues = [NSArray arrayWithObjects:@"maven-surefire",@"https://builds.apache.org/job/maven-surefire/",@"blue", nil];
+    NSArray *downstreamProjectValues1 = [NSArray arrayWithObjects:@"test4commerce",@"http://www.google.com",@"green", nil];
+    NSArray *downstreamProjectValues2 = [NSArray arrayWithObjects:@"test3commerce",@"http://www.yahoo.com",@"blue", nil];
+    NSDictionary *upstreamProject = [NSDictionary dictionaryWithObjects:upstreamProjectValues forKeys:relatedProjectsKeys];
+    NSDictionary *downstreamProject1 = [NSDictionary dictionaryWithObjects:downstreamProjectValues1 forKeys:relatedProjectsKeys];
+    NSDictionary *downstreamProject2 = [NSDictionary dictionaryWithObjects:downstreamProjectValues2 forKeys:relatedProjectsKeys];
+    NSArray *upstreamProjects = [NSArray arrayWithObjects:upstreamProject, nil];
+    NSArray *downstreamProjects = [NSArray arrayWithObjects:downstreamProject1, downstreamProject2, nil];
+    NSArray *healthReportKeys = [NSArray arrayWithObjects:@"description",@"iconUrl",@"score", nil];
+    NSArray *healthReportValues = [NSArray arrayWithObjects:@"Build stability: No recent builds failed.",@"health-80plus.png",@"100", nil];
+    NSDictionary *healthReport = [NSDictionary dictionaryWithObjects:healthReportValues forKeys:healthReportKeys];
+    NSArray *jobkeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobJenkinsInstanceKey, nil];
+    NSArray *jobvals = [NSArray arrayWithObjects:@"TestJob", @"http://jenkins:8080/job/TestJob", _jinstance, nil];
+    NSDictionary *jobdict = [NSDictionary dictionaryWithObjects:jobvals forKeys:jobkeys];
+    Job *job = [Job createJobWithValues:jobdict inManagedObjectContext:_context];
+    
+    NSArray *acKeys = [NSArray arrayWithObjects:ActiveConfigurationNameKey,ActiveConfigurationColorKey,ActiveConfigurationURLKey,ActiveConfigurationBuildableKey,ActiveConfigurationConcurrentBuildKey,ActiveConfigurationDisplayNameKey,ActiveConfigurationFirstBuildKey,ActiveConfigurationLastBuildKey,ActiveConfigurationLastCompletedBuildKey,ActiveConfigurationLastFailedBuildKey,ActiveConfigurationLastStableBuildKey,ActiveConfigurationLastSuccessfulBuildKey,ActiveConfigurationLastUnstableBuildKey,ActiveConfigurationLastUnsucessfulBuildKey,ActiveConfigurationNextBuildNumberKey,ActiveConfigurationInQueueKey,ActiveConfigurationDescriptionKey,ActiveConfigurationKeepDependenciesKey,ActiveConfigurationUpstreamProjectsKey,ActiveConfigurationDownstreamProjectsKey,ActiveConfigurationHealthReportKey,ActiveConfigurationJobKey,nil ];
+    
+    NSArray *acValues = [NSArray arrayWithObjects:@"config=1",@"blue",@"http://tomcat:8080/view/JobsView1/job/Job1/config=1",[NSNumber numberWithInt:1],[NSNumber numberWithInt:0],@"Test1",jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,jobbuilddict,[NSNumber numberWithInt:2],[NSNumber numberWithBool:NO],@"Test1 Description",[NSNumber numberWithBool:NO],upstreamProjects,downstreamProjects,healthReport,job, nil];
+    
+    NSDictionary *acVals = [NSDictionary dictionaryWithObjects:acValues forKeys:acKeys];
+    
+    ActiveConfiguration *ac = [ActiveConfiguration createActiveConfigurationWithValues:acVals inManagedObjectContext:_context];
+    
+    XCTAssert([ac.name isEqualToString:@"config=1"], @"ac name should be Test1, is actually %@",ac.name);
+    XCTAssert([ac.color isEqualToString:@"blue"], @"ac color is wrong");
+    XCTAssert([ac.url isEqualToString:@"http://tomcat:8080/view/JobsView1/job/Job1/config=1"], @"ac url is wrong, is actually %@",ac.url);
+    XCTAssertEqualObjects(ac.buildable, [NSNumber numberWithBool:YES], @"ac should be buildable, is not");
+    XCTAssertEqualObjects(ac.concurrentBuild, [NSNumber numberWithBool:NO], @"ac should be a concurrent build is actually %@", [ac.concurrentBuild stringValue]);
+    XCTAssertEqual(ac.displayName, @"Test1", @"display name is wrong, is actually %@", ac.displayName);
+    XCTAssertEqualObjects(ac.firstBuild, [NSNumber numberWithInt:1], @"first build number is wrong");
+    XCTAssertEqualObjects(ac.lastBuild, [NSNumber numberWithInt:1], @"last build number is wrong");
+    XCTAssertEqualObjects(ac.lastCompletedBuild, [NSNumber numberWithInt:1], @"last complete build number is wrong");
+    XCTAssertEqualObjects(ac.lastFailedBuild, [NSNumber numberWithInt:1], @"last fail build number is wrong");
+    XCTAssertEqualObjects(ac.lastStableBuild, [NSNumber numberWithInt:1], @"last stable build number is wrong");
+    XCTAssertEqualObjects(ac.lastSuccessfulBuild, [NSNumber numberWithInt:1], @"last successful build number is wrong");
+    XCTAssertEqualObjects(ac.lastUnstableBuild, [NSNumber numberWithInt:1], @"last unstable build number is wrong");
+    XCTAssertEqualObjects(ac.lastUnsuccessfulBuild, [NSNumber numberWithInt:1], @"last unsuccessful build number is wrong");
+    XCTAssertEqualObjects(ac.nextBuildNumber, [NSNumber numberWithInt:2], @"next build number is wrong");
+    XCTAssertEqualObjects(ac.inQueue, [NSNumber numberWithBool:NO], @"in queue should be false, is actually %@", [ac.inQueue stringValue]);
+    XCTAssertEqual(ac.activeConfiguration_description, @"Test1 Description", @"ac description is wrong is actually %@", ac.activeConfiguration_description);
+    XCTAssertEqualObjects(ac.keepDependencies, [NSNumber numberWithBool:NO], @"keep dependencies should be false, is actually %@", [ac.keepDependencies stringValue]);
+    XCTAssertNotNil(ac.rel_ActiveConfiguration_Job, @"ac job is null");
+    XCTAssert([ac.upstreamProjects count]==1, @"wrong number of upstream projects");
+    XCTAssert([ac.downstreamProjects count]==2, @"wrong number of downstream projects");
+    XCTAssert([[[ac.upstreamProjects objectAtIndex:0] objectForKey:@"color"] isEqualToString:@"blue"], @"upstream project has wrong color");
+    XCTAssert([[[ac.downstreamProjects objectAtIndex:0] objectForKey:@"color"] isEqualToString:@"green"], @"downstream project1 has wrong color");
+    XCTAssert([[[ac.downstreamProjects objectAtIndex:1] objectForKey:@"url"] isEqualToString:@"http://www.yahoo.com"], @"downstream project2 has wrong url");
+    XCTAssert([[ac.healthReport objectForKey:@"iconUrl"] isEqualToString:@"health-80plus.png"], @"health report is wrong %@", [ac.healthReport objectForKey:@"iconUrl"]);
 }
 
 - (void) testActiveConfigurationSimplifyURL
