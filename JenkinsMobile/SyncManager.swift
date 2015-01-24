@@ -341,12 +341,11 @@ import CoreData
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
         let url = values[ActiveConfigurationURLKey] as String
-        let job = values[ActiveConfigurationJobKey] as Job
         var ac: ActiveConfiguration?
         
         self.masterMOC?.performBlockAndWait({
             // Fetch build based on url
-            ac = ActiveConfiguration.fetchActiveConfigurationWithURL(url, inManagedObjectContext: self.masterMOC, andJob: job)
+            ac = ActiveConfiguration.fetchActiveConfigurationWithURL(url, inManagedObjectContext: self.masterMOC)
             // create if it doesn't exist
             if (ac==nil) {
                 ActiveConfiguration.createActiveConfigurationWithValues(values, inManagedObjectContext: self.masterMOC)
@@ -356,6 +355,31 @@ import CoreData
             }
             self.saveMasterContext()
         })
+    }
+    
+    func activeConfigurationDetailRequestFailed(notification: NSNotification) {
+        assert(self.masterMOC != nil, "master managed object context not set")
+        // parse the error for the view url and status code
+        let userInfo: Dictionary = notification.userInfo!
+        let requestError: NSError = userInfo[RequestErrorKey] as NSError
+        let errorUserInfo: Dictionary = requestError.userInfo!
+        let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
+        
+        if requestError.code == NSURLErrorCannotFindHost {
+            masterMOC!.performBlockAndWait({
+                ActiveConfiguration.fetchAndDeleteActiveConfigurationWithURL(url.absoluteString, inManagedObjectContext: self.masterMOC)
+            })
+        } else {
+            let status: Int = userInfo[StatusCodeKey] as Int
+            // if the error is 404
+            if (status==404) {
+                self.masterMOC?.performBlockAndWait({
+                    ActiveConfiguration.fetchAndDeleteActiveConfigurationWithURL(url.absoluteString, inManagedObjectContext: self.masterMOC)
+                })
+            }
+        }
+        
+        saveMasterContext()
     }
     
     func saveMasterContext () {

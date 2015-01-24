@@ -24,13 +24,13 @@
     return ac;
 }
 
-+ (ActiveConfiguration *)fetchActiveConfigurationWithURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context andJob: (Job *) job
++ (ActiveConfiguration *)fetchActiveConfigurationWithURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context
 {
     ActiveConfiguration *ac = nil;
     
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     request.entity = [NSEntityDescription entityForName:@"ActiveConfiguration" inManagedObjectContext:context];
-    request.predicate = [NSPredicate predicateWithFormat:@"url = %@ && rel_ActiveConfiguration_Job.name = %@", url, job.name];
+    request.predicate = [NSPredicate predicateWithFormat:@"url = %@" , url];
     NSError *executeFetchError = nil;
     
     ac = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
@@ -42,9 +42,9 @@
     return ac;
 }
 
-+ (void)fetchAndDeleteActiveConfigurationWithURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context andJob: (Job *) job
++ (void)fetchAndDeleteActiveConfigurationWithURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context
 {
-    ActiveConfiguration *ac = [ActiveConfiguration fetchActiveConfigurationWithURL:url inManagedObjectContext:context andJob:job];
+    ActiveConfiguration *ac = [ActiveConfiguration fetchActiveConfigurationWithURL:url inManagedObjectContext:context];
     if (ac != nil) {
         [context deleteObject:ac];
     }

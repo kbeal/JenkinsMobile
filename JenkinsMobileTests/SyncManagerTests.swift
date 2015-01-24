@@ -724,4 +724,70 @@ class SyncManagerTests: XCTestCase {
         XCTAssertNotNil(ac.rel_ActiveConfiguration_Job, "job is nil")
         XCTAssertEqual(ac.healthReport!["iconUrl"] as String, "health-80plus.png", "healthReport iconUrl is wrong")
     }
+    
+    func testActiveConfigurationDetailRequestFailed() {
+        let requestFailureExpectation = expectationWithDescription("Active Config will be deleted")
+        let activeConfigDeletedNotificationExpection = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
+            if deletedObjects != nil {
+                for obj in deletedObjects! {
+                    if let ac = obj as? ActiveConfiguration {
+                        if ac.url == "http://www.google.com/TestJob/config=1" {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/TestJob", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        
+        let buildURL = "http://www.google.com/TestJob/1"
+        
+        let buildVals = [BuildJobKey: job, BuildURLKey: buildURL, BuildNumberKey: 1]
+        let build1 = Build.createBuildWithValues(buildVals, inManagedObjectContext: self.context)
+
+        let acURL = "http://www.google.com/TestJob/config=1"
+        let url = NSURL(string: acURL)
+        
+        let acVals = [ActiveConfigurationNameKey: "config=1", ActiveConfigurationURLKey: acURL, ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
+        let ac = ActiveConfiguration.createActiveConfigurationWithValues(acVals, inManagedObjectContext: self.context)
+        
+        let request = NSURLRequest(URL: url!)
+        let operation = AFHTTPRequestOperation(request: request)
+        let serializer = AFJSONResponseSerializer()
+        operation.responseSerializer = serializer
+        
+        let fetchreq = NSFetchRequest()
+        fetchreq.entity = NSEntityDescription.entityForName("ActiveConfiguration", inManagedObjectContext: context!)
+        fetchreq.includesPropertyValues = false
+        let acs = context?.executeFetchRequest(fetchreq, error: nil)
+        XCTAssertEqual(acs!.count, 1, "acs count is wrong. should  be 1 got: \(acs!.count) instead")
+        
+        
+        operation.setCompletionBlockWithSuccess(
+            { operation, response in
+                println("jenkins request received")
+                abort()
+            },
+            failure: { operation, error in
+                var userInfo: [NSObject : AnyObject] = [RequestErrorKey: error]
+                if let response = operation.response {
+                    userInfo[StatusCodeKey] = response.statusCode
+                }
+                let notification = NSNotification(name: ActiveConfigurationDetailRequestFailedNotification, object: self, userInfo: userInfo)
+                self.mgr.activeConfigurationDetailRequestFailed(notification)
+                requestFailureExpectation.fulfill()
+        })
+        
+        operation.start()
+        
+        waitForExpectationsWithTimeout(3, handler: { error in
+            
+        })
+    }
 }

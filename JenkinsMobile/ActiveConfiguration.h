@@ -15,7 +15,6 @@
 
 @property (nonatomic, retain) id actions;
 @property (nonatomic, retain) NSString * activeConfiguration_description;
-@property (nonatomic, retain) id activeConfigurations;
 @property (nonatomic, retain) NSNumber * buildable;
 @property (nonatomic, retain) NSString * color;
 @property (nonatomic, retain) NSNumber * concurrentBuild;

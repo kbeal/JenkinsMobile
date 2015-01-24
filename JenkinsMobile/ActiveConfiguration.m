@@ -15,7 +15,6 @@
 
 @dynamic actions;
 @dynamic activeConfiguration_description;
-@dynamic activeConfigurations;
 @dynamic buildable;
 @dynamic color;
 @dynamic concurrentBuild;

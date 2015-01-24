@@ -16,7 +16,7 @@
 -(void)setValues:(NSDictionary *) values;
 
 + (ActiveConfiguration *)createActiveConfigurationWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
-+ (ActiveConfiguration *)fetchActiveConfigurationWithURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context andJob: (Job *) job;
-+ (void)fetchAndDeleteActiveConfigurationWithURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context andJob: (Job *) job;
++ (ActiveConfiguration *)fetchActiveConfigurationWithURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context;
++ (void)fetchAndDeleteActiveConfigurationWithURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context;
 
 @end
