@@ -8,10 +8,15 @@
 
 #import "ActiveConfiguration.h"
 
+@class Job;
+
 @interface ActiveConfiguration (More)
 
 -(NSURL *) simplifiedURL;
+-(void)setValues:(NSDictionary *) values;
 
 + (ActiveConfiguration *)createActiveConfigurationWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
++ (ActiveConfiguration *)fetchActiveConfigurationWithURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context andJob: (Job *) job;
++ (void)fetchAndDeleteActiveConfigurationWithURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context andJob: (Job *) job;
 
 @end

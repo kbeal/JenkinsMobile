@@ -337,6 +337,27 @@ import CoreData
         saveMasterContext()
     }
     
+    func activeConfigurationDetailResponseReceived(notification: NSNotification) {
+        assert(self.masterMOC != nil, "master managed object context not set")
+        var values: Dictionary = notification.userInfo!
+        let url = values[ActiveConfigurationURLKey] as String
+        let job = values[ActiveConfigurationJobKey] as Job
+        var ac: ActiveConfiguration?
+        
+        self.masterMOC?.performBlockAndWait({
+            // Fetch build based on url
+            ac = ActiveConfiguration.fetchActiveConfigurationWithURL(url, inManagedObjectContext: self.masterMOC, andJob: job)
+            // create if it doesn't exist
+            if (ac==nil) {
+                ActiveConfiguration.createActiveConfigurationWithValues(values, inManagedObjectContext: self.masterMOC)
+            } else {
+                // update it's values
+                ac!.setValues(values)
+            }
+            self.saveMasterContext()
+        })
+    }
+    
     func saveMasterContext () {
         var error: NSError? = nil
         let moc = self.masterMOC

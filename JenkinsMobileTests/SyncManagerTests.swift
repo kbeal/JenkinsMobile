@@ -682,4 +682,46 @@ class SyncManagerTests: XCTestCase {
         XCTAssertTrue(build4.shouldSync(), "build4 should sync because it's after estimated completion time and it's still building")
         XCTAssertTrue(build5.shouldSync(), "build5 should sync because it hasn't synced yet")
     }
+    
+    func testActiveConfigurationResponseReceived() {
+        let build1Obj = ["number": 1, "url": "http://www.google.com/job/Job1/config=1/1"]
+        let healthReport = ["iconUrl": "health-80plus.png"]
+        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/TestJob", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        
+        let userInfo = [ActiveConfigurationNameKey: "config=1", ActiveConfigurationColorKey: "blue", ActiveConfigurationURLKey: "http://www.google.com/job/Job1/config=1", ActiveConfigurationBuildableKey: true, ActiveConfigurationConcurrentBuildKey: false, ActiveConfigurationDisplayNameKey: "Job1", ActiveConfigurationFirstBuildKey: build1Obj, ActiveConfigurationLastBuildKey: build1Obj, ActiveConfigurationLastCompletedBuildKey: build1Obj, ActiveConfigurationLastFailedBuildKey: build1Obj, ActiveConfigurationLastStableBuildKey: build1Obj, ActiveConfigurationLastSuccessfulBuildKey: build1Obj,ActiveConfigurationLastUnstableBuildKey: build1Obj, ActiveConfigurationLastUnsucessfulBuildKey: build1Obj, ActiveConfigurationNextBuildNumberKey: 2, ActiveConfigurationInQueueKey: false, ActiveConfigurationDescriptionKey: "Job1, config=1 Description", ActiveConfigurationKeepDependenciesKey: false,  ActiveConfigurationHealthReportKey: healthReport, ActiveConfigurationJobKey: job, ActiveConfigurationLastSyncKey: NSDate()]
+        let notification = NSNotification(name: ActiveConfigurationDetailResponseReceivedNotification, object: self, userInfo: userInfo)
+        
+        mgr.activeConfigurationDetailResponseReceived(notification)
+        
+        let fetchreq = NSFetchRequest()
+        fetchreq.entity = NSEntityDescription.entityForName("ActiveConfiguration", inManagedObjectContext: context!)
+        fetchreq.predicate = NSPredicate(format: "url = %@", "http://www.google.com/job/Job1/config=1")
+        fetchreq.includesPropertyValues = false
+        
+        let acs = context?.executeFetchRequest(fetchreq, error: nil)
+        let ac = acs![0] as ActiveConfiguration
+        
+        XCTAssertEqual(acs!.count, 1, "jobs count is wrong. Should be 1 got: \(acs!.count) instead")
+        XCTAssertEqual(ac.name, "config=1", "job name is wrong. should be Job1, got: \(ac.name) instead")
+        XCTAssertEqual(ac.color, "blue", "job color is wrong. should be blue, got: \(ac.color) instead")
+        XCTAssertEqual(ac.url, "http://www.google.com/job/Job1/config=1", "ac url is wrong.")
+        XCTAssertEqual(ac.buildable, true, "ac should be buildable")
+        XCTAssertEqual(ac.concurrentBuild, false, "ac should not be a concurrent build")
+        XCTAssertEqual(ac.displayName, "Job1", "ac displayName is wrong")
+        XCTAssertEqual(ac.firstBuild, 1, "ac firstBuild is wrong")
+        XCTAssertEqual(ac.lastBuild, 1, "ac lastBuild is wrong")
+        XCTAssertEqual(ac.lastCompletedBuild, 1, "ac lastBuild is wrong")
+        XCTAssertEqual(ac.lastFailedBuild, 1, "ac lastBuild is wrong")
+        XCTAssertEqual(ac.lastStableBuild, 1, "ac lastBuild is wrong")
+        XCTAssertEqual(ac.lastSuccessfulBuild, 1, "ac lastBuild is wrong")
+        XCTAssertEqual(ac.lastUnstableBuild, 1, "ac lastBuild is wrong")
+        XCTAssertEqual(ac.lastUnsuccessfulBuild, 1, "ac lastBuild is wrong")
+        XCTAssertEqual(ac.nextBuildNumber, 2, "ac lastBuild is wrong")
+        XCTAssertEqual(ac.inQueue, false, "ac should not be inQueue")
+        XCTAssertEqual(ac.activeConfiguration_description, "Job1, config=1 Description", "ac description is wrong")
+        XCTAssertEqual(ac.keepDependencies, false, "ac keepDependencies should be false")
+        XCTAssertNotNil(ac.rel_ActiveConfiguration_Job, "job is nil")
+        XCTAssertEqual(ac.healthReport!["iconUrl"] as String, "health-80plus.png", "healthReport iconUrl is wrong")
+    }
 }

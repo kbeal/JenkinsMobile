@@ -23,6 +23,8 @@ extern NSString * const ViewDetailRequestFailedNotification;
 extern NSString * const BuildDetailResponseReceivedNotification;
 extern NSString * const BuildDetailRequestFailedNotification;
 extern NSString * const BuildProgressResponseReceivedNotification;
+extern NSString * const ActiveConfigurationDetailResponseReceivedNotification;
+extern NSString * const ActiveConfigurationDetailRequestFailedNotification;
 extern NSString * const JobTestResultsImageResponseReceivedNotification;
 
 #pragma mark - View keys

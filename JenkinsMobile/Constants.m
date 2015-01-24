@@ -24,6 +24,8 @@ NSString * const JenkinsInstanceDetailResponseReceivedNotification = @"JenkinsIn
 NSString * const JenkinsInstanceDetailRequestFailedNotification = @"JenkinsInstanceDetailRequestFailed";
 NSString * const BuildDetailResponseReceivedNotification = @"BuildDetailResponseReceived";
 NSString * const BuildDetailRequestFailedNotification = @"BuildDetailRequestFailed";
+NSString * const ActiveConfigurationDetailResponseReceivedNotification = @"ActiveConfigurationDetailResponseReceived";
+NSString * const ActiveConfigurationDetailRequestFailedNotification = @"ActiveConfigurationDetailRequestFailed";
 
 #pragma mark - View Keys
 NSString * const ViewURLKey = @"url";

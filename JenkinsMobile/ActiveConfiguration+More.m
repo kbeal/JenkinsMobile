@@ -8,6 +8,7 @@
 
 #import "ActiveConfiguration+More.h"
 #import "Constants.h"
+#import "Job.h"
 
 // Convert any NULL values to nil. Lifted from Kevin Ballard here: http://stackoverflow.com/a/9138033
 #define NULL_TO_NIL(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
@@ -21,6 +22,32 @@
     [ac setValues:values];
     
     return ac;
+}
+
++ (ActiveConfiguration *)fetchActiveConfigurationWithURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context andJob: (Job *) job
+{
+    ActiveConfiguration *ac = nil;
+    
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    request.entity = [NSEntityDescription entityForName:@"ActiveConfiguration" inManagedObjectContext:context];
+    request.predicate = [NSPredicate predicateWithFormat:@"url = %@ && rel_ActiveConfiguration_Job.name = %@", url, job.name];
+    NSError *executeFetchError = nil;
+    
+    ac = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
+    
+    if (executeFetchError) {
+        NSLog(@"[%@, %@] error looking up ActiveConfiguration with url: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), url, [executeFetchError localizedDescription]);
+    }
+    
+    return ac;
+}
+
++ (void)fetchAndDeleteActiveConfigurationWithURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context andJob: (Job *) job
+{
+    ActiveConfiguration *ac = [ActiveConfiguration fetchActiveConfigurationWithURL:url inManagedObjectContext:context andJob:job];
+    if (ac != nil) {
+        [context deleteObject:ac];
+    }
 }
 
 -(NSURL *) simplifiedURL
