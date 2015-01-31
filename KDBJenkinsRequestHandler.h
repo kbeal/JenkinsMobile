@@ -14,22 +14,24 @@
 
 @interface KDBJenkinsRequestHandler : NSObject
 
-@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext; //masterMOC, works on bg thread
-@property (strong, nonatomic) NSManagedObjectContext *importJobsMOC;
-@property (strong, nonatomic) NSManagedObjectContext *importBuildsMOC;
+//@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext; //masterMOC, works on bg thread
+//@property (strong, nonatomic) NSManagedObjectContext *importJobsMOC;
+//@property (strong, nonatomic) NSManagedObjectContext *importBuildsMOC;
 //@property (strong, nonatomic) JenkinsInstance *jinstance;
-@property (strong, nonatomic) NSNumber *view_count;
-@property (strong, nonatomic) NSMutableArray *viewDetails;
-@property (strong, nonatomic) NSMutableDictionary *viewsJobsCounts;
-@property (strong, nonatomic) NSMutableDictionary *viewsJobsDetails;
-@property (strong, nonatomic) NSMutableDictionary *jobsBuildsCounts;
-@property (strong, nonatomic) NSMutableDictionary *jobsBuildsDetails;
+//@property (strong, nonatomic) NSNumber *view_count;
+//@property (strong, nonatomic) NSMutableArray *viewDetails;
+//@property (strong, nonatomic) NSMutableDictionary *viewsJobsCounts;
+//@property (strong, nonatomic) NSMutableDictionary *viewsJobsDetails;
+//@property (strong, nonatomic) NSMutableDictionary *jobsBuildsCounts;
+//@property (strong, nonatomic) NSMutableDictionary *jobsBuildsDetails;
 
 //- (id) initWithJenkinsInstance: (JenkinsInstance *) instance;
 
 //- (void) importAllViews;
 - (void) importDetailsForJobWithURL:(NSURL *) jobURL andJenkinsInstance:(JenkinsInstance *) jinstance;
 - (void) importDetailsForViewWithURL: (NSURL *) viewURL;
+- (void) importDetailsForActiveConfigurationWithURL: (NSURL *) acURL;
+- (void) importDetailsForBuildWithURL: (NSURL *) buildURL;
 - (void) importProgressForBuild:(NSNumber *) buildNumber ofJobAtURL:(NSString *) jobURL;
 - (void) importDetailsForJenkinsAtURL:(NSString *) url withName:(NSString *) name;
 /*
