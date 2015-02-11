@@ -51,6 +51,8 @@ import CoreData
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jobDetailRequestFailed:"), name: JobDetailRequestFailedNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceDetailResponseReceived:"), name: JenkinsInstanceDetailResponseReceivedNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceDetailRequestFailed:"), name: JenkinsInstanceDetailRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("viewDetailResponseReceived:"), name: ViewDetailResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("viewDetailRequestFailed:"), name: ViewDetailRequestFailedNotification, object: nil)
     }
     
     // called after setting a new currentJenkinsInstanceURL
@@ -172,7 +174,7 @@ import CoreData
         let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
         let jobName = Job.jobNameFromURL(url)
         
-        if requestError.code == NSURLErrorCannotFindHost {
+        if (requestError.code == NSURLErrorCannotFindHost || requestError.code == NSURLErrorUnsupportedURL) {
             masterMOC!.performBlockAndWait({
                 Job.fetchAndDeleteJobWithName(jobName, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
             })

@@ -160,6 +160,7 @@
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"%@%@",@"response received for job at url: ",jobURL.absoluteString);
         NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:responseObject];
         [info setObject:jinstance forKey:JobJenkinsInstanceKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailResponseReceivedNotification object:self userInfo:info];

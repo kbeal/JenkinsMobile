@@ -69,6 +69,87 @@ class SyncManagerTests: XCTestCase {
         }
     }
     
+    func testSyncCurrentJenkinsInstance() {
+        let jenkinsInstanceSavedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            if updatedObjects != nil {
+                for obj in updatedObjects! {
+                    if let ji = obj as? JenkinsInstance {
+                        if ji.url == self.jenkinsInstance?.url {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        self.mgr.syncCurrentJenkinsInstance()
+        
+        // wait for expectations
+        waitForExpectationsWithTimeout(3, handler: { error in
+            
+        })
+    }
+    
+    func testSyncView() {
+        let viewSavedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let insertedObjects: NSSet? = notification.userInfo![NSInsertedObjectsKey] as NSSet?
+            if insertedObjects != nil {
+                for obj in insertedObjects! {
+                    if let view = obj as? View {
+                        if view.url == "http://jenkins:8080/view/GrandParent/" {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        self.mgr.syncView(NSURL(string: "http://jenkins:8080/view/GrandParent")!)
+        
+        // wait for expectations
+        waitForExpectationsWithTimeout(3, handler: { error in
+            
+        })
+    }
+    
+    func testSyncJob() {
+        let jobSavedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let insertedObjects: NSSet? = notification.userInfo![NSInsertedObjectsKey] as NSSet?
+            // Depending on whether the jenkins instance request or the Job3 request returns first
+            // We may be inserting or updating Job3. 
+            // We want to capture the notification from when it was only a request to Job3.
+            // Not getting Job3 in the jenkins request.
+            let relevantObjects = updatedObjects?.count == 1 ? updatedObjects : insertedObjects
+            if relevantObjects != nil {
+                for obj in relevantObjects! {
+                    if let job = obj as? Job {
+                        if job.url == "http://jenkins:8080/job/Job3/" {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        self.mgr.syncJob(NSURL(string: "http://jenkins:8080/job/Job3")!, jenkinsInstance: self.jenkinsInstance!)
+        
+        // wait for expectations
+        waitForExpectationsWithTimeout(3, handler: { error in
+            
+        })
+    }
+    
     func testSharedInstance() {
         XCTAssertNotNil(mgr, "shared instance is nil")
     }
