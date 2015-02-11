@@ -150,6 +150,59 @@ class SyncManagerTests: XCTestCase {
         })
     }
     
+    func testSyncBuild() {
+        let buildSavedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let insertedObjects: NSSet? = notification.userInfo![NSInsertedObjectsKey] as NSSet?
+            if insertedObjects != nil {
+                for obj in insertedObjects! {
+                    if let build = obj as? Build {
+                        if build.url == "http://jenkins:8080/job/Job3/1/" {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        self.mgr.syncBuild(NSURL(string: "http://jenkins:8080/job/Job3/1")!)
+        
+        // wait for expectations
+        waitForExpectationsWithTimeout(3, handler: { error in
+            
+        })
+    }
+    
+    func testSyncActiveConfiguration() {
+        let acSavedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let insertedObjects: NSSet? = notification.userInfo![NSInsertedObjectsKey] as NSSet?
+            if insertedObjects != nil {
+                for obj in insertedObjects! {
+                    if let ac = obj as? ActiveConfiguration {
+                        if ac.url == "http://jenkins:8080/job/Job6/config1=10,config2=test/" {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        let jobvals = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/Job6/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
+        let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
+        
+        self.mgr.syncActiveConfiguration(NSURL(string: "http://jenkins:8080/job/Job6/config1=10,config2=test")!, job: job)
+        
+        // wait for expectations
+        waitForExpectationsWithTimeout(3, handler: { error in
+            
+        })
+    }
+    
     func testSharedInstance() {
         XCTAssertNotNil(mgr, "shared instance is nil")
     }

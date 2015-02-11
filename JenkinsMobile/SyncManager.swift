@@ -53,6 +53,10 @@ import CoreData
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceDetailRequestFailed:"), name: JenkinsInstanceDetailRequestFailedNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("viewDetailResponseReceived:"), name: ViewDetailResponseReceivedNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("viewDetailRequestFailed:"), name: ViewDetailRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("buildDetailResponseReceived:"), name: BuildDetailResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("buildDetailRequestFailed:"), name: BuildDetailRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("activeConfigurationDetailResponseReceived:"), name: ActiveConfigurationDetailResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("activeConfigurationDetailRequestFailed:"), name: ActiveConfigurationDetailRequestFailedNotification, object: nil)
     }
     
     // called after setting a new currentJenkinsInstanceURL
@@ -143,6 +147,18 @@ import CoreData
         assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
         NSLog("%@%@", "Sending request for details for Job at URL: ",url.absoluteString!)
         self.requestHandler!.importDetailsForJobWithURL(url, andJenkinsInstance: jenkinsInstance)
+    }
+    
+    func syncBuild(url: NSURL) {
+        assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
+        NSLog("%@%@", "Sending request for details for Build at URL: ",url.absoluteString!)
+        self.requestHandler!.importDetailsForBuildWithURL(url)
+    }
+    
+    func syncActiveConfiguration(url: NSURL, job: Job) {
+        assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
+        NSLog("%@%@", "Sending request for details for ActiveConfiguration at URL: ",url.absoluteString!)
+        self.requestHandler!.importDetailsForActiveConfigurationWithURL(url, andJob: job)
     }
     
     func jobDetailResponseReceived(notification: NSNotification) {

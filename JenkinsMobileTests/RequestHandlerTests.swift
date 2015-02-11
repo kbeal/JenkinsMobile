@@ -192,8 +192,13 @@ class RequestHandlerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        requestHandler.importDetailsForActiveConfigurationWithURL(NSURL(string: "http://jenkins:8080/job/Job6/config1=10,config2=test"))
-        requestHandler.importDetailsForActiveConfigurationWithURL(NSURL(string: "http://www.google.com/jenkins/job/Job1/config1=true"))
+        let jobvals = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/Job6/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
+        let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
+        let jobvals2 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com/jenkins/job/Job1/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
+        let job2 = Job.createJobWithValues(jobvals2, inManagedObjectContext: context)
+        
+        requestHandler.importDetailsForActiveConfigurationWithURL(NSURL(string: "http://jenkins:8080/job/Job6/config1=10,config2=test"), andJob: job)
+        requestHandler.importDetailsForActiveConfigurationWithURL(NSURL(string: "http://www.google.com/jenkins/job/Job1/config1=true"), andJob: job2)
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in

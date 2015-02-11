@@ -218,7 +218,7 @@
     [operation start];
 }
 
-- (void) importDetailsForActiveConfigurationWithURL: (NSURL *) acURL
+- (void) importDetailsForActiveConfigurationWithURL: (NSURL *) acURL andJob:(Job *) job
 {
     NSURL *requestURL = [acURL URLByAppendingPathComponent:@"/api/json"];
     
@@ -231,7 +231,9 @@
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@%@",@"response received for ActiveConfiguration at url: ",acURL);
-        [[NSNotificationCenter defaultCenter] postNotificationName:ActiveConfigurationDetailResponseReceivedNotification object:self userInfo:responseObject];
+        NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:responseObject];
+        [userInfo setObject:job forKey:ActiveConfigurationJobKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:ActiveConfigurationDetailResponseReceivedNotification object:self userInfo:userInfo];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"%@%@",@"failed to receive response for ActiveConfiguration at url: ",[acURL absoluteString]);
         // since the AC actually exists, we need to inject it's url so that coredata can find it.
@@ -243,7 +245,7 @@
         if (operation.response) {
             [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
         }
-
+        [info setObject:job forKey:ActiveConfigurationJobKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:ActiveConfigurationDetailRequestFailedNotification object:self userInfo:info];
     }];
     
