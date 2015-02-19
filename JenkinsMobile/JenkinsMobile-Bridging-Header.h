@@ -3,7 +3,7 @@
 //
 @import Foundation;
 @import UIKit;
-#import "JenkinsInstance.h"
+#import "JenkinsInstance+More.h"
 #import "Job.h"
 #import "KDBJenkinsRequestHandler.h"
 #import "Constants.h"

@@ -168,7 +168,6 @@
 		8A3DA825198F2C3800C97992 /* KDBJobDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3DA824198F2C3800C97992 /* KDBJobDetailTableViewController.m */; };
 		8A56E60F19C90FD80058B0C7 /* SyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */; };
 		8A56E61119C91EB50058B0C7 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8B57BD19C7B98A004FA446 /* SyncManager.swift */; };
-		8A5A224D18F20A3A001FA8EB /* JenkinsInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A5A224C18F20A3A001FA8EB /* JenkinsInstance.m */; };
 		8A5D1B4C1A788680005C93AD /* RequestHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D1B4B1A788680005C93AD /* RequestHandlerTests.swift */; };
 		8A6D73131A6F22CA00BFA0A5 /* Job.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6D73121A6F22CA00BFA0A5 /* Job.m */; };
 		8A6D73161A6F230A00BFA0A5 /* ActiveConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6D73151A6F230A00BFA0A5 /* ActiveConfiguration.m */; };
@@ -187,6 +186,8 @@
 		8A9B05B11924452D0019B336 /* KDBBuildDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B05B01924452D0019B336 /* KDBBuildDetailViewController.m */; };
 		8A9C3B83196F82A7005A78BB /* balls30.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8A9C3B82196F82A7005A78BB /* balls30.atlas */; };
 		8A9C3B85196F8350005A78BB /* balls80.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8A9C3B84196F8350005A78BB /* balls80.atlas */; };
+		8ABBA74D1A96A54F00A7D176 /* JenkinsInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABBA74C1A96A54F00A7D176 /* JenkinsInstance.m */; };
+		8ABBA7501A96A5AA00A7D176 /* JenkinsInstance+More.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABBA74F1A96A5AA00A7D176 /* JenkinsInstance+More.m */; };
 		8AC329ED18E4F3A90002D106 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EC18E4F3A90002D106 /* Foundation.framework */; };
 		8AC329EF18E4F3A90002D106 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EE18E4F3A90002D106 /* CoreGraphics.framework */; };
 		8AC329F118E4F3A90002D106 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329F018E4F3A90002D106 /* UIKit.framework */; };
@@ -404,8 +405,6 @@
 		8A3DA824198F2C3800C97992 /* KDBJobDetailTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJobDetailTableViewController.m; sourceTree = "<group>"; };
 		8A56E60D19C90FD70058B0C7 /* JenkinsMobileTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JenkinsMobileTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManagerTests.swift; sourceTree = "<group>"; };
-		8A5A224B18F20A3A001FA8EB /* JenkinsInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JenkinsInstance.h; sourceTree = "<group>"; };
-		8A5A224C18F20A3A001FA8EB /* JenkinsInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JenkinsInstance.m; sourceTree = "<group>"; };
 		8A5D1B4B1A788680005C93AD /* RequestHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestHandlerTests.swift; sourceTree = "<group>"; };
 		8A6D73111A6F22CA00BFA0A5 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Job.h; sourceTree = "<group>"; };
 		8A6D73121A6F22CA00BFA0A5 /* Job.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Job.m; sourceTree = "<group>"; };
@@ -432,6 +431,10 @@
 		8A9B05B01924452D0019B336 /* KDBBuildDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBBuildDetailViewController.m; sourceTree = "<group>"; };
 		8A9C3B82196F82A7005A78BB /* balls30.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = balls30.atlas; sourceTree = "<group>"; };
 		8A9C3B84196F8350005A78BB /* balls80.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = balls80.atlas; sourceTree = "<group>"; };
+		8ABBA74B1A96A54F00A7D176 /* JenkinsInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JenkinsInstance.h; sourceTree = "<group>"; };
+		8ABBA74C1A96A54F00A7D176 /* JenkinsInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JenkinsInstance.m; sourceTree = "<group>"; };
+		8ABBA74E1A96A5AA00A7D176 /* JenkinsInstance+More.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JenkinsInstance+More.h"; sourceTree = "<group>"; };
+		8ABBA74F1A96A5AA00A7D176 /* JenkinsInstance+More.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "JenkinsInstance+More.m"; sourceTree = "<group>"; };
 		8AC329E918E4F3A90002D106 /* JenkinsMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JenkinsMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AC329EC18E4F3A90002D106 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8AC329EE18E4F3A90002D106 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -824,6 +827,8 @@
 		8AE3B96918EF80D000E061C1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				8ABBA74B1A96A54F00A7D176 /* JenkinsInstance.h */,
+				8ABBA74C1A96A54F00A7D176 /* JenkinsInstance.m */,
 				8A6D73141A6F230A00BFA0A5 /* ActiveConfiguration.h */,
 				8A6D731A1A6F268700BFA0A5 /* ActiveConfiguration+More.h */,
 				8A6D731B1A6F268700BFA0A5 /* ActiveConfiguration+More.m */,
@@ -832,10 +837,10 @@
 				8A6D73121A6F22CA00BFA0A5 /* Job.m */,
 				8AE4EFFE190B5496003EFE3D /* Build.h */,
 				8AE4EFFF190B5496003EFE3D /* Build.m */,
-				8A5A224B18F20A3A001FA8EB /* JenkinsInstance.h */,
-				8A5A224C18F20A3A001FA8EB /* JenkinsInstance.m */,
 				8AE3B96018EF80CA00E061C1 /* View.h */,
 				8AE3B96118EF80CA00E061C1 /* View.m */,
+				8ABBA74E1A96A5AA00A7D176 /* JenkinsInstance+More.h */,
+				8ABBA74F1A96A5AA00A7D176 /* JenkinsInstance+More.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -1129,6 +1134,7 @@
 				8AD3B759191C684F00DB7439 /* KDBBuildsTableViewController.m in Sources */,
 				8AFBC11F19468806008EDC9D /* KDBMasterBuildListTableViewController.m in Sources */,
 				8A040A00192599D400B25073 /* KDBRelatedProjectsViewController.m in Sources */,
+				8ABBA7501A96A5AA00A7D176 /* JenkinsInstance+More.m in Sources */,
 				8AC464E119E6179C00AE5A76 /* UniqueQueue.swift in Sources */,
 				8A6D73131A6F22CA00BFA0A5 /* Job.m in Sources */,
 				8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */,
@@ -1141,8 +1147,8 @@
 				8AE3B96218EF80CA00E061C1 /* View.m in Sources */,
 				8AC32A4218E4FB6F0002D106 /* AFHTTPRequestOperationManager.m in Sources */,
 				8A99949C197AB258009B82DD /* UIButton+RelatedProject.m in Sources */,
+				8ABBA74D1A96A54F00A7D176 /* JenkinsInstance.m in Sources */,
 				8AC32A4518E4FB6F0002D106 /* AFSecurityPolicy.m in Sources */,
-				8A5A224D18F20A3A001FA8EB /* JenkinsInstance.m in Sources */,
 				8AC329FB18E4F3A90002D106 /* main.m in Sources */,
 				8AC32A0818E4F3A90002D106 /* JenkinsMobile.xcdatamodeld in Sources */,
 				8AC32A4318E4FB6F0002D106 /* AFHTTPSessionManager.m in Sources */,
