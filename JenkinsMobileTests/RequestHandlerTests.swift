@@ -114,14 +114,14 @@ class RequestHandlerTests: XCTestCase {
             let errorUserInfo: Dictionary = requestError.userInfo!
             let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
             
-            if url.absoluteString == "http://www.google.com/jenkins/job/Job1" {
+            if url.absoluteString == "http://www.google.com/jenkins/job/Job1/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
         })
         
-        requestHandler.importDetailsForJobWithURL(NSURL(string: "http://jenkins:8080/job/Job3"), andJenkinsInstance: jenkinsInstance)
-        requestHandler.importDetailsForJobWithURL(NSURL(string: "http://www.google.com/jenkins/job/Job1"), andJenkinsInstance: jenkinsInstance)
+        requestHandler.importDetailsForJobWithURL(NSURL(string: "http://jenkins:8080/job/Job3/"), andJenkinsInstance: jenkinsInstance)
+        requestHandler.importDetailsForJobWithURL(NSURL(string: "http://www.google.com/jenkins/job/Job1/"), andJenkinsInstance: jenkinsInstance)
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in
@@ -150,14 +150,14 @@ class RequestHandlerTests: XCTestCase {
             let errorUserInfo: Dictionary = requestError.userInfo!
             let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
             
-            if url.absoluteString == "http://www.google.com/jenkins/view/View1" {
+            if url.absoluteString == "http://www.google.com/jenkins/view/View1/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
         })
         
-        requestHandler.importDetailsForViewWithURL(NSURL(string: "http://jenkins:8080/view/GrandParent"))
-        requestHandler.importDetailsForViewWithURL(NSURL(string: "http://www.google.com/jenkins/view/View1"))
+        requestHandler.importDetailsForViewWithURL(NSURL(string: "http://jenkins:8080/view/GrandParent/"))
+        requestHandler.importDetailsForViewWithURL(NSURL(string: "http://www.google.com/jenkins/view/View1/"))
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in
@@ -186,7 +186,7 @@ class RequestHandlerTests: XCTestCase {
             let errorUserInfo: Dictionary = requestError.userInfo!
             let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
             
-            if url.absoluteString == "http://www.google.com/jenkins/job/Job1/config1=true" {
+            if url.absoluteString == "http://www.google.com/jenkins/job/Job1/config1=true/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
@@ -197,8 +197,8 @@ class RequestHandlerTests: XCTestCase {
         let jobvals2 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com/jenkins/job/Job1/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
         let job2 = Job.createJobWithValues(jobvals2, inManagedObjectContext: context)
         
-        requestHandler.importDetailsForActiveConfigurationWithURL(NSURL(string: "http://jenkins:8080/job/Job6/config1=10,config2=test"), andJob: job)
-        requestHandler.importDetailsForActiveConfigurationWithURL(NSURL(string: "http://www.google.com/jenkins/job/Job1/config1=true"), andJob: job2)
+        requestHandler.importDetailsForActiveConfigurationWithURL(NSURL(string: "http://jenkins:8080/job/Job6/config1=10,config2=test/"), andJob: job)
+        requestHandler.importDetailsForActiveConfigurationWithURL(NSURL(string: "http://www.google.com/jenkins/job/Job1/config1=true/"), andJob: job2)
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in
@@ -227,14 +227,14 @@ class RequestHandlerTests: XCTestCase {
             let errorUserInfo: Dictionary = requestError.userInfo!
             let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
             
-            if url.absoluteString == "http://www.google.com/jenkins/job/Job1/1" {
+            if url.absoluteString == "http://www.google.com/jenkins/job/Job1/1/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
         })
         
-        requestHandler.importDetailsForBuildWithURL(NSURL(string: "http://jenkins:8080/job/Job6/1"))
-        requestHandler.importDetailsForBuildWithURL(NSURL(string: "http://www.google.com/jenkins/job/Job1/1"))
+        requestHandler.importDetailsForBuildWithURL(NSURL(string: "http://jenkins:8080/job/Job6/1/"))
+        requestHandler.importDetailsForBuildWithURL(NSURL(string: "http://www.google.com/jenkins/job/Job1/1/"))
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in

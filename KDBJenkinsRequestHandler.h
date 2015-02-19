@@ -14,38 +14,11 @@
 
 @interface KDBJenkinsRequestHandler : NSObject
 
-//@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext; //masterMOC, works on bg thread
-//@property (strong, nonatomic) NSManagedObjectContext *importJobsMOC;
-//@property (strong, nonatomic) NSManagedObjectContext *importBuildsMOC;
-//@property (strong, nonatomic) JenkinsInstance *jinstance;
-//@property (strong, nonatomic) NSNumber *view_count;
-//@property (strong, nonatomic) NSMutableArray *viewDetails;
-//@property (strong, nonatomic) NSMutableDictionary *viewsJobsCounts;
-//@property (strong, nonatomic) NSMutableDictionary *viewsJobsDetails;
-//@property (strong, nonatomic) NSMutableDictionary *jobsBuildsCounts;
-//@property (strong, nonatomic) NSMutableDictionary *jobsBuildsDetails;
-
-//- (id) initWithJenkinsInstance: (JenkinsInstance *) instance;
-
-//- (void) importAllViews;
 - (void) importDetailsForJobWithURL:(NSURL *) jobURL andJenkinsInstance:(JenkinsInstance *) jinstance;
 - (void) importDetailsForViewWithURL: (NSURL *) viewURL;
 - (void) importDetailsForActiveConfigurationWithURL: (NSURL *) acURL andJob:(Job *) job;
 - (void) importDetailsForBuildWithURL: (NSURL *) buildURL;
-- (void) importProgressForBuild:(NSNumber *) buildNumber ofJobAtURL:(NSString *) jobURL;
+//- (void) importProgressForBuild:(NSNumber *) buildNumber ofJobAtURL:(NSString *) jobURL;
 - (void) importDetailsForJenkinsAtURL:(NSString *) url withName:(NSString *) name;
-/*
-- (void) importDetailsForViews: (NSArray *) views;
-- (void) importDetailsForJobAtURL:(NSString *)jobURL inViewAtURL:(NSString *) viewURL;
-- (void) importDetailsForJobs;
-- (void) importDetailsForBuild: (NSNumber *) buildNumber forJobURL: (NSString *) jobURL;
-- (void) persistViewsToLocalStorage: (NSArray *) views;
-- (void) persistViewDetailsToLocalStorage;
-- (void) persistJobDetailsToLocalStorageForView: (NSString *) viewURL;
-- (void) persistBuildDetailsToLocalStorageForJobAtURL: (NSString *) jobURL;
-- (void) appendViewDetailsWithValues: (NSDictionary *) viewValues;
-- (void) appendJobDetailsWithValues: (NSDictionary *) jobValues forViewAtURL: (NSString *) viewURL;
-- (void) appendBuildDetailsWithValues: (NSDictionary *) buildValues forJobAtURL: (NSString *) jobURL;
- */
 
 @end

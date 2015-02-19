@@ -12,112 +12,9 @@
 
 @implementation KDBJenkinsRequestHandler
 
-//@synthesize importJobsMOC = _importJobsMOC;
-//@synthesize importBuildsMOC = _importBuildsMOC;
-
-- (id) initWithJenkinsInstance: (JenkinsInstance *) instance
-{
-    /*
-    self.jinstance = instance;
-    self.view_count = 0;
-    self.viewDetails = [[NSMutableArray alloc] init];
-    self.viewsJobsCounts = [[NSMutableDictionary alloc] init];
-    self.viewsJobsDetails = [[NSMutableDictionary alloc] init];
-    self.jobsBuildsCounts = [[NSMutableDictionary alloc] init];
-    self.jobsBuildsDetails = [[NSMutableDictionary alloc] init];
-     */
-    
-    return self;
-}
-
-/*
-- (void) importAllViews
-{
-    //NSLog(@"Starting view import...");
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",self.jinstance.url,@"api/json"]];
-    
-    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
-    //AFNetworking asynchronous url request
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
-                                         initWithRequest:request];
-    
-    operation.responseSerializer = [AFJSONResponseSerializer serializer];
-
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self persistViewsToLocalStorage:[responseObject objectForKey:@"views"]];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        // Handle error
-        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
-    }];
-    
-    [operation start];
-}*/
-
-/*
-- (void) importDetailsForView: (NSString *) viewName atURL: (NSString *) viewURL
-{
-    //NSLog([NSString stringWithFormat:@"%@%@",@"import details for view: ",viewName]);
-    //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for view: ",view.url]);
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",viewURL,@"api/json"]];
-    
-    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
-    //AFNetworking asynchronous url request
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
-                                         initWithRequest:request];
-    
-    operation.responseSerializer = [AFJSONResponseSerializer serializer];
-    
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        // The default Jenkin's 'All' view has the same URL as the node.
-        // Which means when we query it, the response doesn't look like a typical view.
-        // We have to get the views array out of reponse in that case.
-        NSDictionary *viewValues = responseObject;
-        if ([viewURL isEqual:self.jinstance.url])
-        {
-            NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"jobs",@"description", nil];
-            NSArray *values = [NSArray arrayWithObjects:viewName,viewURL,[responseObject objectForKey:@"jobs"],[responseObject objectForKey:@"description"], nil];
-            viewValues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
-        }
-        [self appendViewDetailsWithValues:viewValues];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        // Handle error
-        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
-    }];
-    
-    [operation start];
-}*/
-
-/*
-- (void) importDetailsForJobWithName:(NSString*) jobName
-{
-    //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job at url: ",jobURL]);
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@%@",self.jinstance.url,@"/job/",jobName,@"api/json"]];
-    
-    [self importTestResultsImageForJobWithName:jobName];
-    
-    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
-    //AFNetworking asynchronous url request
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
-                                         initWithRequest:request];
-    
-    operation.responseSerializer = [AFJSONResponseSerializer serializer];
-    
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        //NSLog(@"%@%@",@"response received for job at url: ",jobURL);
-        [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailResponseReceivedNotification object:self userInfo:responseObject];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
-        //NSDictionary *info = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:jobName,self.jinstance.url,error, nil] forKeys:[NSArray arrayWithObjects:JobNameKey, JenkinsInstanceURLKey, JobRequestErrorKey, nil]];
-        
-        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
-        [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailRequestFailedNotification object:self userInfo:error.userInfo];
-    }];
-    
-    [operation start];
-}*/
-
 - (void) importDetailsForViewWithURL: (NSURL *) viewURL
 {
+    /*
     NSURL *requestURL = [viewURL URLByAppendingPathComponent:@"/api/json"];
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     //AFNetworking asynchronous url request
@@ -125,9 +22,18 @@
                                          initWithRequest:request];
     
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    */
     
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"%@%@",@"response received for view at url: ",viewURL);
+    NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:viewURL];
+    NSLog(@"%@%@",@"Requesting details for View at URL: ",requestURL.absoluteString);
+    
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
+    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:@"admin" password:@"admin"];
+    
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [manager GET:requestURL.absoluteString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSNotificationCenter defaultCenter] postNotificationName:ViewDetailResponseReceivedNotification object:self userInfo:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"%@%@",@"failed to receive response for view at url: ",[viewURL absoluteString]);
@@ -143,13 +49,16 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:ViewDetailRequestFailedNotification object:self userInfo:info];
     }];
     
-    [operation start];
+    
+    //[operation start];
 }
 
 - (void) importDetailsForJobWithURL:(NSURL *) jobURL andJenkinsInstance:(JenkinsInstance *) jinstance
 {
+    
     // TODO: fix and uncomment importTestResultsImage
     //[self importTestResultsImageForJobWithName:[Job jobNameFromURL:jobURL]];
+    /*
     NSURL *requestURL = [jobURL URLByAppendingPathComponent:@"/api/json"];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
@@ -158,8 +67,18 @@
                                          initWithRequest:request];
     
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
+     */
+
+    NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:jobURL];
+    NSLog(@"%@%@",@"Requesting details for Job at URL: ",requestURL.absoluteString);
     
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
+    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:@"admin" password:@"admin"];
+    
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [manager GET:requestURL.absoluteString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@%@",@"response received for job at url: ",jobURL.absoluteString);
         NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:responseObject];
         [info setObject:jinstance forKey:JobJenkinsInstanceKey];
@@ -179,20 +98,50 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailRequestFailedNotification object:self userInfo:info];
     }];
     
-    [operation start];
+    //[operation start];
 }
 
 - (void) importDetailsForJenkinsAtURL:(NSString *) url withName:(NSString *) name
 {
     //NSLog([NSString stringWithFormat:@"%@%@",@"importing details for job at url: ",jobURL]);
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",url,@"/api/json"]];
-    NSLog(@"%@%@",@"Requesting details for Jenkins at URL: ",[requestURL absoluteString]);
+//    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@",url,@"/api/json"]];
+
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    //NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     //AFNetworking asynchronous url request
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
-                                         initWithRequest:request];
+    //AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
+    //                                     initWithRequest:request];
     
+    NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:[NSURL URLWithString:url]];
+    NSLog(@"%@%@",@"Requesting details for Jenkins at URL: ",requestURL.absoluteString);
+    
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
+    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:@"admin" password:@"admin"];
+    
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [manager GET:requestURL.absoluteString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:responseObject];
+        [userInfo setObject:url forKey:JenkinsInstanceURLKey];
+        [userInfo setObject:name forKey:JenkinsInstanceNameKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailResponseReceivedNotification object:self userInfo:userInfo];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"%@%@",@"failed to receive response for jenkins at url: ",url);
+        // since the JenkinsInstance actually exists, we need to inject it's url so that coredata can find it.
+        NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
+        [errUserInfo setObject:[NSURL URLWithString:url] forKey:NSErrorFailingURLKey];
+        NSError *newError = [[NSError alloc] initWithDomain:error.domain code:error.code userInfo:errUserInfo];
+        NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:newError, nil] forKeys:[NSArray arrayWithObjects:RequestErrorKey, nil]];
+        
+        if (operation.response) {
+            [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailRequestFailedNotification object:self userInfo:info];
+    }];
+    
+    
+    
+    /*
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -215,11 +164,12 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailRequestFailedNotification object:self userInfo:info];
     }];
     
-    [operation start];
+    [operation start];*/
 }
 
 - (void) importDetailsForActiveConfigurationWithURL: (NSURL *) acURL andJob:(Job *) job
 {
+    /*
     NSURL *requestURL = [acURL URLByAppendingPathComponent:@"/api/json"];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
@@ -228,8 +178,18 @@
                                          initWithRequest:request];
     
     operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    */
     
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+    NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:acURL];
+    NSLog(@"%@%@",@"Requesting details for ActiveConfiguration at URL: ",requestURL.absoluteString);
+    
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
+    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:@"admin" password:@"admin"];
+    
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [manager GET:requestURL.absoluteString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@%@",@"response received for ActiveConfiguration at url: ",acURL);
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:responseObject];
         [userInfo setObject:job forKey:ActiveConfigurationJobKey];
@@ -249,11 +209,12 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:ActiveConfigurationDetailRequestFailedNotification object:self userInfo:info];
     }];
     
-    [operation start];
+//    [operation start];
 }
 
 - (void) importDetailsForBuildWithURL: (NSURL *) buildURL
 {
+    /*
     NSURL *requestURL = [buildURL URLByAppendingPathComponent:@"/api/json"];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
@@ -261,9 +222,18 @@
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
                                          initWithRequest:request];
     
-    operation.responseSerializer = [AFJSONResponseSerializer serializer];
+    operation.responseSerializer = [AFJSONResponseSerializer serializer];*/
     
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+    NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:buildURL];
+    NSLog(@"%@%@",@"Requesting details for Build at URL: ",requestURL.absoluteString);
+    
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
+    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:@"admin" password:@"admin"];
+    
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [manager GET:requestURL.absoluteString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@%@",@"response received for Build at url: ",buildURL);
         [[NSNotificationCenter defaultCenter] postNotificationName:BuildDetailResponseReceivedNotification object:self userInfo:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -281,7 +251,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:BuildDetailRequestFailedNotification object:self userInfo:info];
     }];
     
-    [operation start];
+    //[operation start];
 }
 /*
 - (void) importTestResultsImageForJobAtURL:(NSURL *) jobURL
@@ -305,7 +275,7 @@
     }];
     
     [operation start];
-}*/
+}
 
 - (void) importProgressForBuild:(NSNumber *) buildNumber ofJobAtURL:(NSString *) jobURL
 {
@@ -339,180 +309,6 @@
     }];
     
     [operation start];
-}
-
-/*
-- (void) persistViewsToLocalStorage: (NSArray *) views
-{
-    @autoreleasepool {
-        [self.managedObjectContext performBlock:^{
-            for (NSDictionary *view in views) {
-                [View createViewWithValues:view inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance.url];
-            }
-            NSLog(@"saving views...");
-            NSError *masterError;
-            if (![self.managedObjectContext save:&masterError]) {
-                NSLog(@"Error saving master context %@, %@", masterError, [masterError userInfo]);
-                abort();
-            }
-        }];
-        self.view_count = [NSNumber numberWithLong:views.count];
-    }
-    [self importDetailsForViews:views];
-}
-
-- (void) persistViewDetailsToLocalStorage
-{
-    @autoreleasepool {
-        [self.managedObjectContext performBlock:^{
-            for (NSDictionary *view in self.viewDetails) {
-                [View createViewWithValues:view inManagedObjectContext:self.managedObjectContext forJenkinsInstance:self.jinstance.url];
-            }
-            NSLog(@"Saving view details...");
-            NSError *masterError;
-            if (![self.managedObjectContext save:&masterError]) {
-                NSLog(@"Error saving master context %@, %@", masterError, [masterError userInfo]);
-                abort();
-            }
-        }];
-    }
-}
-
-- (void) appendViewDetailsWithValues: (NSDictionary *) viewValues
-{
-    [self.viewDetails addObject:viewValues];
-    if ([NSNumber numberWithLong:self.viewDetails.count] == self.view_count) {
-        [self persistViewDetailsToLocalStorage];
-    }
-}*/
-
-/*
-- (void) appendBuildDetailsWithValues: (NSDictionary *) buildValues forJobAtURL: (NSString *) jobURL
-{
-    NSMutableArray *builds = [self.jobsBuildsDetails objectForKey:jobURL];
-    if (builds==nil) {
-        builds = [[NSMutableArray alloc] init];
-    }
-    [builds addObject:buildValues];
-    [self.jobsBuildsDetails setObject:builds forKey:jobURL];
-    if (builds.count==[[self.jobsBuildsCounts objectForKey:jobURL] intValue]) {
-        [self persistBuildDetailsToLocalStorageForJobAtURL:jobURL];
-    }
-}
-
-- (void) persistTestResultsImage: (UIImage *)image forJobWithName:jobName
-{
-    [self.importJobsMOC performBlock:^{
-        //Job *job = [Job fetchJobWithName:jobName inManagedObjectContext:self.importJobsMOC];
-        //[job setTestResultsImageWithImage:image];
-        
-        NSError *importJobsError;
-        if (![self.importJobsMOC save:&importJobsError]) {
-            NSLog(@"Error saving import jobs context %@, %@", importJobsError, [importJobsError userInfo]);
-            abort();
-        }
-        [self.managedObjectContext performBlock:^ {
-            NSError *masterError;
-            if (![self.managedObjectContext save:&masterError]) {
-                NSLog(@"Error saving master context %@, %@", masterError, [masterError userInfo]);
-                abort();
-            }
-        }];
-    }];
-}
-
-
-- (void) createBuilds: (NSArray *) builds forJobAtURL: (NSString *) jobURL
-{
-    @autoreleasepool {
-        for (NSDictionary *build in builds) {
-            [self.importBuildsMOC performBlock:^{
-                [Build createBuildWithValues:build inManagedObjectContext:self.importBuildsMOC forJobAtURL:jobURL];
-            }];
-        }
-        [self.importBuildsMOC performBlock:^{
-            NSError *importbuildserror;
-            if (![self.importBuildsMOC save:&importbuildserror]) {
-                NSLog(@"Error saving import builds context %@, %@", importbuildserror, [importbuildserror userInfo]);
-                abort();
-            }
-            [self.managedObjectContext performBlock:^{
-                NSError *masterError;
-                if (![self.managedObjectContext save:&masterError]) {
-                    NSLog(@"Error saving master context %@, %@", masterError, [masterError userInfo]);
-                    abort();
-                }
-            }];
-        }];
-    }
-}*/
-
-/*
-- (void) persistBuildDetailsToLocalStorageForJobAtURL: (NSString *) jobURL
-{
-    @autoreleasepool {
-        for (NSDictionary *build in [self.jobsBuildsDetails objectForKey:jobURL]) {
-            [self.importBuildsMOC performBlock:^{
-                [Build createBuildWithValues:build inManagedObjectContext:self.importBuildsMOC forJobAtURL:jobURL];
-            }];
-        }
-        //NSLog([NSString stringWithFormat:@"%@%@",@"saving details for builds for job: ",jobURL]);
-        [self.importBuildsMOC performBlock:^ {
-            //NSLog([NSString stringWithFormat:@"%@%lu",@"saving this many objs: ",(unsigned long)[[self.importBuildsMOC registeredObjects] count]]);
-            NSError *importBuildsError;
-            if (![self.importBuildsMOC save:&importBuildsError]) {
-                NSLog(@"Error saving import builds context %@, %@", importBuildsError, [importBuildsError userInfo]);
-                abort();
-            }
-            [self.managedObjectContext performBlock:^ {
-                NSError *masterError;
-                if (![self.managedObjectContext save:&masterError]) {
-                    NSLog(@"Error saving master context %@, %@", masterError, [masterError userInfo]);
-                    abort();
-                }
-            }];
-            [self.importBuildsMOC reset];
-        }];
-    }
-}
-
-// This context is for import jobs in a background thread
-// If the context doesn't already exist, it is created and bound to the master managed object context
-- (NSManagedObjectContext *)importJobsMOC
-{
-    @synchronized(_importJobsMOC) {
-        if (_importJobsMOC != nil) {
-            return _importJobsMOC;
-        }
-        
-        _importJobsMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-        [_importJobsMOC performBlockAndWait:^{
-            [_importJobsMOC setUndoManager:nil];
-            [_importJobsMOC setParentContext:self.managedObjectContext];
-        }];
-        
-        return _importJobsMOC;
-    }
-}
-
-// This context is for import builds in a background thread
-// If the context doesn't already exist, it is created and bound to the master managed object context
-- (NSManagedObjectContext *)importBuildsMOC
-{
-    @synchronized(_importBuildsMOC) {
-        if (_importBuildsMOC != nil) {
-            return _importBuildsMOC;
-        }
-        
-        _importBuildsMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-        [_importBuildsMOC performBlockAndWait:^{
-            [_importBuildsMOC setUndoManager:nil];
-            [_importBuildsMOC setParentContext:self.managedObjectContext];
-        }];
-        
-        return _importBuildsMOC;
-    }
 } */
-
 
 @end

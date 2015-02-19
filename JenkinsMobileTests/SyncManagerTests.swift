@@ -111,7 +111,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        self.mgr.syncView(NSURL(string: "http://jenkins:8080/view/GrandParent")!)
+        self.mgr.syncView(NSURL(string: "http://jenkins:8080/view/GrandParent/")!)
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in
@@ -129,7 +129,10 @@ class SyncManagerTests: XCTestCase {
             // We may be inserting or updating Job3. 
             // We want to capture the notification from when it was only a request to Job3.
             // Not getting Job3 in the jenkins request.
-            let relevantObjects = updatedObjects?.count == 1 ? updatedObjects : insertedObjects
+            var relevantObjects = updatedObjects?.count == 1 ? updatedObjects : insertedObjects
+            if insertedObjects == 1 {
+                relevantObjects = insertedObjects
+            }
             if relevantObjects != nil {
                 for obj in relevantObjects! {
                     if let job = obj as? Job {
@@ -142,7 +145,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        self.mgr.syncJob(NSURL(string: "http://jenkins:8080/job/Job3")!, jenkinsInstance: self.jenkinsInstance!)
+        self.mgr.syncJob(NSURL(string: "http://jenkins:8080/job/Job3/")!, jenkinsInstance: self.jenkinsInstance!)
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in
@@ -167,7 +170,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        self.mgr.syncBuild(NSURL(string: "http://jenkins:8080/job/Job3/1")!)
+        self.mgr.syncBuild(NSURL(string: "http://jenkins:8080/job/Job3/1/")!)
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in
@@ -195,7 +198,7 @@ class SyncManagerTests: XCTestCase {
         let jobvals = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/Job6/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
         
-        self.mgr.syncActiveConfiguration(NSURL(string: "http://jenkins:8080/job/Job6/config1=10,config2=test")!, job: job)
+        self.mgr.syncActiveConfiguration(NSURL(string: "http://jenkins:8080/job/Job6/config1=10,config2=test/")!, job: job)
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in
@@ -222,16 +225,16 @@ class SyncManagerTests: XCTestCase {
         context?.performBlockAndWait({jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)})
         
         // create a job in the first instance
-        let job1vals = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins1:8080/job/TestJob", JobJenkinsInstanceKey: jinstance1!]
+        let job1vals = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins1:8080/job/TestJob/", JobJenkinsInstanceKey: jinstance1!]
         let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
         
         // create a second jenkins instance
         var jinstance2: JenkinsInstance?
-        let jenkinsInstanceValues2 = [JenkinsInstanceNameKey: "TestInstance2", JenkinsInstanceURLKey: "http://jenkins2:8080", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true]
+        let jenkinsInstanceValues2 = [JenkinsInstanceNameKey: "TestInstance2", JenkinsInstanceURLKey: "http://jenkins2:8080/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true]
         context?.performBlockAndWait({jinstance2 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues2, inManagedObjectContext: self.context)})
         
         // create a job in the second jenkins instance
-        let job2vals = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins2:8080/job/TestJob", JobJenkinsInstanceKey: jinstance2!]
+        let job2vals = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins2:8080/job/TestJob/", JobJenkinsInstanceKey: jinstance2!]
         let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: context)
         
         saveContext()
@@ -368,10 +371,13 @@ class SyncManagerTests: XCTestCase {
         
         // set up a request to a url that doesn't exist
         let url = NSURL(string: self.jenkinsInstance!.url)
-        let request = NSURLRequest(URL: NSURL(string: "/404", relativeToURL: url)!)
-        let operation = AFHTTPRequestOperation(request: request)
-        let serializer = AFJSONResponseSerializer()
-        operation.responseSerializer = serializer
+        let requestURL = NSURL(string: "404", relativeToURL: url!)
+        let manager = AFHTTPRequestOperationManager(baseURL: url)
+        let reqSerializer = AFHTTPRequestSerializer()
+        reqSerializer.setAuthorizationHeaderFieldWithUsername("admin", password: "admin")
+        manager.requestSerializer = reqSerializer
+        let respSerializer = AFJSONResponseSerializer()
+        manager.responseSerializer = respSerializer
         
         let fetchreq = NSFetchRequest()
         fetchreq.entity = NSEntityDescription.entityForName("JenkinsInstance", inManagedObjectContext: context!)
@@ -379,7 +385,7 @@ class SyncManagerTests: XCTestCase {
         let jenkinss = context?.executeFetchRequest(fetchreq, error: nil)
         XCTAssertEqual(jenkinss!.count, 1, "jenkinss count is wrong. should  be 1 got: \(jenkinss!.count) instead")
         
-        operation.setCompletionBlockWithSuccess(
+        manager.GET(requestURL?.absoluteString, parameters: nil, success:
             { operation, response in
                 println("jenkins request received")
                 abort()
@@ -392,15 +398,13 @@ class SyncManagerTests: XCTestCase {
                 var userInfo: [NSObject : AnyObject] = [RequestErrorKey: newError]
                 if let response = operation.response {
                     userInfo[StatusCodeKey] = response.statusCode
-                }                
+                }
                 let notification = NSNotification(name: JenkinsInstanceDetailRequestFailedNotification, object: self, userInfo: userInfo)
                 self.mgr.jenkinsInstanceDetailRequestFailed(notification)
                 requestFailureExpectation.fulfill()
         })
         
-        operation.start()
-        
-        waitForExpectationsWithTimeout(5, handler: { error in
+        waitForExpectationsWithTimeout(3, handler: { error in
             
         })
     }
@@ -494,11 +498,15 @@ class SyncManagerTests: XCTestCase {
         let url = NSURL(string: jobURL)
         let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobJenkinsInstanceKey: jenkinsInstance!]
         let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
+        saveContext()
         
-        let request = NSURLRequest(URL: url!)
-        let operation = AFHTTPRequestOperation(request: request)
-        let serializer = AFJSONResponseSerializer()
-        operation.responseSerializer = serializer
+        // set up a request to a url that doesn't exist
+        let manager = AFHTTPRequestOperationManager(baseURL: url)
+        let reqSerializer = AFHTTPRequestSerializer()
+        reqSerializer.setAuthorizationHeaderFieldWithUsername("admin", password: "admin")
+        manager.requestSerializer = reqSerializer
+        let respSerializer = AFJSONResponseSerializer()
+        manager.responseSerializer = respSerializer
         
         let fetchreq = NSFetchRequest()
         fetchreq.entity = NSEntityDescription.entityForName("Job", inManagedObjectContext: context!)
@@ -506,7 +514,7 @@ class SyncManagerTests: XCTestCase {
         let jobs = context?.executeFetchRequest(fetchreq, error: nil)
         XCTAssertEqual(jobs!.count, 1, "jobs count is wrong. should  be 1 got: \(jobs!.count) instead")
         
-        operation.setCompletionBlockWithSuccess(
+        manager.GET(url?.absoluteString, parameters: nil, success:
             { operation, response in
                 println("jenkins request received")
                 abort()
@@ -516,15 +524,13 @@ class SyncManagerTests: XCTestCase {
                 if let response = operation.response {
                     userInfo[StatusCodeKey] = response.statusCode
                 }
-                userInfo[JobJenkinsInstanceKey] = job1.rel_Job_JenkinsInstance
+                userInfo[JobJenkinsInstanceKey] = self.jenkinsInstance!
                 let notification = NSNotification(name: JobDetailRequestFailedNotification, object: self, userInfo: userInfo)
                 self.mgr.jobDetailRequestFailed(notification)
                 requestFailureExpectation.fulfill()
         })
         
-        operation.start()
-        
-        waitForExpectationsWithTimeout(5, handler: { error in
+        waitForExpectationsWithTimeout(3, handler: { error in
             
         })
     }
@@ -737,7 +743,7 @@ class SyncManagerTests: XCTestCase {
             if deletedObjects != nil {
                 for obj in deletedObjects! {
                     if let build = obj as? Build {
-                        if build.url == "http://www.google.com/TestJob/1" {
+                        if build.url == "http://www.google.com/TestJob/1/" {
                             expectationFulfilled=true
                         }
                     }
@@ -746,14 +752,15 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/TestJob", JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/TestJob/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         
-        let buildURL = "http://www.google.com/TestJob/1"
+        let buildURL = "http://www.google.com/TestJob/1/"
         let url = NSURL(string: buildURL)
 
         let buildVals = [BuildJobKey: job, BuildURLKey: buildURL, BuildNumberKey: 1]
         let build1 = Build.createBuildWithValues(buildVals, inManagedObjectContext: self.context)
+        saveContext()
         
         let request = NSURLRequest(URL: url!)
         let operation = AFHTTPRequestOperation(request: request)
@@ -868,7 +875,7 @@ class SyncManagerTests: XCTestCase {
             if deletedObjects != nil {
                 for obj in deletedObjects! {
                     if let ac = obj as? ActiveConfiguration {
-                        if ac.url == "http://www.google.com/TestJob/config=1" {
+                        if ac.url == "http://www.google.com/TestJob/config=1/" {
                             expectationFulfilled=true
                         }
                     }
@@ -877,19 +884,20 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/TestJob", JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/TestJob/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         
-        let buildURL = "http://www.google.com/TestJob/1"
+        let buildURL = "http://www.google.com/TestJob/1/"
         
         let buildVals = [BuildJobKey: job, BuildURLKey: buildURL, BuildNumberKey: 1]
         let build1 = Build.createBuildWithValues(buildVals, inManagedObjectContext: self.context)
 
-        let acURL = "http://www.google.com/TestJob/config=1"
+        let acURL = "http://www.google.com/TestJob/config=1/"
         let url = NSURL(string: acURL)
         
         let acVals = [ActiveConfigurationNameKey: "config=1", ActiveConfigurationURLKey: acURL, ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
         let ac = ActiveConfiguration.createActiveConfigurationWithValues(acVals, inManagedObjectContext: self.context)
+        saveContext()
         
         let request = NSURLRequest(URL: url!)
         let operation = AFHTTPRequestOperation(request: request)
