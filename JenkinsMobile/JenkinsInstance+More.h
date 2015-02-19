@@ -10,6 +10,8 @@
 
 @interface JenkinsInstance (More)
 
+@property (nonatomic, copy) NSString *password;
+
 - (void)setValues:(NSDictionary *) values;
 
 + (JenkinsInstance *)createJenkinsInstanceWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;

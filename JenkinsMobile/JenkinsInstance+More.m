@@ -76,6 +76,13 @@
     return missingApi;
 }
 
+- (NSString *)password {}
+
+- (void)setPassword:(NSString*) newPassword
+{
+    
+}
+
 - (void)setValues:(NSDictionary *) values
 {
     self.name = [values objectForKey:JenkinsInstanceNameKey];
