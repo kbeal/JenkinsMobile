@@ -76,7 +76,7 @@
     return missingApi;
 }
 
-- (NSString *)password {}
+- (NSString *)password { return @"hello"; }
 
 - (void)setPassword:(NSString*) newPassword
 {
