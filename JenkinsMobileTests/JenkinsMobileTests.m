@@ -275,10 +275,14 @@
     NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
     NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     JenkinsInstance *instance = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
+    instance.username = @"admin";
+    instance.password = @"password";
     
     XCTAssert([instance.name isEqualToString:@"TestInstance"], @"name is wrong");
     XCTAssert([instance.url isEqualToString:@"http://ci.kylebeal.com"], @"url is wrong");
     XCTAssert([instance.current isEqualToNumber:[NSNumber numberWithBool:YES]], @"not current instance");
+    XCTAssert([instance.username isEqualToString:@"admin"], @"username is wrong");
+    XCTAssert([instance.password isEqualToString:@"password"], @"password is wrong");
 }
 
 - (void) testGetCurrentJenkinsInstance

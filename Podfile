@@ -1,2 +1,5 @@
 source 'https://github.com/CocoaPods/Specs.git'
-pod 'KeychainAccess'
+
+link_with 'JenkinsMobile', 'JenkinsMobileTests'
+
+pod 'UICKeyChainStore'

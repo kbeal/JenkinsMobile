@@ -9,6 +9,7 @@
 #import "JenkinsInstance+More.h"
 #import "Constants.h"
 #import "Job.h"
+#import "UICKeyChainStore.h"
 
 @implementation JenkinsInstance (More)
 
@@ -76,11 +77,24 @@
     return missingApi;
 }
 
-- (NSString *)password { return @"hello"; }
-
-- (void)setPassword:(NSString*) newPassword
+- (NSString *) password
 {
-    
+    if (self.username) {
+        UICKeyChainStore *keychain = [UICKeyChainStore keyChainStoreWithServer:[NSURL URLWithString:self.url]
+                                                                  protocolType:UICKeyChainStoreProtocolTypeHTTPS];
+        return keychain[self.username];
+    }
+
+    return nil;
+}
+
+- (void)setPassword:(NSString *) newPassword
+{
+    if (self.username) {
+        UICKeyChainStore *keychain = [UICKeyChainStore keyChainStoreWithServer:[NSURL URLWithString:self.url]
+                                                                  protocolType:UICKeyChainStoreProtocolTypeHTTPS];
+        keychain[self.username] = newPassword;
+    }
 }
 
 - (void)setValues:(NSDictionary *) values
