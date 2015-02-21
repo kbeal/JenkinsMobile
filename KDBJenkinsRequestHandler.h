@@ -11,14 +11,15 @@
 #import "Job.h"
 #import "Build.h"
 #import "JenkinsInstance.h"
+#import "ActiveConfiguration+More.h"
 
 @interface KDBJenkinsRequestHandler : NSObject
 
 - (void) importDetailsForJobWithURL:(NSURL *) jobURL andJenkinsInstance:(JenkinsInstance *) jinstance;
-- (void) importDetailsForViewWithURL: (NSURL *) viewURL;
-- (void) importDetailsForActiveConfigurationWithURL: (NSURL *) acURL andJob:(Job *) job;
-- (void) importDetailsForBuildWithURL: (NSURL *) buildURL;
+- (void) importDetailsForView: (View *) view;
+- (void) importDetailsForActiveConfiguration: (ActiveConfiguration *) ac;
+- (void) importDetailsForBuild: (Build *) build;
 //- (void) importProgressForBuild:(NSNumber *) buildNumber ofJobAtURL:(NSString *) jobURL;
-- (void) importDetailsForJenkinsAtURL:(NSString *) url withName:(NSString *) name;
+- (void) importDetailsForJenkinsInstance: (JenkinsInstance *) jinstance;
 
 @end

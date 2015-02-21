@@ -98,11 +98,11 @@ class SyncManagerTests: XCTestCase {
         let viewSavedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let insertedObjects: NSSet? = notification.userInfo![NSInsertedObjectsKey] as NSSet?
-            if insertedObjects != nil {
-                for obj in insertedObjects! {
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            if updatedObjects != nil {
+                for obj in updatedObjects! {
                     if let view = obj as? View {
-                        if view.url == "http://jenkins:8080/view/GrandParent/" {
+                        if view.rel_View_Views.count==3 {
                             expectationFulfilled=true
                         }
                     }
@@ -111,7 +111,13 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        self.mgr.syncView(NSURL(string: "http://jenkins:8080/view/GrandParent/")!)
+        let viewURL = "http://jenkins:8080/view/GrandParent/"
+        let url = NSURL(string: viewURL)
+        let viewVals = [ViewNameKey: "View1", ViewURLKey: viewURL, ViewJenkinsInstanceKey: jenkinsInstance!]
+        let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context)
+        saveContext()
+        
+        self.mgr.syncView(view1)
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in
@@ -130,7 +136,7 @@ class SyncManagerTests: XCTestCase {
             // We want to capture the notification from when it was only a request to Job3.
             // Not getting Job3 in the jenkins request.
             var relevantObjects = updatedObjects?.count == 1 ? updatedObjects : insertedObjects
-            if insertedObjects == 1 {
+            if insertedObjects?.count == 1 {
                 relevantObjects = insertedObjects
             }
             if relevantObjects != nil {
@@ -157,11 +163,11 @@ class SyncManagerTests: XCTestCase {
         let buildSavedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let insertedObjects: NSSet? = notification.userInfo![NSInsertedObjectsKey] as NSSet?
-            if insertedObjects != nil {
-                for obj in insertedObjects! {
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            if updatedObjects != nil {
+                for obj in updatedObjects! {
                     if let build = obj as? Build {
-                        if build.url == "http://jenkins:8080/job/Job3/1/" {
+                        if build.fullDisplayName == "Job3 #1" {
                             expectationFulfilled=true
                         }
                     }
@@ -170,7 +176,17 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        self.mgr.syncBuild(NSURL(string: "http://jenkins:8080/job/Job3/1/")!)
+        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/TestJob/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        
+        let buildURL = "http://jenkins:8080/job/Job3/1/"
+        let url = NSURL(string: buildURL)
+        
+        let buildVals = [BuildJobKey: job, BuildURLKey: buildURL, BuildNumberKey: 1]
+        let build1 = Build.createBuildWithValues(buildVals, inManagedObjectContext: self.context)
+        saveContext()
+        
+        self.mgr.syncBuild(build1)
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in
@@ -182,11 +198,11 @@ class SyncManagerTests: XCTestCase {
         let acSavedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let insertedObjects: NSSet? = notification.userInfo![NSInsertedObjectsKey] as NSSet?
-            if insertedObjects != nil {
-                for obj in insertedObjects! {
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            if updatedObjects != nil {
+                for obj in updatedObjects! {
                     if let ac = obj as? ActiveConfiguration {
-                        if ac.url == "http://jenkins:8080/job/Job6/config1=10,config2=test/" {
+                        if ac.name == "config1=10,config2=test" {
                             expectationFulfilled=true
                         }
                     }
@@ -198,7 +214,12 @@ class SyncManagerTests: XCTestCase {
         let jobvals = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/Job6/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
         
-        self.mgr.syncActiveConfiguration(NSURL(string: "http://jenkins:8080/job/Job6/config1=10,config2=test/")!, job: job)
+        let ac1 = [ActiveConfigurationColorKey:"blue",ActiveConfigurationNameKey:"config=1",ActiveConfigurationJobKey:job,ActiveConfigurationURLKey:"http://jenkins:8080/job/Job6/config1=10,config2=test/"]
+        let activeConf1 = ActiveConfiguration.createActiveConfigurationWithValues(ac1, inManagedObjectContext: context!)
+        saveContext()
+        
+        self.mgr.syncActiveConfiguration(activeConf1)
+
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in

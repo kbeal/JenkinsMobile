@@ -106,7 +106,7 @@ import CoreData
         masterMOC?.performBlock({
             let allViews = self.currentJenkinsInstance!.rel_Views
             for view in allViews {
-                self.syncView(NSURL(string: view.url)!)
+                self.syncView(view as View)
             }
         })
     }
@@ -124,7 +124,7 @@ import CoreData
         masterMOC?.performBlock({
             let subviews = view.rel_View_Views.allObjects
             for subview in subviews {
-                self.syncView(NSURL(string: subview.url)!)
+                self.syncView(subview as View)
             }
         })
     }
@@ -132,33 +132,29 @@ import CoreData
     func syncCurrentJenkinsInstance() {
         assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
         if (currentJenkinsInstance != nil) {
-            requestHandler!.importDetailsForJenkinsAtURL(currentJenkinsInstance!.url, withName: currentJenkinsInstance!.name)
+            requestHandler!.importDetailsForJenkinsInstance(currentJenkinsInstance)
         }
     }
     
-    func syncView(url: NSURL) {
+    func syncView(view: View) {
         // sync view details and queue all jobs in view for sync
         assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!!")
-        NSLog("%@%@", "Sending request for details for View at URL: ",url.absoluteString!)
-        self.requestHandler!.importDetailsForViewWithURL(url)
+        self.requestHandler!.importDetailsForView(view)
     }
     
     func syncJob(url: NSURL, jenkinsInstance: JenkinsInstance) {
         assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
-        NSLog("%@%@", "Sending request for details for Job at URL: ",url.absoluteString!)
         self.requestHandler!.importDetailsForJobWithURL(url, andJenkinsInstance: jenkinsInstance)
     }
     
-    func syncBuild(url: NSURL) {
+    func syncBuild(build: Build) {
         assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
-        NSLog("%@%@", "Sending request for details for Build at URL: ",url.absoluteString!)
-        self.requestHandler!.importDetailsForBuildWithURL(url)
+        self.requestHandler!.importDetailsForBuild(build)
     }
     
-    func syncActiveConfiguration(url: NSURL, job: Job) {
+    func syncActiveConfiguration(ac: ActiveConfiguration) {
         assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
-        NSLog("%@%@", "Sending request for details for ActiveConfiguration at URL: ",url.absoluteString!)
-        self.requestHandler!.importDetailsForActiveConfigurationWithURL(url, andJob: job)
+        self.requestHandler!.importDetailsForActiveConfiguration(ac)
     }
     
     func jobDetailResponseReceived(notification: NSNotification) {
