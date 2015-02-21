@@ -38,9 +38,10 @@ class SyncManagerTests: XCTestCase {
         mgr.masterMOC = context;
         mgr.requestHandler = requestHandler
         
-        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true]
+        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
         
         context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: self.context)})
+        self.jenkinsInstance?.password = "admin"
         
         mgr.currentJenkinsInstanceURL = NSURL(string: jenkinsInstance!.url)
         

@@ -10,7 +10,7 @@
 #import "View.h"
 #import "Job.h"
 #import "Build.h"
-#import "JenkinsInstance.h"
+#import "JenkinsInstance+More.h"
 #import "ActiveConfiguration+More.h"
 
 @interface KDBJenkinsRequestHandler : NSObject

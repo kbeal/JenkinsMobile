@@ -103,6 +103,7 @@
     self.url = [values objectForKey:JenkinsInstanceURLKey];
     self.current = [values objectForKey:JenkinsInstanceCurrentKey];
     self.enabled = [values objectForKey:JenkinsInstanceEnabledKey];
+    self.username = [values objectForKey:JenkinsInstanceUsernameKey];
     [self createJobs:[values objectForKey:JenkinsInstanceJobsKey]];
 }
 
