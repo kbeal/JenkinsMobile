@@ -55,7 +55,7 @@
         <relationship name="rel_Build_Job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="rel_Job_Builds" inverseEntity="Job" syncable="YES"/>
     </entity>
     <entity name="JenkinsInstance" representedClassName="JenkinsInstance">
-        <attribute name="authenticated" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="authenticated" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
         <attribute name="current" attributeType="Boolean" indexed="YES" syncable="YES"/>
         <attribute name="enabled" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>

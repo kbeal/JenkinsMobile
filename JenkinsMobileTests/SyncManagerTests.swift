@@ -10,6 +10,7 @@ import Foundation
 import XCTest
 import JenkinsMobile
 
+
 class SyncManagerTests: XCTestCase {
 
     let mgr = SyncManager.sharedInstance
@@ -425,6 +426,73 @@ class SyncManagerTests: XCTestCase {
                 self.mgr.jenkinsInstanceDetailRequestFailed(notification)
                 requestFailureExpectation.fulfill()
         })
+        
+        waitForExpectationsWithTimeout(3, handler: { error in
+            
+        })
+    }
+    
+    func testJenkinsInstanceUnauthenticated() {
+        let jInstanceUnauthenticatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            if updatedObjects != nil {
+                for obj in updatedObjects! {
+                    if let ji = obj as? JenkinsInstance {
+                        if ji.url == "http://snowman:8080/jenkins/" && ji.enabled.boolValue && !ji.authenticated.boolValue {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstanceAuthenticatedKey: true]
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
+        jinstance1.password = "password"
+        saveContext()
+        
+        XCTAssert(jinstance1.enabled.boolValue, "jenkins instance should be enabled")
+        XCTAssert(jinstance1.authenticated.boolValue, "jenkins instance should be authenticated")
+        
+        let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
+        requestHandler.importDetailsForJenkinsInstance(jinstance1)
+        
+        waitForExpectationsWithTimeout(3, handler: { error in
+            
+        })
+    }
+    
+    func testJenkinsInstanceReauthenticated() {
+        let jInstanceUnauthenticatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            if updatedObjects != nil {
+                for obj in updatedObjects! {
+                    if let ji = obj as? JenkinsInstance {
+                        if ji.url == "http://snowman:8080/jenkins/" && ji.enabled.boolValue && ji.authenticated.boolValue {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
+        jinstance1.password = "admin"
+        jinstance1.authenticated = false
+        saveContext()
+        
+        XCTAssert(jinstance1.enabled.boolValue, "jenkins instance should be enabled")
+        XCTAssertFalse(jinstance1.authenticated.boolValue, "jenkins instance should be authenticated")
+        
+        let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
+        requestHandler.importDetailsForJenkinsInstance(jinstance1)
         
         waitForExpectationsWithTimeout(3, handler: { error in
             

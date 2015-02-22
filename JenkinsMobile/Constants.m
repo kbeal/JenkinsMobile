@@ -121,6 +121,7 @@ NSString * const JenkinsInstanceCurrentKey = @"current";
 NSString * const JenkinsInstanceJobsKey = @"jobs";
 NSString * const JenkinsInstanceEnabledKey = @"enabled";
 NSString * const JenkinsInstanceUsernameKey = @"username";
+NSString * const JenkinsInstanceAuthenticatedKey = @"authenticated";
 
 #pragma mark - AFNetworking Keys
 NSString * const StatusCodeKey = @"statusCode";

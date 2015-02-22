@@ -120,6 +120,7 @@ extern NSString * const JenkinsInstanceCurrentKey;
 extern NSString * const JenkinsInstanceJobsKey;
 extern NSString * const JenkinsInstanceEnabledKey;
 extern NSString * const JenkinsInstanceUsernameKey;
+extern NSString * const JenkinsInstanceAuthenticatedKey;
 
 #pragma mark - AFNetworking Keys
 extern NSString * const StatusCodeKey;

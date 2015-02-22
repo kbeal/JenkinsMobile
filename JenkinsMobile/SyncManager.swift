@@ -259,11 +259,10 @@ import CoreData
         assert(self.masterMOC != nil, "main managed object context not set")
         var values: Dictionary = notification.userInfo!
         let url = values[JenkinsInstanceURLKey] as String
-        
-        NSLog("%@%@","Response received for Jenkins at URL: ",url)
 
         values[JenkinsInstanceCurrentKey] = false
         values[JenkinsInstanceEnabledKey] = true
+        values[JenkinsInstanceAuthenticatedKey] = true
         
         self.masterMOC?.performBlock({
             JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values, inManagedObjectContext: self.masterMOC)
@@ -293,16 +292,17 @@ import CoreData
             })
         } else {
             let status: Int = userInfo[StatusCodeKey] as Int
-            // if the error is 404
-            if (status==404) {
-                masterMOC!.performBlockAndWait({
-                    jenkins = JenkinsInstance.fetchJenkinsInstanceWithURL(JenkinsInstance.removeApiFromURL(url), fromManagedObjectContext: self.masterMOC)
-                    if jenkins != nil {
-                        jenkins!.enabled = false
-                        self.saveMasterContext()
-                    }
-                })
+            switch status {
+            case 401:
+                unauthenticateJenkinsInstance(url)
+            case 403:
+                unauthenticateJenkinsInstance(url)                
+            case 404:
+                disableJenkinsInstance(url)
+            default:
+                disableJenkinsInstance(url)
             }
+
         }
     }
     
@@ -394,6 +394,26 @@ import CoreData
         }
         
         saveMasterContext()
+    }
+    
+    func unauthenticateJenkinsInstance(url: NSURL) {
+        masterMOC!.performBlockAndWait({
+            let jenkins = JenkinsInstance.fetchJenkinsInstanceWithURL(JenkinsInstance.removeApiFromURL(url), fromManagedObjectContext: self.masterMOC)
+            if jenkins != nil {
+                jenkins!.authenticated = false
+                self.saveMasterContext()
+            }
+        })
+    }
+    
+    func disableJenkinsInstance(url: NSURL) {
+        masterMOC!.performBlockAndWait({
+            let jenkins = JenkinsInstance.fetchJenkinsInstanceWithURL(JenkinsInstance.removeApiFromURL(url), fromManagedObjectContext: self.masterMOC)
+            if jenkins != nil {
+                jenkins!.enabled = false
+                self.saveMasterContext()
+            }
+        })
     }
     
     func saveMasterContext () {

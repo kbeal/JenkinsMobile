@@ -104,6 +104,7 @@
     self.current = [values objectForKey:JenkinsInstanceCurrentKey];
     self.enabled = [values objectForKey:JenkinsInstanceEnabledKey];
     self.username = [values objectForKey:JenkinsInstanceUsernameKey];
+    self.authenticated = [values objectForKey:JenkinsInstanceAuthenticatedKey];
     [self createJobs:[values objectForKey:JenkinsInstanceJobsKey]];
 }
 
