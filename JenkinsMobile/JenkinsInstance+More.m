@@ -8,7 +8,7 @@
 
 #import "JenkinsInstance+More.h"
 #import "Constants.h"
-#import "Job.h"
+#import "Job+More.h"
 #import "UICKeyChainStore.h"
 
 @implementation JenkinsInstance (More)

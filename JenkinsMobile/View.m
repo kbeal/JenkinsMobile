@@ -7,7 +7,7 @@
 //
 
 #import "View.h"
-#import "Job.h"
+#import "Job+More.h"
 #import "Constants.h"
 
 // Convert any NULL values to nil. Lifted from Kevin Ballard here: http://stackoverflow.com/a/9138033

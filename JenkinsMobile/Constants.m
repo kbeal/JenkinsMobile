@@ -63,6 +63,7 @@ NSString * const JobUpstreamProjectsKey = @"upstreamProjects";
 NSString * const JobHealthReportKey = @"healthReport";
 NSString * const JobLastSyncKey = @"lastSync";
 NSString * const JobRequestErrorKey = @"jobRequestError";
+NSString * const JobLastSyncResultKey = @"lastSyncResult";
 
 #pragma mark - Active Configuration Keys
 NSString * const ActiveConfigurationURLKey = @"url";

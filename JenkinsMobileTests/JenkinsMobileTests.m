@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "Job.h"
+#import "Job+More.h"
 #import "View.h"
 #import "JenkinsInstance+More.h"
 #import "Build.h"

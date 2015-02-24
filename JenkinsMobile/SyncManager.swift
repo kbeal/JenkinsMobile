@@ -163,6 +163,8 @@ import CoreData
         let name = values[JobNameKey] as String
         let jenkinsInstance: JenkinsInstance = values[JobJenkinsInstanceKey] as JenkinsInstance
         
+        values[JobLastSyncResultKey] = "200: OK"
+        
         self.masterMOC?.performBlockAndWait({
             // Fetch job based on name
             let job: Job? = Job.fetchJobWithName(name, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
@@ -282,27 +284,21 @@ import CoreData
         let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
         var jenkins: JenkinsInstance?
         
-        if requestError.code == NSURLErrorCannotFindHost {
-            masterMOC!.performBlockAndWait({
-                jenkins = JenkinsInstance.fetchJenkinsInstanceWithURL(JenkinsInstance.removeApiFromURL(url), fromManagedObjectContext: self.masterMOC)
-                if jenkins != nil {
-                    jenkins!.enabled = false
-                    self.saveMasterContext()
-                }
-            })
-        } else {
+        switch requestError.code {
+        case NSURLErrorBadServerResponse:
             let status: Int = userInfo[StatusCodeKey] as Int
             switch status {
             case 401:
                 unauthenticateJenkinsInstance(url)
             case 403:
-                unauthenticateJenkinsInstance(url)                
+                unauthenticateJenkinsInstance(url)
             case 404:
                 disableJenkinsInstance(url)
             default:
                 disableJenkinsInstance(url)
             }
-
+        default:
+            disableJenkinsInstance(url)
         }
     }
     

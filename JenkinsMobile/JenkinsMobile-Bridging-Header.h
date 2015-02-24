@@ -4,7 +4,7 @@
 @import Foundation;
 @import UIKit;
 #import "JenkinsInstance+More.h"
-#import "Job.h"
+#import "Job+More.h"
 #import "KDBJenkinsRequestHandler.h"
 #import "Constants.h"
 #import "ActiveConfiguration+More.h"

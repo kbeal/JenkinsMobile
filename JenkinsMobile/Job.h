@@ -2,18 +2,19 @@
 //  Job.h
 //  JenkinsMobile
 //
-//  Created by Kyle Beal on 4/15/14.
-//  Copyright (c) 2014 Kyle Beal. All rights reserved.
+//  Created by Kyle on 2/24/15.
+//  Copyright (c) 2015 Kyle Beal. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Build, JenkinsInstance;
+@class Build, JenkinsInstance, View;
 
 @interface Job : NSManagedObject
 
 @property (nonatomic, retain) id actions;
+@property (nonatomic, retain) id activeConfigurations;
 @property (nonatomic, retain) NSNumber * buildable;
 @property (nonatomic, retain) NSString * color;
 @property (nonatomic, retain) NSNumber * concurrentBuild;
@@ -28,8 +29,10 @@
 @property (nonatomic, retain) NSNumber * lastBuild;
 @property (nonatomic, retain) NSNumber * lastCompletedBuild;
 @property (nonatomic, retain) NSNumber * lastFailedBuild;
+@property (nonatomic, retain) NSNumber * lastImportedBuild;
 @property (nonatomic, retain) NSNumber * lastStableBuild;
 @property (nonatomic, retain) NSNumber * lastSuccessfulBuild;
+@property (nonatomic, retain) NSDate * lastSync;
 @property (nonatomic, retain) NSNumber * lastUnstableBuild;
 @property (nonatomic, retain) NSNumber * lastUnsuccessfulBuild;
 @property (nonatomic, retain) NSString * name;
@@ -37,30 +40,25 @@
 @property (nonatomic, retain) id property;
 @property (nonatomic, retain) id queueItem;
 @property (nonatomic, retain) id scm;
+@property (nonatomic, retain) NSData * testResultsImage;
 @property (nonatomic, retain) id upstreamProjects;
 @property (nonatomic, retain) NSString * url;
+@property (nonatomic, retain) NSString * lastSyncResult;
+@property (nonatomic, retain) NSSet *rel_Job_Builds;
 @property (nonatomic, retain) JenkinsInstance *rel_Job_JenkinsInstance;
-@property (nonatomic, retain) id activeConfigurations;
-@property (nonatomic, retain) NSData *testResultsImage;
 @property (nonatomic, retain) NSSet *rel_Job_Views;
-@property (nonatomic, retain) NSDate *lastSync;
 @end
 
 @interface Job (CoreDataGeneratedAccessors)
 
+- (void)addRel_Job_BuildsObject:(Build *)value;
+- (void)removeRel_Job_BuildsObject:(Build *)value;
+- (void)addRel_Job_Builds:(NSSet *)values;
+- (void)removeRel_Job_Builds:(NSSet *)values;
+
+- (void)addRel_Job_ViewsObject:(View *)value;
+- (void)removeRel_Job_ViewsObject:(View *)value;
 - (void)addRel_Job_Views:(NSSet *)values;
 - (void)removeRel_Job_Views:(NSSet *)values;
-- (BOOL)colorIsAnimated;
-- (NSString *)absoluteColor;
-- (void)setValues:(NSDictionary *) values;
-- (NSArray *) getActiveConfigurations;
-- (void) setTestResultsImageWithImage:(UIImage *) image;
-- (UIImage *) getTestResultsImage;
-- (BOOL)shouldSync;
-
-+ (Job *)createJobWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
-+ (Job *)fetchJobWithName: (NSString *) name inManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) jinstance;
-+ (void)fetchAndDeleteJobWithName: (NSString *) name inManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) jinstance;
-+ (NSString *)jobNameFromURL: (NSURL *) jobURL;
 
 @end

@@ -63,6 +63,7 @@ extern NSString * const JobUpstreamProjectsKey;
 extern NSString * const JobHealthReportKey;
 extern NSString * const JobLastSyncKey;
 extern NSString * const JobRequestErrorKey;
+extern NSString * const JobLastSyncResultKey;
 
 #pragma mark - ActiveConfiguration keys
 extern NSString * const ActiveConfigurationURLKey;

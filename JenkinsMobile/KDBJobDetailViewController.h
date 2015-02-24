@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <SpriteKit/SpriteKit.h>
-#import "Job.h"
+#import "Job+More.h"
 #import "Build.h"
 #import "KDBBuildsTableViewController.h"
 
