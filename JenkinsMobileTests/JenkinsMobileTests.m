@@ -8,9 +8,9 @@
 
 #import <XCTest/XCTest.h>
 #import "Job+More.h"
-#import "View.h"
+#import "View+More.h"
 #import "JenkinsInstance+More.h"
-#import "Build.h"
+#import "Build+More.h"
 #import "Constants.h"
 #import "ActiveConfiguration+More.h"
 

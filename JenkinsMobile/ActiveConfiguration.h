@@ -2,7 +2,7 @@
 //  ActiveConfiguration.h
 //  JenkinsMobile
 //
-//  Created by Kyle on 1/20/15.
+//  Created by Kyle on 2/25/15.
 //  Copyright (c) 2015 Kyle Beal. All rights reserved.
 //
 
@@ -32,6 +32,7 @@
 @property (nonatomic, retain) NSNumber * lastStableBuild;
 @property (nonatomic, retain) NSNumber * lastSuccessfulBuild;
 @property (nonatomic, retain) NSDate * lastSync;
+@property (nonatomic, retain) NSString * lastSyncResult;
 @property (nonatomic, retain) NSNumber * lastUnstableBuild;
 @property (nonatomic, retain) NSNumber * lastUnsuccessfulBuild;
 @property (nonatomic, retain) NSString * name;

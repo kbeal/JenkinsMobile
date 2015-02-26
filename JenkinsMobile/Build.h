@@ -2,16 +2,14 @@
 //  Build.h
 //  JenkinsMobile
 //
-//  Created by Kyle Beal on 4/25/14.
-//  Copyright (c) 2014 Kyle Beal. All rights reserved.
+//  Created by Kyle on 2/25/15.
+//  Copyright (c) 2015 Kyle Beal. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-#import "JenkinsInstance.h"
-#import "Constants.h"
 
-@class Job;
+@class ActiveConfiguration, Job;
 
 @interface Build : NSManagedObject
 
@@ -28,18 +26,12 @@
 @property (nonatomic, retain) id executor;
 @property (nonatomic, retain) NSString * fullDisplayName;
 @property (nonatomic, retain) NSNumber * keepLog;
+@property (nonatomic, retain) NSString * lastSyncResult;
 @property (nonatomic, retain) NSNumber * number;
 @property (nonatomic, retain) NSString * result;
 @property (nonatomic, retain) NSDate * timestamp;
 @property (nonatomic, retain) NSString * url;
+@property (nonatomic, retain) ActiveConfiguration *rel_Build_ActiveConfiguration;
 @property (nonatomic, retain) Job *rel_Build_Job;
-
-- (void)setValues:(NSDictionary *) values;
-
-+ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context;
-+ (Build *) fetchBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
-+ (void)fetchAndDeleteBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
-
-- (BOOL) shouldSync;
 
 @end

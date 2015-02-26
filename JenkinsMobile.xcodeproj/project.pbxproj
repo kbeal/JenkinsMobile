@@ -171,7 +171,6 @@
 		8A56E60F19C90FD80058B0C7 /* SyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */; };
 		8A56E61119C91EB50058B0C7 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8B57BD19C7B98A004FA446 /* SyncManager.swift */; };
 		8A5D1B4C1A788680005C93AD /* RequestHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D1B4B1A788680005C93AD /* RequestHandlerTests.swift */; };
-		8A6D73161A6F230A00BFA0A5 /* ActiveConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6D73151A6F230A00BFA0A5 /* ActiveConfiguration.m */; };
 		8A6D731C1A6F268700BFA0A5 /* ActiveConfiguration+More.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6D731B1A6F268700BFA0A5 /* ActiveConfiguration+More.m */; };
 		8A76B0F2199C3AE200B219C5 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A76B0F1199C3AE200B219C5 /* Constants.m */; };
 		8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */; };
@@ -189,7 +188,12 @@
 		8A9C3B85196F8350005A78BB /* balls80.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8A9C3B84196F8350005A78BB /* balls80.atlas */; };
 		8AA1CD281A9D366800F977B0 /* Job.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA1CD271A9D366800F977B0 /* Job.m */; };
 		8AA1CD2B1A9D369100F977B0 /* Job+More.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA1CD2A1A9D369100F977B0 /* Job+More.m */; };
-		8ABBA74D1A96A54F00A7D176 /* JenkinsInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABBA74C1A96A54F00A7D176 /* JenkinsInstance.m */; };
+		8AA1CD2E1A9EA94400F977B0 /* JenkinsInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA1CD2D1A9EA94400F977B0 /* JenkinsInstance.m */; };
+		8AA1CD311A9EA94500F977B0 /* Build.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA1CD301A9EA94500F977B0 /* Build.m */; };
+		8AA1CD341A9EA94500F977B0 /* View.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA1CD331A9EA94500F977B0 /* View.m */; };
+		8AA1CD371A9EA94500F977B0 /* ActiveConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA1CD361A9EA94500F977B0 /* ActiveConfiguration.m */; };
+		8AA1CD3A1A9EA95F00F977B0 /* View+More.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA1CD391A9EA95F00F977B0 /* View+More.m */; };
+		8AA1CD3D1A9EA99A00F977B0 /* Build+More.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA1CD3C1A9EA99A00F977B0 /* Build+More.m */; };
 		8ABBA7501A96A5AA00A7D176 /* JenkinsInstance+More.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABBA74F1A96A5AA00A7D176 /* JenkinsInstance+More.m */; };
 		8AC329ED18E4F3A90002D106 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EC18E4F3A90002D106 /* Foundation.framework */; };
 		8AC329EF18E4F3A90002D106 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC329EE18E4F3A90002D106 /* CoreGraphics.framework */; };
@@ -222,8 +226,6 @@
 		8AC464E219E76F3C00AE5A76 /* UniqueQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC464E019E6179C00AE5A76 /* UniqueQueue.swift */; };
 		8AD3B759191C684F00DB7439 /* KDBBuildsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AD3B758191C684F00DB7439 /* KDBBuildsTableViewController.m */; };
 		8AE3B95C18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B95B18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m */; };
-		8AE3B96218EF80CA00E061C1 /* View.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B96118EF80CA00E061C1 /* View.m */; };
-		8AE4F000190B5496003EFE3D /* Build.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE4EFFF190B5496003EFE3D /* Build.m */; };
 		8AE904B819BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE904B719BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m */; };
 		8AFBC11F19468806008EDC9D /* KDBMasterBuildListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */; };
 		A4CD95588CA1A543B8F48076 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 971CCB7C1BC0DAB1EEF714F9 /* libPods.a */; };
@@ -411,8 +413,6 @@
 		8A56E60D19C90FD70058B0C7 /* JenkinsMobileTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JenkinsMobileTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManagerTests.swift; sourceTree = "<group>"; };
 		8A5D1B4B1A788680005C93AD /* RequestHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestHandlerTests.swift; sourceTree = "<group>"; };
-		8A6D73141A6F230A00BFA0A5 /* ActiveConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveConfiguration.h; sourceTree = "<group>"; };
-		8A6D73151A6F230A00BFA0A5 /* ActiveConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveConfiguration.m; sourceTree = "<group>"; };
 		8A6D731A1A6F268700BFA0A5 /* ActiveConfiguration+More.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ActiveConfiguration+More.h"; sourceTree = "<group>"; };
 		8A6D731B1A6F268700BFA0A5 /* ActiveConfiguration+More.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ActiveConfiguration+More.m"; sourceTree = "<group>"; };
 		8A76B0F1199C3AE200B219C5 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
@@ -438,8 +438,18 @@
 		8AA1CD271A9D366800F977B0 /* Job.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Job.m; sourceTree = "<group>"; };
 		8AA1CD291A9D369100F977B0 /* Job+More.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Job+More.h"; sourceTree = "<group>"; };
 		8AA1CD2A1A9D369100F977B0 /* Job+More.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Job+More.m"; sourceTree = "<group>"; };
-		8ABBA74B1A96A54F00A7D176 /* JenkinsInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JenkinsInstance.h; sourceTree = "<group>"; };
-		8ABBA74C1A96A54F00A7D176 /* JenkinsInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JenkinsInstance.m; sourceTree = "<group>"; };
+		8AA1CD2C1A9EA94400F977B0 /* JenkinsInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JenkinsInstance.h; sourceTree = "<group>"; };
+		8AA1CD2D1A9EA94400F977B0 /* JenkinsInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JenkinsInstance.m; sourceTree = "<group>"; };
+		8AA1CD2F1A9EA94500F977B0 /* Build.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Build.h; sourceTree = "<group>"; };
+		8AA1CD301A9EA94500F977B0 /* Build.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Build.m; sourceTree = "<group>"; };
+		8AA1CD321A9EA94500F977B0 /* View.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = View.h; sourceTree = "<group>"; };
+		8AA1CD331A9EA94500F977B0 /* View.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = View.m; sourceTree = "<group>"; };
+		8AA1CD351A9EA94500F977B0 /* ActiveConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveConfiguration.h; sourceTree = "<group>"; };
+		8AA1CD361A9EA94500F977B0 /* ActiveConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveConfiguration.m; sourceTree = "<group>"; };
+		8AA1CD381A9EA95F00F977B0 /* View+More.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "View+More.h"; sourceTree = "<group>"; };
+		8AA1CD391A9EA95F00F977B0 /* View+More.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "View+More.m"; sourceTree = "<group>"; };
+		8AA1CD3B1A9EA99A00F977B0 /* Build+More.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Build+More.h"; sourceTree = "<group>"; };
+		8AA1CD3C1A9EA99A00F977B0 /* Build+More.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Build+More.m"; sourceTree = "<group>"; };
 		8ABBA74E1A96A5AA00A7D176 /* JenkinsInstance+More.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JenkinsInstance+More.h"; sourceTree = "<group>"; };
 		8ABBA74F1A96A5AA00A7D176 /* JenkinsInstance+More.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "JenkinsInstance+More.m"; sourceTree = "<group>"; };
 		8AC329E918E4F3A90002D106 /* JenkinsMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JenkinsMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -488,10 +498,6 @@
 		8AD3B758191C684F00DB7439 /* KDBBuildsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBBuildsTableViewController.m; sourceTree = "<group>"; };
 		8AE3B95A18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KDBJenkinsRequestHandler.h; path = ../KDBJenkinsRequestHandler.h; sourceTree = "<group>"; };
 		8AE3B95B18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KDBJenkinsRequestHandler.m; path = ../KDBJenkinsRequestHandler.m; sourceTree = "<group>"; };
-		8AE3B96018EF80CA00E061C1 /* View.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = View.h; sourceTree = "<group>"; };
-		8AE3B96118EF80CA00E061C1 /* View.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = View.m; sourceTree = "<group>"; };
-		8AE4EFFE190B5496003EFE3D /* Build.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Build.h; sourceTree = "<group>"; };
-		8AE4EFFF190B5496003EFE3D /* Build.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Build.m; sourceTree = "<group>"; };
 		8AE904B619BD4C3400EE6A79 /* KDBJobTestResultsTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJobTestResultsTableViewCell.h; sourceTree = "<group>"; };
 		8AE904B719BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJobTestResultsTableViewCell.m; sourceTree = "<group>"; };
 		8AFBC11D19468806008EDC9D /* KDBMasterBuildListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBMasterBuildListTableViewController.h; sourceTree = "<group>"; };
@@ -841,22 +847,26 @@
 		8AE3B96918EF80D000E061C1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				8AA1CD351A9EA94500F977B0 /* ActiveConfiguration.h */,
+				8AA1CD361A9EA94500F977B0 /* ActiveConfiguration.m */,
+				8AA1CD321A9EA94500F977B0 /* View.h */,
+				8AA1CD331A9EA94500F977B0 /* View.m */,
+				8AA1CD2F1A9EA94500F977B0 /* Build.h */,
+				8AA1CD301A9EA94500F977B0 /* Build.m */,
+				8AA1CD2C1A9EA94400F977B0 /* JenkinsInstance.h */,
+				8AA1CD2D1A9EA94400F977B0 /* JenkinsInstance.m */,
 				8AA1CD261A9D366800F977B0 /* Job.h */,
 				8AA1CD271A9D366800F977B0 /* Job.m */,
-				8ABBA74B1A96A54F00A7D176 /* JenkinsInstance.h */,
-				8ABBA74C1A96A54F00A7D176 /* JenkinsInstance.m */,
-				8A6D73141A6F230A00BFA0A5 /* ActiveConfiguration.h */,
 				8A6D731A1A6F268700BFA0A5 /* ActiveConfiguration+More.h */,
 				8A6D731B1A6F268700BFA0A5 /* ActiveConfiguration+More.m */,
-				8A6D73151A6F230A00BFA0A5 /* ActiveConfiguration.m */,
-				8AE4EFFE190B5496003EFE3D /* Build.h */,
-				8AE4EFFF190B5496003EFE3D /* Build.m */,
-				8AE3B96018EF80CA00E061C1 /* View.h */,
-				8AE3B96118EF80CA00E061C1 /* View.m */,
 				8ABBA74E1A96A5AA00A7D176 /* JenkinsInstance+More.h */,
 				8ABBA74F1A96A5AA00A7D176 /* JenkinsInstance+More.m */,
 				8AA1CD291A9D369100F977B0 /* Job+More.h */,
 				8AA1CD2A1A9D369100F977B0 /* Job+More.m */,
+				8AA1CD381A9EA95F00F977B0 /* View+More.h */,
+				8AA1CD391A9EA95F00F977B0 /* View+More.m */,
+				8AA1CD3B1A9EA99A00F977B0 /* Build+More.h */,
+				8AA1CD3C1A9EA99A00F977B0 /* Build+More.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -1206,21 +1216,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8AE4F000190B5496003EFE3D /* Build.m in Sources */,
 				8AC32A4618E4FB6F0002D106 /* AFURLConnectionOperation.m in Sources */,
 				8A3DA825198F2C3800C97992 /* KDBJobDetailTableViewController.m in Sources */,
 				8A9B05B11924452D0019B336 /* KDBBuildDetailViewController.m in Sources */,
 				8A14345718E8863E000C2DB4 /* KDBJenkinsViewTableView.m in Sources */,
 				8AC32A4118E4FB6F0002D106 /* AFHTTPRequestOperation.m in Sources */,
 				8A14345418E8857B000C2DB4 /* KDBJenkinsViewsScrollView.m in Sources */,
+				8AA1CD341A9EA94500F977B0 /* View.m in Sources */,
+				8AA1CD311A9EA94500F977B0 /* Build.m in Sources */,
 				8AC32A4418E4FB6F0002D106 /* AFNetworkReachabilityManager.m in Sources */,
-				8A6D73161A6F230A00BFA0A5 /* ActiveConfiguration.m in Sources */,
 				8AC32A4918E4FB6F0002D106 /* AFURLSessionManager.m in Sources */,
 				8AC32A4718E4FB6F0002D106 /* AFURLRequestSerialization.m in Sources */,
 				8AC32A0E18E4F3A90002D106 /* KDBJobDetailViewController.m in Sources */,
 				8AC32A4818E4FB6F0002D106 /* AFURLResponseSerialization.m in Sources */,
 				8AC32A0B18E4F3A90002D106 /* KDBMasterViewController.m in Sources */,
 				8AE904B819BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m in Sources */,
+				8AA1CD3A1A9EA95F00F977B0 /* View+More.m in Sources */,
 				8AA1CD2B1A9D369100F977B0 /* Job+More.m in Sources */,
 				8A399274199455D70071CF08 /* KDBJobTableViewCell.m in Sources */,
 				8A8B57BE19C7B98A004FA446 /* SyncManager.swift in Sources */,
@@ -1229,17 +1240,18 @@
 				8A040A00192599D400B25073 /* KDBRelatedProjectsViewController.m in Sources */,
 				8ABBA7501A96A5AA00A7D176 /* JenkinsInstance+More.m in Sources */,
 				8AC464E119E6179C00AE5A76 /* UniqueQueue.swift in Sources */,
+				8AA1CD371A9EA94500F977B0 /* ActiveConfiguration.m in Sources */,
 				8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */,
 				8AC329FF18E4F3A90002D106 /* KDBAppDelegate.m in Sources */,
+				8AA1CD2E1A9EA94400F977B0 /* JenkinsInstance.m in Sources */,
 				8A14345118E880A2000C2DB4 /* KDBJenkinsViewsViewController.m in Sources */,
 				8AE3B95C18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m in Sources */,
 				8A76B0F2199C3AE200B219C5 /* Constants.m in Sources */,
 				8A6D731C1A6F268700BFA0A5 /* ActiveConfiguration+More.m in Sources */,
 				8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */,
-				8AE3B96218EF80CA00E061C1 /* View.m in Sources */,
+				8AA1CD3D1A9EA99A00F977B0 /* Build+More.m in Sources */,
 				8AC32A4218E4FB6F0002D106 /* AFHTTPRequestOperationManager.m in Sources */,
 				8A99949C197AB258009B82DD /* UIButton+RelatedProject.m in Sources */,
-				8ABBA74D1A96A54F00A7D176 /* JenkinsInstance.m in Sources */,
 				8AC32A4518E4FB6F0002D106 /* AFSecurityPolicy.m in Sources */,
 				8AC329FB18E4F3A90002D106 /* main.m in Sources */,
 				8AC32A0818E4F3A90002D106 /* JenkinsMobile.xcdatamodeld in Sources */,

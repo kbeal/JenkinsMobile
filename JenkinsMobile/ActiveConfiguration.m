@@ -2,7 +2,7 @@
 //  ActiveConfiguration.m
 //  JenkinsMobile
 //
-//  Created by Kyle on 1/20/15.
+//  Created by Kyle on 2/25/15.
 //  Copyright (c) 2015 Kyle Beal. All rights reserved.
 //
 
@@ -32,6 +32,7 @@
 @dynamic lastStableBuild;
 @dynamic lastSuccessfulBuild;
 @dynamic lastSync;
+@dynamic lastSyncResult;
 @dynamic lastUnstableBuild;
 @dynamic lastUnsuccessfulBuild;
 @dynamic name;
