@@ -188,21 +188,28 @@ import CoreData
         let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
         let jobName = Job.jobNameFromURL(url)
         
-        if (requestError.code == NSURLErrorCannotFindHost || requestError.code == NSURLErrorUnsupportedURL) {
-            masterMOC!.performBlockAndWait({
-                Job.fetchAndDeleteJobWithName(jobName, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
-            })
-        } else {
-            let status: Int = userInfo[StatusCodeKey] as Int            
-            // if the error is 404
-            if (status==404) {
+        switch requestError.code {
+        case NSURLErrorBadServerResponse:
+            let status: Int = userInfo[StatusCodeKey] as Int
+            switch status {
+            case 404:
                 self.masterMOC?.performBlockAndWait({
                     Job.fetchAndDeleteJobWithName(jobName, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
+                    self.saveMasterContext()
+                })
+            default:
+                masterMOC!.performBlock({
+                    let job = Job.fetchJobWithName(jobName, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
+                    job.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
+                    self.saveMasterContext()
                 })
             }
+        default:
+            masterMOC!.performBlockAndWait({
+                Job.fetchAndDeleteJobWithName(jobName, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
+                self.saveMasterContext()
+            })
         }
-        
-        saveMasterContext()
     }
     
     func viewDetailResponseReceived(notification: NSNotification) {
