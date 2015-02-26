@@ -219,8 +219,9 @@ import CoreData
         var view: View?
         
         //TODO: re-think this. What if notification comes in after
-        // current instance is swapped?
+        // current instance is swapped? Aren't we passing the instance in the request?
         values[ViewJenkinsInstanceKey] = currentJenkinsInstance
+        values[ViewLastSyncResultKey] = "200: OK"
         
         self.masterMOC?.performBlockAndWait({
             // Fetch view based on url
@@ -272,6 +273,7 @@ import CoreData
         values[JenkinsInstanceCurrentKey] = false
         values[JenkinsInstanceEnabledKey] = true
         values[JenkinsInstanceAuthenticatedKey] = true
+        values[JenkinsInstanceLastSyncResultKey] = "200: OK"
         
         self.masterMOC?.performBlock({
             JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values, inManagedObjectContext: self.masterMOC)
@@ -314,6 +316,8 @@ import CoreData
         var values: Dictionary = notification.userInfo!
         let url = values[BuildURLKey] as String
         var build: Build?
+        
+        values[BuildLastSyncResultKey] = "200: OK"
         
         self.masterMOC?.performBlockAndWait({
             // Fetch build based on url
@@ -359,6 +363,8 @@ import CoreData
         var values: Dictionary = notification.userInfo!
         let url = values[ActiveConfigurationURLKey] as String
         var ac: ActiveConfiguration?
+        
+        values[ActiveConfigurationLastSyncResultKey] = "200: OK"
         
         self.masterMOC?.performBlockAndWait({
             // Fetch build based on url

@@ -35,6 +35,7 @@ NSString * const ViewPropertyKey = @"property";
 NSString * const ViewJobsKey = @"jobs";
 NSString * const ViewViewsKey = @"views";
 NSString * const ViewJenkinsInstanceKey = @"jenkinsInstance";
+NSString * const ViewLastSyncResultKey = @"lastSyncResult";
 
 #pragma mark - Job Keys
 NSString * const JobURLKey = @"url";
@@ -92,6 +93,7 @@ NSString * const ActiveConfigurationUpstreamProjectsKey = @"upstreamProjects";
 NSString * const ActiveConfigurationHealthReportKey = @"healthReport";
 NSString * const ActiveConfigurationLastSyncKey = @"lastSync";
 NSString * const ActiveConfigurationRequestErrorKey = @"ActiveConfigurationRequestError";
+NSString * const ActiveConfigurationLastSyncResultKey = @"lastSyncResult";
 
 #pragma mark - Build Keys
 NSString * const BuildURLKey = @"url";
@@ -114,6 +116,7 @@ NSString * const BuildDescriptionKey = @"description";
 NSString * const BuildKeepLogKey = @"keepLog";
 NSString * const BuildIDKey = @"id";
 NSString * const BuildFullDisplayNameKey = @"fullDisplayName";
+NSString * const BuildLastSyncResultKey = @"lastSyncResult";
 
 #pragma mark - JenkinsInstance Keys
 NSString * const JenkinsInstanceNameKey = @"name";
@@ -123,6 +126,7 @@ NSString * const JenkinsInstanceJobsKey = @"jobs";
 NSString * const JenkinsInstanceEnabledKey = @"enabled";
 NSString * const JenkinsInstanceUsernameKey = @"username";
 NSString * const JenkinsInstanceAuthenticatedKey = @"authenticated";
+NSString * const JenkinsInstanceLastSyncResultKey = @"lastSyncResult";
 
 #pragma mark - AFNetworking Keys
 NSString * const StatusCodeKey = @"statusCode";

@@ -106,6 +106,7 @@
     self.username = [values objectForKey:JenkinsInstanceUsernameKey];
     self.authenticated = [values objectForKey:JenkinsInstanceAuthenticatedKey];
     [self createJobs:[values objectForKey:JenkinsInstanceJobsKey]];
+    self.lastSyncResult = [values objectForKey:JenkinsInstanceLastSyncResultKey];
 }
 
 // your local delegate's favorite method!

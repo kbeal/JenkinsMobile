@@ -102,6 +102,7 @@
     self.healthReport = NULL_TO_NIL([values objectForKey:ActiveConfigurationHealthReportKey]);
     self.rel_ActiveConfiguration_Job = NULL_TO_NIL([values objectForKey:ActiveConfigurationJobKey]);
     self.lastSync = NULL_TO_NIL([values objectForKey:ActiveConfigurationLastSyncKey]);
+    self.lastSyncResult = NULL_TO_NIL([values objectForKey:ActiveConfigurationLastSyncResultKey]);
 }
 
 @end

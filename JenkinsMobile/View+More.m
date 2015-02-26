@@ -53,6 +53,7 @@
     self.name = NULL_TO_NIL([values objectForKey:@"name"]);
     self.url = NULL_TO_NIL([values objectForKey:@"url"]);
     self.property = NULL_TO_NIL([values objectForKey:@"property"]);
+    self.lastSyncResult = NULL_TO_NIL([values objectForKey:ViewLastSyncResultKey]);
     self.view_description = NULL_TO_NIL([values objectForKey:@"description"]);
     self.rel_View_JenkinsInstance = NULL_TO_NIL([values objectForKey:@"jenkinsInstance"]);
     [self createJobsFromViewValues:[values objectForKey:@"jobs"]];

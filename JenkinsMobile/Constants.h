@@ -35,6 +35,7 @@ extern NSString * const ViewPropertyKey;
 extern NSString * const ViewJobsKey;
 extern NSString * const ViewViewsKey;
 extern NSString * const ViewJenkinsInstanceKey;
+extern NSString * const ViewLastSyncResultKey;
 
 #pragma mark - Job keys
 extern NSString * const JobURLKey;
@@ -91,6 +92,7 @@ extern NSString * const ActiveConfigurationUpstreamProjectsKey;
 extern NSString * const ActiveConfigurationHealthReportKey;
 extern NSString * const ActiveConfigurationLastSyncKey;
 extern NSString * const ActiveConfigurationRequestErrorKey;
+extern NSString * const ActiveConfigurationLastSyncResultKey;
 
 #pragma mark - Build keys
 extern NSString * const BuildURLKey;
@@ -113,6 +115,7 @@ extern NSString * const BuildDescriptionKey;
 extern NSString * const BuildKeepLogKey;
 extern NSString * const BuildIDKey;
 extern NSString * const BuildFullDisplayNameKey;
+extern NSString * const BuildLastSyncResultKey;
 
 #pragma mark - JenkinsInstance Keys
 extern NSString * const JenkinsInstanceNameKey;
@@ -122,6 +125,7 @@ extern NSString * const JenkinsInstanceJobsKey;
 extern NSString * const JenkinsInstanceEnabledKey;
 extern NSString * const JenkinsInstanceUsernameKey;
 extern NSString * const JenkinsInstanceAuthenticatedKey;
+extern NSString * const JenkinsInstanceLastSyncResultKey;
 
 #pragma mark - AFNetworking Keys
 extern NSString * const StatusCodeKey;

@@ -90,6 +90,7 @@
     self.timestamp = [NSDate dateWithTimeIntervalSince1970:([timestamp doubleValue] / 1000)];
     self.url = NULL_TO_NIL([values objectForKey:@"url"]);
     self.rel_Build_Job = NULL_TO_NIL([values objectForKey:BuildJobKey]);
+    self.lastSyncResult = NULL_TO_NIL([values objectForKey:BuildLastSyncResultKey]);
 }
 
 @end
