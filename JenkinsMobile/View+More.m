@@ -48,6 +48,18 @@
     }
 }
 
+// Removes /api/json and /api/json/ from the end of URL's
++ (NSString *) removeApiFromURL:(NSURL *) url
+{
+    NSString *missingApi = [url absoluteString];
+    if ([[url absoluteString] hasSuffix:@"/api/json"]) {
+        missingApi = [[url absoluteString] substringToIndex:[[url absoluteString] length]-9];
+    } else if ([[url absoluteString] hasSuffix:@"/api/json/"]) {
+        missingApi = [[url absoluteString] substringToIndex:[[url absoluteString] length]-10];
+    }
+    return missingApi;
+}
+
 - (void)setValues:(NSDictionary *) values
 {
     self.name = NULL_TO_NIL([values objectForKey:@"name"]);

@@ -16,5 +16,6 @@
 + (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context;
 + (Build *) fetchBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
 + (void)fetchAndDeleteBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
++ (NSString *) removeApiFromURL:(NSURL *) url;
 
 @end

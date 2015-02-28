@@ -247,22 +247,31 @@ import CoreData
         let requestError: NSError = userInfo[RequestErrorKey] as NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
         let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
+        let viewURL = View.removeApiFromURL(url)
         
-        if requestError.code == NSURLErrorCannotFindHost {
-            masterMOC!.performBlockAndWait({
-                View.fetchAndDeleteViewWithURL(url.absoluteString, inContext: self.masterMOC)
-            })
-        } else {
+        switch requestError.code {
+        case NSURLErrorBadServerResponse:
             let status: Int = userInfo[StatusCodeKey] as Int
-            // if the error is 404
-            if (status==404) {
+            switch status {
+            case 404:
                 self.masterMOC?.performBlockAndWait({
-                    View.fetchAndDeleteViewWithURL(url.absoluteString, inContext: self.masterMOC)
+                    View.fetchAndDeleteViewWithURL(viewURL, inContext: self.masterMOC)
+                    self.saveMasterContext()
+                })
+            default:
+                masterMOC!.performBlock({
+                    if let view = View.fetchViewWithURL(viewURL, inContext: self.masterMOC) {
+                        view.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
+                        self.saveMasterContext()                        
+                    }
                 })
             }
+        default:
+            masterMOC!.performBlockAndWait({
+                View.fetchAndDeleteViewWithURL(viewURL, inContext: self.masterMOC)
+                self.saveMasterContext()
+            })
         }
-        
-        saveMasterContext()
     }
     
     func jenkinsInstanceDetailResponseReceived(notification: NSNotification) {
@@ -296,18 +305,19 @@ import CoreData
         switch requestError.code {
         case NSURLErrorBadServerResponse:
             let status: Int = userInfo[StatusCodeKey] as Int
+            let message: String = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
             switch status {
             case 401:
-                unauthenticateJenkinsInstance(url)
+                unauthenticateJenkinsInstance(url,message: message)
             case 403:
-                unauthenticateJenkinsInstance(url)
+                unauthenticateJenkinsInstance(url,message: message)
             case 404:
-                disableJenkinsInstance(url)
+                disableJenkinsInstance(url,message: message)
             default:
-                disableJenkinsInstance(url)
+                disableJenkinsInstance(url,message: message)
             }
         default:
-            disableJenkinsInstance(url)
+            disableJenkinsInstance(url,message: requestError.localizedDescription)
         }
     }
     
@@ -340,22 +350,30 @@ import CoreData
         let requestError: NSError = userInfo[RequestErrorKey] as NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
         let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
+        let buildURL = Build.removeApiFromURL(url)
         
-        if requestError.code == NSURLErrorCannotFindHost {
-            masterMOC!.performBlockAndWait({
-                Build.fetchAndDeleteBuildWithURL(url.absoluteString, inContext: self.masterMOC)
-            })
-        } else {
+        switch requestError.code {
+        case NSURLErrorBadServerResponse:
             let status: Int = userInfo[StatusCodeKey] as Int
-            // if the error is 404
-            if (status==404) {
+            switch status {
+            case 404:
                 self.masterMOC?.performBlockAndWait({
-                    Build.fetchAndDeleteBuildWithURL(url.absoluteString, inContext: self.masterMOC)
+                    Build.fetchAndDeleteBuildWithURL(buildURL, inContext: self.masterMOC)
+                    self.saveMasterContext()
+                })
+            default:
+                masterMOC!.performBlock({
+                    let build = Build.fetchBuildWithURL(buildURL, inContext: self.masterMOC)
+                    build.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
+                    self.saveMasterContext()
                 })
             }
+        default:
+            masterMOC!.performBlockAndWait({
+                Build.fetchAndDeleteBuildWithURL(buildURL, inContext: self.masterMOC)
+                self.saveMasterContext()
+            })
         }
-        
-        saveMasterContext()
     }
     
     func activeConfigurationDetailResponseReceived(notification: NSNotification) {
@@ -387,39 +405,49 @@ import CoreData
         let requestError: NSError = userInfo[RequestErrorKey] as NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
         let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
+        let urlStr: String = ActiveConfiguration.removeApiFromURL(url)
         
-        if requestError.code == NSURLErrorCannotFindHost {
-            masterMOC!.performBlockAndWait({
-                ActiveConfiguration.fetchAndDeleteActiveConfigurationWithURL(url.absoluteString, inManagedObjectContext: self.masterMOC)
-            })
-        } else {
+        switch requestError.code {
+        case NSURLErrorBadServerResponse:
             let status: Int = userInfo[StatusCodeKey] as Int
-            // if the error is 404
-            if (status==404) {
-                self.masterMOC?.performBlockAndWait({
-                    ActiveConfiguration.fetchAndDeleteActiveConfigurationWithURL(url.absoluteString, inManagedObjectContext: self.masterMOC)
+            switch status {
+            case 404:
+                self.masterMOC?.performBlock({
+                    ActiveConfiguration.fetchAndDeleteActiveConfigurationWithURL(urlStr, inManagedObjectContext: self.masterMOC)
+                })
+            default:
+                self.masterMOC?.performBlock({
+                    if let ac = ActiveConfiguration.fetchActiveConfigurationWithURL(urlStr, inManagedObjectContext: self.masterMOC) {
+                        ac.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
+                        self.saveMasterContext()
+                    }
                 })
             }
+        default:
+            self.masterMOC?.performBlock({
+                ActiveConfiguration.fetchAndDeleteActiveConfigurationWithURL(urlStr, inManagedObjectContext: self.masterMOC)
+                self.saveMasterContext()
+            })
         }
-        
-        saveMasterContext()
     }
     
-    func unauthenticateJenkinsInstance(url: NSURL) {
+    func unauthenticateJenkinsInstance(url: NSURL, message: String) {
         masterMOC!.performBlockAndWait({
             let jenkins = JenkinsInstance.fetchJenkinsInstanceWithURL(JenkinsInstance.removeApiFromURL(url), fromManagedObjectContext: self.masterMOC)
             if jenkins != nil {
                 jenkins!.authenticated = false
+                jenkins!.lastSyncResult = message
                 self.saveMasterContext()
             }
         })
     }
     
-    func disableJenkinsInstance(url: NSURL) {
+    func disableJenkinsInstance(url: NSURL, message: String) {
         masterMOC!.performBlockAndWait({
             let jenkins = JenkinsInstance.fetchJenkinsInstanceWithURL(JenkinsInstance.removeApiFromURL(url), fromManagedObjectContext: self.masterMOC)
             if jenkins != nil {
                 jenkins!.enabled = false
+                jenkins!.lastSyncResult = message
                 self.saveMasterContext()
             }
         })
