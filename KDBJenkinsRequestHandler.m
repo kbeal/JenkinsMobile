@@ -18,9 +18,10 @@
     NSLog(@"%@%@",@"Requesting details for Job at URL: ",requestURL.absoluteString);
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
-    
+
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     [manager GET:requestURL.absoluteString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -53,6 +54,7 @@
     JenkinsInstance *jinstance = (JenkinsInstance *)view.rel_View_JenkinsInstance;
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
     
@@ -83,6 +85,7 @@
     JenkinsInstance *jinstance = (JenkinsInstance *)ac.rel_ActiveConfiguration_Job.rel_Job_JenkinsInstance;
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
     
@@ -117,6 +120,7 @@
     JenkinsInstance *jinstance = (JenkinsInstance *)build.rel_Build_Job.rel_Job_JenkinsInstance;
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
     
@@ -147,6 +151,7 @@
     NSLog(@"%@%@",@"Requesting details for Jenkins at URL: ",requestURL.absoluteString);
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
     

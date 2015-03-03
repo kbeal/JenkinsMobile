@@ -440,7 +440,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.url == "http://snowman:8080/jenkins/" && ji.enabled.boolValue && !ji.authenticated.boolValue {
+                        if ji.url == "https://snowman:8443/jenkins/" && ji.enabled.boolValue && !ji.authenticated.boolValue {
                             expectationFulfilled=true
                         }
                     }
@@ -449,7 +449,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstanceAuthenticatedKey: true]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstanceAuthenticatedKey: true]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
         jinstance1.password = "password"
         saveContext()
@@ -473,7 +473,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.url == "http://snowman:8080/jenkins/" && ji.enabled.boolValue && ji.authenticated.boolValue {
+                        if ji.url == "https://snowman:8443/jenkins/" && ji.enabled.boolValue && ji.authenticated.boolValue {
                             expectationFulfilled=true
                         }
                     }
@@ -482,7 +482,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
         jinstance1.password = "admin"
         jinstance1.authenticated = false
@@ -507,8 +507,10 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.lastSyncResult == "200: OK" {
+                        if ji.lastSyncResult == "200: OK" && ji.url == "http://snowman:8080/jenkins/" {
                             expectationFulfilled=true
+                        } else {
+                            println(ji.url + ": " + ji.lastSyncResult)
                         }
                     }
                 }
@@ -519,6 +521,7 @@ class SyncManagerTests: XCTestCase {
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
         jinstance1.password = "admin"
+        jinstance1.allowInvalidSSLCertificate = true;
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
@@ -537,7 +540,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.lastSyncResult == "401: unauthorized" && ji.url == "http://snowman:8080/jenkins/" {
+                        if ji.lastSyncResult == "401: unauthorized" && ji.url == "https://snowman:8443/jenkins/" {
                             expectationFulfilled=true
                         }
                     }
@@ -546,9 +549,10 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user"]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user"]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
         jinstance1.password = "password1"
+        jinstance1.allowInvalidSSLCertificate = true;
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
@@ -567,7 +571,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.lastSyncResult == "403: forbidden" && ji.url == "http://snowman:8080/jenkins/" {
+                        if ji.lastSyncResult == "403: forbidden" && ji.url == "https://snowman:8443/jenkins/" {
                             expectationFulfilled=true
                         }
                     }
@@ -576,9 +580,10 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user"]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user"]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
         jinstance1.password = "password"
+        jinstance1.allowInvalidSSLCertificate = true;
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
