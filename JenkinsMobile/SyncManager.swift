@@ -199,9 +199,10 @@ import CoreData
                 })
             default:
                 masterMOC!.performBlock({
-                    let job = Job.fetchJobWithName(jobName, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
-                    job.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
-                    self.saveMasterContext()
+                    if let job = Job.fetchJobWithName(jobName, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance) {
+                        job.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
+                        self.saveMasterContext()
+                    }
                 })
             }
         default:
