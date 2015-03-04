@@ -148,15 +148,19 @@
 - (void) importDetailsForJenkinsInstance: (JenkinsInstance *) jinstance
 {
     NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:[NSURL URLWithString:jinstance.url]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     NSLog(@"%@%@",@"Requesting details for Jenkins at URL: ",requestURL.absoluteString);
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
+
+    manager.credential = [NSURLCredential credentialWithUser:jinstance.username password:jinstance.password persistence:NSURLCredentialPersistenceNone];
     
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    [manager GET:requestURL.absoluteString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    
+    AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:responseObject];
         [userInfo setObject:jinstance.url forKey:JenkinsInstanceURLKey];
         [userInfo setObject:jinstance.name forKey:JenkinsInstanceNameKey];
@@ -174,6 +178,22 @@
         }
         [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailRequestFailedNotification object:self userInfo:info];
     }];
+    
+    [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {
+        if ([request.allHTTPHeaderFields objectForKey:@"Authorization"] != nil) {
+            return request;
+        }
+        
+        NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+        NSString *authStr = [NSString stringWithFormat:@"%@:%@", @"admin", @"admin"];
+        NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+        NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+        [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+        
+        return urlRequest;
+    }];
+    
+    [operation start];
 }
 
 /*
