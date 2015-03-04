@@ -150,13 +150,15 @@
     NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:[NSURL URLWithString:jinstance.url]];
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     NSLog(@"%@%@",@"Requesting details for Jenkins at URL: ",requestURL.absoluteString);
+    NSString *username = jinstance.username;
+    NSString *password = jinstance.password;
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
-    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
+    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:username password:password];
 
-    manager.credential = [NSURLCredential credentialWithUser:jinstance.username password:jinstance.password persistence:NSURLCredentialPersistenceNone];
+    manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
     
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
@@ -185,7 +187,7 @@
         }
         
         NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
-        NSString *authStr = [NSString stringWithFormat:@"%@:%@", @"admin", @"admin"];
+        NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
         NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
         NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
         [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
