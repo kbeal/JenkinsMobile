@@ -66,9 +66,10 @@ class SyncManagerTests: XCTestCase {
         if (!saveResult) {
             println("Error saving context: \(error?.localizedDescription)\n\(error?.userInfo)")
             abort()
-        } else {
-            println("Successfully saved test managed object context")
         }
+        //else {
+          //  println("Successfully saved test managed object context")
+        //}
     }
     
     func testSyncCurrentJenkinsInstance() {
@@ -482,14 +483,15 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin"]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
-        jinstance1.password = "admin"
+        jinstance1.allowInvalidSSLCertificate = true
+        jinstance1.password = "changeme"
         jinstance1.authenticated = false
         saveContext()
         
         XCTAssert(jinstance1.enabled.boolValue, "jenkins instance should be enabled")
-        XCTAssertFalse(jinstance1.authenticated.boolValue, "jenkins instance should be authenticated")
+        XCTAssertFalse(jinstance1.authenticated.boolValue, "jenkins instance should not be authenticated")
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
         requestHandler.importDetailsForJenkinsInstance(jinstance1)
@@ -518,9 +520,9 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin"]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
-        jinstance1.password = "admin"
+        jinstance1.password = "changeme"
         jinstance1.allowInvalidSSLCertificate = true;
         saveContext()
         
@@ -580,9 +582,9 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user"]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "littleone"]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
-        jinstance1.password = "password"
+        jinstance1.password = "changeme"
         jinstance1.allowInvalidSSLCertificate = true;
         saveContext()
         
