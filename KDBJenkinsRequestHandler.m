@@ -50,8 +50,11 @@
     NSString *viewURL = view.url;
     NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:[NSURL URLWithString:view.url]];
     NSLog(@"%@%@",@"Requesting details for View at URL: ",requestURL.absoluteString);
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     
     JenkinsInstance *jinstance = (JenkinsInstance *)view.rel_View_JenkinsInstance;
+    NSString *username = jinstance.username;
+    NSString *password = jinstance.password;
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
@@ -59,8 +62,9 @@
     [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
     
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
     
-    [manager GET:requestURL.absoluteString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[NSNotificationCenter defaultCenter] postNotificationName:ViewDetailResponseReceivedNotification object:self userInfo:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"%@%@",@"failed to receive response for view at url: ",viewURL);
@@ -75,6 +79,21 @@
         }
         [[NSNotificationCenter defaultCenter] postNotificationName:ViewDetailRequestFailedNotification object:self userInfo:info];
     }];
+    
+    [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {
+        if ([request.allHTTPHeaderFields objectForKey:@"Authorization"] != nil) {
+            return request;
+        }
+        NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+        NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+        NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+        NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+        [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+        
+        return urlRequest;
+    }];
+    
+    [operation start];
 }
 
 - (void) importDetailsForActiveConfiguration: (ActiveConfiguration *) ac

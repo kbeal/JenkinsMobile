@@ -43,6 +43,7 @@ class SyncManagerTests: XCTestCase {
         
         context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: self.context)})
         self.jenkinsInstance?.password = "admin"
+        self.jenkinsInstance?.allowInvalidSSLCertificate = true
         
         mgr.currentJenkinsInstanceURL = NSURL(string: jenkinsInstance!.url)
         
@@ -979,18 +980,22 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let view1 = obj as? View {
-                        if view1.lastSyncResult == "200: OK" {
+                        if view1.lastSyncResult == "200: OK" && view1.url == "https://snowman:8443/jenkins/view/Test/" {
                             expectationFulfilled=true
-                        }
+                        } 
                     }
                 }
             }
             return expectationFulfilled
         })
         
-        let viewURLStr = "http://jenkins:8080/view/GrandParent/"
+        let viewURLStr = "https://snowman:8443/jenkins/view/Test/"
         let viewURL = NSURL(string: viewURLStr)
-        let childViewVals1 = [ViewNameKey: "GrandParent", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jenkinsInstance!]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin"]
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
+        jinstance1.password = "changeme"
+        jinstance1.allowInvalidSSLCertificate = true;
+        let childViewVals1 = [ViewNameKey: "All", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jinstance1]
         let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context)
         saveContext()
         
