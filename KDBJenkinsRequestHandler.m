@@ -16,6 +16,10 @@
 {
     NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:jobURL];
     NSLog(@"%@%@",@"Requesting details for Job at URL: ",requestURL.absoluteString);
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    
+    NSString *username = jinstance.username;
+    NSString *password = jinstance.password;
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
@@ -23,8 +27,9 @@
     [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
 
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
     
-    [manager GET:requestURL.absoluteString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@%@",@"response received for job at url: ",jobURL.absoluteString);
         NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:responseObject];
         [info setObject:jinstance forKey:JobJenkinsInstanceKey];
@@ -43,6 +48,21 @@
         [info setObject:jinstance forKey:JobJenkinsInstanceKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailRequestFailedNotification object:self userInfo:info];
     }];
+    
+    [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {
+        if ([request.allHTTPHeaderFields objectForKey:@"Authorization"] != nil) {
+            return request;
+        }
+        NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+        NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+        NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+        NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+        [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+        
+        return urlRequest;
+    }];
+    
+    [operation start];
 }
 
 - (void) importDetailsForView: (View *) view
@@ -100,17 +120,20 @@
 {
     NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:[NSURL URLWithString:ac.url]];
     NSLog(@"%@%@",@"Requesting details for ActiveConfiguration at URL: ",requestURL.absoluteString);
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     
     JenkinsInstance *jinstance = (JenkinsInstance *)ac.rel_ActiveConfiguration_Job.rel_Job_JenkinsInstance;
+    NSString *username = jinstance.username;
+    NSString *password = jinstance.password;
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
-    
+    manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
-    [manager GET:requestURL.absoluteString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@%@",@"response received for ActiveConfiguration at url: ",ac.url);
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:responseObject];
         [userInfo setObject:ac.rel_ActiveConfiguration_Job forKey:ActiveConfigurationJobKey];
@@ -129,23 +152,41 @@
         [info setObject:ac.rel_ActiveConfiguration_Job forKey:ActiveConfigurationJobKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:ActiveConfigurationDetailRequestFailedNotification object:self userInfo:info];
     }];
+    
+    [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {
+        if ([request.allHTTPHeaderFields objectForKey:@"Authorization"] != nil) {
+            return request;
+        }
+        NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+        NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+        NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+        NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+        [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+        
+        return urlRequest;
+    }];
+    
+    [operation start];
 }
 
 - (void) importDetailsForBuild: (Build *) build
 {
     NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:[NSURL URLWithString:build.url]];
     NSLog(@"%@%@",@"Requesting details for Build at URL: ",requestURL.absoluteString);
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     
     JenkinsInstance *jinstance = (JenkinsInstance *)build.rel_Build_Job.rel_Job_JenkinsInstance;
+    NSString *username = jinstance.username;
+    NSString *password = jinstance.password;
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
-    
+    manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
-    [manager GET:requestURL.absoluteString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@%@",@"response received for Build at url: ",build.url);
         [[NSNotificationCenter defaultCenter] postNotificationName:BuildDetailResponseReceivedNotification object:self userInfo:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -162,6 +203,21 @@
         
         [[NSNotificationCenter defaultCenter] postNotificationName:BuildDetailRequestFailedNotification object:self userInfo:info];
     }];
+    
+    [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {
+        if ([request.allHTTPHeaderFields objectForKey:@"Authorization"] != nil) {
+            return request;
+        }
+        NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+        NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+        NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+        NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+        [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+        
+        return urlRequest;
+    }];
+    
+    [operation start];
 }
 
 - (void) importDetailsForJenkinsInstance: (JenkinsInstance *) jinstance

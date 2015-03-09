@@ -731,7 +731,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let job1 = obj as? Job {
-                        if job1.lastSyncResult == "200: OK" && job1.url == "http://jenkins:8080/job/Job3/" {
+                        if job1.lastSyncResult == "200: OK" && job1.url == "https://snowman:8443/jenkins/job/Job1/" {
                             expectationFulfilled=true
                         }
                     }
@@ -740,9 +740,11 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jobURLStr = "http://jenkins:8080/job/Job3/"
+        let jobURLStr = "http://snowman:8080/jenkins/job/Job1/"
         let jobURL = NSURL(string: jobURLStr)
-        let job1vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: jobURLStr, JobJenkinsInstanceKey: jenkinsInstance!]
+        jenkinsInstance?.username = "jenkinsadmin"
+        jenkinsInstance?.password = "changeme"
+        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: jobURLStr, JobJenkinsInstanceKey: jenkinsInstance!]
         let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
         saveContext()
         
@@ -982,7 +984,7 @@ class SyncManagerTests: XCTestCase {
                     if let view1 = obj as? View {
                         if view1.lastSyncResult == "200: OK" && view1.url == "https://snowman:8443/jenkins/view/Test/" {
                             expectationFulfilled=true
-                        } 
+                        }
                     }
                 }
             }
@@ -1219,7 +1221,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let build = obj as? Build {
-                        if build.lastSyncResult == "200: OK" {
+                        if build.lastSyncResult == "200: OK" && build.url == "https://snowman:8443/jenkins/job/Job1/1/" {
                             expectationFulfilled=true
                         }
                     }
@@ -1228,8 +1230,10 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let buildURLStr = "http://jenkins:8080/job/Job3/1/"
-        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let buildURLStr = "https://snowman:8443/jenkins/job/Job1/1/"
+        jenkinsInstance?.username = "jenkinsadmin"
+        jenkinsInstance?.password = "changeme"
+        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         let buildVals1 = [BuildBuildingKey: false, BuildEstimatedDurationKey: 120000, BuildJobKey: job, BuildNumberKey: 100, BuildURLKey: buildURLStr]
         let build = Build.createBuildWithValues(buildVals1, inManagedObjectContext: self.context)
@@ -1423,7 +1427,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ac = obj as? ActiveConfiguration {
-                        if ac.lastSyncResult == "200: OK" {
+                        if ac.lastSyncResult == "200: OK" && ac.url == "https://snowman:8443/jenkins/job/Job2/config=10/" {
                             expectationFulfilled=true
                         }
                     }
@@ -1432,13 +1436,16 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
+        jenkinsInstance?.username = "jenkinsadmin"
+        jenkinsInstance?.password = "changeme"
+        
         let jobVals1 = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/Job6/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         
-        let acURL = "http://jenkins:8080/job/Job6/config1=10,config2=test/"
+        let acURL = "https://snowman:8443/jenkins/job/Job2/config=10/"
         let url = NSURL(string: acURL)
         
-        let acVals = [ActiveConfigurationNameKey: "config1=10,config2=test", ActiveConfigurationURLKey: acURL, ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
+        let acVals = [ActiveConfigurationNameKey: "config=10", ActiveConfigurationURLKey: acURL, ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
         let ac = ActiveConfiguration.createActiveConfigurationWithValues(acVals, inManagedObjectContext: self.context)
         saveContext()
         
