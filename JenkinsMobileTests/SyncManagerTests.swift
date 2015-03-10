@@ -1075,6 +1075,43 @@ class SyncManagerTests: XCTestCase {
         })
     }
     
+    func testPrimaryViewURL() {
+        // the primary view comes back with the Jenkins Instance's url.
+        // we need to correct that in the SyncManager
+        let viewUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            if updatedObjects != nil {
+                for obj in updatedObjects! {
+                    if let view1 = obj as? View {
+                        if view1.lastSyncResult == "200: OK" && view1.url == "https://snowman:8443/jenkins/view/All/" {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        let viewURLStr = "https://snowman:8443/jenkins/view/All/"
+        let viewURL = NSURL(string: viewURLStr)
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin"]
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
+        jinstance1.password = "changeme"
+        jinstance1.allowInvalidSSLCertificate = true;
+        let childViewVals1 = [ViewNameKey: "All", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jinstance1]
+        let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context)
+        saveContext()
+        
+        let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
+        requestHandler.importDetailsForView(view)
+        
+        waitForExpectationsWithTimeout(3, handler: { error in
+            
+        })
+    }
+    
     func testBuildDetailResponseReceived() {
         let causes = [[BuildCausesShortDescriptionKey: "because",BuildCausesUserIDKey: "10",BuildCausesUserNameKey: "kbeal"]]
         let actions = [[BuildCausesKey: causes]]
