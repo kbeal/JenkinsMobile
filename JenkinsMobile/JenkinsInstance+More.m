@@ -105,6 +105,7 @@
     self.enabled = [values objectForKey:JenkinsInstanceEnabledKey];
     self.username = [values objectForKey:JenkinsInstanceUsernameKey];
     self.authenticated = [values objectForKey:JenkinsInstanceAuthenticatedKey];
+    self.primaryView = [values objectForKeyedSubscript:JenkinsInstancePrimaryViewKey];
     [self createJobs:[values objectForKey:JenkinsInstanceJobsKey]];
     self.lastSyncResult = [values objectForKey:JenkinsInstanceLastSyncResultKey];
 }
