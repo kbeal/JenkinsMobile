@@ -85,9 +85,12 @@
     manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:ViewDetailResponseReceivedNotification object:self userInfo:responseObject];
+        NSLog(@"%@%@",@"response received for View at URL: ",viewURL);
+        NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:responseObject];
+        [info setObject:jinstance forKey:JobJenkinsInstanceKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:ViewDetailResponseReceivedNotification object:self userInfo:info];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@%@",@"failed to receive response for view at url: ",viewURL);
+        NSLog(@"%@%@",@"failed to receive response for View at URL: ",viewURL);
         // since the View actually exists, we need to inject it's url so that coredata can find it.
         NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
         [errUserInfo setObject:[NSURL URLWithString:viewURL] forKey:NSErrorFailingURLKey];

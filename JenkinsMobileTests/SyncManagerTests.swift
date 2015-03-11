@@ -1001,7 +1001,7 @@ class SyncManagerTests: XCTestCase {
         
         let viewURLStr = "https://snowman:8443/jenkins/view/All/"
         let viewURL = NSURL(string: viewURLStr)
-        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
+        let primaryView = [ViewNameKey: "Nunya", ViewURLKey: "http://jenkins:8080/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin", JenkinsInstancePrimaryViewKey: primaryView]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
         jinstance1.password = "changeme"
@@ -1094,7 +1094,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let view1 = obj as? View {
-                        if view1.lastSyncResult == "200: OK" && view1.url == "https://snowman:8443/jenkins/" {
+                        if view1.lastSyncResult == "200: OK" && view1.url == "https://snowman:8443/jenkins/view/Test/" {
                             expectationFulfilled=true
                         }
                     }
@@ -1110,7 +1110,7 @@ class SyncManagerTests: XCTestCase {
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
         jinstance1.password = "changeme"
         jinstance1.allowInvalidSSLCertificate = true;
-        let childViewVals1 = [ViewNameKey: "All", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jinstance1]
+        let childViewVals1 = [ViewNameKey: "Test", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jinstance1]
         let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context)
         saveContext()
         
