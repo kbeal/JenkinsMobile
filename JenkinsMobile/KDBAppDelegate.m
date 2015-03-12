@@ -13,6 +13,7 @@
 #import "JenkinsInstance+More.h"
 #import "KDBJenkinsRequestHandler.h"
 #import "JenkinsMobile-Swift.h"
+#import "Constants.h"
 
 @implementation KDBAppDelegate
 
@@ -68,8 +69,8 @@
 
 - (void) createJenkinsInstanceWithURL:(NSURL *) url
 {
-    NSArray *jenkinskeys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
-    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",[url absoluteString],[NSNumber numberWithBool:YES], nil];
+    NSArray *jenkinskeys = [NSArray arrayWithObjects:JenkinsInstanceNameKey,JenkinsInstanceURLKey,JenkinsInstanceCurrentKey,JenkinsInstanceEnabledKey, nil];
+    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",[url absoluteString],[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES], nil];
     NSDictionary *jenkins = [NSDictionary dictionaryWithObjects:jenkinsvalues forKeys:jenkinskeys];
     
     JenkinsInstance *jinstance = [JenkinsInstance fetchJenkinsInstanceWithURL:[url absoluteString] fromManagedObjectContext:self.mainMOC];

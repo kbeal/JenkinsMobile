@@ -134,12 +134,12 @@
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"%@%@",@"response received for ActiveConfiguration at url: ",ac.url);
+        NSLog(@"%@%@",@"response received for ActiveConfiguration at url: ",requestURL.absoluteString);
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:responseObject];
         [userInfo setObject:ac.rel_ActiveConfiguration_Job forKey:ActiveConfigurationJobKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:ActiveConfigurationDetailResponseReceivedNotification object:self userInfo:userInfo];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@%@",@"failed to receive response for ActiveConfiguration at url: ",ac.url);
+        NSLog(@"%@%@",@"failed to receive response for ActiveConfiguration at url: ",requestURL.absoluteString);
         // since the AC actually exists, we need to inject it's url so that coredata can find it.
         NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
         [errUserInfo setObject:[NSURL URLWithString:ac.url] forKey:NSErrorFailingURLKey];
@@ -187,10 +187,10 @@
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"%@%@",@"response received for Build at url: ",build.url);
+        NSLog(@"%@%@",@"response received for Build at url: ",requestURL.absoluteString);
         [[NSNotificationCenter defaultCenter] postNotificationName:BuildDetailResponseReceivedNotification object:self userInfo:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@%@",@"failed to receive response for Build at url: ",build.url);
+        NSLog(@"%@%@",@"failed to receive response for Build at url: ",requestURL.absoluteString);
         // since the Build actually exists, we need to inject it's url so that coredata can find it.
         NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
         [errUserInfo setObject:[NSURL URLWithString:build.url] forKey:NSErrorFailingURLKey];
@@ -227,6 +227,7 @@
     NSLog(@"%@%@",@"Requesting details for Jenkins at URL: ",requestURL.absoluteString);
     NSString *username = jinstance.username;
     NSString *password = jinstance.password;
+    NSURL *jinstanceURL = [NSURL URLWithString:jinstance.url];
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
@@ -243,10 +244,10 @@
         [userInfo setObject:jinstance.name forKey:JenkinsInstanceNameKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailResponseReceivedNotification object:self userInfo:userInfo];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@%@",@"failed to receive response for jenkins at url: ",jinstance.url);
+        NSLog(@"%@%@",@"failed to receive response for jenkins at url: ",requestURL.absoluteString);
         // since the JenkinsInstance actually exists, we need to inject it's url so that coredata can find it.
         NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
-        [errUserInfo setObject:[NSURL URLWithString:jinstance.url] forKey:NSErrorFailingURLKey];
+        [errUserInfo setObject:jinstanceURL forKey:NSErrorFailingURLKey];
         NSError *newError = [[NSError alloc] initWithDomain:error.domain code:error.code userInfo:errUserInfo];
         NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:newError, nil] forKeys:[NSArray arrayWithObjects:RequestErrorKey, nil]];
         
