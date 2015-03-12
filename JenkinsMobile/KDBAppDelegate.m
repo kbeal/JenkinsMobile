@@ -32,7 +32,7 @@
     
     //NSURL *jenkinsURL = [NSURL URLWithString:@"https://jenkins.qa.ubuntu.com"];
     //NSURL *jenkinsURL = [NSURL URLWithString:@"http://ci.thermofisher.com/jenkins"];
-    NSURL *jenkinsURL = [NSURL URLWithString:@"http://jenkins:8080"];
+    NSURL *jenkinsURL = [NSURL URLWithString:@"https://snowman:8443/jenkins/"];
     
     [self createJenkinsInstanceWithURL:jenkinsURL];
     mgr.requestHandler = [[KDBJenkinsRequestHandler alloc] init];
@@ -69,13 +69,15 @@
 
 - (void) createJenkinsInstanceWithURL:(NSURL *) url
 {
-    NSArray *jenkinskeys = [NSArray arrayWithObjects:JenkinsInstanceNameKey,JenkinsInstanceURLKey,JenkinsInstanceCurrentKey,JenkinsInstanceEnabledKey, nil];
-    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",[url absoluteString],[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES], nil];
+    NSArray *jenkinskeys = [NSArray arrayWithObjects:JenkinsInstanceNameKey,JenkinsInstanceURLKey,JenkinsInstanceCurrentKey,JenkinsInstanceEnabledKey,JenkinsInstanceUsernameKey, nil];
+    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",[url absoluteString],[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES],@"jenkinsadmin", nil];
     NSDictionary *jenkins = [NSDictionary dictionaryWithObjects:jenkinsvalues forKeys:jenkinskeys];
     
     JenkinsInstance *jinstance = [JenkinsInstance fetchJenkinsInstanceWithURL:[url absoluteString] fromManagedObjectContext:self.mainMOC];
     if (jinstance == nil) {
         jinstance = [JenkinsInstance createJenkinsInstanceWithValues:jenkins inManagedObjectContext:self.mainMOC];
+        jinstance.password = @"changeme";
+        jinstance.allowInvalidSSLCertificate = [NSNumber numberWithBool:YES];
         [self saveMainContext];
     }
 }

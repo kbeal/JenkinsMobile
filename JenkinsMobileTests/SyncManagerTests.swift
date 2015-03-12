@@ -982,7 +982,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let view1 = obj as? View {
-                        if view1.lastSyncResult == "200: OK" && view1.url == "https://snowman:8443/jenkins/view/Test/" {
+                        if view1.lastSyncResult == "200: OK" && view1.url == "https://snowman:8443/jenkins/view/All/" {
                             expectationFulfilled=true
                         }
                     }
@@ -991,7 +991,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let viewURLStr = "https://snowman:8443/jenkins/view/Test/"
+        let viewURLStr = "https://snowman:8443/jenkins/view/All/"
         let viewURL = NSURL(string: viewURLStr)
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin"]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)

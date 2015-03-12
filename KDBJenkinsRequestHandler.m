@@ -228,6 +228,7 @@
     NSString *username = jinstance.username;
     NSString *password = jinstance.password;
     NSURL *jinstanceURL = [NSURL URLWithString:jinstance.url];
+    NSString *jinstanceName = jinstance.name;
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
@@ -240,8 +241,9 @@
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:responseObject];
-        [userInfo setObject:jinstance.url forKey:JenkinsInstanceURLKey];
-        [userInfo setObject:jinstance.name forKey:JenkinsInstanceNameKey];
+        [userInfo setObject:jinstanceURL.absoluteString forKey:JenkinsInstanceURLKey];
+        [userInfo setObject:jinstanceName forKey:JenkinsInstanceNameKey];
+        [userInfo setObject:username forKey:JenkinsInstanceUsernameKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailResponseReceivedNotification object:self userInfo:userInfo];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"%@%@",@"failed to receive response for jenkins at url: ",requestURL.absoluteString);

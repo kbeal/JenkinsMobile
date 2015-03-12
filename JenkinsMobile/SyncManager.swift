@@ -78,11 +78,9 @@ import CoreData
             // Kick off a sync for that job
             self.masterMOC?.performBlock({
                 let jobname = self.jobSyncQueue.pop()!.stringByAddingPercentEncodingWithAllowedCharacters(.URLPathAllowedCharacterSet())
-                let fullurl = self.currentJenkinsInstance!.url + "/job/" + jobname!
+                let fullurl = self.currentJenkinsInstance!.url + "job/" + jobname! + "/"
                 self.syncJob(NSURL(string: fullurl)!, jenkinsInstance: self.currentJenkinsInstance!)
             })
-        } else {
-            println("No more jobs to sync!!")
         }
     }
     
@@ -318,6 +316,7 @@ import CoreData
                 disableJenkinsInstance(url,message: message)
             }
         default:
+            println(requestError.localizedDescription)
             disableJenkinsInstance(url,message: requestError.localizedDescription)
         }
     }
