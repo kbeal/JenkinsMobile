@@ -82,7 +82,8 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.url == self.jenkinsInstance?.url && ji.rel_Views.count == 3 {
+                        let priView: [String: String] = ji.primaryView as [String: String]
+                        if ji.url == self.jenkinsInstance?.url && ji.rel_Views.count == 3 && priView["name"] == "All" {
                             expectationFulfilled=true
                         }
                     }

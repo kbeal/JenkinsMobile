@@ -93,6 +93,7 @@ class RequestHandlerTests: XCTestCase {
         let jinstance2 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues2, inManagedObjectContext: self.context)
         jinstance1.password = "admin"
         jinstance2.password = "admin"
+        saveContext()
         
         requestHandler.importDetailsForJenkinsInstance(jinstance1)
         requestHandler.importDetailsForJenkinsInstance(jinstance2)
@@ -217,6 +218,7 @@ class RequestHandlerTests: XCTestCase {
         let acVals2 = [ActiveConfigurationNameKey: "config=2", ActiveConfigurationURLKey: "http://www.google.com/jenkins/job/Job1/config1=true/", ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
         let ac = ActiveConfiguration.createActiveConfigurationWithValues(acVals, inManagedObjectContext: self.context)
         let ac2 = ActiveConfiguration.createActiveConfigurationWithValues(acVals2, inManagedObjectContext: self.context)
+        saveContext()
         
         requestHandler.importDetailsForActiveConfiguration(ac)
         requestHandler.importDetailsForActiveConfiguration(ac2)
@@ -261,6 +263,7 @@ class RequestHandlerTests: XCTestCase {
         let buildVals2 = [BuildJobKey: job, BuildURLKey: "http://www.google.com/jenkins/job/Job1/1/", BuildNumberKey: 1]
         let build1 = Build.createBuildWithValues(buildVals, inManagedObjectContext: self.context)
         let build2 = Build.createBuildWithValues(buildVals2, inManagedObjectContext: self.context)
+        saveContext()
         
         requestHandler.importDetailsForBuild(build1)
         requestHandler.importDetailsForBuild(build2)
