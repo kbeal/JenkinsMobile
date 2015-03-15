@@ -12,14 +12,16 @@
 
 @implementation KDBJenkinsRequestHandler
 
-- (void) importDetailsForJobWithURL:(NSURL *) jobURL andJenkinsInstance:(JenkinsInstance *) jinstance
+- (void) importDetailsForJob:(Job *) job;
 {
-    NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:jobURL];
+    NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:[NSURL URLWithString:job.url]];
     NSLog(@"%@%@",@"Requesting details for Job at URL: ",requestURL.absoluteString);
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     
-    NSString *username = jinstance.username;
-    NSString *password = jinstance.password;
+    JenkinsInstance *jinstance = job.rel_Job_JenkinsInstance;
+    NSString *username = job.rel_Job_JenkinsInstance.username;
+    NSString *password = job.rel_Job_JenkinsInstance.password;
+    NSString *jobURL = job.url;
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
@@ -30,15 +32,15 @@
     manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"%@%@",@"response received for job at url: ",jobURL.absoluteString);
+        NSLog(@"%@%@",@"response received for job at url: ",jobURL);
         NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:responseObject];
         [info setObject:jinstance forKey:JobJenkinsInstanceKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailResponseReceivedNotification object:self userInfo:info];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@%@",@"failed to receive response for job at url: ",jobURL.absoluteString);
+        NSLog(@"%@%@",@"failed to receive response for job at url: ",jobURL);
         // since the Job actually exists, we need to inject it's url so that coredata can find it.
         NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
-        [errUserInfo setObject:jobURL forKey:NSErrorFailingURLKey];
+        [errUserInfo setObject:[NSURL URLWithString:jobURL] forKey:NSErrorFailingURLKey];
         NSError *newError = [[NSError alloc] initWithDomain:error.domain code:error.code userInfo:errUserInfo];
         NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:newError, nil] forKeys:[NSArray arrayWithObjects:RequestErrorKey, nil]];
         

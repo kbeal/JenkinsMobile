@@ -16,11 +16,6 @@ import CoreData
     private var jobSyncQueue = UniqueQueue<Job>()
     private var jobSyncTimer: NSTimer?
     private var currentJenkinsInstance: JenkinsInstance?
-    var currentJenkinsInstanceURL: NSURL? {
-        didSet {
-            switchJenkinsInstance()
-        }
-    }
     //var currentBuilds: NSMutableArray
     //var currentBuildsTimer: NSTimer
     var requestHandler: KDBJenkinsRequestHandler?
@@ -59,49 +54,31 @@ import CoreData
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("activeConfigurationDetailRequestFailed:"), name: ActiveConfigurationDetailRequestFailedNotification, object: nil)
     }
     
-    // called after setting a new currentJenkinsInstanceURL
-    // fetches the JenkinsInstance with this URL into the masterMOC
-    func switchJenkinsInstance() {
-        assert(self.masterMOC != nil, "master MOC is nil!!")
-        if currentJenkinsInstanceURL != nil {
-            self.masterMOC?.performBlockAndWait({
-                self.currentJenkinsInstance = JenkinsInstance.fetchJenkinsInstanceWithURL(self.currentJenkinsInstanceURL!.absoluteString, fromManagedObjectContext: self.masterMOC)
-                self.jobSyncQueue.removeAll()
-                self.syncCurrentJenkinsInstance()
-            })
-        }
-    }
-    
     func jobSyncTimerTick() {
         if (jobSyncQueue.count() > 0) {
             // Build the job's URL from the currentJenkinsInstance and jobName
             // Kick off a sync for that job
             self.masterMOC?.performBlock({
                 let job = self.jobSyncQueue.pop()!
-                self.syncJob(NSURL(string: job.url)!, jenkinsInstance: self.currentJenkinsInstance!)
+                self.syncJob(job)
             })
         }
     }
     
     public func jobSyncQueueSize() -> Int { return jobSyncQueue.count() }
     
-    func syncAllJobs() {
-        // queue all jobs for current Jenkins Instance to sync
-        assert(self.currentJenkinsInstance != nil, "sync managers currentJenkinsInstance is nil!!")
-
+    func syncAllJobs(jenkinsInstance: JenkinsInstance) {
         masterMOC?.performBlock({
-            let allJobs = self.currentJenkinsInstance!.rel_Jobs
+            let allJobs = jenkinsInstance.rel_Jobs
             for job in allJobs {
                 self.jobSyncQueue.push(job as Job)
             }
         })
     }
     
-    func syncAllViews() {
-        // sync all the views for current Jenkins Instance
-        assert(self.currentJenkinsInstance != nil, "sync managers currentJenkinsInstance is nil!!")
+    func syncAllViews(jenkinsInstance: JenkinsInstance) {
         masterMOC?.performBlock({
-            let allViews = self.currentJenkinsInstance!.rel_Views
+            let allViews = jenkinsInstance.rel_Views
             for view in allViews {
                 self.syncView(view as View)
             }
@@ -126,11 +103,9 @@ import CoreData
         })
     }
     
-    func syncCurrentJenkinsInstance() {
-        assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
-        if (currentJenkinsInstance != nil) {
-            requestHandler!.importDetailsForJenkinsInstance(currentJenkinsInstance)
-        }
+    func syncJenkinsInstance(instance: JenkinsInstance) {
+        assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!!")
+        self.requestHandler!.importDetailsForJenkinsInstance(instance)
     }
     
     func syncView(view: View) {
@@ -139,9 +114,9 @@ import CoreData
         self.requestHandler!.importDetailsForView(view)
     }
     
-    func syncJob(url: NSURL, jenkinsInstance: JenkinsInstance) {
+    func syncJob(job: Job) {
         assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
-        self.requestHandler!.importDetailsForJobWithURL(url, andJenkinsInstance: jenkinsInstance)
+        self.requestHandler!.importDetailsForJob(job)
     }
     
     func syncBuild(build: Build) {
@@ -287,13 +262,12 @@ import CoreData
         values[JenkinsInstanceLastSyncResultKey] = "200: OK"
         
         self.masterMOC?.performBlock({
-            JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values, inManagedObjectContext: self.masterMOC)
+            let instance = JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values, inManagedObjectContext: self.masterMOC)
             self.saveMasterContext()
             NSLog("%@%@","Saved details for Jenkins at URL: ",url)
+            self.syncAllJobs(instance)
+            self.syncAllViews(instance)
         })
-        
-        syncAllJobs()
-        syncAllViews()
     }
     
     func jenkinsInstanceDetailRequestFailed(notification: NSNotification) {

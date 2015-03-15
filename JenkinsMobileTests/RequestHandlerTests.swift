@@ -36,8 +36,6 @@ class RequestHandlerTests: XCTestCase {
         context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: self.context)})
         self.jenkinsInstance?.password = "admin"
         
-        mgr.currentJenkinsInstanceURL = NSURL(string: jenkinsInstance!.url)
-        
         saveContext()
     }
     
@@ -131,8 +129,13 @@ class RequestHandlerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        requestHandler.importDetailsForJobWithURL(NSURL(string: "http://jenkins:8080/job/Job3/"), andJenkinsInstance: jenkinsInstance)
-        requestHandler.importDetailsForJobWithURL(NSURL(string: "http://www.google.com/jenkins/job/Job1/"), andJenkinsInstance: jenkinsInstance)
+        let jobvals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/Job3/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobvals2 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com/jenkins/job/Job1/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
+        let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
+        let job2 = Job.createJobWithValues(jobvals2, inManagedObjectContext: context)
+        
+        requestHandler.importDetailsForJob(job)
+        requestHandler.importDetailsForJob(job2)
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in
