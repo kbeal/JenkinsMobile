@@ -2,7 +2,7 @@
 //  JenkinsInstance.h
 //  JenkinsMobile
 //
-//  Created by Kyle on 3/1/15.
+//  Created by Kyle on 3/10/15.
 //  Copyright (c) 2015 Kyle Beal. All rights reserved.
 //
 
@@ -13,6 +13,7 @@
 
 @interface JenkinsInstance : NSManagedObject
 
+@property (nonatomic, retain) NSNumber * allowInvalidSSLCertificate;
 @property (nonatomic, retain) NSNumber * authenticated;
 @property (nonatomic, retain) NSNumber * current;
 @property (nonatomic, retain) NSNumber * enabled;
@@ -20,7 +21,7 @@
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * url;
 @property (nonatomic, retain) NSString * username;
-@property (nonatomic, retain) NSNumber * allowInvalidSSLCertificate;
+@property (nonatomic, retain) id primaryView;
 @property (nonatomic, retain) NSSet *rel_Jobs;
 @property (nonatomic, retain) NSSet *rel_Views;
 @end

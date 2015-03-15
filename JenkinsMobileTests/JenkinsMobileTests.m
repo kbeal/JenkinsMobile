@@ -32,8 +32,11 @@
     _context = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
     [_context setPersistentStoreCoordinator: coord];
 
-    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current",JenkinsInstanceEnabledKey, nil];
-    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES], nil];
+    NSArray *viewKeys = [NSArray arrayWithObjects:ViewNameKey,ViewURLKey, nil];
+    NSArray *priViewVals = [NSArray arrayWithObjects:@"All",@"http://tomcat:8080/", nil];
+    NSDictionary *primaryView = [NSDictionary dictionaryWithObjects:priViewVals forKeys:viewKeys];
+    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current",JenkinsInstanceEnabledKey,JenkinsInstancePrimaryViewKey, nil];
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES],primaryView, nil];
     NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     _jinstance = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
 }
