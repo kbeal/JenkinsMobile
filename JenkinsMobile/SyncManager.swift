@@ -13,7 +13,7 @@ import CoreData
     
     var masterMOC: NSManagedObjectContext?
     var mainMOC: NSManagedObjectContext?
-    private var jobSyncQueue = UniqueQueue()
+    private var jobSyncQueue = UniqueQueue<Job>()
     private var jobSyncTimer: NSTimer?
     private var currentJenkinsInstance: JenkinsInstance?
     var currentJenkinsInstanceURL: NSURL? {
@@ -77,9 +77,8 @@ import CoreData
             // Build the job's URL from the currentJenkinsInstance and jobName
             // Kick off a sync for that job
             self.masterMOC?.performBlock({
-                let jobname = self.jobSyncQueue.pop()!.stringByAddingPercentEncodingWithAllowedCharacters(.URLPathAllowedCharacterSet())
-                let fullurl = self.currentJenkinsInstance!.url + "job/" + jobname! + "/"
-                self.syncJob(NSURL(string: fullurl)!, jenkinsInstance: self.currentJenkinsInstance!)
+                let job = self.jobSyncQueue.pop()!
+                self.syncJob(NSURL(string: job.url)!, jenkinsInstance: self.currentJenkinsInstance!)
             })
         }
     }
@@ -93,7 +92,7 @@ import CoreData
         masterMOC?.performBlock({
             let allJobs = self.currentJenkinsInstance!.rel_Jobs
             for job in allJobs {
-                self.jobSyncQueue.push(job.name)
+                self.jobSyncQueue.push(job as Job)
             }
         })
     }
@@ -113,7 +112,7 @@ import CoreData
         masterMOC?.performBlock({
             let viewjobs = view.rel_View_Jobs
             for job in viewjobs {
-                self.jobSyncQueue.push(job.name)
+                self.jobSyncQueue.push(job as Job)
             }
         })
     }

@@ -11,16 +11,42 @@ import XCTest
 import JenkinsMobile
 
 class UniqueQueueTests: XCTestCase {
+    
+    var jenkinsInstance: JenkinsInstance?
+    var context: NSManagedObjectContext?    
+    
+    override func setUp() {
+        let modelURL = NSBundle.mainBundle().URLForResource("JenkinsMobile", withExtension: "momd")
+        let model = NSManagedObjectModel(contentsOfURL: modelURL!)
+        let coord = NSPersistentStoreCoordinator(managedObjectModel: model!)
+        context = NSManagedObjectContext(concurrencyType: NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType)
+        coord.addPersistentStoreWithType(NSInMemoryStoreType, configuration: nil, URL: nil, options: nil, error: nil)
+        context!.persistentStoreCoordinator = coord
+        
+        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
+        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
+        
+        self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: self.context)
+    }
 
     func testUniqueQueueIter() {
-        let uq = UniqueQueue()
+        let uq = UniqueQueue<Job>()
         
-        uq.push("Job1")
-        uq.push("Job2")
-        uq.push("Job3")
-        uq.push("Job3")
-        uq.push("Job5")
-        uq.push("Job1")
+        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
+        let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: context)
+        let job3 = Job.createJobWithValues(job3vals, inManagedObjectContext: context)
+        let job4 = Job.createJobWithValues(job4vals, inManagedObjectContext: context)
+        
+        uq.push(job1)
+        uq.push(job2)
+        uq.push(job3)
+        uq.push(job3)
+        uq.push(job4)
+        uq.push(job1)
         
         for item in uq {
             //println(item)
@@ -29,14 +55,23 @@ class UniqueQueueTests: XCTestCase {
     }
     
     func testUniqueQueueIterPop() {
-        let uq = UniqueQueue()
+        let uq = UniqueQueue<Job>()
         
-        uq.push("Job1")
-        uq.push("Job2")
-        uq.push("Job3")
-        uq.push("Job3")
-        uq.push("Job5")
-        uq.push("Job1")
+        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
+        let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: context)
+        let job3 = Job.createJobWithValues(job3vals, inManagedObjectContext: context)
+        let job4 = Job.createJobWithValues(job4vals, inManagedObjectContext: context)
+        
+        uq.push(job1)
+        uq.push(job2)
+        uq.push(job3)
+        uq.push(job3)
+        uq.push(job4)
+        uq.push(job1)
         
         var itmcnt = 0
         
@@ -51,14 +86,24 @@ class UniqueQueueTests: XCTestCase {
     }
     
     func testUniqueQueueRemoveAll() {
-        let uq = UniqueQueue()
+        let uq = UniqueQueue<Job>()
         
-        uq.push("Job1")
-        uq.push("Job2")
-        uq.push("Job3")
-        uq.push("Job3")
-        uq.push("Job5")
-        uq.push("Job1")
+        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
+        let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: context)
+        let job3 = Job.createJobWithValues(job3vals, inManagedObjectContext: context)
+        let job4 = Job.createJobWithValues(job4vals, inManagedObjectContext: context)
+        
+        uq.push(job1)
+        uq.push(job2)
+        uq.push(job3)
+        uq.push(job3)
+        uq.push(job4)
+        uq.push(job1)
+        
         XCTAssertEqual(uq.count(), 4, "uq count is wrong")
         
         uq.removeAll()
@@ -66,28 +111,43 @@ class UniqueQueueTests: XCTestCase {
     }
     
     func testUniqueQueuePush() {
-        let uq = UniqueQueue()
+        let uq = UniqueQueue<Job>()
+        
+        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
+        let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: context)
         
         //initial item count should be 0
         XCTAssertEqual(uq.count(), 0, "initial uq count is wrong")
         
-        uq.push("Job1")
+        uq.push(job1)
         XCTAssertEqual(uq.count(), 1, "uq count after push is wrong")
-        uq.push("job2")
+        uq.push(job2)
         XCTAssertEqual(uq.count(), 2, "uq count after push2 is wrong")
-        uq.push("Job1")
+        uq.push(job1)
         XCTAssertEqual(uq.count(), 2, "uq count after second push of Job1 is wrong")
     }
     
     func testUniqueQueuePop() {
-        let uq = UniqueQueue()
+        let uq = UniqueQueue<Job>()
         
-        uq.push("Job1")
-        uq.push("Job2")
-        uq.push("Job3")
-        uq.push("Job3")
-        uq.push("Job5")
-        uq.push("Job1")
+        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
+        let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: context)
+        let job3 = Job.createJobWithValues(job3vals, inManagedObjectContext: context)
+        let job4 = Job.createJobWithValues(job4vals, inManagedObjectContext: context)
+        
+        uq.push(job1)
+        uq.push(job2)
+        uq.push(job3)
+        uq.push(job3)
+        uq.push(job4)
+        uq.push(job1)
+        
         XCTAssertEqual(uq.count(), 4, "uq count is wrong")
         //should pop in this order: 1,2,3,5
         let pop1 = uq.pop() //1
@@ -100,19 +160,19 @@ class UniqueQueueTests: XCTestCase {
         XCTAssertEqual(uq.count(), 0, "uq count is wrong after pop4")
         let pop5 = uq.pop() //empty
         
-        XCTAssertEqual(pop1!, "Job1", "pop1 is wrong")
-        XCTAssertEqual(pop2!, "Job2", "pop2 is wrong")
-        XCTAssertEqual(pop3!, "Job3", "pop3 is wrong")
-        XCTAssertEqual(pop4!, "Job5", "pop4 is wrong")
+        XCTAssertEqual(pop1!, job1, "pop1 is wrong")
+        XCTAssertEqual(pop2!, job2, "pop2 is wrong")
+        XCTAssertEqual(pop3!, job3, "pop3 is wrong")
+        XCTAssertEqual(pop4!, job4, "pop4 is wrong")
         XCTAssertNil(pop5, "pop5 is wrong")
         
-        uq.push("Job1")
-        uq.push("Job2")
-        uq.push("Job3")
+        uq.push(job1)
+        uq.push(job2)
+        uq.push(job3)
         let pop6 = uq.pop() //Job1
-        uq.push("Job1")
-        uq.push("Job5")
-        uq.push("Job1")
+        uq.push(job1)
+        uq.push(job4)
+        uq.push(job1)
         XCTAssertEqual(uq.count(), 4, "uq count is wrong")
         //should pop in this order: 2,3,1,5
         let pop7 = uq.pop() //Job2
@@ -124,10 +184,10 @@ class UniqueQueueTests: XCTestCase {
         let pop10 = uq.pop() //Job5
         XCTAssertEqual(uq.count(), 0, "uq count is wrong after pop10")
         
-        XCTAssertEqual(pop6!, "Job1", "pop6 is wrong")
-        XCTAssertEqual(pop7!, "Job2", "pop7 is wrong")
-        XCTAssertEqual(pop8!, "Job3", "pop8 is wrong")
-        XCTAssertEqual(pop9!, "Job1", "pop9 is wrong")
-        XCTAssertEqual(pop10!, "Job5", "pop10 is wrong")
+        XCTAssertEqual(pop6!, job1, "pop6 is wrong")
+        XCTAssertEqual(pop7!, job2, "pop7 is wrong")
+        XCTAssertEqual(pop8!, job3, "pop8 is wrong")
+        XCTAssertEqual(pop9!, job1, "pop9 is wrong")
+        XCTAssertEqual(pop10!, job4, "pop10 is wrong")
     }
 }
