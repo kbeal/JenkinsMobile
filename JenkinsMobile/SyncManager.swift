@@ -214,12 +214,16 @@ import CoreData
     func viewDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
-        let url = values[ViewURLKey] as String
+        var url = values[ViewURLKey] as String
+        let ji = values[ViewJenkinsInstanceKey] as JenkinsInstance
+        let primaryView: [String: String] = ji.primaryView! as [String: String]
+        let name = values[ViewNameKey] as String
         var view: View?
         
-        //TODO: re-think this. What if notification comes in after
-        // current instance is swapped? Aren't we passing the instance in the request?
-        values[ViewJenkinsInstanceKey] = currentJenkinsInstance
+        if name == primaryView[ViewNameKey] {
+            url =  url + "view/" + name + "/"
+            values[ViewURLKey] = url
+        }
         values[ViewLastSyncResultKey] = "200: OK"
         
         self.masterMOC?.performBlockAndWait({
