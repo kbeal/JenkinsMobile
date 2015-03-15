@@ -38,7 +38,6 @@
     mgr.requestHandler = [[KDBJenkinsRequestHandler alloc] init];
     mgr.masterMOC = self.masterMOC;
     mgr.mainMOC = self.mainMOC;
-    mgr.currentJenkinsInstanceURL = jenkinsURL;
     
     /*
     KDBJenkinsRequestHandler *handler = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:jinstance];

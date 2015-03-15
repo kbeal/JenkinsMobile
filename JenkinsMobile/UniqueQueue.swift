@@ -14,10 +14,10 @@
 
 import Foundation
 
-public class UniqueQueue {
+public class UniqueQueue<T: Hashable> {
     
-    var itemsDict = Dictionary<String,Bool>()
-    var itemsArray: [String] = []
+    var itemsDict = Dictionary<T,Bool>()
+    var itemsArray: [T] = []
     let lockQueue = dispatch_queue_create("com.kylebeal.JenkinsMobile.UniqueQueue.LockQueue", DISPATCH_QUEUE_SERIAL)
     
     init() {}
@@ -31,7 +31,7 @@ public class UniqueQueue {
         return cnt!
     }
     
-    func push(newItem: String) {
+    func push(newItem: T) {
         dispatch_sync(lockQueue, {
             if let existingItem = self.itemsDict[newItem] {
                 return
@@ -43,8 +43,8 @@ public class UniqueQueue {
         })
     }
     
-    func pop() -> String? {
-        var itm: String?
+    func pop() -> T? {
+        var itm: T?
         dispatch_sync(lockQueue, {
             if self.itemsArray.count == 0 {
                 itm = nil
@@ -72,7 +72,7 @@ public class UniqueQueue {
 }
 
 extension UniqueQueue: SequenceType {
-    public func generate() -> IndexingGenerator<[String]> {
+    public func generate() -> IndexingGenerator<[T]> {
         return itemsArray.generate()
     }
 }

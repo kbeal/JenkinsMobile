@@ -46,8 +46,6 @@ class SyncManagerTests: XCTestCase {
         self.jenkinsInstance?.password = "admin"
         self.jenkinsInstance?.allowInvalidSSLCertificate = true
         
-        mgr.currentJenkinsInstanceURL = NSURL(string: jenkinsInstance!.url)
-        
         saveContext()
     }
     
@@ -72,32 +70,6 @@ class SyncManagerTests: XCTestCase {
         //else {
           //  println("Successfully saved test managed object context")
         //}
-    }
-    
-    func testSyncCurrentJenkinsInstance() {
-        let jenkinsInstanceSavedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
-            var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
-            if updatedObjects != nil {
-                for obj in updatedObjects! {
-                    if let ji = obj as? JenkinsInstance {
-                        let priView: [String: String] = ji.primaryView as [String: String]
-                        if ji.url == self.jenkinsInstance?.url && ji.rel_Views.count == 3 && priView["name"] == "All" {
-                            expectationFulfilled=true
-                        }
-                    }
-                }
-            }
-            return expectationFulfilled
-        })
-        
-        self.mgr.syncCurrentJenkinsInstance()
-        
-        // wait for expectations
-        waitForExpectationsWithTimeout(3, handler: { error in
-            
-        })
     }
     
     func testSyncView() {
@@ -157,7 +129,9 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        self.mgr.syncJob(NSURL(string: "http://jenkins:8080/job/Job3/")!, jenkinsInstance: self.jenkinsInstance!)
+        let jobVals1 = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        self.mgr.syncJob(job)
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in
@@ -758,7 +732,7 @@ class SyncManagerTests: XCTestCase {
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForJobWithURL(jobURL, andJenkinsInstance: self.jenkinsInstance!)
+        requestHandler.importDetailsForJob(job1)
         
         waitForExpectationsWithTimeout(3, handler: { error in
             
@@ -791,7 +765,7 @@ class SyncManagerTests: XCTestCase {
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForJobWithURL(jobURL, andJenkinsInstance: self.jenkinsInstance!)
+        requestHandler.importDetailsForJob(job1)
         
         waitForExpectationsWithTimeout(3, handler: { error in
             
@@ -824,7 +798,7 @@ class SyncManagerTests: XCTestCase {
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForJobWithURL(jobURL, andJenkinsInstance: self.jenkinsInstance!)
+        requestHandler.importDetailsForJob(job1)
         
         waitForExpectationsWithTimeout(3, handler: { error in
             

@@ -15,7 +15,7 @@
 
 @interface KDBJenkinsRequestHandler : NSObject
 
-- (void) importDetailsForJobWithURL:(NSURL *) jobURL andJenkinsInstance:(JenkinsInstance *) jinstance;
+- (void) importDetailsForJob:(Job *) job;
 - (void) importDetailsForView: (View *) view;
 - (void) importDetailsForActiveConfiguration: (ActiveConfiguration *) ac;
 - (void) importDetailsForBuild: (Build *) build;
