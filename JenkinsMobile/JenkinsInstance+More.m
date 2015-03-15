@@ -10,6 +10,7 @@
 #import "Constants.h"
 #import "Job+More.h"
 #import "UICKeyChainStore.h"
+#import "View+More.h"
 
 @implementation JenkinsInstance (More)
 
@@ -106,6 +107,7 @@
     self.username = [values objectForKey:JenkinsInstanceUsernameKey];
     self.authenticated = [values objectForKey:JenkinsInstanceAuthenticatedKey];
     [self createJobs:[values objectForKey:JenkinsInstanceJobsKey]];
+    [self createViews:[values objectForKey:JenkinsInstanceViewsKey]];
     self.lastSyncResult = [values objectForKey:JenkinsInstanceLastSyncResultKey];
 }
 
@@ -124,6 +126,24 @@
             [mutjob setObject:self forKey:JobJenkinsInstanceKey];
             Job *newJob = [Job createJobWithValues:mutjob inManagedObjectContext:self.managedObjectContext];
             [currentJobs addObject:newJob];
+        }
+    }
+}
+
+- (void)createViews:(NSArray *) viewValues
+{
+    NSMutableSet *currentViews = (NSMutableSet *)self.rel_Views;
+    NSMutableArray *currentViewURLs = [[NSMutableArray alloc] init];
+    for (View *view in currentViews) {
+        [currentViewURLs addObject:view.url];
+    }
+    
+    for (NSDictionary *view in viewValues) {
+        if (![currentViewURLs containsObject:[view objectForKey:ViewURLKey]]) {
+            NSMutableDictionary *mutview = [NSMutableDictionary dictionaryWithDictionary:view];
+            [mutview setObject:self forKey:ViewJenkinsInstanceKey];
+            View *newView = [View createViewWithValues:mutview inManagedObjectContext:self.managedObjectContext];
+            [currentViews addObject:newView];
         }
     }
 }

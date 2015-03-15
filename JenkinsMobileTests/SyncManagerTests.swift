@@ -81,7 +81,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.url == self.jenkinsInstance?.url {
+                        if ji.url == self.jenkinsInstance?.url && ji.rel_Views.count == 3 {
                             expectationFulfilled=true
                         }
                     }

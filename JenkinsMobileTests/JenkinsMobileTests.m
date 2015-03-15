@@ -271,8 +271,14 @@
 
 - (void) testCreateJenkinsInstance
 {
-    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://ci.kylebeal.com",[NSNumber numberWithBool:YES], nil];
-    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current", nil];
+    NSArray *viewkeys = [NSArray arrayWithObjects:ViewNameKey,ViewURLKey, nil];
+    NSArray *view1vals = [NSArray arrayWithObjects:@"View1",@"http://ci.kylebeal.com/view/View1/", nil];
+    NSArray *view2vals = [NSArray arrayWithObjects:@"View2",@"http://ci.kylebeal.com/view/View2/", nil];
+    NSDictionary *view1 = [NSDictionary dictionaryWithObjects:view1vals forKeys:viewkeys];
+    NSDictionary *view2 = [NSDictionary dictionaryWithObjects:view2vals forKeys:viewkeys];
+    NSArray *views = [NSArray arrayWithObjects:view1,view2, nil];
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://ci.kylebeal.com",[NSNumber numberWithBool:YES],views, nil];
+    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current",JenkinsInstanceViewsKey, nil];
     NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     JenkinsInstance *instance = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
     instance.username = @"admin";
@@ -283,6 +289,8 @@
     XCTAssert([instance.current isEqualToNumber:[NSNumber numberWithBool:YES]], @"not current instance");
     XCTAssert([instance.username isEqualToString:@"admin"], @"username is wrong");
     XCTAssert([instance.password isEqualToString:@"password"], @"password is wrong");
+
+    XCTAssert(instance.rel_Views.count==2,@"views count is wrong");
 }
 
 - (void) testGetCurrentJenkinsInstance
