@@ -170,6 +170,8 @@
 		8A3DA825198F2C3800C97992 /* KDBJobDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3DA824198F2C3800C97992 /* KDBJobDetailTableViewController.m */; };
 		8A56E60F19C90FD80058B0C7 /* SyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */; };
 		8A56E61119C91EB50058B0C7 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8B57BD19C7B98A004FA446 /* SyncManager.swift */; };
+		8A58D9B21AB50B6400FCC12F /* KDBMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A58D9B11AB50B6400FCC12F /* KDBMasterViewController.m */; };
+		8A58D9B81AB513E300FCC12F /* KDBViewsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A58D9B71AB513E300FCC12F /* KDBViewsTableViewController.m */; };
 		8A5D1B4C1A788680005C93AD /* RequestHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D1B4B1A788680005C93AD /* RequestHandlerTests.swift */; };
 		8A6D731C1A6F268700BFA0A5 /* ActiveConfiguration+More.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6D731B1A6F268700BFA0A5 /* ActiveConfiguration+More.m */; };
 		8A76B0F2199C3AE200B219C5 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A76B0F1199C3AE200B219C5 /* Constants.m */; };
@@ -205,7 +207,6 @@
 		8AC32A0218E4F3A90002D106 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AC32A0018E4F3A90002D106 /* Main_iPhone.storyboard */; };
 		8AC32A0518E4F3A90002D106 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AC32A0318E4F3A90002D106 /* Main_iPad.storyboard */; };
 		8AC32A0818E4F3A90002D106 /* JenkinsMobile.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8AC32A0618E4F3A90002D106 /* JenkinsMobile.xcdatamodeld */; };
-		8AC32A0B18E4F3A90002D106 /* KDBMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AC32A0A18E4F3A90002D106 /* KDBMasterViewController.m */; };
 		8AC32A0E18E4F3A90002D106 /* KDBJobDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AC32A0D18E4F3A90002D106 /* KDBJobDetailViewController.m */; };
 		8AC32A1018E4F3A90002D106 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AC32A0F18E4F3A90002D106 /* Images.xcassets */; };
 		8AC32A1718E4F3A90002D106 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AC32A1618E4F3A90002D106 /* XCTest.framework */; };
@@ -412,6 +413,10 @@
 		8A3DA824198F2C3800C97992 /* KDBJobDetailTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJobDetailTableViewController.m; sourceTree = "<group>"; };
 		8A56E60D19C90FD70058B0C7 /* JenkinsMobileTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JenkinsMobileTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManagerTests.swift; sourceTree = "<group>"; };
+		8A58D9B01AB50B6400FCC12F /* KDBMasterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBMasterViewController.h; sourceTree = "<group>"; };
+		8A58D9B11AB50B6400FCC12F /* KDBMasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBMasterViewController.m; sourceTree = "<group>"; };
+		8A58D9B61AB513E300FCC12F /* KDBViewsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBViewsTableViewController.h; sourceTree = "<group>"; };
+		8A58D9B71AB513E300FCC12F /* KDBViewsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBViewsTableViewController.m; sourceTree = "<group>"; };
 		8A5D1B4B1A788680005C93AD /* RequestHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestHandlerTests.swift; sourceTree = "<group>"; };
 		8A6D731A1A6F268700BFA0A5 /* ActiveConfiguration+More.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ActiveConfiguration+More.h"; sourceTree = "<group>"; };
 		8A6D731B1A6F268700BFA0A5 /* ActiveConfiguration+More.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ActiveConfiguration+More.m"; sourceTree = "<group>"; };
@@ -466,8 +471,6 @@
 		8AC32A0118E4F3A90002D106 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
 		8AC32A0418E4F3A90002D106 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
 		8AC32A0718E4F3A90002D106 /* JenkinsMobile.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = JenkinsMobile.xcdatamodel; sourceTree = "<group>"; };
-		8AC32A0918E4F3A90002D106 /* KDBMasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KDBMasterViewController.h; sourceTree = "<group>"; };
-		8AC32A0A18E4F3A90002D106 /* KDBMasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KDBMasterViewController.m; sourceTree = "<group>"; };
 		8AC32A0C18E4F3A90002D106 /* KDBJobDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KDBJobDetailViewController.h; sourceTree = "<group>"; };
 		8AC32A0D18E4F3A90002D106 /* KDBJobDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KDBJobDetailViewController.m; sourceTree = "<group>"; };
 		8AC32A0F18E4F3A90002D106 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -765,14 +768,14 @@
 				8AC32A0D18E4F3A90002D106 /* KDBJobDetailViewController.m */,
 				8AFBC11D19468806008EDC9D /* KDBMasterBuildListTableViewController.h */,
 				8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */,
-				8AC32A0918E4F3A90002D106 /* KDBMasterViewController.h */,
-				8AC32A0A18E4F3A90002D106 /* KDBMasterViewController.m */,
 				8A0409FE192599D400B25073 /* KDBRelatedProjectsViewController.h */,
 				8A0409FF192599D400B25073 /* KDBRelatedProjectsViewController.m */,
 				8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */,
 				8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */,
 				8AC32A0318E4F3A90002D106 /* Main_iPad.storyboard */,
 				8AC32A0018E4F3A90002D106 /* Main_iPhone.storyboard */,
+				8A58D9B61AB513E300FCC12F /* KDBViewsTableViewController.h */,
+				8A58D9B71AB513E300FCC12F /* KDBViewsTableViewController.m */,
 				8AE3B96918EF80D000E061C1 /* Models */,
 				8AFDD5121947CFA5008F2791 /* Protocols */,
 				8AC329F518E4F3A90002D106 /* Supporting Files */,
@@ -789,6 +792,8 @@
 				8A8B57BD19C7B98A004FA446 /* SyncManager.swift */,
 				8A8B57BC19C7B989004FA446 /* JenkinsMobile-Bridging-Header.h */,
 				8AC464E019E6179C00AE5A76 /* UniqueQueue.swift */,
+				8A58D9B01AB50B6400FCC12F /* KDBMasterViewController.h */,
+				8A58D9B11AB50B6400FCC12F /* KDBMasterViewController.m */,
 			);
 			path = JenkinsMobile;
 			sourceTree = "<group>";
@@ -1229,7 +1234,7 @@
 				8AC32A4718E4FB6F0002D106 /* AFURLRequestSerialization.m in Sources */,
 				8AC32A0E18E4F3A90002D106 /* KDBJobDetailViewController.m in Sources */,
 				8AC32A4818E4FB6F0002D106 /* AFURLResponseSerialization.m in Sources */,
-				8AC32A0B18E4F3A90002D106 /* KDBMasterViewController.m in Sources */,
+				8A58D9B21AB50B6400FCC12F /* KDBMasterViewController.m in Sources */,
 				8AE904B819BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m in Sources */,
 				8AA1CD3A1A9EA95F00F977B0 /* View+More.m in Sources */,
 				8AA1CD2B1A9D369100F977B0 /* Job+More.m in Sources */,
@@ -1248,6 +1253,7 @@
 				8AE3B95C18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m in Sources */,
 				8A76B0F2199C3AE200B219C5 /* Constants.m in Sources */,
 				8A6D731C1A6F268700BFA0A5 /* ActiveConfiguration+More.m in Sources */,
+				8A58D9B81AB513E300FCC12F /* KDBViewsTableViewController.m in Sources */,
 				8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */,
 				8AA1CD3D1A9EA99A00F977B0 /* Build+More.m in Sources */,
 				8AC32A4218E4FB6F0002D106 /* AFHTTPRequestOperationManager.m in Sources */,

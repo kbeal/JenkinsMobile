@@ -52,9 +52,8 @@
         UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
         splitViewController.delegate = (id)navigationController.topViewController;
         
-        UINavigationController *masterNavigationController = splitViewController.viewControllers[0];
-        KDBMasterViewController *masterController = (KDBMasterViewController *)masterNavigationController.topViewController;
-        masterController.managedObjectContext = _mainMOC;
+        KDBMasterViewController *masterTabBarController = (KDBMasterViewController *)splitViewController.viewControllers[0];
+        masterTabBarController.managedObjectContext = _mainMOC;
         KDBJobDetailViewController *detailController = (KDBJobDetailViewController *)navigationController.topViewController;
         detailController.managedObjectContext = _mainMOC;
         

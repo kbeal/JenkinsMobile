@@ -2,27 +2,14 @@
 //  KDBMasterViewController.h
 //  JenkinsMobile
 //
-//  Created by Kyle Beal on 3/27/14.
-//  Copyright (c) 2014 Kyle Beal. All rights reserved.
+//  Created by Kyle on 3/14/15.
+//  Copyright (c) 2015 Kyle Beal. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "KDBViewPickerViewController.h"
-#import "Job.h"
-#import "KDBMasterViewControllerDelegate.h"
 
-@class KDBJobDetailViewController;
+@interface KDBMasterViewController : UITabBarController
 
-@interface KDBMasterViewController : UITableViewController <KDBViewPickerDelegate, KDBMasterViewControllerDelegate, NSFetchedResultsControllerDelegate, UIDataSourceModelAssociation>
-
-@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-
-@property (strong, nonatomic) KDBJobDetailViewController *jobDetailViewController;
-
-@property (nonatomic, strong) KDBViewPickerViewController *viewPicker;
-@property (nonatomic, strong) UIPopoverController *viewPickerPopover;
-
--(IBAction)chooseViewButtonTapped:(id)sender;
 
 @end
