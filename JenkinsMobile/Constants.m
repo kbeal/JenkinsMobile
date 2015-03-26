@@ -135,4 +135,7 @@ NSString * const StatusCodeKey = @"statusCode";
 NSString * const NSErrorFailingURLKey = @"NSErrorFailingURLKey";
 NSString * const RequestErrorKey = @"requestError";
 
+#pragma mark - RequestHandler Keys
+NSString * const RequestedObjectKey = @"requestedObject";
+
 @end

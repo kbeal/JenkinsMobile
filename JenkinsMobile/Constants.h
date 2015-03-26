@@ -134,4 +134,7 @@ extern NSString * const StatusCodeKey;
 extern NSString * const NSErrorFailingURLKey;
 extern NSString * const RequestErrorKey;
 
+#pragma mark - RequestHandler Keys
+extern NSString * const RequestedObjectKey;
+
 @end

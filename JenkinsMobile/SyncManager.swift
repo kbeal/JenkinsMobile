@@ -132,33 +132,27 @@ import CoreData
     func jobDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
-        let name = values[JobNameKey] as String
-        let jenkinsInstance: JenkinsInstance = values[JobJenkinsInstanceKey] as JenkinsInstance
+        let job = values[RequestedObjectKey] as Job
+        //let jenkinsInstance = job.rel_Job_JenkinsInstance
         
         values[JobLastSyncResultKey] = "200: OK"
+        values[JobJenkinsInstanceKey] = job.rel_Job_JenkinsInstance
         
-        self.masterMOC?.performBlockAndWait({
-            // Fetch job based on name
-            let job: Job? = Job.fetchJobWithName(name, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
-            // create if it doesn't exist
-            if (job==nil) {
-                Job.createJobWithValues(values, inManagedObjectContext: self.masterMOC)
-            } else {
-                // update it\s values
-                job!.setValues(values)
-            }
-            self.saveMasterContext()
-        })        
+        job.managedObjectContext?.performBlock({
+            job.setValues(values)
+            self.saveContext(job.managedObjectContext)
+        })
     }
     
     func jobDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set!!")
         let userInfo: Dictionary = notification.userInfo!
-        let jenkinsInstance: JenkinsInstance = userInfo[JobJenkinsInstanceKey] as JenkinsInstance
         let requestError: NSError = userInfo[RequestErrorKey] as NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
         let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
-        let jobName = Job.jobNameFromURL(url)
+        let job: Job = userInfo[RequestedObjectKey] as Job
+        let jenkinsInstance = job.rel_Job_JenkinsInstance
+        let jobName = job.name
         
         switch requestError.code {
         case NSURLErrorBadServerResponse:
@@ -188,18 +182,22 @@ import CoreData
     func viewDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
-        var url = values[ViewURLKey] as String
-        let ji = values[ViewJenkinsInstanceKey] as JenkinsInstance
+        let view = values[RequestedObjectKey] as View
+        let ji = view.rel_View_JenkinsInstance
         let primaryView: [String: String] = ji.primaryView! as [String: String]
-        let name = values[ViewNameKey] as String
-        var view: View?
         
-        if name == primaryView[ViewNameKey] {
-            url =  url + "view/" + name + "/"
-            values[ViewURLKey] = url
+        if view.name == primaryView[ViewNameKey] {
+            values[ViewURLKey] = view.url + "view/" + view.name + "/"
         }
         values[ViewLastSyncResultKey] = "200: OK"
+        values[ViewJenkinsInstanceKey] = ji
         
+        view.managedObjectContext?.performBlock({
+            view.setValues(values)
+            self.saveContext(view.managedObjectContext)
+        })
+        
+        /*
         self.masterMOC?.performBlockAndWait({
             // Fetch view based on url
             view = View.fetchViewWithURL(url, inContext: self.masterMOC)
@@ -211,7 +209,7 @@ import CoreData
                 view!.setValues(values)
             }
             self.saveMasterContext()
-        })
+        })*/
         
         // TODO: fix so that this works
         //self.syncAllJobsForView(view!)
@@ -428,6 +426,24 @@ import CoreData
                 self.saveMasterContext()
             }
         })
+    }
+    
+    func saveContext(moc: NSManagedObjectContext?) {
+        var error: NSError? = nil
+        if moc == nil {
+            return
+        }
+        if !moc!.hasChanges {
+            return
+        }
+        let saveResult: Bool = moc!.save(&error)
+        
+        if (!saveResult) {
+            println("Error saving context: \(error?.localizedDescription)\n\(error?.userInfo)")
+            abort()
+        } else {
+            println("Successfully saved master managed object context")
+        }
     }
     
     func saveMasterContext () {
