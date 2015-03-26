@@ -132,33 +132,26 @@ import CoreData
     func jobDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
-        let name = values[JobNameKey] as String
-        let jenkinsInstance: JenkinsInstance = values[JobJenkinsInstanceKey] as JenkinsInstance
+        let job = values[RequestedObjectKey] as Job
         
         values[JobLastSyncResultKey] = "200: OK"
+        values[JobJenkinsInstanceKey] = job.rel_Job_JenkinsInstance
         
-        self.masterMOC?.performBlockAndWait({
-            // Fetch job based on name
-            let job: Job? = Job.fetchJobWithName(name, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
-            // create if it doesn't exist
-            if (job==nil) {
-                Job.createJobWithValues(values, inManagedObjectContext: self.masterMOC)
-            } else {
-                // update it\s values
-                job!.setValues(values)
-            }
-            self.saveMasterContext()
-        })        
+        job.managedObjectContext?.performBlock({
+            job.setValues(values)
+            self.saveContext(job.managedObjectContext)
+        })
     }
     
     func jobDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set!!")
         let userInfo: Dictionary = notification.userInfo!
-        let jenkinsInstance: JenkinsInstance = userInfo[JobJenkinsInstanceKey] as JenkinsInstance
         let requestError: NSError = userInfo[RequestErrorKey] as NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
         let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
-        let jobName = Job.jobNameFromURL(url)
+        let job: Job = userInfo[RequestedObjectKey] as Job
+        let jenkinsInstance = job.rel_Job_JenkinsInstance
+        let jobName = job.name
         
         switch requestError.code {
         case NSURLErrorBadServerResponse:
@@ -188,29 +181,15 @@ import CoreData
     func viewDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
-        var url = values[ViewURLKey] as String
-        let ji = values[ViewJenkinsInstanceKey] as JenkinsInstance
-        let primaryView: [String: String] = ji.primaryView! as [String: String]
-        let name = values[ViewNameKey] as String
-        var view: View?
+        let view = values[RequestedObjectKey] as View
+        let ji = view.rel_View_JenkinsInstance
         
-        if name == primaryView[ViewNameKey] {
-            url =  url + "view/" + name + "/"
-            values[ViewURLKey] = url
-        }
         values[ViewLastSyncResultKey] = "200: OK"
+        values[ViewJenkinsInstanceKey] = ji
         
-        self.masterMOC?.performBlockAndWait({
-            // Fetch view based on url
-            view = View.fetchViewWithURL(url, inContext: self.masterMOC)
-            // create if it doesn't exist
-            if (view==nil) {
-                View.createViewWithValues(values, inManagedObjectContext: self.masterMOC)
-            } else {
-                // update it\s values
-                view!.setValues(values)
-            }
-            self.saveMasterContext()
+        view.managedObjectContext?.performBlock({
+            view.setValues(values)
+            self.saveContext(view.managedObjectContext)
         })
         
         // TODO: fix so that this works
@@ -301,22 +280,13 @@ import CoreData
     func buildDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
-        let url = values[BuildURLKey] as String
-        var build: Build?
+        let build: Build = values[RequestedObjectKey] as Build
         
         values[BuildLastSyncResultKey] = "200: OK"
         
-        self.masterMOC?.performBlockAndWait({
-            // Fetch build based on url
-            build = Build.fetchBuildWithURL(url, inContext: self.masterMOC)
-            // create if it doesn't exist
-            if (build==nil) {
-                Build.createBuildWithValues(values, inManagedObjectContext: self.masterMOC)
-            } else {
-                // update it's values
-                build!.setValues(values)
-            }
-            self.saveMasterContext()
+        build.managedObjectContext?.performBlock({
+            build.setValues(values)
+            self.saveContext(build.managedObjectContext)
         })
     }
     
@@ -356,22 +326,15 @@ import CoreData
     func activeConfigurationDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
-        let url = values[ActiveConfigurationURLKey] as String
-        var ac: ActiveConfiguration?
+        let ac: ActiveConfiguration = values[RequestedObjectKey] as ActiveConfiguration
+        let job = ac.rel_ActiveConfiguration_Job
         
         values[ActiveConfigurationLastSyncResultKey] = "200: OK"
+        values[ActiveConfigurationJobKey] = job
         
-        self.masterMOC?.performBlockAndWait({
-            // Fetch build based on url
-            ac = ActiveConfiguration.fetchActiveConfigurationWithURL(url, inManagedObjectContext: self.masterMOC)
-            // create if it doesn't exist
-            if (ac==nil) {
-                ActiveConfiguration.createActiveConfigurationWithValues(values, inManagedObjectContext: self.masterMOC)
-            } else {
-                // update it's values
-                ac!.setValues(values)
-            }
-            self.saveMasterContext()
+        ac.managedObjectContext?.performBlock({
+            ac.setValues(values)
+            self.saveContext(ac.managedObjectContext)
         })
     }
     
@@ -391,6 +354,7 @@ import CoreData
             case 404:
                 self.masterMOC?.performBlock({
                     ActiveConfiguration.fetchAndDeleteActiveConfigurationWithURL(urlStr, inManagedObjectContext: self.masterMOC)
+                    self.saveMasterContext()
                 })
             default:
                 self.masterMOC?.performBlock({
@@ -428,6 +392,24 @@ import CoreData
                 self.saveMasterContext()
             }
         })
+    }
+    
+    func saveContext(moc: NSManagedObjectContext?) {
+        var error: NSError? = nil
+        if moc == nil {
+            return
+        }
+        if !moc!.hasChanges {
+            return
+        }
+        let saveResult: Bool = moc!.save(&error)
+        
+        if (!saveResult) {
+            println("Error saving context: \(error?.localizedDescription)\n\(error?.userInfo)")
+            abort()
+        } else {
+            println("Successfully saved master managed object context")
+        }
     }
     
     func saveMasterContext () {

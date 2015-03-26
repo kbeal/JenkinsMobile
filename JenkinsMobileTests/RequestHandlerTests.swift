@@ -62,9 +62,9 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
-            let url: String = userInfo[JenkinsInstanceURLKey] as String
+            let jinstance: JenkinsInstance = userInfo[RequestedObjectKey] as JenkinsInstance
             
-            if url == "http://jenkins:8080" {
+            if jinstance.url == "http://jenkins:8080" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
@@ -107,9 +107,9 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
-            let url: String = userInfo[JobURLKey] as String
+            let job: Job = userInfo[RequestedObjectKey] as Job
             
-            if url == "http://jenkins:8080/job/Job3/" {
+            if job.url == "http://jenkins:8080/job/Job3/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
@@ -148,9 +148,9 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
-            let url: String = userInfo[ViewURLKey] as String
+            let view: View = userInfo[RequestedObjectKey] as View
             
-            if url == "http://jenkins:8080/view/GrandParent/" {
+            if view.url == "http://jenkins:8080/view/GrandParent/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
@@ -190,9 +190,9 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
-            let url: String = userInfo[ActiveConfigurationURLKey] as String
+            let ac: ActiveConfiguration = userInfo[RequestedObjectKey] as ActiveConfiguration
             
-            if url == "http://jenkins:8080/job/Job6/config1=10,config2=test/" {
+            if ac.url == "http://jenkins:8080/job/Job6/config1=10,config2=test/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
@@ -237,9 +237,9 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
-            let url: String = userInfo[BuildURLKey] as String
+            let build: Build = userInfo[RequestedObjectKey] as Build
             
-            if url == "http://jenkins:8080/job/Job6/1/" {
+            if build.url == "http://jenkins:8080/job/Job6/1/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled

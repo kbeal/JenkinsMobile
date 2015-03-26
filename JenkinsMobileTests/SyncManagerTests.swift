@@ -108,17 +108,8 @@ class SyncManagerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
-            let insertedObjects: NSSet? = notification.userInfo![NSInsertedObjectsKey] as NSSet?
-            // Depending on whether the jenkins instance request or the Job3 request returns first
-            // We may be inserting or updating Job3. 
-            // We want to capture the notification from when it was only a request to Job3.
-            // Not getting Job3 in the jenkins request.
-            var relevantObjects = updatedObjects?.count == 1 ? updatedObjects : insertedObjects
-            if insertedObjects?.count == 1 {
-                relevantObjects = insertedObjects
-            }
-            if relevantObjects != nil {
-                for obj in relevantObjects! {
+            if updatedObjects != nil {
+                for obj in updatedObjects! {
                     if let job = obj as? Job {
                         if job.url == "http://jenkins:8080/job/Job3/" {
                             expectationFulfilled=true
@@ -131,6 +122,7 @@ class SyncManagerTests: XCTestCase {
         
         let jobVals1 = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        saveContext()
         self.mgr.syncJob(job)
         
         // wait for expectations
@@ -581,6 +573,28 @@ class SyncManagerTests: XCTestCase {
     }
     
     func testJobDetailResponseReceived() {
+        let jobUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            if updatedObjects != nil {
+                for obj in updatedObjects! {
+                    if let job = obj as? Job {
+                        if job.name == "Job1" && job.job_description == "Job1 Description" {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        // create the job as it would be received from a JenkinsInstance jobs object
+        let jobObj1 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job1 = Job.createJobWithValues(jobObj1, inManagedObjectContext: context!)
+        saveContext()
+        
+        // create the data that would be returned by a call to this job's api/json
         let build1Obj = ["number": 1, "url": "http://www.google.com/job/Job1/build/1"]
         let downstreamObj1 = ["name": "Job2", "color": "blue", "url":"http://www.ask.com"]
         let downstreamObj2 = ["name": "Job3", "color": "green", "url":"http://www.yahoo.com"]
@@ -588,63 +602,19 @@ class SyncManagerTests: XCTestCase {
         let downstreamProjects = [downstreamObj1, downstreamObj2]
         let upstreamProjects = [upstreamObj1]
         let healthReport = ["iconUrl": "health-80plus.png"]
-        let jobObj1 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobJenkinsInstanceKey: jenkinsInstance!]
-        let jobObj2 = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job1 = Job.createJobWithValues(jobObj1, inManagedObjectContext: context!)
-        let job2 = Job.createJobWithValues(jobObj2, inManagedObjectContext: context!)
-        
         let ac1 = [ActiveConfigurationColorKey:"blue",ActiveConfigurationNameKey:"config=1",ActiveConfigurationJobKey:job1,ActiveConfigurationURLKey:"http://www.google.com/job/Job1/config=1"]
-        let ac2 = [ActiveConfigurationColorKey:"blue",ActiveConfigurationNameKey:"config=1",ActiveConfigurationJobKey:job2,ActiveConfigurationURLKey:"http://www.google.com/job/Job2/config=1"]
         let activeConf1 = ActiveConfiguration.createActiveConfigurationWithValues(ac1, inManagedObjectContext: context!)
-        let activeConf2 = ActiveConfiguration.createActiveConfigurationWithValues(ac2, inManagedObjectContext: context!)
-        let activeConfs = [activeConf1,activeConf2]
+        let activeConfs = [activeConf1]
         let testImage = UIImage(named: "blue.png")
         
-        let userInfo = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/Job1", JobBuildableKey: true, JobConcurrentBuildKey: false, JobDisplayNameKey: "Job1", JobFirstBuildKey: build1Obj, JobLastBuildKey: build1Obj, JobLastCompletedBuildKey: build1Obj, JobLastFailedBuildKey: build1Obj, JobLastStableBuildKey: build1Obj, JobLastSuccessfulBuildKey: build1Obj,JobLastUnstableBuildKey: build1Obj, JobLastUnsucessfulBuildKey: build1Obj, JobNextBuildNumberKey: 2, JobInQueueKey: false, JobDescriptionKey: "Job1 Description", JobKeepDependenciesKey: false, JobJenkinsInstanceKey: jenkinsInstance!, JobDownstreamProjectsKey: downstreamProjects, JobUpstreamProjectsKey: upstreamProjects, JobHealthReportKey: healthReport, JobActiveConfigurationsKey: activeConfs, JobLastSyncKey: NSDate()]
+        let userInfo = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/Job1", JobBuildableKey: true, JobConcurrentBuildKey: false, JobDisplayNameKey: "Job1", JobFirstBuildKey: build1Obj, JobLastBuildKey: build1Obj, JobLastCompletedBuildKey: build1Obj, JobLastFailedBuildKey: build1Obj, JobLastStableBuildKey: build1Obj, JobLastSuccessfulBuildKey: build1Obj,JobLastUnstableBuildKey: build1Obj, JobLastUnsucessfulBuildKey: build1Obj, JobNextBuildNumberKey: 2, JobInQueueKey: false, JobDescriptionKey: "Job1 Description", JobKeepDependenciesKey: false, JobJenkinsInstanceKey: jenkinsInstance!, JobDownstreamProjectsKey: downstreamProjects, JobUpstreamProjectsKey: upstreamProjects, JobHealthReportKey: healthReport, JobActiveConfigurationsKey: activeConfs, JobLastSyncKey: NSDate(), RequestedObjectKey: job1]
         let notification = NSNotification(name: JobDetailResponseReceivedNotification, object: self, userInfo: userInfo)
         
         mgr.jobDetailResponseReceived(notification)
         
-        let fetchreq = NSFetchRequest()
-        fetchreq.entity = NSEntityDescription.entityForName("Job", inManagedObjectContext: context!)
-        fetchreq.predicate = NSPredicate(format: "name = %@", "Job1")
-        fetchreq.includesPropertyValues = false
-        
-        let jobs = context?.executeFetchRequest(fetchreq, error: nil)
-        let job = jobs![0] as Job
-        job.setTestResultsImageWithImage(testImage)
-        
-        XCTAssertEqual(jobs!.count, 1, "jobs count is wrong. Should be 1 got: \(jobs!.count) instead")
-        XCTAssertEqual(job.name, "Job1", "job name is wrong. should be Job1, got: \(job.name) instead")
-        XCTAssertEqual(job.color, "blue", "job color is wrong. should be blue, got: \(job.color) instead")
-        XCTAssertEqual(job.url, "http://www.google.com/job/Job1", "job url is wrong. should be http://www.google.com, got: \(job.url) instead")
-        XCTAssertEqual(job.buildable, true, "job should be buildable")
-        XCTAssertEqual(job.concurrentBuild, false, "job should not be a concurrent build")
-        XCTAssertEqual(job.displayName, "Job1", "job displayName is wrong")
-        XCTAssertEqual(job.firstBuild, 1, "job firstBuild is wrong")
-        XCTAssertEqual(job.lastBuild, 1, "job lastBuild is wrong")
-        XCTAssertEqual(job.lastCompletedBuild, 1, "job lastBuild is wrong")
-        XCTAssertEqual(job.lastFailedBuild, 1, "job lastBuild is wrong")
-        XCTAssertEqual(job.lastStableBuild, 1, "job lastBuild is wrong")
-        XCTAssertEqual(job.lastSuccessfulBuild, 1, "job lastBuild is wrong")
-        XCTAssertEqual(job.lastUnstableBuild, 1, "job lastBuild is wrong")
-        XCTAssertEqual(job.lastUnsuccessfulBuild, 1, "job lastBuild is wrong")
-        XCTAssertEqual(job.nextBuildNumber, 2, "job lastBuild is wrong")
-        XCTAssertEqual(job.inQueue, false, "job should not be inQueue")
-        XCTAssertEqual(job.job_description, "Job1 Description", "job description is wrong")
-        XCTAssertEqual(job.keepDependencies, false, "Job keepDependencies should be false")
-        XCTAssertNotNil(job.rel_Job_JenkinsInstance, "jenkins instance is nil")
-        XCTAssertEqual(job.rel_Job_JenkinsInstance.name, jenkinsInstance!.name, "job's jenkins instance's name is wrong")
-        XCTAssertEqual(job.upstreamProjects.count, 1, "upstream projects count is wrong")
-        XCTAssertEqual(job.downstreamProjects.count, 2, "downstream projects count is wrong")
-        XCTAssertEqual(job.upstreamProjects![0]["color"] as String, "red", "upstream project color is wrong")
-        XCTAssertEqual(job.downstreamProjects![0]["color"] as String, "blue", "upstream project color is wrong")
-        XCTAssertEqual(job.downstreamProjects![1]["url"] as String, "http://www.yahoo.com", "upstream project color is wrong")
-        XCTAssertEqual(job.healthReport!["iconUrl"] as String, "health-80plus.png", "healthReport iconUrl is wrong")
-        XCTAssertEqual(job.activeConfigurations.count, 2, "active configs count is wrong")
-        XCTAssertEqual(job.activeConfigurations![1].color as String, "blue", "active config has wrong color")
-        XCTAssertNotNil(job.testResultsImage, "job's test results image is nill")
-        XCTAssertNotNil(job.lastSync, "job lastSync is nil")
+        waitForExpectationsWithTimeout(2, handler: { error in
+            
+        })
     }
     
     func testJobDetailRequestFailed() {
@@ -695,7 +665,7 @@ class SyncManagerTests: XCTestCase {
                 if let response = operation.response {
                     userInfo[StatusCodeKey] = response.statusCode
                 }
-                userInfo[JobJenkinsInstanceKey] = self.jenkinsInstance!
+                userInfo[RequestedObjectKey] = job1
                 let notification = NSNotification(name: JobDetailRequestFailedNotification, object: self, userInfo: userInfo)
                 self.mgr.jobDetailRequestFailed(notification)
                 requestFailureExpectation.fulfill()
@@ -801,6 +771,48 @@ class SyncManagerTests: XCTestCase {
         requestHandler.importDetailsForJob(job1)
         
         waitForExpectationsWithTimeout(3, handler: { error in
+            
+        })
+    }
+    
+    func testViewDetailResponseReceived() {
+        let viewUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            if updatedObjects != nil {
+                for obj in updatedObjects! {
+                    if let view = obj as? View {
+                        if view.lastSyncResult == "200: OK" && view.url == "http://www.google.com/jenkins/view/Parent/" && view.view_description == "this is the parent view" {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        let viewURL = "http://www.google.com/jenkins/view/Parent/"
+        let url = NSURL(string: viewURL)
+        let viewVals = [ViewNameKey: "Parent", ViewURLKey: viewURL, ViewJenkinsInstanceKey: jenkinsInstance!]
+        let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context)
+        saveContext()
+        
+        let jobvals1 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/Job1"]
+        let jobvals2 = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/Job2"]
+        let jobvals3 = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/Job3"]
+        let jobs1 = [jobvals1,jobvals2,jobvals3]
+        
+        let childViewVals1 = [ViewNameKey: "child1", ViewURLKey: "http://www.google.com/jenkins/view/child1"]
+        let childViewVals2 = [ViewNameKey: "child2", ViewURLKey: "http://www.google.com/jenkins/view/child2"]
+        let childViews = [childViewVals1,childViewVals2]
+        
+        let userInfo = [ViewNameKey: "Parent", ViewURLKey: viewURL, ViewDescriptionKey: "this is the parent view", ViewJenkinsInstanceKey: jenkinsInstance!, ViewJobsKey: jobs1, ViewViewsKey: childViews, RequestedObjectKey: view1]
+        let notification = NSNotification(name: ViewDetailResponseReceivedNotification, object: self, userInfo: userInfo)
+        
+        mgr.viewDetailResponseReceived(notification)
+        
+        waitForExpectationsWithTimeout(2, handler: { error in
             
         })
     }
@@ -921,42 +933,6 @@ class SyncManagerTests: XCTestCase {
         })
     }
     
-    func testViewDetailResponseReceived() {
-        let jobvals1 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/Job1"]
-        let jobvals2 = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/Job2"]
-        let jobvals3 = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/Job3"]
-        let jobs1 = [jobvals1,jobvals2,jobvals3]
-        let jobs2 = [jobvals2,jobvals3]
-        
-        let childViewVals1 = [ViewNameKey: "child1", ViewURLKey: "http://www.google.com/jenkins/view/child1"]
-        let childViewVals2 = [ViewNameKey: "child2", ViewURLKey: "http://www.google.com/jenkins/view/child2"]
-        let childViews = [childViewVals1,childViewVals2]
-        
-        let userInfo = [ViewNameKey: "ParentView", ViewURLKey: "http://www.google.com/jenkins/view/Parent", ViewDescriptionKey: "this is the parent view", ViewJenkinsInstanceKey: jenkinsInstance!, ViewJobsKey: jobs1, ViewViewsKey: childViews]
-        let notification = NSNotification(name: ViewDetailResponseReceivedNotification, object: self, userInfo: userInfo)
-        
-        mgr.viewDetailResponseReceived(notification)
-        
-        let fetchreq = NSFetchRequest()
-        fetchreq.entity = NSEntityDescription.entityForName("View", inManagedObjectContext: context!)
-        fetchreq.predicate = NSPredicate(format: "name = %@", "ParentView")
-
-        let views = context?.executeFetchRequest(fetchreq, error: nil)
-        let view  = views![0] as View
-        
-        XCTAssertEqual(views!.count, 1, "parent view count is wrong.")
-        XCTAssertEqual(view.name, "ParentView", "view name is wrong")
-        XCTAssertEqual(view.view_description, "this is the parent view", "parent view description is wrong")
-        XCTAssertEqual(view.rel_View_JenkinsInstance, jenkinsInstance!, "parent view's jenkinsInstance is wrong")
-        XCTAssertEqual(view.rel_View_Views.count, 2, "parent view's child view count is wrong")
-        
-        let allviewsfetchreq = NSFetchRequest()
-        allviewsfetchreq.entity = NSEntityDescription.entityForName("View", inManagedObjectContext: context!)
-        
-        let allviews = context?.executeFetchRequest(allviewsfetchreq, error: nil)
-        XCTAssertEqual(allviews!.count, 3, "all views count is wrong")
-    }
-    
     func testViewLastSyncResultOK() {
         let viewUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
@@ -1059,17 +1035,15 @@ class SyncManagerTests: XCTestCase {
         })
     }
     
-    func testPrimaryViewURL() {
-        // the primary view comes back with the Jenkins Instance's url.
-        // we need to correct that in the SyncManager
-        let viewUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+    func testBuildDetailResponseReceived() {
+        let buildUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
-                    if let view1 = obj as? View {
-                        if view1.lastSyncResult == "200: OK" && view1.url == "https://snowman:8443/jenkins/view/Test/" {
+                    if let build = obj as? Build {
+                        if build.lastSyncResult == "200: OK" && build.url == "http://jenkins:8080/TestJob/1/" && build.build_description == "A build" {
                             expectationFulfilled=true
                         }
                     }
@@ -1078,26 +1052,10 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let viewURLStr = "https://snowman:8443/jenkins/view/Test/"
-        let viewURL = NSURL(string: viewURLStr)
-        let primaryView = [ViewNameKey: "Test", ViewURLKey: "https://snowman:8443/jenkins/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin", JenkinsInstancePrimaryViewKey: primaryView]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
-        jinstance1.password = "changeme"
-        jinstance1.allowInvalidSSLCertificate = true;
-        let childViewVals1 = [ViewNameKey: "Test", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jinstance1]
-        let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context)
+        let initBuildVals = [BuildNumberKey: 1, BuildURLKey:"http://jenkins:8080/TestJob/1/"]
+        let build = Build.createBuildWithValues(initBuildVals, inManagedObjectContext: self.context)
         saveContext()
         
-        let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForView(view)
-        
-        waitForExpectationsWithTimeout(3, handler: { error in
-            
-        })
-    }
-    
-    func testBuildDetailResponseReceived() {
         let causes = [[BuildCausesShortDescriptionKey: "because",BuildCausesUserIDKey: "10",BuildCausesUserNameKey: "kbeal"]]
         let actions = [[BuildCausesKey: causes]]
         let changeSetItems = ["one","two"]
@@ -1105,44 +1063,14 @@ class SyncManagerTests: XCTestCase {
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/TestJob", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         
-        let userInfo = [BuildActionsKey: actions, BuildBuildingKey: true, BuildDescriptionKey: "A build", BuildDurationKey: 120000, BuildEstimatedDurationKey: 120001, BuildFullDisplayNameKey: "TestJob #1", BuildIDKey: "2015-01-07_21-57-03", BuildKeepLogKey: false, BuildNumberKey: 1, BuildResultKey: "SUCCESS", BuildTimestampKey:1420685823231, BuildURLKey: "http://jenkins:8080/TestJob/1", BuildChangeSetKey: changeSet, BuildJobKey: job]
+        let userInfo = [BuildActionsKey: actions, BuildBuildingKey: true, BuildDescriptionKey: "A build", BuildDurationKey: 120000, BuildEstimatedDurationKey: 120001, BuildFullDisplayNameKey: "TestJob #1", BuildIDKey: "2015-01-07_21-57-03", BuildKeepLogKey: false, BuildNumberKey: 1, BuildResultKey: "SUCCESS", BuildTimestampKey:1420685823231, BuildURLKey: "http://jenkins:8080/TestJob/1/", BuildChangeSetKey: changeSet, BuildJobKey: job, RequestedObjectKey: build]
         let notification = NSNotification(name: BuildDetailResponseReceivedNotification, object: self, userInfo: userInfo)
         
         mgr.buildDetailResponseReceived(notification)
         
-        let fetchreq = NSFetchRequest()
-        fetchreq.entity = NSEntityDescription.entityForName("Build", inManagedObjectContext: context!)
-        fetchreq.predicate = NSPredicate(format: "url = %@", "http://jenkins:8080/TestJob/1")
-        fetchreq.includesPropertyValues = false
-        
-        let builds = context?.executeFetchRequest(fetchreq, error: nil)
-        let build = builds![0] as Build
-        
-        XCTAssertEqual(builds!.count, 1, "builds count is wrong. Should be 1 got: \(builds!.count) instead")
-        XCTAssertEqual(build.url, "http://jenkins:8080/TestJob/1", "build url is wrong. got: \(build.url) instead")
-        XCTAssertEqual(build.fullDisplayName, "TestJob #1", "build displayName is wrong")
-        XCTAssertTrue(build.building.boolValue, "build should be building")
-        XCTAssertEqual(build.build_description, "A build", "build description is wrong")
-        XCTAssertEqual(build.duration, 120000, "build duration is wrong")
-        XCTAssertEqual(build.estimatedDuration, 120001, "build estimated duration is wrong")
-        XCTAssertEqual(build.fullDisplayName, "TestJob #1", "build display name is wrong")
-        XCTAssertEqual(build.build_id, "2015-01-07_21-57-03", "build id is wrong")
-        XCTAssertEqual(build.keepLog, false, "keepLog is wrong")
-        XCTAssertEqual(build.number.integerValue, 1, "build number is wrong")
-        XCTAssertEqual(build.result, "SUCCESS", "build result is wrong")
-        XCTAssertEqual(build.timestamp.timeIntervalSince1970, 1420685823.231, "timestamp is wrong")
-        XCTAssertEqual(build.url, "http://jenkins:8080/TestJob/1", "build url is wrong")
-        
-        let changeset: Dictionary = build.changeset as [String:AnyObject]
-        let changeSetKind: String = changeset[BuildChangeSetKindKey] as String
-        XCTAssertEqual(changeSetKind, "idk", "build change set kind is wrong")
-        
-        let buildAction: Dictionary = build.actions![0] as [String:AnyObject]
-        let buildCauses: [Dictionary] = buildAction[BuildCausesKey]! as [[String:AnyObject]]
-        let buildCause1: Dictionary = buildCauses[0] as [String:AnyObject]
-        let causeDesc: String = buildCause1[BuildCausesShortDescriptionKey] as String
-        XCTAssertEqual(causeDesc, "because", "build cause description is wrong")
-
+        waitForExpectationsWithTimeout(2, handler: { error in
+            
+        })
     }
     
     func testBuildDetailRequestFailed() {
@@ -1338,45 +1266,39 @@ class SyncManagerTests: XCTestCase {
     }
     
     func testActiveConfigurationResponseReceived() {
-        let build1Obj = ["number": 1, "url": "http://www.google.com/job/Job1/config=1/1"]
-        let healthReport = ["iconUrl": "health-80plus.png"]
+        let acUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            if updatedObjects != nil {
+                for obj in updatedObjects! {
+                    if let ac = obj as? ActiveConfiguration {
+                        if ac.lastSyncResult == "200: OK" && ac.url == "http://www.google.com/job/Job1/config=1/" && ac.activeConfiguration_description == "Job1, config=1 Description" {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/TestJob", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        let initACVals = [ActiveConfigurationNameKey:"config=1",ActiveConfigurationURLKey:"http://www.google.com/job/Job1/config=1/",ActiveConfigurationColorKey:"blue",ActiveConfigurationJobKey: job]
+        let ac = ActiveConfiguration.createActiveConfigurationWithValues(initACVals, inManagedObjectContext: context)
+        saveContext()
         
-        let userInfo = [ActiveConfigurationNameKey: "config=1", ActiveConfigurationColorKey: "blue", ActiveConfigurationURLKey: "http://www.google.com/job/Job1/config=1", ActiveConfigurationBuildableKey: true, ActiveConfigurationConcurrentBuildKey: false, ActiveConfigurationDisplayNameKey: "Job1", ActiveConfigurationFirstBuildKey: build1Obj, ActiveConfigurationLastBuildKey: build1Obj, ActiveConfigurationLastCompletedBuildKey: build1Obj, ActiveConfigurationLastFailedBuildKey: build1Obj, ActiveConfigurationLastStableBuildKey: build1Obj, ActiveConfigurationLastSuccessfulBuildKey: build1Obj,ActiveConfigurationLastUnstableBuildKey: build1Obj, ActiveConfigurationLastUnsucessfulBuildKey: build1Obj, ActiveConfigurationNextBuildNumberKey: 2, ActiveConfigurationInQueueKey: false, ActiveConfigurationDescriptionKey: "Job1, config=1 Description", ActiveConfigurationKeepDependenciesKey: false,  ActiveConfigurationHealthReportKey: healthReport, ActiveConfigurationJobKey: job, ActiveConfigurationLastSyncKey: NSDate()]
+        let build1Obj = ["number": 1, "url": "http://www.google.com/job/Job1/config=1/1"]
+        let healthReport = ["iconUrl": "health-80plus.png"]
+
+        
+        let userInfo = [ActiveConfigurationNameKey: "config=1", ActiveConfigurationColorKey: "blue", ActiveConfigurationURLKey: "http://www.google.com/job/Job1/config=1/", ActiveConfigurationBuildableKey: true, ActiveConfigurationConcurrentBuildKey: false, ActiveConfigurationDisplayNameKey: "Job1", ActiveConfigurationFirstBuildKey: build1Obj, ActiveConfigurationLastBuildKey: build1Obj, ActiveConfigurationLastCompletedBuildKey: build1Obj, ActiveConfigurationLastFailedBuildKey: build1Obj, ActiveConfigurationLastStableBuildKey: build1Obj, ActiveConfigurationLastSuccessfulBuildKey: build1Obj,ActiveConfigurationLastUnstableBuildKey: build1Obj, ActiveConfigurationLastUnsucessfulBuildKey: build1Obj, ActiveConfigurationNextBuildNumberKey: 2, ActiveConfigurationInQueueKey: false, ActiveConfigurationDescriptionKey: "Job1, config=1 Description", ActiveConfigurationKeepDependenciesKey: false,  ActiveConfigurationHealthReportKey: healthReport, ActiveConfigurationJobKey: job, ActiveConfigurationLastSyncKey: NSDate(),RequestedObjectKey:ac]
         let notification = NSNotification(name: ActiveConfigurationDetailResponseReceivedNotification, object: self, userInfo: userInfo)
         
         mgr.activeConfigurationDetailResponseReceived(notification)
-        
-        let fetchreq = NSFetchRequest()
-        fetchreq.entity = NSEntityDescription.entityForName("ActiveConfiguration", inManagedObjectContext: context!)
-        fetchreq.predicate = NSPredicate(format: "url = %@", "http://www.google.com/job/Job1/config=1")
-        fetchreq.includesPropertyValues = false
-        
-        let acs = context?.executeFetchRequest(fetchreq, error: nil)
-        let ac = acs![0] as ActiveConfiguration
-        
-        XCTAssertEqual(acs!.count, 1, "jobs count is wrong. Should be 1 got: \(acs!.count) instead")
-        XCTAssertEqual(ac.name, "config=1", "job name is wrong. should be Job1, got: \(ac.name) instead")
-        XCTAssertEqual(ac.color, "blue", "job color is wrong. should be blue, got: \(ac.color) instead")
-        XCTAssertEqual(ac.url, "http://www.google.com/job/Job1/config=1", "ac url is wrong.")
-        XCTAssertEqual(ac.buildable, true, "ac should be buildable")
-        XCTAssertEqual(ac.concurrentBuild, false, "ac should not be a concurrent build")
-        XCTAssertEqual(ac.displayName, "Job1", "ac displayName is wrong")
-        XCTAssertEqual(ac.firstBuild, 1, "ac firstBuild is wrong")
-        XCTAssertEqual(ac.lastBuild, 1, "ac lastBuild is wrong")
-        XCTAssertEqual(ac.lastCompletedBuild, 1, "ac lastBuild is wrong")
-        XCTAssertEqual(ac.lastFailedBuild, 1, "ac lastBuild is wrong")
-        XCTAssertEqual(ac.lastStableBuild, 1, "ac lastBuild is wrong")
-        XCTAssertEqual(ac.lastSuccessfulBuild, 1, "ac lastBuild is wrong")
-        XCTAssertEqual(ac.lastUnstableBuild, 1, "ac lastBuild is wrong")
-        XCTAssertEqual(ac.lastUnsuccessfulBuild, 1, "ac lastBuild is wrong")
-        XCTAssertEqual(ac.nextBuildNumber, 2, "ac lastBuild is wrong")
-        XCTAssertEqual(ac.inQueue, false, "ac should not be inQueue")
-        XCTAssertEqual(ac.activeConfiguration_description, "Job1, config=1 Description", "ac description is wrong")
-        XCTAssertEqual(ac.keepDependencies, false, "ac keepDependencies should be false")
-        XCTAssertNotNil(ac.rel_ActiveConfiguration_Job, "job is nil")
-        XCTAssertEqual(ac.healthReport!["iconUrl"] as String, "health-80plus.png", "healthReport iconUrl is wrong")
+        waitForExpectationsWithTimeout(2, handler: { error in
+            
+        })
     }
     
     func testActiveConfigurationDetailRequestFailed() {
@@ -1461,7 +1383,7 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.username = "jenkinsadmin"
         jenkinsInstance?.password = "changeme"
         
-        let jobVals1 = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/Job6/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobVals1 = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "https://snowman:8443/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         
         let acURL = "https://snowman:8443/jenkins/job/Job2/config=10/"
