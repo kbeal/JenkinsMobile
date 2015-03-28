@@ -134,10 +134,9 @@ import CoreData
         var values: Dictionary = notification.userInfo!
         let job = values[RequestedObjectKey] as Job
         
-        values[JobLastSyncResultKey] = "200: OK"
-        values[JobJenkinsInstanceKey] = job.rel_Job_JenkinsInstance
-        
         job.managedObjectContext?.performBlock({
+            values[JobLastSyncResultKey] = "200: OK"
+            values[JobJenkinsInstanceKey] = job.rel_Job_JenkinsInstance
             job.setValues(values)
             self.saveContext(job.managedObjectContext)
         })
@@ -184,10 +183,9 @@ import CoreData
         let view = values[RequestedObjectKey] as View
         let ji = view.rel_View_JenkinsInstance
         
-        values[ViewLastSyncResultKey] = "200: OK"
-        values[ViewJenkinsInstanceKey] = ji
-        
         view.managedObjectContext?.performBlock({
+            values[ViewLastSyncResultKey] = "200: OK"
+            values[ViewJenkinsInstanceKey] = ji
             view.setValues(values)
             self.saveContext(view.managedObjectContext)
         })
@@ -283,9 +281,8 @@ import CoreData
         var values: Dictionary = notification.userInfo!
         let build: Build = values[RequestedObjectKey] as Build
         
-        values[BuildLastSyncResultKey] = "200: OK"
-        
         build.managedObjectContext?.performBlock({
+            values[BuildLastSyncResultKey] = "200: OK"
             build.setValues(values)
             self.saveContext(build.managedObjectContext)
         })
@@ -330,10 +327,9 @@ import CoreData
         let ac: ActiveConfiguration = values[RequestedObjectKey] as ActiveConfiguration
         let job = ac.rel_ActiveConfiguration_Job
         
-        values[ActiveConfigurationLastSyncResultKey] = "200: OK"
-        values[ActiveConfigurationJobKey] = job
-        
         ac.managedObjectContext?.performBlock({
+            values[ActiveConfigurationLastSyncResultKey] = "200: OK"
+            values[ActiveConfigurationJobKey] = job
             ac.setValues(values)
             self.saveContext(ac.managedObjectContext)
         })
