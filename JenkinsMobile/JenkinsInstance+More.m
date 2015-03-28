@@ -143,6 +143,12 @@
         if (![currentViewURLs containsObject:[view objectForKey:ViewURLKey]]) {
             NSMutableDictionary *mutview = [NSMutableDictionary dictionaryWithDictionary:view];
             [mutview setObject:self forKey:ViewJenkinsInstanceKey];
+
+            if ([mutview objectForKey:ViewNameKey] == [self.primaryView objectForKey:ViewNameKey]) {
+                NSString *fullViewURL = [NSString stringWithFormat:@"%@%@%@%@",[mutview objectForKey:ViewURLKey],@"view/",[mutview objectForKey:ViewNameKey],@"/"];
+                [mutview setObject:fullViewURL forKey:ViewURLKey];
+            }
+            
             View *newView = [View createViewWithValues:mutview inManagedObjectContext:self.managedObjectContext];
             [currentViews addObject:newView];
         }

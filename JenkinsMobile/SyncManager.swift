@@ -233,19 +233,20 @@ import CoreData
     func jenkinsInstanceDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "main managed object context not set")
         var values: Dictionary = notification.userInfo!
-        let url = values[JenkinsInstanceURLKey] as String
-
-        values[JenkinsInstanceCurrentKey] = false
-        values[JenkinsInstanceEnabledKey] = true
-        values[JenkinsInstanceAuthenticatedKey] = true
-        values[JenkinsInstanceLastSyncResultKey] = "200: OK"
+        let ji: JenkinsInstance = values[RequestedObjectKey] as JenkinsInstance
         
-        self.masterMOC?.performBlock({
-            let instance = JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values, inManagedObjectContext: self.masterMOC)
-            self.saveMasterContext()
-            NSLog("%@%@","Saved details for Jenkins at URL: ",url)
-            self.syncAllJobs(instance)
-            self.syncAllViews(instance)
+        ji.managedObjectContext?.performBlock({
+            values[JenkinsInstanceCurrentKey] = false
+            values[JenkinsInstanceEnabledKey] = true
+            values[JenkinsInstanceAuthenticatedKey] = true
+            values[JenkinsInstanceLastSyncResultKey] = "200: OK"
+            values[JenkinsInstanceNameKey] = ji.name
+            values[JenkinsInstanceURLKey] = ji.url
+            
+            ji.setValues(values)
+            self.saveContext(ji.managedObjectContext)
+            self.syncAllJobs(ji)
+            self.syncAllViews(ji)
         })
     }
     

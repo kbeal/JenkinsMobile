@@ -210,85 +210,6 @@ class SyncManagerTests: XCTestCase {
         XCTAssertFalse(job.shouldSync(), "shouldsync should be false")
     }
     
-    func testTwoJobsTwoJenkins() {
-        let requestFailureExpectation = expectationWithDescription("notificaiton will be sent and TestJob from jenkins2:8080 is deleted")
-        // create a jenkins instance
-        var jinstance1: JenkinsInstance?
-        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://jenkins1:8080", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstancePrimaryViewKey: primaryView]
-        context?.performBlockAndWait({jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)})
-        
-        // create a job in the first instance
-        let job1vals = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins1:8080/job/TestJob/", JobJenkinsInstanceKey: jinstance1!]
-        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
-        
-        // create a second jenkins instance
-        var jinstance2: JenkinsInstance?
-        let jenkinsInstanceValues2 = [JenkinsInstanceNameKey: "TestInstance2", JenkinsInstanceURLKey: "http://jenkins2:8080/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstancePrimaryViewKey: primaryView]
-        context?.performBlockAndWait({jinstance2 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues2, inManagedObjectContext: self.context)})
-        
-        // create a job in the second jenkins instance
-        let job2vals = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins2:8080/job/TestJob/", JobJenkinsInstanceKey: jinstance2!]
-        let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: context)
-        
-        saveContext()
-        
-        let job2URL = "http://jenkins2:8080/job/TestJob/api/json"
-        let url = NSURL(string: job2URL)
-        let request = NSURLRequest(URL: url!)
-        let operation = AFHTTPRequestOperation(request: request)
-        let serializer = AFJSONResponseSerializer()
-        operation.responseSerializer = serializer
-        
-        var fetchreq = NSFetchRequest()
-        fetchreq.entity = NSEntityDescription.entityForName("Job", inManagedObjectContext: context!)
-        let jobs = context?.executeFetchRequest(fetchreq, error: nil)
-        XCTAssertEqual(jobs!.count, 2, "jobs count is wrong. should  be 2 got: \(jobs!.count) instead")
-        
-        // send a request to the job in jenkins instance 2
-        operation.setCompletionBlockWithSuccess(
-            { operation, response in
-                // if it succeeds something went wrong
-                // request to jenkins2:8080 should fail
-                abort()
-            },
-            failure: { operation, error in
-                // if it fails send notification
-                var userInfo: [NSObject : AnyObject] = [RequestErrorKey: error]
-                if let response = operation.response {
-                    userInfo[StatusCodeKey] = response.statusCode
-                }
-                userInfo[JobJenkinsInstanceKey] = jinstance2
-                let notification = NSNotification(name: JobDetailRequestFailedNotification, object: self, userInfo: userInfo)
-                self.mgr.jobDetailRequestFailed(notification)
-                
-                var predicate = NSPredicate(format: "rel_Job_JenkinsInstance.url == %@", jinstance1!.url)
-                fetchreq.predicate = predicate
-                // after sending notification, should be one job left in the original jenkins instance
-                let jobsafterfail = self.context?.executeFetchRequest(fetchreq, error: nil)
-                XCTAssertEqual(jobsafterfail!.count, 1, "jobs count is wrong. should  be 1 got: \(jobsafterfail!.count) instead")
-                let job: Job? = jobsafterfail!.first as? Job
-                XCTAssertEqual(job!.rel_Job_JenkinsInstance!, jinstance1!, "remaining job should be in original jenkins instance")
-                
-                predicate = NSPredicate(format: "rel_Job_JenkinsInstance.url == %@", jinstance2!.url)
-                fetchreq.predicate = predicate
-                // after sending notification, should be one job left in the original jenkins instance
-                let jobs2afterfail = self.context?.executeFetchRequest(fetchreq, error: nil)
-                
-                XCTAssertEqual(jobs2afterfail!.count, 0, "jobs count is wrong. should  be 0 got: \(jobs2afterfail!.count) instead")
-                
-                requestFailureExpectation.fulfill()
-        })
-        
-        operation.start()
-        
-        // wait for expectations
-        waitForExpectationsWithTimeout(5, handler: { error in
-            
-        })
-        
-    }
-    
     func testJenkinsInstanceFindOrCreated() {
         let jobObj1 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com"]
         let jobObj2 = [JobNameKey: "Job2", JobColorKey: "red", JobURLKey: "http://www.yahoo.com"]
@@ -424,6 +345,7 @@ class SyncManagerTests: XCTestCase {
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstanceAuthenticatedKey: true, JenkinsInstancePrimaryViewKey: primaryView]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
+        jinstance1.allowInvalidSSLCertificate = true
         jinstance1.password = "password"
         saveContext()
         
@@ -433,7 +355,7 @@ class SyncManagerTests: XCTestCase {
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
         requestHandler.importDetailsForJenkinsInstance(jinstance1)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectationsWithTimeout(2, handler: { error in
             
         })
     }
@@ -482,7 +404,16 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.lastSyncResult == "200: OK" && ji.url == "http://snowman:8080/jenkins/" {
+                        let priView: [String: String] = ji.primaryView as [String: String]
+                        let priViewName = priView[ViewNameKey]
+                        let jiviews: [View] = ji.rel_Views.allObjects as [View]
+                        var priViewURL: String?
+                        for view: View in jiviews {
+                            if view.name == priViewName {
+                                priViewURL = view.url
+                            }
+                        }
+                        if ji.lastSyncResult == "200: OK" && ji.url == "http://snowman:8080/jenkins/" && priViewURL == "https://snowman:8443/jenkins/view/Test/" {
                             expectationFulfilled=true
                         } else {
                             println(ji.url + ": " + ji.lastSyncResult)
@@ -493,7 +424,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
+        let primaryView = [ViewNameKey: "Test", ViewURLKey: "https://snowman:8443/jenkins/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin", JenkinsInstancePrimaryViewKey: primaryView]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
         jinstance1.password = "changeme"

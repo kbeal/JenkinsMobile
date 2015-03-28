@@ -275,25 +275,37 @@
 - (void) testCreateJenkinsInstance
 {
     NSArray *viewkeys = [NSArray arrayWithObjects:ViewNameKey,ViewURLKey, nil];
-    NSArray *view1vals = [NSArray arrayWithObjects:@"View1",@"http://ci.kylebeal.com/view/View1/", nil];
+    NSArray *view1vals = [NSArray arrayWithObjects:@"View1",@"http://ci.kylebeal.com/", nil];
     NSArray *view2vals = [NSArray arrayWithObjects:@"View2",@"http://ci.kylebeal.com/view/View2/", nil];
+    NSArray *priviewvals = [NSArray arrayWithObjects:@"View1",@"http://ci.kylebeal.com/", nil];
     NSDictionary *view1 = [NSDictionary dictionaryWithObjects:view1vals forKeys:viewkeys];
     NSDictionary *view2 = [NSDictionary dictionaryWithObjects:view2vals forKeys:viewkeys];
+    NSDictionary *priview = [NSDictionary dictionaryWithObjects:priviewvals forKeys:viewkeys];
     NSArray *views = [NSArray arrayWithObjects:view1,view2, nil];
-    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://ci.kylebeal.com",[NSNumber numberWithBool:YES],views, nil];
-    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current",JenkinsInstanceViewsKey, nil];
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://ci.kylebeal.com",[NSNumber numberWithBool:YES],views,priview, nil];
+    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current",JenkinsInstanceViewsKey,JenkinsInstancePrimaryViewKey, nil];
     NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     JenkinsInstance *instance = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
     instance.username = @"admin";
     instance.password = @"password";
+    NSDictionary *primaryView = instance.primaryView;
     
     XCTAssert([instance.name isEqualToString:@"TestInstance"], @"name is wrong");
     XCTAssert([instance.url isEqualToString:@"http://ci.kylebeal.com"], @"url is wrong");
     XCTAssert([instance.current isEqualToNumber:[NSNumber numberWithBool:YES]], @"not current instance");
     XCTAssert([instance.username isEqualToString:@"admin"], @"username is wrong");
     XCTAssert([instance.password isEqualToString:@"password"], @"password is wrong");
-
     XCTAssert(instance.rel_Views.count==2,@"views count is wrong");
+    XCTAssert([[primaryView objectForKey:ViewNameKey] isEqualToString:@"View1"],@"primary view name is wrong");
+    
+    NSArray *savedViews = [instance.rel_Views allObjects];
+    View *savedPrimaryView;
+    for (View *view in savedViews) {
+        if (view.name == [primaryView objectForKey:ViewNameKey]) {
+            savedPrimaryView = view;
+        }
+    }
+    XCTAssert([savedPrimaryView.url isEqualToString:@"http://ci.kylebeal.com/view/View1/"],@"primary view url is wrong; got %@", [primaryView objectForKey:ViewURLKey]);
 }
 
 - (void) testGetCurrentJenkinsInstance
