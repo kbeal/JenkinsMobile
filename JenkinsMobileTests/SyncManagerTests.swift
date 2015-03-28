@@ -315,6 +315,7 @@ class SyncManagerTests: XCTestCase {
                 if let response = operation.response {
                     userInfo[StatusCodeKey] = response.statusCode
                 }
+                userInfo[RequestedObjectKey] = self.jenkinsInstance
                 let notification = NSNotification(name: JenkinsInstanceDetailRequestFailedNotification, object: self, userInfo: userInfo)
                 self.mgr.jenkinsInstanceDetailRequestFailed(notification)
                 requestFailureExpectation.fulfill()
@@ -795,6 +796,7 @@ class SyncManagerTests: XCTestCase {
                 if let response = operation.response {
                     userInfo[StatusCodeKey] = response.statusCode
                 }
+                userInfo[RequestedObjectKey] = view1
                 let notification = NSNotification(name: ViewDetailRequestFailedNotification, object: self, userInfo: userInfo)
                 self.mgr.viewDetailRequestFailed(notification)
                 requestFailureExpectation.fulfill()
@@ -852,6 +854,7 @@ class SyncManagerTests: XCTestCase {
                 if let response = operation.response {
                     userInfo[StatusCodeKey] = response.statusCode
                 }
+                userInfo[RequestedObjectKey] = view1
                 let notification = NSNotification(name: ViewDetailRequestFailedNotification, object: self, userInfo: userInfo)
                 self.mgr.viewDetailRequestFailed(notification)
                 requestFailureExpectation.fulfill()
@@ -1054,6 +1057,7 @@ class SyncManagerTests: XCTestCase {
                 if let response = operation.response {
                     userInfo[StatusCodeKey] = response.statusCode
                 }
+                userInfo[RequestedObjectKey] = build1
                 let notification = NSNotification(name: BuildDetailRequestFailedNotification, object: self, userInfo: userInfo)
                 self.mgr.buildDetailRequestFailed(notification)
                 requestFailureExpectation.fulfill()
@@ -1282,6 +1286,7 @@ class SyncManagerTests: XCTestCase {
                 if let response = operation.response {
                     userInfo[StatusCodeKey] = response.statusCode
                 }
+                userInfo[RequestedObjectKey] = ac
                 let notification = NSNotification(name: ActiveConfigurationDetailRequestFailedNotification, object: self, userInfo: userInfo)
                 self.mgr.activeConfigurationDetailRequestFailed(notification)
                 requestFailureExpectation.fulfill()

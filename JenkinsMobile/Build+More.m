@@ -40,14 +40,6 @@
     return build;
 }
 
-+ (void)fetchAndDeleteBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context
-{
-    Build *build = [Build fetchBuildWithURL:url inContext:context];
-    if (build != nil) {
-        [context deleteObject:build];
-    }
-}
-
 // Removes /api/json and /api/json/ from the end of URL's
 + (NSString *) removeApiFromURL:(NSURL *) url
 {

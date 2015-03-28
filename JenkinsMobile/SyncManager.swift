@@ -147,32 +147,27 @@ import CoreData
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
-        let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
         let job: Job = userInfo[RequestedObjectKey] as Job
-        let jenkinsInstance = job.rel_Job_JenkinsInstance
-        let jobName = job.name
         
         switch requestError.code {
         case NSURLErrorBadServerResponse:
             let status: Int = userInfo[StatusCodeKey] as Int
             switch status {
             case 404:
-                self.masterMOC?.performBlockAndWait({
-                    Job.fetchAndDeleteJobWithName(jobName, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
-                    self.saveMasterContext()
+                job.managedObjectContext?.performBlock({
+                    job.managedObjectContext?.deleteObject(job)
+                    self.saveContext(job.managedObjectContext)
                 })
             default:
-                masterMOC!.performBlock({
-                    if let job = Job.fetchJobWithName(jobName, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance) {
-                        job.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
-                        self.saveMasterContext()
-                    }
+                job.managedObjectContext?.performBlock({
+                    job.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
+                    self.saveContext(job.managedObjectContext)
                 })
             }
         default:
-            masterMOC!.performBlockAndWait({
-                Job.fetchAndDeleteJobWithName(jobName, inManagedObjectContext: self.masterMOC, andJenkinsInstance: jenkinsInstance)
-                self.saveMasterContext()
+            job.managedObjectContext?.performBlock({
+                job.managedObjectContext?.deleteObject(job)
+                self.saveContext(job.managedObjectContext)
             })
         }
     }
@@ -196,34 +191,30 @@ import CoreData
     
     func viewDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
-        // parse the error for the view url and status code
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
-        let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
-        let viewURL = View.removeApiFromURL(url)
+        let view: View = userInfo[RequestedObjectKey] as View
         
         switch requestError.code {
         case NSURLErrorBadServerResponse:
             let status: Int = userInfo[StatusCodeKey] as Int
             switch status {
             case 404:
-                self.masterMOC?.performBlockAndWait({
-                    View.fetchAndDeleteViewWithURL(viewURL, inContext: self.masterMOC)
-                    self.saveMasterContext()
+                view.managedObjectContext?.performBlock({
+                    view.managedObjectContext?.deleteObject(view)
+                    self.saveContext(view.managedObjectContext)
                 })
             default:
-                masterMOC!.performBlock({
-                    if let view = View.fetchViewWithURL(viewURL, inContext: self.masterMOC) {
-                        view.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
-                        self.saveMasterContext()                        
-                    }
+                view.managedObjectContext?.performBlock({
+                    view.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
+                    self.saveContext(view.managedObjectContext)
                 })
             }
         default:
-            masterMOC!.performBlockAndWait({
-                View.fetchAndDeleteViewWithURL(viewURL, inContext: self.masterMOC)
-                self.saveMasterContext()
+            view.managedObjectContext?.performBlock({
+                view.managedObjectContext?.deleteObject(view)
+                self.saveContext(view.managedObjectContext)
             })
         }
     }
@@ -253,8 +244,7 @@ import CoreData
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
-        let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
-        var jenkins: JenkinsInstance?
+        let ji: JenkinsInstance = userInfo[RequestedObjectKey] as JenkinsInstance
         
         switch requestError.code {
         case NSURLErrorBadServerResponse:
@@ -262,17 +252,17 @@ import CoreData
             let message: String = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
             switch status {
             case 401:
-                unauthenticateJenkinsInstance(url,message: message)
+                unauthenticateJenkinsInstance(ji,message: message)
             case 403:
-                unauthenticateJenkinsInstance(url,message: message)
+                unauthenticateJenkinsInstance(ji,message: message)
             case 404:
-                disableJenkinsInstance(url,message: message)
+                disableJenkinsInstance(ji,message: message)
             default:
-                disableJenkinsInstance(url,message: message)
+                disableJenkinsInstance(ji,message: message)
             }
         default:
             println(requestError.localizedDescription)
-            disableJenkinsInstance(url,message: requestError.localizedDescription)
+            disableJenkinsInstance(ji,message: requestError.localizedDescription)
         }
     }
     
@@ -290,33 +280,30 @@ import CoreData
     
     func buildDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
-        // parse the error for the view url and status code
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
-        let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
-        let buildURL = Build.removeApiFromURL(url)
+        let build: Build = userInfo[RequestedObjectKey] as Build
         
         switch requestError.code {
         case NSURLErrorBadServerResponse:
             let status: Int = userInfo[StatusCodeKey] as Int
             switch status {
             case 404:
-                self.masterMOC?.performBlockAndWait({
-                    Build.fetchAndDeleteBuildWithURL(buildURL, inContext: self.masterMOC)
-                    self.saveMasterContext()
+                build.managedObjectContext?.performBlock({
+                    build.managedObjectContext?.deleteObject(build)
+                    self.saveContext(build.managedObjectContext)
                 })
             default:
-                masterMOC!.performBlock({
-                    let build = Build.fetchBuildWithURL(buildURL, inContext: self.masterMOC)
+                build.managedObjectContext?.performBlock({
                     build.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
-                    self.saveMasterContext()
+                    self.saveContext(build.managedObjectContext)
                 })
             }
         default:
-            masterMOC!.performBlockAndWait({
-                Build.fetchAndDeleteBuildWithURL(buildURL, inContext: self.masterMOC)
-                self.saveMasterContext()
+            build.managedObjectContext?.performBlock({
+                build.managedObjectContext?.deleteObject(build)
+                self.saveContext(build.managedObjectContext)
             })
         }
     }
@@ -337,81 +324,52 @@ import CoreData
     
     func activeConfigurationDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
-        // parse the error for the view url and status code
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
-        let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
-        let urlStr: String = ActiveConfiguration.removeApiFromURL(url)
+        let ac: ActiveConfiguration = userInfo[RequestedObjectKey] as ActiveConfiguration
         
         switch requestError.code {
         case NSURLErrorBadServerResponse:
             let status: Int = userInfo[StatusCodeKey] as Int
             switch status {
             case 404:
-                self.masterMOC?.performBlock({
-                    ActiveConfiguration.fetchAndDeleteActiveConfigurationWithURL(urlStr, inManagedObjectContext: self.masterMOC)
-                    self.saveMasterContext()
+                ac.managedObjectContext?.performBlock({
+                    ac.managedObjectContext?.deleteObject(ac)
+                    self.saveContext(ac.managedObjectContext)
                 })
             default:
-                self.masterMOC?.performBlock({
-                    if let ac = ActiveConfiguration.fetchActiveConfigurationWithURL(urlStr, inManagedObjectContext: self.masterMOC) {
-                        ac.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
-                        self.saveMasterContext()
-                    }
+                ac.managedObjectContext?.performBlock({
+                    ac.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
+                    self.saveContext(ac.managedObjectContext)
                 })
             }
         default:
-            self.masterMOC?.performBlock({
-                ActiveConfiguration.fetchAndDeleteActiveConfigurationWithURL(urlStr, inManagedObjectContext: self.masterMOC)
-                self.saveMasterContext()
+            ac.managedObjectContext?.performBlock({
+                ac.managedObjectContext?.deleteObject(ac)
+                self.saveContext(ac.managedObjectContext)
             })
         }
     }
-    
-    func unauthenticateJenkinsInstance(url: NSURL, message: String) {
-        masterMOC!.performBlockAndWait({
-            let jenkins = JenkinsInstance.fetchJenkinsInstanceWithURL(JenkinsInstance.removeApiFromURL(url), fromManagedObjectContext: self.masterMOC)
-            if jenkins != nil {
-                jenkins!.authenticated = false
-                jenkins!.lastSyncResult = message
-                self.saveMasterContext()
-            }
+
+    func unauthenticateJenkinsInstance(ji: JenkinsInstance, message: String) {
+        ji.managedObjectContext?.performBlock({
+            ji.authenticated = false
+            ji.lastSyncResult = message
+            self.saveContext(ji.managedObjectContext)
         })
     }
     
-    func disableJenkinsInstance(url: NSURL, message: String) {
-        masterMOC!.performBlockAndWait({
-            let jenkins = JenkinsInstance.fetchJenkinsInstanceWithURL(JenkinsInstance.removeApiFromURL(url), fromManagedObjectContext: self.masterMOC)
-            if jenkins != nil {
-                jenkins!.enabled = false
-                jenkins!.lastSyncResult = message
-                self.saveMasterContext()
-            }
+    func disableJenkinsInstance(ji: JenkinsInstance, message: String) {
+        ji.managedObjectContext?.performBlock({
+            ji.enabled = false
+            ji.lastSyncResult = message
+            self.saveContext(ji.managedObjectContext)
         })
     }
     
     func saveContext(moc: NSManagedObjectContext?) {
         var error: NSError? = nil
-        if moc == nil {
-            return
-        }
-        if !moc!.hasChanges {
-            return
-        }
-        let saveResult: Bool = moc!.save(&error)
-        
-        if (!saveResult) {
-            println("Error saving context: \(error?.localizedDescription)\n\(error?.userInfo)")
-            abort()
-        } else {
-            println("Successfully saved master managed object context")
-        }
-    }
-    
-    func saveMasterContext () {
-        var error: NSError? = nil
-        let moc = self.masterMOC
         if moc == nil {
             return
         }

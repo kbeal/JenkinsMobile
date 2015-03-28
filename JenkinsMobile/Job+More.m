@@ -41,14 +41,6 @@
     return job;
 }
 
-+ (void)fetchAndDeleteJobWithName: (NSString *) name inManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) jinstance
-{
-    Job *job = [Job fetchJobWithName:name inManagedObjectContext:context andJenkinsInstance:jinstance];
-    if (job != nil) {
-        [context deleteObject:job];
-    }
-}
-
 // returns the absolute color of this job
 // strips the "anime" part of color is job is building
 // ex: if job.color==blue_anime, this method returns just "blue"

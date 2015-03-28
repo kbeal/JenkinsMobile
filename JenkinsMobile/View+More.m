@@ -40,14 +40,6 @@
     return view;
 }
 
-+ (void)fetchAndDeleteViewWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context
-{
-    View *view = [View fetchViewWithURL:url inContext:context];
-    if (view != nil) {
-        [context deleteObject:view];
-    }
-}
-
 // Removes /api/json and /api/json/ from the end of URL's
 + (NSString *) removeApiFromURL:(NSURL *) url
 {

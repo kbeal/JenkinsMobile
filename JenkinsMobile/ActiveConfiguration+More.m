@@ -42,14 +42,6 @@
     return ac;
 }
 
-+ (void)fetchAndDeleteActiveConfigurationWithURL: (NSString *) url inManagedObjectContext: (NSManagedObjectContext *) context
-{
-    ActiveConfiguration *ac = [ActiveConfiguration fetchActiveConfigurationWithURL:url inManagedObjectContext:context];
-    if (ac != nil) {
-        [context deleteObject:ac];
-    }
-}
-
 // Removes /api/json and /api/json/ from the end of URL's
 + (NSString *) removeApiFromURL:(NSURL *) url
 {
