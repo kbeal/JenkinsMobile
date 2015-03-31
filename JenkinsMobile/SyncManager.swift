@@ -137,6 +137,7 @@ import CoreData
         job.managedObjectContext?.performBlock({
             values[JobLastSyncResultKey] = "200: OK"
             values[JobJenkinsInstanceKey] = job.rel_Job_JenkinsInstance
+            values[JobLastSyncKey] = NSDate()
             job.setValues(values)
             self.saveContext(job.managedObjectContext)
         })
@@ -231,6 +232,7 @@ import CoreData
             values[JenkinsInstanceLastSyncResultKey] = "200: OK"
             values[JenkinsInstanceNameKey] = ji.name
             values[JenkinsInstanceURLKey] = ji.url
+            values[JenkinsInstanceUsernameKey] = ji.username
             
             ji.setValues(values)
             self.saveContext(ji.managedObjectContext)
@@ -317,6 +319,7 @@ import CoreData
         ac.managedObjectContext?.performBlock({
             values[ActiveConfigurationLastSyncResultKey] = "200: OK"
             values[ActiveConfigurationJobKey] = job
+            values[ActiveConfigurationLastSyncKey] = NSDate()
             ac.setValues(values)
             self.saveContext(ac.managedObjectContext)
         })

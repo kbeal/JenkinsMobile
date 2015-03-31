@@ -246,7 +246,7 @@ class SyncManagerTests: XCTestCase {
             jobs.append([JobNameKey: uuid, JobColorKey: "blue", JobURLKey: "http://www.google.com"])
         }
         
-        let values = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json", JenkinsInstanceCurrentKey: false, JenkinsInstanceJobsKey: jobs]
+        let values = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json", JenkinsInstanceCurrentKey: false, JenkinsInstanceJobsKey: jobs, JenkinsInstanceEnabledKey: true]
         
         let ji = JenkinsInstance.createJenkinsInstanceWithValues(values, inManagedObjectContext: context)
         
@@ -258,7 +258,7 @@ class SyncManagerTests: XCTestCase {
             jobs.append([JobNameKey: uuid, JobColorKey: "blue", JobURLKey: "http://www.google.com"])
         }
         
-        let newvalues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json", JenkinsInstanceCurrentKey: false, JenkinsInstanceJobsKey: jobs]
+        let newvalues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json", JenkinsInstanceCurrentKey: false, JenkinsInstanceJobsKey: jobs, JenkinsInstanceEnabledKey: true]
         
         self.measureBlock({
           ji.setValues(newvalues)
