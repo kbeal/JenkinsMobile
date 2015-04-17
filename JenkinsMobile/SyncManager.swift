@@ -71,7 +71,7 @@ import CoreData
         masterMOC?.performBlock({
             let allJobs = jenkinsInstance.rel_Jobs
             for job in allJobs {
-                self.jobSyncQueue.push(job as Job)
+                self.jobSyncQueue.push(job as! Job)
             }
         })
     }
@@ -80,7 +80,7 @@ import CoreData
         masterMOC?.performBlock({
             let allViews = jenkinsInstance.rel_Views
             for view in allViews {
-                self.syncView(view as View)
+                self.syncView(view as! View)
             }
         })
     }
@@ -89,16 +89,16 @@ import CoreData
         masterMOC?.performBlock({
             let viewjobs = view.rel_View_Jobs
             for job in viewjobs {
-                self.jobSyncQueue.push(job as Job)
+                self.jobSyncQueue.push(job as! Job)
             }
         })
     }
     
     func syncSubViewsForView(view: View) {
         masterMOC?.performBlock({
-            let subviews = view.rel_View_Views.allObjects
+            let subviews = view.rel_View_Views
             for subview in subviews {
-                self.syncView(subview as View)
+                self.syncView(subview as! View)
             }
         })
     }
@@ -132,7 +132,7 @@ import CoreData
     func jobDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
-        let job = values[RequestedObjectKey] as Job
+        let job = values[RequestedObjectKey] as! Job
         
         job.managedObjectContext?.performBlock({
             values[JobLastSyncResultKey] = "200: OK"
@@ -146,13 +146,13 @@ import CoreData
     func jobDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set!!")
         let userInfo: Dictionary = notification.userInfo!
-        let requestError: NSError = userInfo[RequestErrorKey] as NSError
+        let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
-        let job: Job = userInfo[RequestedObjectKey] as Job
+        let job: Job = userInfo[RequestedObjectKey] as! Job
         
         switch requestError.code {
         case NSURLErrorBadServerResponse:
-            let status: Int = userInfo[StatusCodeKey] as Int
+            let status: Int = userInfo[StatusCodeKey] as! Int
             switch status {
             case 404:
                 job.managedObjectContext?.performBlock({
@@ -176,7 +176,7 @@ import CoreData
     func viewDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
-        let view = values[RequestedObjectKey] as View
+        let view = values[RequestedObjectKey] as! View
         let ji = view.rel_View_JenkinsInstance
         
         view.managedObjectContext?.performBlock({
@@ -193,13 +193,13 @@ import CoreData
     func viewDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         let userInfo: Dictionary = notification.userInfo!
-        let requestError: NSError = userInfo[RequestErrorKey] as NSError
+        let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
-        let view: View = userInfo[RequestedObjectKey] as View
+        let view: View = userInfo[RequestedObjectKey] as! View
         
         switch requestError.code {
         case NSURLErrorBadServerResponse:
-            let status: Int = userInfo[StatusCodeKey] as Int
+            let status: Int = userInfo[StatusCodeKey] as! Int
             switch status {
             case 404:
                 view.managedObjectContext?.performBlock({
@@ -223,7 +223,7 @@ import CoreData
     func jenkinsInstanceDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "main managed object context not set")
         var values: Dictionary = notification.userInfo!
-        let ji: JenkinsInstance = values[RequestedObjectKey] as JenkinsInstance
+        let ji: JenkinsInstance = values[RequestedObjectKey] as! JenkinsInstance
         
         ji.managedObjectContext?.performBlock({
             values[JenkinsInstanceCurrentKey] = false
@@ -244,13 +244,13 @@ import CoreData
     func jenkinsInstanceDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         let userInfo: Dictionary = notification.userInfo!
-        let requestError: NSError = userInfo[RequestErrorKey] as NSError
+        let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
-        let ji: JenkinsInstance = userInfo[RequestedObjectKey] as JenkinsInstance
+        let ji: JenkinsInstance = userInfo[RequestedObjectKey] as! JenkinsInstance
         
         switch requestError.code {
         case NSURLErrorBadServerResponse:
-            let status: Int = userInfo[StatusCodeKey] as Int
+            let status: Int = userInfo[StatusCodeKey] as! Int
             let message: String = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
             switch status {
             case 401:
@@ -271,7 +271,7 @@ import CoreData
     func buildDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
-        let build: Build = values[RequestedObjectKey] as Build
+        let build: Build = values[RequestedObjectKey] as! Build
         
         build.managedObjectContext?.performBlock({
             values[BuildLastSyncResultKey] = "200: OK"
@@ -283,13 +283,13 @@ import CoreData
     func buildDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         let userInfo: Dictionary = notification.userInfo!
-        let requestError: NSError = userInfo[RequestErrorKey] as NSError
+        let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
-        let build: Build = userInfo[RequestedObjectKey] as Build
+        let build: Build = userInfo[RequestedObjectKey] as! Build
         
         switch requestError.code {
         case NSURLErrorBadServerResponse:
-            let status: Int = userInfo[StatusCodeKey] as Int
+            let status: Int = userInfo[StatusCodeKey] as! Int
             switch status {
             case 404:
                 build.managedObjectContext?.performBlock({
@@ -313,7 +313,7 @@ import CoreData
     func activeConfigurationDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
-        let ac: ActiveConfiguration = values[RequestedObjectKey] as ActiveConfiguration
+        let ac: ActiveConfiguration = values[RequestedObjectKey] as! ActiveConfiguration
         let job = ac.rel_ActiveConfiguration_Job
         
         ac.managedObjectContext?.performBlock({
@@ -328,13 +328,13 @@ import CoreData
     func activeConfigurationDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         let userInfo: Dictionary = notification.userInfo!
-        let requestError: NSError = userInfo[RequestErrorKey] as NSError
+        let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
-        let ac: ActiveConfiguration = userInfo[RequestedObjectKey] as ActiveConfiguration
+        let ac: ActiveConfiguration = userInfo[RequestedObjectKey] as! ActiveConfiguration
         
         switch requestError.code {
         case NSURLErrorBadServerResponse:
-            let status: Int = userInfo[StatusCodeKey] as Int
+            let status: Int = userInfo[StatusCodeKey] as! Int
             switch status {
             case 404:
                 ac.managedObjectContext?.performBlock({

@@ -33,7 +33,7 @@ class RequestHandlerTests: XCTestCase {
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
         let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         
-        context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: self.context)})
+        context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: self.context)})
         self.jenkinsInstance?.password = "admin"
         
         saveContext()
@@ -62,7 +62,7 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
-            let jinstance: JenkinsInstance = userInfo[RequestedObjectKey] as JenkinsInstance
+            let jinstance: JenkinsInstance = userInfo[RequestedObjectKey] as! JenkinsInstance
             
             if jinstance.url == "http://jenkins:8080" {
                 expectationFulfilled=true
@@ -74,9 +74,9 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo: Dictionary = notification.userInfo!
-            let requestError: NSError = userInfo[RequestErrorKey] as NSError
+            let requestError: NSError = userInfo[RequestErrorKey] as! NSError
             let errorUserInfo: Dictionary = requestError.userInfo!
-            let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
+            let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
             
             if url.absoluteString == "http://www.google.com/jenkins" {
                 expectationFulfilled=true
@@ -87,8 +87,8 @@ class RequestHandlerTests: XCTestCase {
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         let jenkinsInstanceValues2 = [JenkinsInstanceNameKey: "TestInstance2", JenkinsInstanceURLKey: "http://www.google.com/jenkins", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
-        let jinstance2 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues2, inManagedObjectContext: self.context)
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
+        let jinstance2 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues2 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.password = "admin"
         jinstance2.password = "admin"
         saveContext()
@@ -107,7 +107,7 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
-            let job: Job = userInfo[RequestedObjectKey] as Job
+            let job: Job = userInfo[RequestedObjectKey] as! Job
             
             if job.url == "http://jenkins:8080/job/Job3/" {
                 expectationFulfilled=true
@@ -119,9 +119,9 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo: Dictionary = notification.userInfo!
-            let requestError: NSError = userInfo[RequestErrorKey] as NSError
+            let requestError: NSError = userInfo[RequestErrorKey] as! NSError
             let errorUserInfo: Dictionary = requestError.userInfo!
-            let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
+            let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
             
             if url.absoluteString == "http://www.google.com/jenkins/job/Job1/" {
                 expectationFulfilled=true
@@ -148,7 +148,7 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
-            let view: View = userInfo[RequestedObjectKey] as View
+            let view: View = userInfo[RequestedObjectKey] as! View
             
             if view.url == "http://jenkins:8080/view/GrandParent/" {
                 expectationFulfilled=true
@@ -160,9 +160,9 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo: Dictionary = notification.userInfo!
-            let requestError: NSError = userInfo[RequestErrorKey] as NSError
+            let requestError: NSError = userInfo[RequestErrorKey] as! NSError
             let errorUserInfo: Dictionary = requestError.userInfo!
-            let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
+            let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
             
             if url.absoluteString == "http://www.google.com/jenkins/view/View1/" {
                 expectationFulfilled=true
@@ -190,7 +190,7 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
-            let ac: ActiveConfiguration = userInfo[RequestedObjectKey] as ActiveConfiguration
+            let ac: ActiveConfiguration = userInfo[RequestedObjectKey] as! ActiveConfiguration
             
             if ac.url == "http://jenkins:8080/job/Job6/config1=10,config2=test/" {
                 expectationFulfilled=true
@@ -202,9 +202,9 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo: Dictionary = notification.userInfo!
-            let requestError: NSError = userInfo[RequestErrorKey] as NSError
+            let requestError: NSError = userInfo[RequestErrorKey] as! NSError
             let errorUserInfo: Dictionary = requestError.userInfo!
-            let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
+            let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
             
             if url.absoluteString == "http://www.google.com/jenkins/job/Job1/config1=true/" {
                 expectationFulfilled=true
@@ -237,7 +237,7 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
-            let build: Build = userInfo[RequestedObjectKey] as Build
+            let build: Build = userInfo[RequestedObjectKey] as! Build
             
             if build.url == "http://jenkins:8080/job/Job6/1/" {
                 expectationFulfilled=true
@@ -249,9 +249,9 @@ class RequestHandlerTests: XCTestCase {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo: Dictionary = notification.userInfo!
-            let requestError: NSError = userInfo[RequestErrorKey] as NSError
+            let requestError: NSError = userInfo[RequestErrorKey] as! NSError
             let errorUserInfo: Dictionary = requestError.userInfo!
-            let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as NSURL
+            let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
             
             if url.absoluteString == "http://www.google.com/jenkins/job/Job1/1/" {
                 expectationFulfilled=true

@@ -42,7 +42,7 @@ class SyncManagerTests: XCTestCase {
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
         let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         
-        context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues, inManagedObjectContext: self.context)})
+        context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: self.context)})
         self.jenkinsInstance?.password = "admin"
         self.jenkinsInstance?.allowInvalidSSLCertificate = true
         
@@ -76,7 +76,7 @@ class SyncManagerTests: XCTestCase {
         let viewSavedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let view = obj as? View {
@@ -107,7 +107,7 @@ class SyncManagerTests: XCTestCase {
         let jobSavedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let job = obj as? Job {
@@ -135,7 +135,7 @@ class SyncManagerTests: XCTestCase {
         let buildSavedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let build = obj as? Build {
@@ -170,7 +170,7 @@ class SyncManagerTests: XCTestCase {
         let acSavedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ac = obj as? ActiveConfiguration {
@@ -220,7 +220,7 @@ class SyncManagerTests: XCTestCase {
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
         let values = [JenkinsInstanceNameKey: "QA Ubuntu", JenkinsInstanceURLKey: "https://jenkins.qa.ubuntu.com/", JenkinsInstanceJobsKey: jobs, JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstancePrimaryViewKey: primaryView]
 
-        JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values, inManagedObjectContext: context!)
+        JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values as [NSObject : AnyObject], inManagedObjectContext: context!)
         
         
         let fetchreq = NSFetchRequest()
@@ -229,7 +229,7 @@ class SyncManagerTests: XCTestCase {
         fetchreq.includesPropertyValues = false
         
         let jenkinss = context?.executeFetchRequest(fetchreq, error: nil)
-        let ji = jenkinss![0] as JenkinsInstance
+        let ji = jenkinss![0] as! JenkinsInstance
 
         XCTAssertEqual(jenkinss!.count, 1, "jenkinss count is wrong. Should be 1 got: \(jenkinss!.count) instead")
         XCTAssertEqual(ji.name, "QA Ubuntu", "jenkins instance name is wrong. should be QA Ubuntu, got: \(ji.name) instead")
@@ -272,7 +272,7 @@ class SyncManagerTests: XCTestCase {
         let jInstanceDisabledNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
@@ -330,7 +330,7 @@ class SyncManagerTests: XCTestCase {
         let jInstanceUnauthenticatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
@@ -345,7 +345,7 @@ class SyncManagerTests: XCTestCase {
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstanceAuthenticatedKey: true, JenkinsInstancePrimaryViewKey: primaryView]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.allowInvalidSSLCertificate = true
         jinstance1.password = "password"
         saveContext()
@@ -365,7 +365,7 @@ class SyncManagerTests: XCTestCase {
         let jInstanceUnauthenticatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
@@ -380,7 +380,7 @@ class SyncManagerTests: XCTestCase {
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin", JenkinsInstancePrimaryViewKey: primaryView]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.allowInvalidSSLCertificate = true
         jinstance1.password = "changeme"
         jinstance1.authenticated = false
@@ -401,13 +401,13 @@ class SyncManagerTests: XCTestCase {
         let jiUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        let priView: [String: String] = ji.primaryView as [String: String]
+                        let priView: [String: String] = ji.primaryView as! [String: String]
                         let priViewName = priView[ViewNameKey]
-                        let jiviews: [View] = ji.rel_Views.allObjects as [View]
+                        let jiviews = ji.rel_Views as! Set<View>
                         var priViewURL: String?
                         for view: View in jiviews {
                             if view.name == priViewName {
@@ -427,7 +427,7 @@ class SyncManagerTests: XCTestCase {
         
         let primaryView = [ViewNameKey: "Test", ViewURLKey: "https://snowman:8443/jenkins/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin", JenkinsInstancePrimaryViewKey: primaryView]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.password = "changeme"
         jinstance1.allowInvalidSSLCertificate = true;
         saveContext()
@@ -444,7 +444,7 @@ class SyncManagerTests: XCTestCase {
         let viewUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
@@ -459,7 +459,7 @@ class SyncManagerTests: XCTestCase {
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.password = "password1"
         jinstance1.allowInvalidSSLCertificate = true;
         saveContext()
@@ -476,7 +476,7 @@ class SyncManagerTests: XCTestCase {
         let viewUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
@@ -491,7 +491,7 @@ class SyncManagerTests: XCTestCase {
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "littleone", JenkinsInstancePrimaryViewKey: primaryView]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.password = "changeme"
         jinstance1.allowInvalidSSLCertificate = true;
         saveContext()
@@ -508,7 +508,7 @@ class SyncManagerTests: XCTestCase {
         let jobUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let job = obj as? Job {
@@ -554,7 +554,7 @@ class SyncManagerTests: XCTestCase {
         let jobDeletedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
                 var expectationFulfilled = false
-                let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
+                let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as! NSSet?
                 if deletedObjects != nil {
                     for obj in deletedObjects! {
                         if let job1 = obj as? Job {
@@ -612,7 +612,7 @@ class SyncManagerTests: XCTestCase {
         let jobUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let job1 = obj as? Job {
@@ -645,7 +645,7 @@ class SyncManagerTests: XCTestCase {
         let jobUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let job1 = obj as? Job {
@@ -678,7 +678,7 @@ class SyncManagerTests: XCTestCase {
         let jobUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let job1 = obj as? Job {
@@ -711,7 +711,7 @@ class SyncManagerTests: XCTestCase {
         let viewUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let view = obj as? View {
@@ -754,7 +754,7 @@ class SyncManagerTests: XCTestCase {
         let viewDeletedNotificationExpectionat = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
+            let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as! NSSet?
             if deletedObjects != nil {
                 for obj in deletedObjects! {
                     if let view = obj as? View {
@@ -814,7 +814,7 @@ class SyncManagerTests: XCTestCase {
         let viewDeletedNotificationExpectionat = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
+            let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as! NSSet?
             if deletedObjects != nil {
                 for obj in deletedObjects! {
                     if let view = obj as? View {
@@ -871,7 +871,7 @@ class SyncManagerTests: XCTestCase {
         let viewUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let view1 = obj as? View {
@@ -888,7 +888,7 @@ class SyncManagerTests: XCTestCase {
         let viewURL = NSURL(string: viewURLStr)
         let primaryView = [ViewNameKey: "Nunya", ViewURLKey: "http://jenkins:8080/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin", JenkinsInstancePrimaryViewKey: primaryView]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.password = "changeme"
         jinstance1.allowInvalidSSLCertificate = true;
         let childViewVals1 = [ViewNameKey: "All", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jinstance1]
@@ -907,7 +907,7 @@ class SyncManagerTests: XCTestCase {
         let viewUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let view = obj as? View {
@@ -940,7 +940,7 @@ class SyncManagerTests: XCTestCase {
         let viewUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let view = obj as? View {
@@ -973,7 +973,7 @@ class SyncManagerTests: XCTestCase {
         let buildUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let build = obj as? Build {
@@ -1012,7 +1012,7 @@ class SyncManagerTests: XCTestCase {
         let buildDeletedNotificationExpection = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
+            let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as! NSSet?
             if deletedObjects != nil {
                 for obj in deletedObjects! {
                     if let build = obj as? Build {
@@ -1102,7 +1102,7 @@ class SyncManagerTests: XCTestCase {
         let buildUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let build = obj as? Build {
@@ -1136,7 +1136,7 @@ class SyncManagerTests: XCTestCase {
         let buildUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let build = obj as? Build {
@@ -1170,7 +1170,7 @@ class SyncManagerTests: XCTestCase {
         let buildUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let build = obj as? Build {
@@ -1204,7 +1204,7 @@ class SyncManagerTests: XCTestCase {
         let acUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ac = obj as? ActiveConfiguration {
@@ -1241,7 +1241,7 @@ class SyncManagerTests: XCTestCase {
         let activeConfigDeletedNotificationExpection = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as NSSet?
+            let deletedObjects: NSSet? = notification.userInfo![NSDeletedObjectsKey] as! NSSet?
             if deletedObjects != nil {
                 for obj in deletedObjects! {
                     if let ac = obj as? ActiveConfiguration {
@@ -1303,7 +1303,7 @@ class SyncManagerTests: XCTestCase {
         let acUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ac = obj as? ActiveConfiguration {
@@ -1341,7 +1341,7 @@ class SyncManagerTests: XCTestCase {
         let acUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ac = obj as? ActiveConfiguration {
@@ -1378,7 +1378,7 @@ class SyncManagerTests: XCTestCase {
         let acUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as NSSet?
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ac = obj as? ActiveConfiguration {
