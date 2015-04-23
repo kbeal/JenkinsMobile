@@ -34,12 +34,12 @@
     //NSURL *jenkinsURL = [NSURL URLWithString:@"http://ci.thermofisher.com/jenkins"];
     NSURL *jenkinsURL = [NSURL URLWithString:@"https://snowman:8443/jenkins/"];
     
-    [self createJenkinsInstanceWithURL:jenkinsURL];
+    JenkinsInstance *ji = [self createJenkinsInstanceWithURL:jenkinsURL];
     mgr.requestHandler = [[KDBJenkinsRequestHandler alloc] init];
     mgr.masterMOC = self.masterMOC;
     mgr.mainMOC = self.mainMOC;
     
-    [mgr syncJenkinsInstance:<#(JenkinsInstance * __nonnull)#>];
+    [mgr syncJenkinsInstance:ji];
     
     /*
     KDBJenkinsRequestHandler *handler = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:jinstance];
@@ -69,7 +69,7 @@
     return YES;
 }
 
-- (void) createJenkinsInstanceWithURL:(NSURL *) url
+- (JenkinsInstance *) createJenkinsInstanceWithURL:(NSURL *) url
 {
     NSArray *jenkinskeys = [NSArray arrayWithObjects:JenkinsInstanceNameKey,JenkinsInstanceURLKey,JenkinsInstanceCurrentKey,JenkinsInstanceEnabledKey,JenkinsInstanceUsernameKey, nil];
     NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",[url absoluteString],[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES],@"jenkinsadmin", nil];
@@ -82,6 +82,7 @@
         jinstance.allowInvalidSSLCertificate = [NSNumber numberWithBool:YES];
         [self saveMainContext];
     }
+    return jinstance;
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
