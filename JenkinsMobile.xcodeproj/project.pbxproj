@@ -168,6 +168,8 @@
 		8A3CBA3B18E7C57C00D0D160 /* notbuilt.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CBA3918E7C57C00D0D160 /* notbuilt.png */; };
 		8A3CBA3C18E7C57C00D0D160 /* notbuilt@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CBA3A18E7C57C00D0D160 /* notbuilt@2x.png */; };
 		8A3DA825198F2C3800C97992 /* KDBJobDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3DA824198F2C3800C97992 /* KDBJobDetailTableViewController.m */; };
+		8A41D37C1AE86C7C00650CFE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A41D37A1AE86C7C00650CFE /* Main.storyboard */; };
+		8A41D37F1AE86EBD00650CFE /* KDBViewsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A41D37E1AE86EBD00650CFE /* KDBViewsTableViewController.m */; };
 		8A56E60F19C90FD80058B0C7 /* SyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */; };
 		8A56E61119C91EB50058B0C7 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8B57BD19C7B98A004FA446 /* SyncManager.swift */; };
 		8A5D1B4C1A788680005C93AD /* RequestHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D1B4B1A788680005C93AD /* RequestHandlerTests.swift */; };
@@ -202,7 +204,6 @@
 		8AC329F918E4F3A90002D106 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8AC329F718E4F3A90002D106 /* InfoPlist.strings */; };
 		8AC329FB18E4F3A90002D106 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AC329FA18E4F3A90002D106 /* main.m */; };
 		8AC329FF18E4F3A90002D106 /* KDBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AC329FE18E4F3A90002D106 /* KDBAppDelegate.m */; };
-		8AC32A0218E4F3A90002D106 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AC32A0018E4F3A90002D106 /* Main_iPhone.storyboard */; };
 		8AC32A0518E4F3A90002D106 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AC32A0318E4F3A90002D106 /* Main_iPad.storyboard */; };
 		8AC32A0818E4F3A90002D106 /* JenkinsMobile.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8AC32A0618E4F3A90002D106 /* JenkinsMobile.xcdatamodeld */; };
 		8AC32A0B18E4F3A90002D106 /* KDBMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AC32A0A18E4F3A90002D106 /* KDBMasterViewController.m */; };
@@ -410,6 +411,9 @@
 		8A3CBA3A18E7C57C00D0D160 /* notbuilt@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "notbuilt@2x.png"; sourceTree = "<group>"; };
 		8A3DA823198F2C3800C97992 /* KDBJobDetailTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJobDetailTableViewController.h; sourceTree = "<group>"; };
 		8A3DA824198F2C3800C97992 /* KDBJobDetailTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJobDetailTableViewController.m; sourceTree = "<group>"; };
+		8A41D37B1AE86C7C00650CFE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		8A41D37D1AE86EBD00650CFE /* KDBViewsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBViewsTableViewController.h; sourceTree = "<group>"; };
+		8A41D37E1AE86EBD00650CFE /* KDBViewsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBViewsTableViewController.m; sourceTree = "<group>"; };
 		8A56E60D19C90FD70058B0C7 /* JenkinsMobileTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JenkinsMobileTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		8A56E60E19C90FD80058B0C7 /* SyncManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManagerTests.swift; sourceTree = "<group>"; };
 		8A5D1B4B1A788680005C93AD /* RequestHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestHandlerTests.swift; sourceTree = "<group>"; };
@@ -463,7 +467,6 @@
 		8AC329FC18E4F3A90002D106 /* JenkinsMobile-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JenkinsMobile-Prefix.pch"; sourceTree = "<group>"; };
 		8AC329FD18E4F3A90002D106 /* KDBAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KDBAppDelegate.h; sourceTree = "<group>"; };
 		8AC329FE18E4F3A90002D106 /* KDBAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KDBAppDelegate.m; sourceTree = "<group>"; };
-		8AC32A0118E4F3A90002D106 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
 		8AC32A0418E4F3A90002D106 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
 		8AC32A0718E4F3A90002D106 /* JenkinsMobile.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = JenkinsMobile.xcdatamodel; sourceTree = "<group>"; };
 		8AC32A0918E4F3A90002D106 /* KDBMasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KDBMasterViewController.h; sourceTree = "<group>"; };
@@ -781,7 +784,9 @@
 				8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */,
 				8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */,
 				8AC32A0318E4F3A90002D106 /* Main_iPad.storyboard */,
-				8AC32A0018E4F3A90002D106 /* Main_iPhone.storyboard */,
+				8A41D37A1AE86C7C00650CFE /* Main.storyboard */,
+				8A41D37D1AE86EBD00650CFE /* KDBViewsTableViewController.h */,
+				8A41D37E1AE86EBD00650CFE /* KDBViewsTableViewController.m */,
 				8AE3B96918EF80D000E061C1 /* Models */,
 				8AFDD5121947CFA5008F2791 /* Protocols */,
 				8AC329F518E4F3A90002D106 /* Supporting Files */,
@@ -1050,6 +1055,7 @@
 				8A3CBA0C18E7C39900D0D160 /* grey@2x.png in Resources */,
 				8A3CB9B718E7C39900D0D160 /* system-log-out.png in Resources */,
 				8A3CB9AD18E7C39900D0D160 /* video.png in Resources */,
+				8A41D37C1AE86C7C00650CFE /* Main.storyboard in Resources */,
 				8A3CBA2F18E7C39900D0D160 /* bookmark-new.png in Resources */,
 				8A3CB9F618E7C39900D0D160 /* keys@2x.png in Resources */,
 				8A3CB9BB18E7C39900D0D160 /* star.png in Resources */,
@@ -1073,7 +1079,6 @@
 				8A3CB9DD18E7C39900D0D160 /* orange-square.png in Resources */,
 				8A3CBA1418E7C39900D0D160 /* gear2@2x.png in Resources */,
 				8A3CBA1E18E7C39900D0D160 /* emblem-urgent@2x.png in Resources */,
-				8AC32A0218E4F3A90002D106 /* Main_iPhone.storyboard in Resources */,
 				8A3CB9D618E7C39900D0D160 /* previous@2x.png in Resources */,
 				8A3CB9C918E7C39900D0D160 /* search.png in Resources */,
 				8A3CB9B318E7C39900D0D160 /* undo.png in Resources */,
@@ -1248,6 +1253,7 @@
 				8AE3B95C18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m in Sources */,
 				8A76B0F2199C3AE200B219C5 /* Constants.m in Sources */,
 				8A6D731C1A6F268700BFA0A5 /* ActiveConfiguration+More.m in Sources */,
+				8A41D37F1AE86EBD00650CFE /* KDBViewsTableViewController.m in Sources */,
 				8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */,
 				8AA1CD3D1A9EA99A00F977B0 /* Build+More.m in Sources */,
 				8AC32A4218E4FB6F0002D106 /* AFHTTPRequestOperationManager.m in Sources */,
@@ -1285,20 +1291,20 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		8A41D37A1AE86C7C00650CFE /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8A41D37B1AE86C7C00650CFE /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
 		8AC329F718E4F3A90002D106 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
 				8AC329F818E4F3A90002D106 /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		8AC32A0018E4F3A90002D106 /* Main_iPhone.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8AC32A0118E4F3A90002D106 /* Base */,
-			);
-			name = Main_iPhone.storyboard;
 			sourceTree = "<group>";
 		};
 		8AC32A0318E4F3A90002D106 /* Main_iPad.storyboard */ = {

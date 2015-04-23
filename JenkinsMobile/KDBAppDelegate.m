@@ -39,12 +39,15 @@
     mgr.masterMOC = self.masterMOC;
     mgr.mainMOC = self.mainMOC;
     
+    [mgr syncJenkinsInstance:<#(JenkinsInstance * __nonnull)#>];
+    
     /*
     KDBJenkinsRequestHandler *handler = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:jinstance];
     handler.managedObjectContext = self.masterMOC;
     [handler importAllViews];
      */
     
+    /*
     // Override point for customization after application launch.
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
@@ -61,7 +64,7 @@
         UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
         KDBMasterViewController *controller = (KDBMasterViewController *)navigationController.topViewController;
         controller.managedObjectContext = _mainMOC;
-    }
+    }*/
     
     return YES;
 }
