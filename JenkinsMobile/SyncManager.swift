@@ -259,9 +259,9 @@ import CoreData
             values[JenkinsInstanceUsernameKey] = ji.username
             
             ji.setValues(values)
+            self.saveContext(ji.managedObjectContext)            
             self.syncAllJobs(ji)
             self.syncAllViews(ji)
-            self.saveContext(ji.managedObjectContext)
         })
     }
     

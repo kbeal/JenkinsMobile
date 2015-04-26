@@ -408,13 +408,13 @@ class SyncManagerTests: XCTestCase {
                         let priView: [String: String] = ji.primaryView as! [String: String]
                         let priViewName = priView[ViewNameKey]
                         let jiviews = ji.rel_Views as! Set<View>
-                        var priViewURL: String?
+                        var priViewObj: View?
                         for view: View in jiviews {
                             if view.name == priViewName {
-                                priViewURL = view.url
+                                priViewObj = view
                             }
                         }
-                        if ji.lastSyncResult == "200: OK" && ji.url == "http://snowman:8080/jenkins/" && priViewURL == "https://snowman:8443/jenkins/view/Test/" {
+                        if ji.lastSyncResult == "200: OK" && ji.url == "http://snowman:8080/jenkins/" && priViewObj!.url == "http://snowman:8080/jenkins/view/Test/" {
                             expectationFulfilled=true
                         } else {
                             println(ji.url + ": " + ji.lastSyncResult)

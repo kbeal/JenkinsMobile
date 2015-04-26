@@ -149,9 +149,8 @@
     NSDictionary *job2 = [NSDictionary dictionaryWithObjects:jobValues2 forKeys:jobKeys];
     NSArray *jobs = [NSArray arrayWithObjects:job1,job2,nil];
     NSArray *viewKeys = [NSArray arrayWithObjects:@"name",@"url",@"description",@"property",@"jobs",ViewJenkinsInstanceKey, nil];
-    NSArray *viewValues = [NSArray arrayWithObjects:@"test1",@"url1",@"descriptiontest1",@"",jobs,_jinstance,nil];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"All",@"http://tomcat:8080/",@"descriptiontest1",@"",jobs,_jinstance,nil];
     NSDictionary *values = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
-
     
     View *view = [View createViewWithValues:values inManagedObjectContext:_context];
     
@@ -161,14 +160,13 @@
     [allViews setIncludesPropertyValues:NO]; //only fetch the managedObjectID
     NSArray *views = [_context executeFetchRequest:allViews error:&error];
     
-    XCTAssert([view.name isEqualToString:@"test1"], @"view name wrong");
-    XCTAssert([view.url isEqualToString:@"url1"], @"view name wrong");
+    XCTAssert([view.name isEqualToString:@"All"], @"view name wrong");
+    XCTAssert([view.url isEqualToString:@"http://tomcat:8080/view/All/"], @"view url wrong");
     XCTAssert(view.rel_View_Jobs.count==1, @"view's job count should be 1, got %lu instead",(unsigned long)view.rel_View_Jobs.count);
     XCTAssert(views.count==1, @"view count should be 4, instead got %lu", (unsigned long)views.count);
     XCTAssert(_jinstance.rel_Jobs.count==1, @"jenkins instance's related job count should be 1, got %lu instead",(unsigned long)_jinstance.rel_Jobs.count);
     
 }
-
 
 - (void)testCreateJobWithValues
 {
@@ -282,7 +280,7 @@
     NSDictionary *view2 = [NSDictionary dictionaryWithObjects:view2vals forKeys:viewkeys];
     NSDictionary *priview = [NSDictionary dictionaryWithObjects:priviewvals forKeys:viewkeys];
     NSArray *views = [NSArray arrayWithObjects:view1,view2, nil];
-    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://ci.kylebeal.com",[NSNumber numberWithBool:YES],views,priview, nil];
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://ci.kylebeal.com/",[NSNumber numberWithBool:YES],views,priview, nil];
     NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current",JenkinsInstanceViewsKey,JenkinsInstancePrimaryViewKey, nil];
     NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
     JenkinsInstance *instance = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
@@ -291,7 +289,7 @@
     NSDictionary *primaryView = instance.primaryView;
     
     XCTAssert([instance.name isEqualToString:@"TestInstance"], @"name is wrong");
-    XCTAssert([instance.url isEqualToString:@"http://ci.kylebeal.com"], @"url is wrong");
+    XCTAssert([instance.url isEqualToString:@"http://ci.kylebeal.com/"], @"url is wrong");
     XCTAssert([instance.current isEqualToNumber:[NSNumber numberWithBool:YES]], @"not current instance");
     XCTAssert([instance.username isEqualToString:@"admin"], @"username is wrong");
     XCTAssert([instance.password isEqualToString:@"password"], @"password is wrong");
@@ -305,7 +303,7 @@
             savedPrimaryView = view;
         }
     }
-    XCTAssert([savedPrimaryView.url isEqualToString:@"http://ci.kylebeal.com/view/View1/"],@"primary view url is wrong; got %@", [primaryView objectForKey:ViewURLKey]);
+    XCTAssert([savedPrimaryView.url isEqualToString:@"http://ci.kylebeal.com/view/View1/"],@"primary view url is wrong; got %@", savedPrimaryView.url);
 }
 
 - (void) testGetCurrentJenkinsInstance

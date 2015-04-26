@@ -60,8 +60,23 @@
     self.lastSyncResult = NULL_TO_NIL([values objectForKey:ViewLastSyncResultKey]);
     self.view_description = NULL_TO_NIL([values objectForKey:@"description"]);
     self.rel_View_JenkinsInstance = NULL_TO_NIL([values objectForKey:@"jenkinsInstance"]);
+    [self setCanonicalURL];
     [self createJobsFromViewValues:[values objectForKey:@"jobs"]];
     [self createChildViews:NULL_TO_NIL([values objectForKey:ViewViewsKey])];
+}
+
+// returns the view's canonical URL
+// removes /api/json
+// adds /view/<ViewName> if view is JenkinsInstance's primaryView
+- (void) setCanonicalURL
+{
+    NSString *canonicalURL;
+    canonicalURL = [View removeApiFromURL:[NSURL URLWithString:self.url]];
+    
+    if ([[self.rel_View_JenkinsInstance.primaryView objectForKey:ViewNameKey] isEqualToString:self.name]) {
+        canonicalURL = [NSString stringWithFormat:@"%@%@%@%@",self.rel_View_JenkinsInstance.url,@"view/",self.name,@"/"];
+    }
+    self.url = canonicalURL;
 }
 
 - (void) createChildViews: (NSArray *) viewsArray
