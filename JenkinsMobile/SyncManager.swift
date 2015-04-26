@@ -14,7 +14,9 @@ import CoreData
     var masterMOC: NSManagedObjectContext?
     var mainMOC: NSManagedObjectContext?
     private var jobSyncQueue = UniqueQueue<Job>()
-    private var jobSyncTimer: NSTimer?
+    private var viewSyncQueue = UniqueQueue<View>()
+    private var buildSyncQueue = UniqueQueue<Build>()
+    private var syncTimer: NSTimer?
     private var currentJenkinsInstance: JenkinsInstance?
     //var currentBuilds: NSMutableArray
     //var currentBuildsTimer: NSTimer
@@ -36,7 +38,7 @@ import CoreData
         let runningTests = NSClassFromString("XCTestCase") != nil
         if !runningTests {
             // only start the timer if we aren't running unit tests
-            jobSyncTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("jobSyncTimerTick"), userInfo: nil, repeats: true)
+            syncTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("syncTimerTick"), userInfo: nil, repeats: true)
         }
     }
     
@@ -54,13 +56,28 @@ import CoreData
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("activeConfigurationDetailRequestFailed:"), name: ActiveConfigurationDetailRequestFailedNotification, object: nil)
     }
     
-    func jobSyncTimerTick() {
+    func syncTimerTick() {
         if (jobSyncQueue.count() > 0) {
-            // Build the job's URL from the currentJenkinsInstance and jobName
-            // Kick off a sync for that job
+            // pop a job from the jobQueue and sync it
             self.masterMOC?.performBlock({
                 let job = self.jobSyncQueue.pop()!
                 self.syncJob(job)
+            })
+        }
+        
+        if (viewSyncQueue.count() > 0) {
+            // pop a view from the jobQueue and sync it
+            self.masterMOC?.performBlock({
+                let view = self.viewSyncQueue.pop()!
+                self.syncView(view)
+            })
+        }
+        
+        if (buildSyncQueue.count() > 0) {
+            // pop a build from the jobQueue and sync it
+            self.masterMOC?.performBlock({
+                let build = self.buildSyncQueue.pop()!
+                self.syncBuild(build)
             })
         }
     }
@@ -69,18 +86,26 @@ import CoreData
     
     func syncAllJobs(jenkinsInstance: JenkinsInstance) {
         masterMOC?.performBlock({
-            let allJobs = jenkinsInstance.rel_Jobs
-            for job in allJobs {
-                self.jobSyncQueue.push(job as! Job)
+            if let bgji: JenkinsInstance = self.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance {
+                let allJobs = bgji.rel_Jobs
+                for job in allJobs {
+                    self.jobSyncQueue.push(job as! Job)
+                }
+            } else {
+                println("Error syncing all Jobs: Unable to retrieve JenkinsInstance from background context.")
             }
         })
     }
     
     func syncAllViews(jenkinsInstance: JenkinsInstance) {
         masterMOC?.performBlock({
-            let allViews = jenkinsInstance.rel_Views
-            for view in allViews {
-                self.syncView(view as! View)
+            if let bgji: JenkinsInstance = self.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance {
+                let allViews = bgji.rel_Views
+                for view in allViews {
+                    self.viewSyncQueue.push(view as! View)
+                }
+            } else {
+                println("Error syncing all Views: Unable to retrieve JenkinsInstance from background context.")
             }
         })
     }
@@ -98,7 +123,7 @@ import CoreData
         masterMOC?.performBlock({
             let subviews = view.rel_View_Views
             for subview in subviews {
-                self.syncView(subview as! View)
+                self.viewSyncQueue.push(subview as! View)
             }
         })
     }
@@ -177,11 +202,10 @@ import CoreData
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
         let view = values[RequestedObjectKey] as! View
-        let ji = view.rel_View_JenkinsInstance
         
         view.managedObjectContext?.performBlock({
             values[ViewLastSyncResultKey] = "200: OK"
-            values[ViewJenkinsInstanceKey] = ji
+            values[ViewJenkinsInstanceKey] = view.rel_View_JenkinsInstance
             view.setValues(values)
             self.saveContext(view.managedObjectContext)
         })
@@ -235,9 +259,9 @@ import CoreData
             values[JenkinsInstanceUsernameKey] = ji.username
             
             ji.setValues(values)
-            self.saveContext(ji.managedObjectContext)
             self.syncAllJobs(ji)
             self.syncAllViews(ji)
+            self.saveContext(ji.managedObjectContext)
         })
     }
     
@@ -371,6 +395,21 @@ import CoreData
         })
     }
     
+    // takes an NSManagedObject and if it isn't already on a background thread
+    // ie. on the main queue NSManagedObjectContext
+    // looks it up by NSManagedObjectID from the background NSManagedObjectContext
+    func ensureObjectOnBackgroundThread(obj: NSManagedObject) -> NSManagedObject? {
+        var bgobj: NSManagedObject? = obj
+        if obj.managedObjectContext?.concurrencyType == NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType {
+            var error: NSError? = nil
+            bgobj = self.masterMOC?.existingObjectWithID(obj.objectID, error: &error)
+            if bgobj == nil {
+               println("Error retrieving object from background context: \(error?.localizedDescription)\n\(error?.userInfo)")
+            }
+        }
+        return bgobj
+    }
+    
     func saveContext(moc: NSManagedObjectContext?) {
         var error: NSError? = nil
         if moc == nil {
@@ -385,7 +424,7 @@ import CoreData
             println("Error saving context: \(error?.localizedDescription)\n\(error?.userInfo)")
             abort()
         } else {
-            println("Successfully saved master managed object context")
+            //println("Successfully saved master managed object context")
         }
     }
 }

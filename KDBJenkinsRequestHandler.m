@@ -32,12 +32,12 @@
     manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"%@%@",@"response received for job at url: ",jobURL);
+        NSLog(@"%@%@",@"Response received for job at url: ",jobURL);
         NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:responseObject];
         [info setObject:job forKey:RequestedObjectKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailResponseReceivedNotification object:self userInfo:info];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@%@",@"failed to receive response for job at url: ",jobURL);
+        NSLog(@"%@%@",@"Failed to receive response for job at url: ",jobURL);
         // since the Job actually exists, we need to inject it's url so that coredata can find it.
         NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
         [errUserInfo setObject:[NSURL URLWithString:jobURL] forKey:NSErrorFailingURLKey];
@@ -87,12 +87,12 @@
     manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"%@%@",@"response received for View at URL: ",viewURL);
+        NSLog(@"%@%@",@"Response received for View at URL: ",viewURL);
         NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:responseObject];
         [info setObject:view forKey:RequestedObjectKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:ViewDetailResponseReceivedNotification object:self userInfo:info];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@%@",@"failed to receive response for View at URL: ",viewURL);
+        NSLog(@"%@%@",@"Failed to receive response for View at URL: ",viewURL);
         // since the View actually exists, we need to inject it's url so that coredata can find it.
         NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
         [errUserInfo setObject:[NSURL URLWithString:viewURL] forKey:NSErrorFailingURLKey];
@@ -140,12 +140,12 @@
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"%@%@",@"response received for ActiveConfiguration at url: ",requestURL.absoluteString);
+        NSLog(@"%@%@",@"Response received for ActiveConfiguration at url: ",requestURL.absoluteString);
         NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:responseObject];
         [info setObject:ac forKey:RequestedObjectKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:ActiveConfigurationDetailResponseReceivedNotification object:self userInfo:info];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@%@",@"failed to receive response for ActiveConfiguration at url: ",requestURL.absoluteString);
+        NSLog(@"%@%@",@"Failed to receive response for ActiveConfiguration at url: ",requestURL.absoluteString);
         // since the AC actually exists, we need to inject it's url so that coredata can find it.
         NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
         [errUserInfo setObject:[NSURL URLWithString:ac.url] forKey:NSErrorFailingURLKey];
@@ -193,12 +193,12 @@
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"%@%@",@"response received for Build at url: ",requestURL.absoluteString);
+        NSLog(@"%@%@",@"Response received for Build at url: ",requestURL.absoluteString);
         NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:responseObject];
         [info setObject:build forKey:RequestedObjectKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:BuildDetailResponseReceivedNotification object:self userInfo:info];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@%@",@"failed to receive response for Build at url: ",requestURL.absoluteString);
+        NSLog(@"%@%@",@"Failed to receive response for Build at url: ",requestURL.absoluteString);
         // since the Build actually exists, we need to inject it's url so that coredata can find it.
         NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
         [errUserInfo setObject:[NSURL URLWithString:build.url] forKey:NSErrorFailingURLKey];
@@ -248,11 +248,12 @@
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"%@%@",@"Response received for JenkinsInstance at url: ",jinstanceURL);
         NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:responseObject];
         [info setObject:jinstance forKey:RequestedObjectKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailResponseReceivedNotification object:self userInfo:info];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@%@",@"failed to receive response for jenkins at url: ",requestURL.absoluteString);
+        NSLog(@"%@%@",@"Failed to receive response for jenkins at url: ",requestURL.absoluteString);
         // since the JenkinsInstance actually exists, we need to inject it's url so that coredata can find it.
         NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
         [errUserInfo setObject:jinstanceURL forKey:NSErrorFailingURLKey];

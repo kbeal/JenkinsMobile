@@ -30,8 +30,8 @@ class RequestHandlerTests: XCTestCase {
         mgr.masterMOC = context;
         mgr.requestHandler = requestHandler
         
-        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
-        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
+        let primaryView = [ViewNameKey: "All", ViewURLKey: "https://snowman:8443/jenkins/"]
+        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "PrimaryTestInstance", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         
         context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: self.context)})
         self.jenkinsInstance?.password = "admin"
@@ -53,7 +53,7 @@ class RequestHandlerTests: XCTestCase {
             println("Error saving context: \(error?.localizedDescription)\n\(error?.userInfo)")
             abort()
         } else {
-            println("Successfully saved test managed object context")
+            //println("Successfully saved test managed object context")
         }
     }
     
@@ -64,7 +64,7 @@ class RequestHandlerTests: XCTestCase {
             let userInfo = notification.userInfo!
             let jinstance: JenkinsInstance = userInfo[RequestedObjectKey] as! JenkinsInstance
             
-            if jinstance.url == "http://jenkins:8080" {
+            if jinstance.url == "https://snowman:8443/jenkins/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
@@ -84,12 +84,13 @@ class RequestHandlerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
-        let jenkinsInstanceValues2 = [JenkinsInstanceNameKey: "TestInstance2", JenkinsInstanceURLKey: "http://www.google.com/jenkins", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
+        let primaryView = [ViewNameKey: "All", ViewURLKey: "https://snowman:8443/jenkins/"]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "JIDetailRequestTestInstance", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin", JenkinsInstancePrimaryViewKey: primaryView]
+        let jenkinsInstanceValues2 = [JenkinsInstanceNameKey: "JIDetailRequestFailure", JenkinsInstanceURLKey: "http://www.google.com/jenkins", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         let jinstance2 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues2 as [NSObject : AnyObject], inManagedObjectContext: self.context)
-        jinstance1.password = "admin"
+        jinstance1.allowInvalidSSLCertificate = true
+        jinstance1.password = "changeme"
         jinstance2.password = "admin"
         saveContext()
         
@@ -109,7 +110,7 @@ class RequestHandlerTests: XCTestCase {
             let userInfo = notification.userInfo!
             let job: Job = userInfo[RequestedObjectKey] as! Job
             
-            if job.url == "http://jenkins:8080/job/Job3/" {
+            if job.url == "https://snowman:8443/jenkins/job/Job1/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
@@ -129,10 +130,14 @@ class RequestHandlerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jobvals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/Job3/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobvals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "https://snowman:8443/jenkins/job/Job1/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
         let jobvals2 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com/jenkins/job/Job1/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
         let job2 = Job.createJobWithValues(jobvals2, inManagedObjectContext: context)
+        jenkinsInstance?.allowInvalidSSLCertificate = true
+        jenkinsInstance?.username = "jenkinsadmin"
+        jenkinsInstance?.password = "changeme"
+        saveContext()
         
         requestHandler.importDetailsForJob(job)
         requestHandler.importDetailsForJob(job2)
@@ -150,7 +155,7 @@ class RequestHandlerTests: XCTestCase {
             let userInfo = notification.userInfo!
             let view: View = userInfo[RequestedObjectKey] as! View
             
-            if view.url == "http://jenkins:8080/view/GrandParent/" {
+            if view.url == "https://snowman:8443/jenkins/view/All/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
@@ -170,10 +175,13 @@ class RequestHandlerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let viewVals = [ViewNameKey: "View1", ViewURLKey: "http://jenkins:8080/view/GrandParent/", ViewJenkinsInstanceKey: jenkinsInstance!]
+        let viewVals = [ViewNameKey: "View1", ViewURLKey: "https://snowman:8443/jenkins/view/All/", ViewJenkinsInstanceKey: jenkinsInstance!]
         let viewVals2 = [ViewNameKey: "View2", ViewURLKey: "http://www.google.com/jenkins/view/View1/", ViewJenkinsInstanceKey: jenkinsInstance!]
         let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context)
         let view2 = View.createViewWithValues(viewVals2, inManagedObjectContext: context)
+        jenkinsInstance?.allowInvalidSSLCertificate = true
+        jenkinsInstance?.username = "jenkinsadmin"
+        jenkinsInstance?.password = "changeme"
         saveContext()
         
         requestHandler.importDetailsForView(view1)
@@ -192,7 +200,7 @@ class RequestHandlerTests: XCTestCase {
             let userInfo = notification.userInfo!
             let ac: ActiveConfiguration = userInfo[RequestedObjectKey] as! ActiveConfiguration
             
-            if ac.url == "http://jenkins:8080/job/Job6/config1=10,config2=test/" {
+            if ac.url == "https://snowman:8443/jenkins/job/Job2/config=10/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
@@ -212,15 +220,18 @@ class RequestHandlerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jobvals = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/Job6/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobvals = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "https://snowman:8443/jenkins/job/Job2/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
         let jobvals2 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com/jenkins/job/Job1/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
         let job2 = Job.createJobWithValues(jobvals2, inManagedObjectContext: context)
         
-        let acVals = [ActiveConfigurationNameKey: "config=1", ActiveConfigurationURLKey: "http://jenkins:8080/job/Job6/config1=10,config2=test/", ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
+        let acVals = [ActiveConfigurationNameKey: "config=1", ActiveConfigurationURLKey: "https://snowman:8443/jenkins/job/Job2/config=10/", ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
         let acVals2 = [ActiveConfigurationNameKey: "config=2", ActiveConfigurationURLKey: "http://www.google.com/jenkins/job/Job1/config1=true/", ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
         let ac = ActiveConfiguration.createActiveConfigurationWithValues(acVals, inManagedObjectContext: self.context)
         let ac2 = ActiveConfiguration.createActiveConfigurationWithValues(acVals2, inManagedObjectContext: self.context)
+        jenkinsInstance?.allowInvalidSSLCertificate = true
+        jenkinsInstance?.username = "jenkinsadmin"
+        jenkinsInstance?.password = "changeme"
         saveContext()
         
         requestHandler.importDetailsForActiveConfiguration(ac)
@@ -239,7 +250,7 @@ class RequestHandlerTests: XCTestCase {
             let userInfo = notification.userInfo!
             let build: Build = userInfo[RequestedObjectKey] as! Build
             
-            if build.url == "http://jenkins:8080/job/Job6/1/" {
+            if build.url == "https://snowman:8443/jenkins/job/Job1/1/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
@@ -262,10 +273,13 @@ class RequestHandlerTests: XCTestCase {
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/TestJob/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         
-        let buildVals = [BuildJobKey: job, BuildURLKey: "http://jenkins:8080/job/Job6/1/", BuildNumberKey: 1]
+        let buildVals = [BuildJobKey: job, BuildURLKey: "https://snowman:8443/jenkins/job/Job1/1/", BuildNumberKey: 1]
         let buildVals2 = [BuildJobKey: job, BuildURLKey: "http://www.google.com/jenkins/job/Job1/1/", BuildNumberKey: 1]
         let build1 = Build.createBuildWithValues(buildVals, inManagedObjectContext: self.context)
         let build2 = Build.createBuildWithValues(buildVals2, inManagedObjectContext: self.context)
+        jenkinsInstance?.allowInvalidSSLCertificate = true
+        jenkinsInstance?.username = "jenkinsadmin"
+        jenkinsInstance?.password = "changeme"
         saveContext()
         
         requestHandler.importDetailsForBuild(build1)
