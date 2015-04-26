@@ -30,9 +30,9 @@
     
     SyncManager *mgr = [SyncManager sharedInstance];
     
-    //NSURL *jenkinsURL = [NSURL URLWithString:@"https://jenkins.qa.ubuntu.com"];
+    NSURL *jenkinsURL = [NSURL URLWithString:@"https://jenkins.qa.ubuntu.com"];
     //NSURL *jenkinsURL = [NSURL URLWithString:@"http://ci.thermofisher.com/jenkins"];
-    NSURL *jenkinsURL = [NSURL URLWithString:@"https://snowman:8443/jenkins/"];
+    //NSURL *jenkinsURL = [NSURL URLWithString:@"https://snowman:8443/jenkins/"];
     
     JenkinsInstance *ji = [self createJenkinsInstanceWithURL:jenkinsURL];
     mgr.requestHandler = [[KDBJenkinsRequestHandler alloc] init];
