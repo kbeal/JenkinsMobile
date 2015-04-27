@@ -2,7 +2,7 @@
 //  JenkinsInstance.h
 //  JenkinsMobile
 //
-//  Created by Kyle on 3/10/15.
+//  Created by Kyle on 4/26/15.
 //  Copyright (c) 2015 Kyle Beal. All rights reserved.
 //
 
@@ -19,9 +19,10 @@
 @property (nonatomic, retain) NSNumber * enabled;
 @property (nonatomic, retain) NSString * lastSyncResult;
 @property (nonatomic, retain) NSString * name;
+@property (nonatomic, retain) id primaryView;
 @property (nonatomic, retain) NSString * url;
 @property (nonatomic, retain) NSString * username;
-@property (nonatomic, retain) id primaryView;
+@property (nonatomic, retain) NSNumber * shouldAuthenticate;
 @property (nonatomic, retain) NSSet *rel_Jobs;
 @property (nonatomic, retain) NSSet *rel_Views;
 @end

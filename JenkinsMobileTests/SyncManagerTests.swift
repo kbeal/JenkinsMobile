@@ -344,7 +344,7 @@ class SyncManagerTests: XCTestCase {
         })
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstanceAuthenticatedKey: true, JenkinsInstancePrimaryViewKey: primaryView]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstanceAuthenticatedKey: true, JenkinsInstancePrimaryViewKey: primaryView, JenkinsInstanceShouldAuthenticateKey: true]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.allowInvalidSSLCertificate = true
         jinstance1.password = "password"
@@ -458,7 +458,7 @@ class SyncManagerTests: XCTestCase {
         })
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView, JenkinsInstanceShouldAuthenticateKey: true]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.password = "password1"
         jinstance1.allowInvalidSSLCertificate = true;
@@ -473,6 +473,7 @@ class SyncManagerTests: XCTestCase {
     }
     
     func testJenkinsInstanceLastSyncResult403() {
+        // this jenkins instance must not have anonymous access turned on
         let viewUpdatedNotificationExpectation = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
@@ -480,7 +481,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.lastSyncResult == "403: forbidden" && ji.url == "https://snowman:8443/jenkins/" {
+                        if ji.lastSyncResult == "403: forbidden" && ji.url == "http://jenkins:8080/" {
                             expectationFulfilled=true
                         }
                     }
@@ -490,9 +491,9 @@ class SyncManagerTests: XCTestCase {
         })
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "littleone", JenkinsInstancePrimaryViewKey: primaryView]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://jenkins:8080/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView, JenkinsInstanceShouldAuthenticateKey: true]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
-        jinstance1.password = "changeme"
+        jinstance1.password = "password"
         jinstance1.allowInvalidSSLCertificate = true;
         saveContext()
         
@@ -660,6 +661,7 @@ class SyncManagerTests: XCTestCase {
         
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password1"
+        jenkinsInstance?.shouldAuthenticate = true
         let jobURLStr = "http://jenkins:8080/job/Job3/"
         let jobURL = NSURL(string: jobURLStr)
         let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: jobURLStr, JobJenkinsInstanceKey: jenkinsInstance!]
@@ -693,6 +695,7 @@ class SyncManagerTests: XCTestCase {
         
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password"
+        jenkinsInstance?.shouldAuthenticate = true
         let jobURLStr = "http://jenkins:8080/job/Job3/"
         let jobURL = NSURL(string: jobURLStr)
         let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: jobURLStr, JobJenkinsInstanceKey: jenkinsInstance!]
@@ -922,6 +925,7 @@ class SyncManagerTests: XCTestCase {
         
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password1"
+        jenkinsInstance?.shouldAuthenticate = true
         let viewURLStr = "http://jenkins:8080/view/GrandParent/"
         let viewURL = NSURL(string: viewURLStr)
         let childViewVals1 = [ViewNameKey: "GrandParent", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jenkinsInstance!]
@@ -955,6 +959,7 @@ class SyncManagerTests: XCTestCase {
         
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password"
+        jenkinsInstance?.shouldAuthenticate = true
         let viewURLStr = "http://jenkins:8080/view/GrandParent/"
         let viewURL = NSURL(string: viewURLStr)
         let childViewVals1 = [ViewNameKey: "GrandParent", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jenkinsInstance!]
@@ -1151,6 +1156,7 @@ class SyncManagerTests: XCTestCase {
         
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password1"
+        jenkinsInstance?.shouldAuthenticate = true
         let buildURLStr = "http://jenkins:8080/job/Job3/1/"
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
@@ -1356,6 +1362,7 @@ class SyncManagerTests: XCTestCase {
         
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password1"
+        jenkinsInstance?.shouldAuthenticate = true
         let jobVals1 = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/Job6/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         

@@ -129,6 +129,7 @@ NSString * const JenkinsInstanceAuthenticatedKey = @"authenticated";
 NSString * const JenkinsInstanceLastSyncResultKey = @"lastSyncResult";
 NSString * const JenkinsInstanceViewsKey = @"views";
 NSString * const JenkinsInstancePrimaryViewKey = @"primaryView";
+NSString * const JenkinsInstanceShouldAuthenticateKey = @"shouldAuthenticate";
 
 #pragma mark - AFNetworking Keys
 NSString * const StatusCodeKey = @"statusCode";

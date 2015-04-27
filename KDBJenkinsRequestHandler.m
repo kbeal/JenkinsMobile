@@ -21,15 +21,18 @@
     JenkinsInstance *jinstance = job.rel_Job_JenkinsInstance;
     NSString *username = job.rel_Job_JenkinsInstance.username;
     NSString *password = job.rel_Job_JenkinsInstance.password;
+    BOOL shouldAuthenticate = [jinstance.shouldAuthenticate boolValue];
     NSString *jobURL = job.url;
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
-    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
-
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    
+    if (shouldAuthenticate) {
+        [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
+        manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    }
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@%@",@"Response received for job at url: ",jobURL);
@@ -55,13 +58,16 @@
         if ([request.allHTTPHeaderFields objectForKey:@"Authorization"] != nil) {
             return request;
         }
-        NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
-        NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
-        NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
-        NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
-        [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
-        
-        return urlRequest;
+        if (shouldAuthenticate) {
+            NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+            NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+            NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+            NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+            [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+            return urlRequest;
+        } else {
+            return request;
+        }
     }];
     
     [operation start];
@@ -77,14 +83,18 @@
     JenkinsInstance *jinstance = (JenkinsInstance *)view.rel_View_JenkinsInstance;
     NSString *username = jinstance.username;
     NSString *password = jinstance.password;
+    BOOL shouldAuthenticate = [jinstance.shouldAuthenticate boolValue];
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
-    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
-    
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    
+    if (shouldAuthenticate) {
+        [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
+        manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    }
+
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"%@%@",@"Response received for View at URL: ",viewURL);
@@ -110,13 +120,16 @@
         if ([request.allHTTPHeaderFields objectForKey:@"Authorization"] != nil) {
             return request;
         }
-        NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
-        NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
-        NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
-        NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
-        [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
-        
-        return urlRequest;
+        if (shouldAuthenticate) {
+            NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+            NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+            NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+            NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+            [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+            return urlRequest;
+        } else {
+            return request;
+        }
     }];
     
     [operation start];
@@ -131,12 +144,17 @@
     JenkinsInstance *jinstance = (JenkinsInstance *)ac.rel_ActiveConfiguration_Job.rel_Job_JenkinsInstance;
     NSString *username = jinstance.username;
     NSString *password = jinstance.password;
+    BOOL shouldAuthenticate = [jinstance.shouldAuthenticate boolValue];
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
-    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
-    manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    
+    if (shouldAuthenticate) {
+        [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
+        manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    }
+    
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -163,13 +181,16 @@
         if ([request.allHTTPHeaderFields objectForKey:@"Authorization"] != nil) {
             return request;
         }
-        NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
-        NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
-        NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
-        NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
-        [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
-        
-        return urlRequest;
+        if (shouldAuthenticate) {
+            NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+            NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+            NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+            NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+            [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+            return urlRequest;
+        } else {
+            return request;
+        }
     }];
     
     [operation start];
@@ -184,12 +205,17 @@
     JenkinsInstance *jinstance = (JenkinsInstance *)build.rel_Build_Job.rel_Job_JenkinsInstance;
     NSString *username = jinstance.username;
     NSString *password = jinstance.password;
+    BOOL shouldAuthenticate = [jinstance.shouldAuthenticate boolValue];
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
-    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
-    manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    
+    if (shouldAuthenticate) {
+        [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
+        manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    }
+    
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -216,13 +242,16 @@
         if ([request.allHTTPHeaderFields objectForKey:@"Authorization"] != nil) {
             return request;
         }
-        NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
-        NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
-        NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
-        NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
-        [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
-        
-        return urlRequest;
+        if (shouldAuthenticate) {
+            NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+            NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+            NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+            NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+            [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+            return urlRequest;
+        } else {
+            return request;
+        }
     }];
     
     [operation start];
@@ -235,15 +264,18 @@
     NSLog(@"%@%@",@"Requesting details for Jenkins at URL: ",requestURL.absoluteString);
     NSString *username = jinstance.username;
     NSString *password = jinstance.password;
+    BOOL shouldAuthenticate = [jinstance.shouldAuthenticate boolValue];
     NSURL *jinstanceURL = [NSURL URLWithString:jinstance.url];
     //NSString *jinstanceName = jinstance.name;
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
-    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:username password:password];
-
-    manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    
+    if (shouldAuthenticate) {
+        [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:username password:password];
+        manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    }
     
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
@@ -272,13 +304,16 @@
             return request;
         }
         
-        NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
-        NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
-        NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
-        NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
-        [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
-        
-        return urlRequest;
+        if (shouldAuthenticate) {
+            NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+            NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+            NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+            NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+            [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+            return urlRequest;
+        } else {
+            return request;
+        }
     }];
     
     [operation start];

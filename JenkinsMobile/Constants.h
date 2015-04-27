@@ -128,6 +128,7 @@ extern NSString * const JenkinsInstanceAuthenticatedKey;
 extern NSString * const JenkinsInstanceLastSyncResultKey;
 extern NSString * const JenkinsInstanceViewsKey;
 extern NSString * const JenkinsInstancePrimaryViewKey;
+extern NSString * const JenkinsInstanceShouldAuthenticateKey;
 
 #pragma mark - AFNetworking Keys
 extern NSString * const StatusCodeKey;
