@@ -7,22 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "KDBViewPickerViewController.h"
-#import "Job.h"
-#import "KDBMasterViewControllerDelegate.h"
+#import "KDBViewsTableViewController.h"
+#import "Constants.h"
 
 @class KDBJobDetailViewController;
 
-@interface KDBMasterViewController : UITableViewController <KDBViewPickerDelegate, KDBMasterViewControllerDelegate, NSFetchedResultsControllerDelegate, UIDataSourceModelAssociation>
-
-@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
-@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-
-@property (strong, nonatomic) KDBJobDetailViewController *jobDetailViewController;
-
-@property (nonatomic, strong) KDBViewPickerViewController *viewPicker;
-@property (nonatomic, strong) UIPopoverController *viewPickerPopover;
-
--(IBAction)chooseViewButtonTapped:(id)sender;
+@interface KDBMasterViewController : UITabBarController <UIDataSourceModelAssociation>
 
 @end

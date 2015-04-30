@@ -30,9 +30,9 @@
     
     SyncManager *mgr = [SyncManager sharedInstance];
     
-    NSURL *jenkinsURL = [NSURL URLWithString:@"https://jenkins.qa.ubuntu.com"];
+    //NSURL *jenkinsURL = [NSURL URLWithString:@"https://jenkins.qa.ubuntu.com"];
     //NSURL *jenkinsURL = [NSURL URLWithString:@"http://ci.thermofisher.com/jenkins"];
-    //NSURL *jenkinsURL = [NSURL URLWithString:@"https://snowman:8443/jenkins/"];
+    NSURL *jenkinsURL = [NSURL URLWithString:@"https://snowman:8443/jenkins/"];
     
     JenkinsInstance *ji = [self createJenkinsInstanceWithURL:jenkinsURL];
     mgr.requestHandler = [[KDBJenkinsRequestHandler alloc] init];
@@ -40,6 +40,12 @@
     mgr.mainMOC = self.mainMOC;
     
     [mgr syncJenkinsInstance:ji];
+    
+    UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
+    KDBMasterViewController *masterVC = splitViewController.viewControllers[0];
+    UINavigationController *viewsNavController = masterVC.viewControllers[0];
+    KDBViewsTableViewController *viewsTVC = (KDBViewsTableViewController *)viewsNavController.topViewController;
+    viewsTVC.managedObjectContext = self.mainMOC;
     
     /*
     KDBJenkinsRequestHandler *handler = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:jinstance];
@@ -79,6 +85,7 @@
     if (jinstance == nil) {
         jinstance = [JenkinsInstance createJenkinsInstanceWithValues:jenkins inManagedObjectContext:self.mainMOC];
         jinstance.password = @"changeme";
+        jinstance.shouldAuthenticate = [NSNumber numberWithBool:YES];
         jinstance.allowInvalidSSLCertificate = [NSNumber numberWithBool:YES];
         [self saveMainContext];
     }

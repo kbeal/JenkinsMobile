@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "View+More.h"
 
-@interface KDBViewsTableViewController : UITableViewController
+@interface KDBViewsTableViewController : UITableViewController <NSFetchedResultsControllerDelegate>
+
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 
 @end
