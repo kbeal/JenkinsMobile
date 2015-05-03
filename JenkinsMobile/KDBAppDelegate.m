@@ -35,6 +35,7 @@
     //NSURL *jenkinsURL = [NSURL URLWithString:@"https://snowman:8443/jenkins/"];
     
     JenkinsInstance *ji = [self createJenkinsInstanceWithURL:jenkinsURL];
+    mgr.currentJenkinsInstance = ji;
     mgr.requestHandler = [[KDBJenkinsRequestHandler alloc] init];
     mgr.masterMOC = self.masterMOC;
     mgr.mainMOC = self.mainMOC;
