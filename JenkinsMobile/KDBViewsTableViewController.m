@@ -16,6 +16,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.syncMgr = [SyncManager sharedInstance];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -110,11 +111,13 @@
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"View" inManagedObjectContext:self.managedObjectContext];
     [fetchRequest setEntity:entity];
     
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"rel_View_JenkinsInstance == %@", self.syncMgr.currentJenkinsInstance];
+    
     // Set the batch size to a suitable number.
     [fetchRequest setFetchBatchSize:20];
     
     // Edit the sort key as appropriate.
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:NO];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
     NSArray *sortDescriptors = @[sortDescriptor];
     
     [fetchRequest setSortDescriptors:sortDescriptors];
