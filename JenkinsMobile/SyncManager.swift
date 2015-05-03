@@ -13,11 +13,11 @@ import CoreData
     
     var masterMOC: NSManagedObjectContext?
     var mainMOC: NSManagedObjectContext?
+    var currentJenkinsInstance: JenkinsInstance?    
     private var jobSyncQueue = UniqueQueue<Job>()
     private var viewSyncQueue = UniqueQueue<View>()
     private var buildSyncQueue = UniqueQueue<Build>()
     private var syncTimer: NSTimer?
-    private var currentJenkinsInstance: JenkinsInstance?
     //var currentBuilds: NSMutableArray
     //var currentBuildsTimer: NSTimer
     var requestHandler: KDBJenkinsRequestHandler?
