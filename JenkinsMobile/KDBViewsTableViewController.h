@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "View+More.h"
 #import "JenkinsMobile-Swift.h"
+#import "JenkinsInstance+More.h"
 
 @interface KDBViewsTableViewController : UITableViewController <NSFetchedResultsControllerDelegate>
 
