@@ -17,12 +17,22 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.syncMgr = [SyncManager sharedInstance];
-    self.navigationItem.prompt = self.syncMgr.currentJenkinsInstance.name;
+    [self setNavTitleAndPrompt];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+}
+
+- (void) setNavTitleAndPrompt {
+    self.navigationItem.prompt = self.syncMgr.currentJenkinsInstance.name;
+    if (self.parentView) {
+        self.navigationItem.title = self.parentView.name;
+    } else {
+
+        self.navigationItem.title = @"Views";
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -108,15 +118,21 @@
 }
 */
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    if ([[segue identifier] isEqualToString:@"showChildViews"]) {
+        UINavigationController *newViewsNC = [segue destinationViewController];
+        KDBViewsTableViewController *newViewsTVC = (KDBViewsTableViewController *)newViewsNC.topViewController;
+        //View *selectedView = [[self fetchedResultsController] objectAtIndexPath:[self.tableView indexPathForSelectedRow]];
+        [newViewsTVC setManagedObjectContext:self.managedObjectContext];
+        [newViewsTVC setParentView:[[self fetchedResultsController] objectAtIndexPath:[self.tableView indexPathForSelectedRow]]];
+    }
 }
-*/
 
 #pragma mark - Fetched results controller
 - (NSFetchedResultsController *)fetchedResultsController

@@ -16,5 +16,6 @@
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) SyncManager *syncMgr;
+@property (strong, nonatomic) View *parentView;
 
 @end

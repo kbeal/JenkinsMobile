@@ -79,6 +79,9 @@
                                         </imageView>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="S9n-1Q-FwG" kind="show" identifier="showChildViews" id="LvU-Pz-zrK"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -161,4 +164,7 @@
     <resources>
         <image name="folder.png" width="40" height="40"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="LvU-Pz-zrK"/>
+    </inferredMetricsTieBreakers>
 </document>
