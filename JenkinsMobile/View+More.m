@@ -146,6 +146,8 @@
         
         // if there is no relation between this job and this view, create it
         if (![viewsJobsNames containsObject:[jobDict objectForKey:JobNameKey]]) {
+            [self addRel_View_JobsObject:job];
+            [job addRel_Job_ViewsObject:self];
             NSMutableSet *viewjobs = (NSMutableSet *)self.rel_View_Jobs;
             [viewjobs addObject:job];
             NSMutableSet *jobviews = (NSMutableSet *)job.rel_Job_Views;

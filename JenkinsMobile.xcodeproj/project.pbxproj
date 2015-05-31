@@ -11,6 +11,7 @@
 		5AF6BB25FF611914DCA12ECD /* (null) in Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (Weak, ); }; };
 		8A040A00192599D400B25073 /* KDBRelatedProjectsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A0409FF192599D400B25073 /* KDBRelatedProjectsViewController.m */; };
 		8A04ED4C1B1B6D9D005317E1 /* View.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A04ED4B1B1B6D9D005317E1 /* View.m */; };
+		8A04ED4F1B1BA2EF005317E1 /* KDBJobsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A04ED4E1B1BA2EF005317E1 /* KDBJobsTableViewController.m */; };
 		8A17654C191D9E3B00E108DF /* Git-Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A17654B191D9E3B00E108DF /* Git-Icon.png */; };
 		8A17654E191D9E4200E108DF /* svn-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A17654D191D9E4200E108DF /* svn-icon.png */; };
 		8A176551191DA0F300E108DF /* down.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A17654F191DA0F300E108DF /* down.png */; };
@@ -245,6 +246,8 @@
 		8A0409FF192599D400B25073 /* KDBRelatedProjectsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBRelatedProjectsViewController.m; sourceTree = "<group>"; };
 		8A04ED4A1B1B6D9D005317E1 /* View.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = View.h; sourceTree = "<group>"; };
 		8A04ED4B1B1B6D9D005317E1 /* View.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = View.m; sourceTree = "<group>"; };
+		8A04ED4D1B1BA2EF005317E1 /* KDBJobsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJobsTableViewController.h; sourceTree = "<group>"; };
+		8A04ED4E1B1BA2EF005317E1 /* KDBJobsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJobsTableViewController.m; sourceTree = "<group>"; };
 		8A17654B191D9E3B00E108DF /* Git-Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Git-Icon.png"; sourceTree = "<group>"; };
 		8A17654D191D9E4200E108DF /* svn-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "svn-icon.png"; sourceTree = "<group>"; };
 		8A17654F191DA0F300E108DF /* down.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = down.png; sourceTree = "<group>"; };
@@ -779,6 +782,8 @@
 				8A99949A197AB258009B82DD /* UIButton+RelatedProject.h */,
 				8A99949B197AB258009B82DD /* UIButton+RelatedProject.m */,
 				8AC464E019E6179C00AE5A76 /* UniqueQueue.swift */,
+				8A04ED4D1B1BA2EF005317E1 /* KDBJobsTableViewController.h */,
+				8A04ED4E1B1BA2EF005317E1 /* KDBJobsTableViewController.m */,
 			);
 			path = JenkinsMobile;
 			sourceTree = "<group>";
@@ -1235,6 +1240,7 @@
 				8A04ED4C1B1B6D9D005317E1 /* View.m in Sources */,
 				8AA85D6D1AF070C000F8B915 /* KDBMasterViewController.m in Sources */,
 				8A6D731C1A6F268700BFA0A5 /* ActiveConfiguration+More.m in Sources */,
+				8A04ED4F1B1BA2EF005317E1 /* KDBJobsTableViewController.m in Sources */,
 				8A41D37F1AE86EBD00650CFE /* KDBViewsTableViewController.m in Sources */,
 				8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */,
 				8AA1CD3D1A9EA99A00F977B0 /* Build+More.m in Sources */,

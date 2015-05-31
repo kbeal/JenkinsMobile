@@ -1,23 +1,24 @@
 //
-//  KDBViewsTableViewController.m
+//  KDBJobsTableViewController.m
 //  JenkinsMobile
 //
-//  Created by Kyle on 4/22/15.
+//  Created by Kyle on 5/31/15.
 //  Copyright (c) 2015 Kyle Beal. All rights reserved.
 //
 
-#import "KDBViewsTableViewController.h"
+#import "KDBJobsTableViewController.h"
 
-@interface KDBViewsTableViewController ()
+@interface KDBJobsTableViewController ()
 
 @end
 
-@implementation KDBViewsTableViewController
+@implementation KDBJobsTableViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.syncMgr = [SyncManager sharedInstance];
+    self.syncMgr = [SyncManager sharedInstance];    
     [self setNavTitleAndPrompt];
+    
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -28,10 +29,9 @@
 - (void) setNavTitleAndPrompt {
     self.navigationItem.prompt = self.syncMgr.currentJenkinsInstance.name;
     if (self.parentView) {
-        self.navigationItem.title = self.parentView.name;
+        self.navigationItem.title = [NSString stringWithFormat:@"%@%@",self.parentView.name,@" Jobs"];
     } else {
-
-        self.navigationItem.title = @"Views";
+        self.navigationItem.title = @"All Jobs";
     }
 }
 
@@ -41,17 +41,6 @@
 }
 
 #pragma mark - Table view delegate
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    View *selectedView = [[self fetchedResultsController] objectAtIndexPath:[self.tableView indexPathForSelectedRow]];
-    if (selectedView.rel_View_Views.count > 0) {
-        [self performSegueWithIdentifier:@"showChildViews" sender:self];
-    } else {
-        [self performSegueWithIdentifier:@"showJobs" sender:self];        
-    }
-    
-}
-
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Remove seperator inset
@@ -71,7 +60,6 @@
 }
 
 #pragma mark - Table view data source
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
@@ -84,14 +72,15 @@
     return [sectionInfo numberOfObjects];
 }
 
+
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    View *view = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    cell.textLabel.text = view.name;
+    Job *job = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    cell.textLabel.text = job.name;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ViewCell" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"JobCell" forIndexPath:indexPath];
     [self configureCell:cell atIndexPath:indexPath];
     return cell;
 }
@@ -130,26 +119,15 @@
 }
 */
 
-
+/*
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
-    if ([[segue identifier] isEqualToString:@"showChildViews"]) {
-        UINavigationController *newViewsNC = [segue destinationViewController];
-        KDBViewsTableViewController *newViewsTVC = (KDBViewsTableViewController *)newViewsNC.topViewController;
-        //View *selectedView = [[self fetchedResultsController] objectAtIndexPath:[self.tableView indexPathForSelectedRow]];
-        [newViewsTVC setManagedObjectContext:self.managedObjectContext];
-        [newViewsTVC setParentView:[[self fetchedResultsController] objectAtIndexPath:[self.tableView indexPathForSelectedRow]]];
-    } else if ([[segue identifier] isEqualToString:@"showJobs"]) {
-        UINavigationController *jobsNC = [segue destinationViewController];
-        KDBJobsTableViewController *jobsTVC = (KDBJobsTableViewController *)jobsNC.topViewController;
-        [jobsTVC setManagedObjectContext:self.managedObjectContext];
-        [jobsTVC setParentView:[[self fetchedResultsController] objectAtIndexPath:[self.tableView indexPathForSelectedRow]]];
-    }
 }
+*/
 
 #pragma mark - Fetched results controller
 - (NSFetchedResultsController *)fetchedResultsController
@@ -160,16 +138,12 @@
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     // Edit the entity name as appropriate.
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"View" inManagedObjectContext:self.managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Job" inManagedObjectContext:self.managedObjectContext];
     [fetchRequest setEntity:entity];
-
-    NSPredicate *predicate = nil;
+    
     if (self.parentView) {
-        predicate = [NSPredicate predicateWithFormat:@"rel_ParentView == %@", self.parentView];
-    } else {
-        predicate = [NSPredicate predicateWithFormat:@"rel_View_JenkinsInstance == %@", self.syncMgr.currentJenkinsInstance];
+        fetchRequest.predicate = [NSPredicate predicateWithFormat:@"rel_Job_Views contains[cd] %@", self.parentView];
     }
-    fetchRequest.predicate = predicate;
     
     // Set the batch size to a suitable number.
     [fetchRequest setFetchBatchSize:20];
