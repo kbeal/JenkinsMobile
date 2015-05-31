@@ -2,7 +2,7 @@
 //  View.h
 //  JenkinsMobile
 //
-//  Created by Kyle on 2/25/15.
+//  Created by Kyle on 5/31/15.
 //  Copyright (c) 2015 Kyle Beal. All rights reserved.
 //
 
@@ -21,6 +21,7 @@
 @property (nonatomic, retain) JenkinsInstance *rel_View_JenkinsInstance;
 @property (nonatomic, retain) NSSet *rel_View_Jobs;
 @property (nonatomic, retain) NSSet *rel_View_Views;
+@property (nonatomic, retain) View *rel_ParentView;
 @end
 
 @interface View (CoreDataGeneratedAccessors)

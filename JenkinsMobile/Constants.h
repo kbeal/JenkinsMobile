@@ -36,6 +36,7 @@ extern NSString * const ViewJobsKey;
 extern NSString * const ViewViewsKey;
 extern NSString * const ViewJenkinsInstanceKey;
 extern NSString * const ViewLastSyncResultKey;
+extern NSString * const ViewParentViewKey;
 
 #pragma mark - Job keys
 extern NSString * const JobURLKey;

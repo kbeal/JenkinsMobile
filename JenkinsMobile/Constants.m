@@ -36,6 +36,7 @@ NSString * const ViewJobsKey = @"jobs";
 NSString * const ViewViewsKey = @"views";
 NSString * const ViewJenkinsInstanceKey = @"jenkinsInstance";
 NSString * const ViewLastSyncResultKey = @"lastSyncResult";
+NSString * const ViewParentViewKey = @"parentView";
 
 #pragma mark - Job Keys
 NSString * const JobURLKey = @"url";

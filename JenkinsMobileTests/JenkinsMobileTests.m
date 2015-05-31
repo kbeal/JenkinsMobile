@@ -569,6 +569,8 @@
     NSDictionary *parentView2Dict = [NSDictionary dictionaryWithObjects:parentView2Values forKeys:viewKeys];
     View *parentView = [View createViewWithValues:parentViewDict inManagedObjectContext:_context];
     View *parentView2 = [View createViewWithValues:parentView2Dict inManagedObjectContext:_context];
+    View *childViewObj1 = [parentView.rel_View_Views anyObject];
+    View *childViewObj2 = [parentView2.rel_View_Views anyObject];
     
     NSError *error;
     NSFetchRequest *allViews = [[NSFetchRequest alloc] init];
@@ -578,6 +580,8 @@
     
     XCTAssert(parentView.rel_View_Views.count==3, @"parentView's views count should be 3, got %lu instead",(unsigned long)parentView.rel_View_Views.count);
     XCTAssert(parentView2.rel_View_Views.count==2, @"parentView2's views count should be 2, got %lu instead",(unsigned long)parentView2.rel_View_Views.count);
+    XCTAssert(childViewObj1.rel_ParentView==parentView, @"child view 1 has wrong parent view");
+    XCTAssert(childViewObj2.rel_ParentView==parentView, @"child view 2 has wrong parent view");
     XCTAssert(views.count==5, @"view count should be 4, instead got %lu", (unsigned long)views.count);
     XCTAssert(_jinstance.rel_Views.count==5, @"jenkins instance should be related to 5 views, instead related to %lu",(unsigned long)_jinstance.rel_Views.count);
 }

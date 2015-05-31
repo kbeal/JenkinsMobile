@@ -2,7 +2,7 @@
 //  View.m
 //  JenkinsMobile
 //
-//  Created by Kyle on 2/25/15.
+//  Created by Kyle on 5/31/15.
 //  Copyright (c) 2015 Kyle Beal. All rights reserved.
 //
 
@@ -22,5 +22,6 @@
 @dynamic rel_View_JenkinsInstance;
 @dynamic rel_View_Jobs;
 @dynamic rel_View_Views;
+@dynamic rel_ParentView;
 
 @end

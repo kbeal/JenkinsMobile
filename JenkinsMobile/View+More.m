@@ -60,6 +60,7 @@
     self.lastSyncResult = NULL_TO_NIL([values objectForKey:ViewLastSyncResultKey]);
     self.view_description = NULL_TO_NIL([values objectForKey:@"description"]);
     self.rel_View_JenkinsInstance = NULL_TO_NIL([values objectForKey:@"jenkinsInstance"]);
+    self.rel_ParentView = NULL_TO_NIL([values objectForKey:ViewParentViewKey]);
     [self setCanonicalURL];
     [self createJobsFromViewValues:[values objectForKey:@"jobs"]];
     [self createChildViews:NULL_TO_NIL([values objectForKey:ViewViewsKey])];
@@ -97,6 +98,7 @@
                 // or create new view with url
                 NSMutableDictionary *mutchildView = [NSMutableDictionary dictionaryWithDictionary:childViewDict];
                 [mutchildView setObject:self.rel_View_JenkinsInstance forKey:ViewJenkinsInstanceKey];
+                [mutchildView setObject:self forKey:ViewParentViewKey];
                 newView = [View createViewWithValues:mutchildView inManagedObjectContext:self.managedObjectContext];
             }
             
