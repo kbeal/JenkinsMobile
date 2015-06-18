@@ -42,7 +42,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    self.syncMgr = [SyncManager sharedInstance];
+    [self setNavTitleAndPrompt];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -50,10 +51,33 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
+- (void) setNavTitleAndPrompt {
+    self.navigationItem.prompt = self.syncMgr.currentJenkinsInstance.name;
+    if (self.job) {
+        self.navigationItem.title = self.job.name;
+    } else {
+        self.navigationItem.title = @"Current Builds";
+    }
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Table view delegate
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Remove seperator inset
+    if ([cell respondsToSelector:@selector(setSeparatorInset:)]) {
+        [cell setSeparatorInset:UIEdgeInsetsZero];
+    }
+    
+    // Explictly set your cell's layout margins
+    if ([cell respondsToSelector:@selector(setLayoutMargins:)]) {
+        [cell setLayoutMargins:UIEdgeInsetsZero];
+    }
 }
 
 #pragma mark - Table view data source
@@ -73,7 +97,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"BuildCell" forIndexPath:indexPath];
     [self configureCell:cell atIndexPath:indexPath];
     return cell;
 }
@@ -81,7 +105,11 @@
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     Build *build = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    cell.textLabel.text = [NSString stringWithFormat:@"%@%@",@"# ",[build.number stringValue]];
+    NSString *label = [NSString stringWithFormat:@"%@%@",@"# ",[build.number stringValue]];
+    if (!self.job) {
+        label = [NSString stringWithFormat:@"%@%@%@",build.rel_Build_Job.name,@" #",[build.number stringValue]];
+    }
+    cell.textLabel.text = label;
 }
 
 /*
@@ -162,8 +190,16 @@
     // nil for section name key path means "no sections".
     // cacheName must be nil to workaround crash when managedObjectContext is a child context with NSMainQueueConcurrencyType
     NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:nil];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"jobURL = %@",self.job.url];
-    [aFetchedResultsController.fetchRequest setPredicate:predicate];
+
+    NSPredicate *predicate = nil;
+    if (self.job) {
+        predicate = [NSPredicate predicateWithFormat:@"rel_Build_Job == %@", self.job];
+    } else {
+        // TODO: add Build <--> JenkinsInstance relationship
+        //predicate = [NSPredicate predicateWithFormat:@"rel_View_JenkinsInstance == %@ && building == true", self.syncMgr.currentJenkinsInstance];
+    }
+    fetchRequest.predicate = predicate;
+    
     aFetchedResultsController.delegate = self;
     self.fetchedResultsController = aFetchedResultsController;
     

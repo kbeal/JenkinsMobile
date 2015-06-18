@@ -7,12 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Job.h"
-#import "Build.h"
+#import "Job+More.h"
+#import "Build+More.h"
+#import "JenkinsMobile-Swift.h"
 
 @interface KDBBuildsTableViewController : UITableViewController <NSFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) Job *job;
+@property (strong, nonatomic) SyncManager *syncMgr;
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
