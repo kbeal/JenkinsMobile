@@ -45,8 +45,11 @@
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
     KDBMasterViewController *masterVC = splitViewController.viewControllers[0];
     UINavigationController *viewsNavController = masterVC.viewControllers[0];
+    UINavigationController *allJobsNavController = masterVC.viewControllers[1];
     KDBViewsTableViewController *viewsTVC = (KDBViewsTableViewController *)viewsNavController.topViewController;
+    KDBJobsTableViewController *jobsTVC = (KDBJobsTableViewController *)allJobsNavController.topViewController;
     viewsTVC.managedObjectContext = self.mainMOC;
+    jobsTVC.managedObjectContext = self.mainMOC;
     
     /*
     KDBJenkinsRequestHandler *handler = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:jinstance];
