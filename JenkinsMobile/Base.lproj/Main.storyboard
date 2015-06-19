@@ -211,11 +211,11 @@
             </objects>
             <point key="canvasLocation" x="2628" y="1110"/>
         </scene>
-        <!--Current Builds Navigation Controller-->
+        <!--Recent Activity Navigation Controller-->
         <scene sceneID="JP8-Ur-bgI">
             <objects>
-                <navigationController id="bX0-6M-OX3" userLabel="Current Builds Navigation Controller" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Current Builds" id="lqK-pt-sDn"/>
+                <navigationController id="bX0-6M-OX3" userLabel="Recent Activity Navigation Controller" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Recent Activity" id="lqK-pt-sDn"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="Fdi-x2-bjQ">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>

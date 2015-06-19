@@ -56,7 +56,7 @@
     if (self.job) {
         self.navigationItem.title = self.job.name;
     } else {
-        self.navigationItem.title = @"Current Builds";
+        self.navigationItem.title = @"Recent Activity";
     }
 }
 
