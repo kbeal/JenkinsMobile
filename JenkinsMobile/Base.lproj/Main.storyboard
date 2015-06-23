@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="8nv-Fh-rle">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D2134" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="8nv-Fh-rle">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
@@ -87,7 +87,9 @@
                             <outlet property="delegate" destination="ZAy-iI-4w0" id="wD8-Lg-gBs"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Views" id="43e-Ib-4XW"/>
+                    <navigationItem key="navigationItem" title="Views" id="K27-tr-6Gy">
+                        <barButtonItem key="leftBarButtonItem" image="logo.png" id="UgT-kA-zfr"/>
+                    </navigationItem>
                     <connections>
                         <segue destination="CWw-Fc-R3P" kind="show" identifier="showJobs" id="ZGx-hL-vHC"/>
                         <segue destination="S9n-1Q-FwG" kind="show" identifier="showChildViews" id="wNa-42-HRK"/>
@@ -233,9 +235,10 @@
     <resources>
         <image name="blue.png" width="40" height="40"/>
         <image name="folder.png" width="40" height="40"/>
+        <image name="logo.png" width="40" height="40"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="TkT-ak-Muz"/>
-        <segue reference="Gcw-vz-jDd"/>
+        <segue reference="ZGx-hL-vHC"/>
+        <segue reference="wNa-42-HRK"/>
     </inferredMetricsTieBreakers>
 </document>

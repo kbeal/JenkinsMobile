@@ -17,7 +17,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.syncMgr = [SyncManager sharedInstance];
-    [self setNavTitleAndPrompt];
+    [self setNavTitleAndButton];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -25,12 +25,12 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
-- (void) setNavTitleAndPrompt {
-    self.navigationItem.prompt = self.syncMgr.currentJenkinsInstance.name;
+- (void) setNavTitleAndButton {
+    self.navigationItem.leftBarButtonItem.image = [[UIImage imageNamed:@"logo.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     if (self.parentView) {
         self.navigationItem.title = self.parentView.name;
     } else {
-
+        
         self.navigationItem.title = @"Views";
     }
 }
