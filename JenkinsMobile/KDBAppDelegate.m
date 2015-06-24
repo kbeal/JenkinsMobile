@@ -42,6 +42,21 @@
     
     [mgr syncJenkinsInstance:ji];
     
+    /*
+    SWRevealViewController *revealViewController = (SWRevealViewController *)self.window.rootViewController;
+    UISplitViewController *splitViewController = (UISplitViewController *)revealViewController.frontViewController;
+    KDBMasterViewController *masterVC = splitViewController.viewControllers[0];
+    UINavigationController *viewsNavController = masterVC.viewControllers[0];
+    UINavigationController *allJobsNavController = masterVC.viewControllers[1];
+    UINavigationController *currentBuildsNavController = masterVC.viewControllers[2];
+    KDBViewsTableViewController *viewsTVC = (KDBViewsTableViewController *)viewsNavController.topViewController;
+    KDBJobsTableViewController *jobsTVC = (KDBJobsTableViewController *)allJobsNavController.topViewController;
+    KDBBuildsTableViewController *buildsTVC = (KDBBuildsTableViewController *)currentBuildsNavController.topViewController;
+    viewsTVC.managedObjectContext = self.mainMOC;
+    jobsTVC.managedObjectContext = self.mainMOC;
+    buildsTVC.managedObjectContext = self.mainMOC;*/
+    
+    /*
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
     KDBMasterViewController *masterVC = splitViewController.viewControllers[0];
     UINavigationController *viewsNavController = masterVC.viewControllers[0];
@@ -53,6 +68,7 @@
     viewsTVC.managedObjectContext = self.mainMOC;
     jobsTVC.managedObjectContext = self.mainMOC;
     buildsTVC.managedObjectContext = self.mainMOC;
+     */
     
     /*
     KDBJenkinsRequestHandler *handler = [[KDBJenkinsRequestHandler alloc] initWithJenkinsInstance:jinstance];
