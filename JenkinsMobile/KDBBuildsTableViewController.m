@@ -43,7 +43,8 @@
 {
     [super viewDidLoad];
     self.syncMgr = [SyncManager sharedInstance];
-    [self setNavTitleAndPrompt];
+    self.managedObjectContext = self.syncMgr.mainMOC;    
+    [self setNavTitleAndButton];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -51,11 +52,12 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
-- (void) setNavTitleAndPrompt {
-    self.navigationItem.prompt = self.syncMgr.currentJenkinsInstance.name;
+- (void) setNavTitleAndButton {
+    self.navigationItem.leftBarButtonItem.image = [[UIImage imageNamed:@"logo.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     if (self.job) {
         self.navigationItem.title = self.job.name;
     } else {
+        
         self.navigationItem.title = @"Recent Activity";
     }
 }

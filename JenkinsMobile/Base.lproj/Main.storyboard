@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D2134" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="eKZ-33-6Jp">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="eKZ-33-6Jp">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
@@ -81,7 +81,7 @@
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Boom" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5qp-Mb-sIk">
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
@@ -207,7 +207,11 @@
                             <outlet property="delegate" destination="jhQ-zG-oVb" id="Q0P-bk-bNI"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="UE9-5y-KwB"/>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="UE9-5y-KwB">
+                        <barButtonItem key="leftBarButtonItem" image="logo.png" id="Eda-7H-Akn"/>
+                    </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TCb-do-UnG" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -264,7 +268,9 @@
                             <outlet property="delegate" destination="ZTY-wW-mYp" id="bty-hf-5Js"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="Dll-Ae-kb7"/>
+                    <navigationItem key="navigationItem" title="Root View Controller" id="Dll-Ae-kb7">
+                        <barButtonItem key="leftBarButtonItem" image="logo.png" id="XQ1-vW-NXx"/>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1We-KT-Ws6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
