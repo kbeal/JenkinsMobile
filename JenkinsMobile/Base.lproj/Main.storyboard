@@ -143,11 +143,8 @@
                             <outlet property="delegate" destination="ZAy-iI-4w0" id="wD8-Lg-gBs"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Views" id="K27-tr-6Gy">
-                        <barButtonItem key="leftBarButtonItem" image="logo.png" id="UgT-kA-zfr"/>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Views" id="K27-tr-6Gy"/>
                     <connections>
-                        <outlet property="sidebarButton" destination="UgT-kA-zfr" id="dDo-Kf-eRy"/>
                         <segue destination="CWw-Fc-R3P" kind="show" identifier="showJobs" id="ZGx-hL-vHC"/>
                         <segue destination="S9n-1Q-FwG" kind="show" identifier="showChildViews" id="wNa-42-HRK"/>
                     </connections>
@@ -209,7 +206,7 @@
                     </tableView>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="UE9-5y-KwB">
-                        <barButtonItem key="leftBarButtonItem" image="logo.png" id="Eda-7H-Akn"/>
+                        <barButtonItem key="leftBarButtonItem" image="logo.png" id="D3l-lH-DGj"/>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
@@ -268,9 +265,7 @@
                             <outlet property="delegate" destination="ZTY-wW-mYp" id="bty-hf-5Js"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="Dll-Ae-kb7">
-                        <barButtonItem key="leftBarButtonItem" image="logo.png" id="XQ1-vW-NXx"/>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Root View Controller" id="Dll-Ae-kb7"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1We-KT-Ws6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

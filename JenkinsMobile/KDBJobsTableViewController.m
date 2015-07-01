@@ -14,6 +14,8 @@
 
 @implementation KDBJobsTableViewController
 
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.syncMgr = [SyncManager sharedInstance];
@@ -28,10 +30,12 @@
 }
 
 - (void) setNavTitleAndButton {
-    self.navigationItem.leftBarButtonItem.image = [[UIImage imageNamed:@"logo.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    // TODO: This is slow.
     if (self.parentView) {
+        self.navigationItem.leftBarButtonItem = nil;
         self.navigationItem.title = self.parentView.name;
-    } else {        
+    } else {
+        self.navigationItem.leftBarButtonItem.image = [[UIImage imageNamed:@"logo.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
         self.navigationItem.title = @"All Jobs";
     }
 }

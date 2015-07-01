@@ -53,11 +53,10 @@
 }
 
 - (void) setNavTitleAndButton {
-    self.navigationItem.leftBarButtonItem.image = [[UIImage imageNamed:@"logo.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     if (self.job) {
         self.navigationItem.title = self.job.name;
     } else {
-        
+        self.navigationItem.leftBarButtonItem.image = [[UIImage imageNamed:@"logo.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];        
         self.navigationItem.title = @"Recent Activity";
     }
 }
