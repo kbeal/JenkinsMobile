@@ -37,13 +37,10 @@
 
 - (void) setNavTitleAndButton {
     if (self.parentView) {
+        self.navigationItem.leftBarButtonItem = nil;
         self.navigationItem.title = self.parentView.name;
     } else {
-        UIButton *logoButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [logoButton setImage:[[UIImage imageNamed:@"logo.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
-        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:logoButton];
-        
-//        self.navigationItem.leftBarButtonItem.image = [[UIImage imageNamed:@"logo.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        self.navigationItem.leftBarButtonItem.image = [[UIImage imageNamed:@"logo.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
         self.navigationItem.title = @"Views";
     }
 }

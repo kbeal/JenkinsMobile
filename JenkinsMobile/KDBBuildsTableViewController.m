@@ -10,6 +10,7 @@
 #import "KDBBuildDetailViewController.h"
 #import "KDBJobDetailViewController.h"
 #import "KDBMasterViewController.h"
+#import "SWRevealViewController.h"
 
 @interface KDBBuildsTableViewController ()
 
@@ -45,6 +46,13 @@
     self.syncMgr = [SyncManager sharedInstance];
     self.managedObjectContext = self.syncMgr.mainMOC;    
     [self setNavTitleAndButton];
+    
+    SWRevealViewController *revealViewController = self.revealViewController;
+    if (revealViewController) {
+        [self.sidebarButton setTarget: self.revealViewController];
+        [self.sidebarButton setAction: @selector( revealToggle: )];
+        [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    }
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -54,6 +62,7 @@
 
 - (void) setNavTitleAndButton {
     if (self.job) {
+        self.navigationItem.leftBarButtonItem = nil;
         self.navigationItem.title = self.job.name;
     } else {
         self.navigationItem.leftBarButtonItem.image = [[UIImage imageNamed:@"logo.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];        

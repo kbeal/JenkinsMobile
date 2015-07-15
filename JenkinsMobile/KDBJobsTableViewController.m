@@ -7,6 +7,7 @@
 //
 
 #import "KDBJobsTableViewController.h"
+#import "SWRevealViewController.h"
 
 @interface KDBJobsTableViewController ()
 
@@ -22,6 +23,13 @@
     self.managedObjectContext = self.syncMgr.mainMOC;    
     [self setNavTitleAndButton];
     
+    SWRevealViewController *revealViewController = self.revealViewController;
+    if (revealViewController) {
+        [self.sidebarButton setTarget: self.revealViewController];
+        [self.sidebarButton setAction: @selector( revealToggle: )];
+        [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    }
+    
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -30,7 +38,6 @@
 }
 
 - (void) setNavTitleAndButton {
-    // TODO: This is slow.
     if (self.parentView) {
         self.navigationItem.leftBarButtonItem = nil;
         self.navigationItem.title = self.parentView.name;
