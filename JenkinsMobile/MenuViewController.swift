@@ -8,10 +8,13 @@
 
 import UIKit
 
-class MenuViewController: UITableViewController {
+class MenuViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+    
+    var managedObjectContext: NSManagedObjectContext?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.managedObjectContext = SyncManager.sharedInstance.currentJenkinsInstance?.managedObjectContext
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -36,13 +39,20 @@ class MenuViewController: UITableViewController {
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
-        return 1
+        return self.fetchedResultsController.sections!.count
     }
 
+    func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
+        let jinstance = self.fetchedResultsController.objectAtIndexPath(indexPath) as! JenkinsInstance
+        cell.textLabel?.text = jinstance.name
+        cell.detailTextLabel?.text = jinstance.url
+
+    }
+    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("JenkinsInstanceCell", forIndexPath: indexPath) as! UITableViewCell
 
-        cell.textLabel?.text = "Add Server";
+        self.configureCell(cell, atIndexPath: indexPath)
 
         return cell
     }
@@ -91,5 +101,60 @@ class MenuViewController: UITableViewController {
         // Pass the selected object to the new view controller.
     }
     */
+    
+    // MARK: - Fetched Results Controller Delegate
+    var fetchedResultsController: NSFetchedResultsController {
+        if self._fetchedResultsController != nil {
+            return self._fetchedResultsController!
+        }
+        let managedObjectContext = self.managedObjectContext!
+        
+        let entity = NSEntityDescription.entityForName("JenkinsInstance", inManagedObjectContext: managedObjectContext)
+        let sort = NSSortDescriptor(key: "name", ascending: true)
+        let req = NSFetchRequest()
+        req.entity = entity
+        req.sortDescriptors = [sort]
+        
+        let aFetchedResultsController = NSFetchedResultsController(fetchRequest: req, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        aFetchedResultsController.delegate = self
+        self._fetchedResultsController = aFetchedResultsController
+        
+        // perform initial model fetch
+        var e: NSError?
+        if !self._fetchedResultsController!.performFetch(&e) {
+            println("fetch error: \(e!.localizedDescription)")
+            abort();
+        }
+        
+        return self._fetchedResultsController!
+    }
+    var _fetchedResultsController: NSFetchedResultsController?
+    
+    func controllerWillChangeContent(controller: NSFetchedResultsController) {
+        self.tableView.beginUpdates()
+    }
+    
+    func controller(controller: NSFetchedResultsController, didChangeObject object: AnyObject, atIndexPath indexPath: NSIndexPath?,
+        forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+            switch type {
+            case .Insert:
+                self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
+            case .Update:
+                let cell = self.tableView.cellForRowAtIndexPath(indexPath!)
+                self.configureCell(cell!, atIndexPath: indexPath!)
+                self.tableView.reloadRowsAtIndexPaths([indexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
+            case .Move:
+                self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
+                self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
+            case .Delete:
+                self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
+            default:
+                return
+            }
+    }
+    
+    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        self.tableView.endUpdates()
+    }
 
 }
