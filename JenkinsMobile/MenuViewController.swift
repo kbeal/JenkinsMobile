@@ -10,6 +10,7 @@ import UIKit
 
 class MenuViewController: UITableViewController, NSFetchedResultsControllerDelegate {
     
+    @IBOutlet weak var addServerButton: UIButton!
     var managedObjectContext: NSManagedObjectContext?
 
     override func viewDidLoad() {
