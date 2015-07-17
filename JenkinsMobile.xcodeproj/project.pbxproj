@@ -167,7 +167,6 @@
 		8A3CBA3B18E7C57C00D0D160 /* notbuilt.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CBA3918E7C57C00D0D160 /* notbuilt.png */; };
 		8A3CBA3C18E7C57C00D0D160 /* notbuilt@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CBA3A18E7C57C00D0D160 /* notbuilt@2x.png */; };
 		8A3DA825198F2C3800C97992 /* KDBJobDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A3DA824198F2C3800C97992 /* KDBJobDetailTableViewController.m */; };
-		8A41D37C1AE86C7C00650CFE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A41D37A1AE86C7C00650CFE /* Main.storyboard */; };
 		8A41D37F1AE86EBD00650CFE /* KDBViewsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A41D37E1AE86EBD00650CFE /* KDBViewsTableViewController.m */; };
 		8A4ACA5D1B3A3DE50088648C /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A4ACA5C1B3A3DE50088648C /* SWRevealViewController.m */; };
 		8A4ACA641B3A40280088648C /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4ACA631B3A40280088648C /* MenuViewController.swift */; };
@@ -229,6 +228,8 @@
 		8AE3B95C18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B95B18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m */; };
 		8AE904B819BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE904B719BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m */; };
 		8AFBC11F19468806008EDC9D /* KDBMasterBuildListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */; };
+		8AFC02191B5883EA00D2B78E /* DismissSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC02181B5883EA00D2B78E /* DismissSegue.swift */; };
+		8AFC021A1B58865F00D2B78E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A41D37A1AE86C7C00650CFE /* Main.storyboard */; };
 		A4CD95588CA1A543B8F48076 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 971CCB7C1BC0DAB1EEF714F9 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -504,6 +505,7 @@
 		8AE904B719BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJobTestResultsTableViewCell.m; sourceTree = "<group>"; };
 		8AFBC11D19468806008EDC9D /* KDBMasterBuildListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBMasterBuildListTableViewController.h; sourceTree = "<group>"; };
 		8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBMasterBuildListTableViewController.m; sourceTree = "<group>"; };
+		8AFC02181B5883EA00D2B78E /* DismissSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DismissSegue.swift; sourceTree = "<group>"; };
 		8AFDD5131947CFCA008F2791 /* KDBMasterViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KDBMasterViewControllerDelegate.h; sourceTree = "<group>"; };
 		8AFDD5141947CFEA008F2791 /* KDBViewPickerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KDBViewPickerDelegate.h; sourceTree = "<group>"; };
 		8AFDD5151947D421008F2791 /* KDBDetailViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KDBDetailViewControllerDelegate.h; sourceTree = "<group>"; };
@@ -800,6 +802,7 @@
 				8A04ED4D1B1BA2EF005317E1 /* KDBJobsTableViewController.h */,
 				8A04ED4E1B1BA2EF005317E1 /* KDBJobsTableViewController.m */,
 				8A4ACA631B3A40280088648C /* MenuViewController.swift */,
+				8AFC02181B5883EA00D2B78E /* DismissSegue.swift */,
 			);
 			path = JenkinsMobile;
 			sourceTree = "<group>";
@@ -1061,7 +1064,6 @@
 				8A3CBA0C18E7C39900D0D160 /* grey@2x.png in Resources */,
 				8A3CB9B718E7C39900D0D160 /* system-log-out.png in Resources */,
 				8A3CB9AD18E7C39900D0D160 /* video.png in Resources */,
-				8A41D37C1AE86C7C00650CFE /* Main.storyboard in Resources */,
 				8A3CBA2F18E7C39900D0D160 /* bookmark-new.png in Resources */,
 				8A3CB9F618E7C39900D0D160 /* keys@2x.png in Resources */,
 				8A3CB9BB18E7C39900D0D160 /* star.png in Resources */,
@@ -1073,6 +1075,7 @@
 				8A23EF17196B89AE0001DDE3 /* health-80plus@2x.png in Resources */,
 				8A3CB9CC18E7C39900D0D160 /* save@2x.png in Resources */,
 				8A3CB9B818E7C39900D0D160 /* system-log-out@2x.png in Resources */,
+				8AFC021A1B58865F00D2B78E /* Main.storyboard in Resources */,
 				8A3CB9F818E7C39900D0D160 /* installer@2x.png in Resources */,
 				8A3CB9F118E7C39900D0D160 /* logo.png in Resources */,
 				8A3CBA2218E7C39900D0D160 /* document@2x.png in Resources */,
@@ -1233,6 +1236,7 @@
 				8A9B05B11924452D0019B336 /* KDBBuildDetailViewController.m in Sources */,
 				8AC32A4118E4FB6F0002D106 /* AFHTTPRequestOperation.m in Sources */,
 				8AA1CD311A9EA94500F977B0 /* Build.m in Sources */,
+				8AFC02191B5883EA00D2B78E /* DismissSegue.swift in Sources */,
 				8AC32A4418E4FB6F0002D106 /* AFNetworkReachabilityManager.m in Sources */,
 				8AC32A4918E4FB6F0002D106 /* AFURLSessionManager.m in Sources */,
 				8AC32A4718E4FB6F0002D106 /* AFURLRequestSerialization.m in Sources */,

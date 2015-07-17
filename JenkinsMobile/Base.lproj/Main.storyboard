@@ -81,7 +81,7 @@
                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
                                     <state key="normal" title="Add Server"/>
                                     <connections>
-                                        <segue destination="U2y-ax-vZu" kind="presentation" id="pov-J3-P6q"/>
+                                        <segue destination="haU-l6-AyS" kind="presentation" id="PUT-gz-wxJ"/>
                                     </connections>
                                 </button>
                             </subviews>
@@ -107,6 +107,9 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="haU-l6-AyS" kind="presentation" id="fPI-8a-26I"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -122,10 +125,26 @@
             </objects>
             <point key="canvasLocation" x="233" y="-964"/>
         </scene>
-        <!--Presentation-->
+        <!--Add Server Navigation Controller-->
+        <scene sceneID="zzW-qh-Hr2">
+            <objects>
+                <navigationController title="Add Server Navigation Controller" id="haU-l6-AyS" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="8Xp-7e-D33">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="U2y-ax-vZu" kind="relationship" relationship="rootViewController" id="tXX-zV-tjz"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="bPK-kw-Xqy" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="956" y="-1610"/>
+        </scene>
+        <!--Add Server TableView Controller-->
         <scene sceneID="B34-HD-KCY">
             <objects>
-                <tableViewController id="U2y-ax-vZu" customClass="UIPresentation" sceneMemberID="viewController">
+                <tableViewController title="Add Server TableView Controller" id="U2y-ax-vZu" customClass="UIPresentation" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="xgy-xf-8pN">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -289,10 +308,22 @@
                             <outlet property="delegate" destination="U2y-ax-vZu" id="2vo-Mh-04q"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" id="vul-vb-WJJ">
+                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="dhq-9D-BQ8">
+                            <connections>
+                                <segue destination="20v-Qr-N6F" kind="custom" customClass="DismissSegue" customModule="JenkinsMobile" id="T6A-mv-LGP"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Done" id="XAC-dt-Sgq">
+                            <connections>
+                                <segue destination="20v-Qr-N6F" kind="custom" customClass="DismissSegue" customModule="JenkinsMobile" id="CPU-IM-53X"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Uqy-Td-JYj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="902" y="-964"/>
+            <point key="canvasLocation" x="1653" y="-964"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="ziT-nW-2Rb">
@@ -508,5 +539,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="wNa-42-HRK"/>
         <segue reference="ZGx-hL-vHC"/>
+        <segue reference="PUT-gz-wxJ"/>
+        <segue reference="T6A-mv-LGP"/>
     </inferredMetricsTieBreakers>
 </document>
