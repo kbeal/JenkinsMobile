@@ -68,6 +68,22 @@ class JenkinsInstanceTableViewController: UITableViewController {
         return rows
     }
     
+    func configureTextField(cell: UITableViewCell, textFieldText: String?) {
+        cell.detailTextLabel?.hidden = true
+        cell.viewWithTag(3)?.removeFromSuperview()
+        let textField: UITextField = UITextField()
+        textField.tag = 3;
+        textField.text = textFieldText
+        textField.setTranslatesAutoresizingMaskIntoConstraints(false)
+        cell.contentView.addSubview(textField)
+        cell.addConstraint(NSLayoutConstraint(item: textField, attribute: NSLayoutAttribute.Leading, relatedBy: NSLayoutRelation.Equal, toItem: cell.textLabel, attribute: NSLayoutAttribute.Trailing, multiplier: 1, constant: 8))
+        cell.addConstraint(NSLayoutConstraint(item: textField, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: cell.contentView, attribute: NSLayoutAttribute.Top, multiplier: 1, constant: 8))
+        cell.addConstraint(NSLayoutConstraint(item: textField, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: cell.contentView, attribute: NSLayoutAttribute.Bottom, multiplier: 1, constant: -8))
+        cell.addConstraint(NSLayoutConstraint(item: textField, attribute: NSLayoutAttribute.Trailing, relatedBy: NSLayoutRelation.Equal, toItem: cell.detailTextLabel, attribute: NSLayoutAttribute.Trailing, multiplier: 1, constant: 0))
+        textField.textAlignment = NSTextAlignment.Right
+        //textField.delegate = self
+    }
+    
     func configureSwitchCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
         let switchView = KDBSwitch(frame: CGRectZero)
         if indexPath.section == 1 {
@@ -91,35 +107,36 @@ class JenkinsInstanceTableViewController: UITableViewController {
     }
     
     func configureTextEntryCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
+        
+        var textFieldText: String?
         switch indexPath.section {
         case 0:
             switch indexPath.row {
             case 0:
                 cell.textLabel?.text = "Name"
-                cell.detailTextLabel?.text = jinstance.name
+                textFieldText = jinstance.name
             case 1:
                 cell.textLabel?.text = "URL"
-                cell.detailTextLabel?.text = jinstance.url
+                textFieldText = jinstance.url
             default:
-                cell.detailTextLabel?.text = ""
+                textFieldText = ""
             }
         case 1:
             switch indexPath.row {
             case 1:
                 cell.textLabel?.text = "Username"
-                cell.detailTextLabel?.text = jinstance.username
-
+                textFieldText = jinstance.username
             case 2:
                 cell.textLabel?.text = "Password"
-                cell.detailTextLabel?.text = generateRandomPasswordMask()
+                textFieldText = generateRandomPasswordMask()
             default:
-                cell.detailTextLabel?.text = ""
+                textFieldText = ""
             }
         default:
             println("Invalid section")
             abort()
         }
-        
+        self.configureTextField(cell,textFieldText: textFieldText)
     }
     
     func generateRandomPasswordMask() -> String {
