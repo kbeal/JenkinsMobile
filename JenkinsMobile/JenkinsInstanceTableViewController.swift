@@ -56,7 +56,7 @@ class JenkinsInstanceTableViewController: UITableViewController {
         case 0: // server info
             rows = 2
         case 1: // authentication
-            rows = 3
+            rows = 1
             if (self.jinstance.shouldAuthenticate.boolValue) {
                 rows = 3
             }
