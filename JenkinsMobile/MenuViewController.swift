@@ -93,15 +93,21 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
     }
     */
 
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Get the new view controller using [segue destinationViewController].
         // Pass the selected object to the new view controller.
+        let destinationNavController: UINavigationController = segue.destinationViewController as! UINavigationController
+        let destination: JenkinsInstanceTableViewController = destinationNavController.topViewController as! JenkinsInstanceTableViewController
+        
+        if (segue.identifier == "showJenkinsInstance") {
+            destination.jinstance = self.fetchedResultsController.objectAtIndexPath(self.tableView.indexPathForSelectedRow()!) as! JenkinsInstance
+        } else {
+            destination.jinstance = JenkinsInstance.createJenkinsInstanceWithValues(nil, inManagedObjectContext: self.managedObjectContext)
+        }
     }
-    */
     
     // MARK: - Fetched Results Controller Delegate
     var fetchedResultsController: NSFetchedResultsController {

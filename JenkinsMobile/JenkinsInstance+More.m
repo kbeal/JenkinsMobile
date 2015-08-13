@@ -103,11 +103,11 @@
     self.name = [values objectForKey:JenkinsInstanceNameKey];
     self.url = [values objectForKey:JenkinsInstanceURLKey];
     self.current = [values objectForKey:JenkinsInstanceCurrentKey];
-    self.enabled = [values objectForKey:JenkinsInstanceEnabledKey];
+    //self.enabled = [values objectForKey:JenkinsInstanceEnabledKey];
     self.username = [values objectForKey:JenkinsInstanceUsernameKey];
     self.authenticated = [values objectForKey:JenkinsInstanceAuthenticatedKey];
     self.primaryView = [values objectForKeyedSubscript:JenkinsInstancePrimaryViewKey];
-    self.shouldAuthenticate = [values objectForKey:JenkinsInstanceShouldAuthenticateKey];
+    //self.shouldAuthenticate = [values objectForKey:JenkinsInstanceShouldAuthenticateKey];
     [self createJobs:[values objectForKey:JenkinsInstanceJobsKey]];
     [self createViews:[values objectForKey:JenkinsInstanceViewsKey]];
     self.lastSyncResult = [values objectForKey:JenkinsInstanceLastSyncResultKey];
