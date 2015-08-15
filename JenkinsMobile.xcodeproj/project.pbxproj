@@ -176,6 +176,7 @@
 		8A6D731C1A6F268700BFA0A5 /* ActiveConfiguration+More.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6D731B1A6F268700BFA0A5 /* ActiveConfiguration+More.m */; };
 		8A76B0F2199C3AE200B219C5 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A76B0F1199C3AE200B219C5 /* Constants.m */; };
 		8A779FD71B7C227E00678BC0 /* KDBSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A779FD61B7C227E00678BC0 /* KDBSwitch.swift */; };
+		8A779FDB1B7D636A00678BC0 /* KDBTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A779FDA1B7D636A00678BC0 /* KDBTextField.swift */; };
 		8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */; };
 		8A817A5319638D1400ED7075 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A817A5219638D1400ED7075 /* SpriteKit.framework */; };
 		8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A817AAE196390D700ED7075 /* KDBBallScene.m */; };
@@ -425,6 +426,7 @@
 		8A6D731B1A6F268700BFA0A5 /* ActiveConfiguration+More.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ActiveConfiguration+More.m"; sourceTree = "<group>"; };
 		8A76B0F1199C3AE200B219C5 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		8A779FD61B7C227E00678BC0 /* KDBSwitch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDBSwitch.swift; sourceTree = "<group>"; };
+		8A779FDA1B7D636A00678BC0 /* KDBTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDBTextField.swift; sourceTree = "<group>"; };
 		8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBViewPickerViewController.h; sourceTree = "<group>"; };
 		8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBViewPickerViewController.m; sourceTree = "<group>"; };
 		8A817A5219638D1400ED7075 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
@@ -794,6 +796,7 @@
 				8A0409FE192599D400B25073 /* KDBRelatedProjectsViewController.h */,
 				8A0409FF192599D400B25073 /* KDBRelatedProjectsViewController.m */,
 				8A779FD61B7C227E00678BC0 /* KDBSwitch.swift */,
+				8A779FDA1B7D636A00678BC0 /* KDBTextField.swift */,
 				8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */,
 				8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */,
 				8A41D37D1AE86EBD00650CFE /* KDBViewsTableViewController.h */,
@@ -1239,6 +1242,7 @@
 				8AC32A4618E4FB6F0002D106 /* AFURLConnectionOperation.m in Sources */,
 				8A3DA825198F2C3800C97992 /* KDBJobDetailTableViewController.m in Sources */,
 				8A4ACA5D1B3A3DE50088648C /* SWRevealViewController.m in Sources */,
+				8A779FDB1B7D636A00678BC0 /* KDBTextField.swift in Sources */,
 				8A9B05B11924452D0019B336 /* KDBBuildDetailViewController.m in Sources */,
 				8AC32A4118E4FB6F0002D106 /* AFHTTPRequestOperation.m in Sources */,
 				8AA1CD311A9EA94500F977B0 /* Build.m in Sources */,

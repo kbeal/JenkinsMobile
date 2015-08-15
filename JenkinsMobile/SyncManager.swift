@@ -410,6 +410,14 @@ import CoreData
         return bgobj
     }
     
+    // saves the main managedObjectContext and then also updates the masterManagedObjectContext
+    func saveMainContext() {
+        self.saveContext(self.mainMOC)
+        self.masterMOC?.performBlock({
+            self.saveContext(self.masterMOC)
+        })
+    }
+    
     func saveContext(moc: NSManagedObjectContext?) {
         var error: NSError? = nil
         if moc == nil {
