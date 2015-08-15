@@ -233,6 +233,8 @@
         _mainMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         [_mainMOC setUndoManager:nil];
         [_mainMOC setParentContext:_masterMOC];
+        NSUndoManager *undoManager = [[NSUndoManager alloc] init];
+        [_mainMOC setUndoManager:undoManager];
         
         return _mainMOC;
     }

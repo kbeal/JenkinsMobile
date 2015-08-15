@@ -57,6 +57,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     
     // MARK: - Text Field Delegate
     func textFieldDidEndEditing(textField: UITextField) {
+        self.jinstance.managedObjectContext?.undoManager?.beginUndoGrouping()
         let kdbTextField: KDBTextField = textField as! KDBTextField
         switch kdbTextField.type {
         case .Name:
@@ -71,6 +72,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             println("invalid textfieldtype")
             abort()
         }
+        self.jinstance.managedObjectContext?.undoManager?.endUndoGrouping()
     }
     
     // MARK: - Table view data source
@@ -188,6 +190,8 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         if (segue.identifier == "jenkinsInstanceDoneSegue") {
             //self.syncMgr?.saveContext(self.managedObjectContext)
             self.syncMgr?.saveMainContext()
+        } else {
+            self.jinstance.managedObjectContext?.undoManager?.undo()
         }
     }
 }

@@ -31,6 +31,7 @@
     [coord addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:nil];
     _context = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
     [_context setPersistentStoreCoordinator: coord];
+    [_context setUndoManager:[[NSUndoManager alloc] init]];
 
     NSArray *viewKeys = [NSArray arrayWithObjects:ViewNameKey,ViewURLKey, nil];
     NSArray *priViewVals = [NSArray arrayWithObjects:@"All",@"http://tomcat:8080/", nil];
