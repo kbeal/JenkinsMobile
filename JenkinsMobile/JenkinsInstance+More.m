@@ -113,6 +113,28 @@
     self.lastSyncResult = [values objectForKey:JenkinsInstanceLastSyncResultKey];
 }
 
+- (BOOL)validateURL:(NSString *) newURL withMessage:(NSString **) message; {
+    NSError *error = nil;
+    BOOL validated = [self validateValue:&newURL forKey:JenkinsInstanceURLKey error:&error];
+    
+    if (!validated) {
+        *message = @"URL cannot be empty";
+    }
+    
+    return validated;
+}
+
+- (BOOL)validateName:(NSString *) newName withMessage:(NSString **) message;{
+    NSError *error = nil;
+    BOOL validated = [self validateValue:&newName forKey:JenkinsInstanceNameKey error:&error];
+    
+    if (!validated) {
+        *message = @"Name cannot be empty";
+    }
+    
+    return validated;
+}
+
 // your local delegate's favorite method!
 - (void)createJobs:(NSArray *) jobValues
 {

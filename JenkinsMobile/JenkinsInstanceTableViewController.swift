@@ -56,6 +56,31 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     }
     
     // MARK: - Text Field Delegate
+    func textFieldShouldEndEditing(textField: UITextField) -> Bool {
+        var validated = true
+        let kdbTextField: KDBTextField = textField as! KDBTextField
+        var error: NSError? = nil
+        var message: NSString? = nil
+        
+        switch kdbTextField.type {
+        case .Name:
+            validated = self.jinstance.validateName(kdbTextField.text, withMessage: &message)
+        case .URL:
+            validated = self.jinstance.validateURL(kdbTextField.text, withMessage: &message)
+        default:
+            validated = true
+        }
+        
+        if (!validated) {
+            kdbTextField.setInvalidBorder()
+            kdbTextField.placeholder = message as? String
+        } else {
+            kdbTextField.setNoBorder()
+        }
+        
+        return validated
+    }
+    
     func textFieldDidEndEditing(textField: UITextField) {
         self.jinstance.managedObjectContext?.undoManager?.beginUndoGrouping()
         let kdbTextField: KDBTextField = textField as! KDBTextField

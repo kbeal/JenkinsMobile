@@ -33,6 +33,17 @@ class KDBTextField: UITextField {
             self.secureTextEntry = true
         }
     }
+    
+    func setInvalidBorder() {
+        self.layer.cornerRadius = 8.0
+        self.layer.masksToBounds = true
+        self.layer.borderColor = UIColor.redColor().CGColor
+        self.layer.borderWidth = 1.0
+    }
+    
+    func setNoBorder() {
+        self.layer.borderColor = UIColor.clearColor().CGColor
+    }
 
     required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

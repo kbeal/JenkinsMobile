@@ -695,6 +695,20 @@
     XCTAssertEqualObjects(@"http://www.google.com/ci/jenkins", [JenkinsInstance removeApiFromURL:url2]);
 }
 
+- (void) testValidateURL
+{
+    NSString *url = nil;
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",nil];
+    NSArray *keys = [NSArray arrayWithObjects:JenkinsInstanceNameKey,nil];
+    NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    JenkinsInstance *instance = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
+    
+    NSError *error = nil;
+    BOOL valid = [instance validateValue:&url forKey:JenkinsInstanceURLKey error:&error];
+    
+    XCTAssertFalse(valid);
+}
+
 - (void) deleteAllRecordsForEntity: (NSString *) entityName
 {
     NSFetchRequest * allRecords = [[NSFetchRequest alloc] init];
