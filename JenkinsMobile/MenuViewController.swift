@@ -32,15 +32,12 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
     // MARK: - Table view data source
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Potentially incomplete method implementation.
-        // Return the number of sections.
         return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete method implementation.
-        // Return the number of rows in the section.
-        return self.fetchedResultsController.sections!.count
+        let sectionInfo = self.fetchedResultsController.sections![section] as! NSFetchedResultsSectionInfo
+        return sectionInfo.numberOfObjects
     }
 
     func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
@@ -52,9 +49,7 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("JenkinsInstanceCell", forIndexPath: indexPath) as! UITableViewCell
-
         self.configureCell(cell, atIndexPath: indexPath)
-
         return cell
     }
 
@@ -105,7 +100,8 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
         if (segue.identifier == "showJenkinsInstance") {
             destination.jinstance = self.fetchedResultsController.objectAtIndexPath(self.tableView.indexPathForSelectedRow()!) as! JenkinsInstance
         } else {
-            destination.jinstance = JenkinsInstance.createJenkinsInstanceWithValues(nil, inManagedObjectContext: self.managedObjectContext)
+            let newInstanceValues = [ JenkinsInstanceCurrentKey: true ]
+            destination.jinstance = JenkinsInstance.createJenkinsInstanceWithValues(newInstanceValues, inManagedObjectContext: self.managedObjectContext)
         }
     }
     

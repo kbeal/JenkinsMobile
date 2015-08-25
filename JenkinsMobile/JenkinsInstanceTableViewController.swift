@@ -161,8 +161,8 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
                 cell.textLabel?.text = "Allow Invalid SSL Certificate?"
                 switchView.setOn(self.jinstance.allowInvalidSSLCertificate.boolValue, animated: false)
             } else {
-                switchView.switchType = .Enabled
-                cell.textLabel?.text = "Enabled?"
+                switchView.switchType = .Active
+                cell.textLabel?.text = "Active?"
                 switchView.setOn(self.jinstance.enabled.boolValue, animated: false)
             }
         }
@@ -195,7 +195,10 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
                 textFieldType = .Username
             case 2:
                 cell.textLabel?.text = "Password"
-                textFieldText = generateRandomPasswordMask()
+                println(jinstance.password)
+                if (jinstance.password != nil) {
+                    textFieldText = generateRandomPasswordMask()
+                }
                 textFieldType = .Password
             default:
                 textFieldText = ""

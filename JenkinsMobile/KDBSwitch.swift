@@ -12,6 +12,7 @@ enum SwitchViewType {
     case UseAuthentication
     case AllowInvalidSSL
     case Enabled
+    case Active
 }
 
 class KDBSwitch: UISwitch {

@@ -77,8 +77,8 @@
                             <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NI9-Fl-PLX">
-                                    <rect key="frame" x="15" y="6" width="80" height="30"/>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NI9-Fl-PLX">
+                                    <rect key="frame" x="15" y="6" width="577" height="30"/>
                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
                                     <state key="normal" title="Add Server"/>
                                     <connections>
@@ -86,7 +86,11 @@
                                     </connections>
                                 </button>
                             </subviews>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstItem="NI9-Fl-PLX" firstAttribute="leading" secondItem="hbq-7G-qQU" secondAttribute="leading" constant="15" id="Mqg-xH-Jz1"/>
+                                <constraint firstItem="NI9-Fl-PLX" firstAttribute="bottom" secondItem="hbq-7G-qQU" secondAttribute="bottomMargin" id="TcH-jf-gmZ"/>
+                                <constraint firstItem="NI9-Fl-PLX" firstAttribute="trailing" secondItem="hbq-7G-qQU" secondAttribute="trailingMargin" id="uEr-xd-lsy"/>
+                            </constraints>
                         </view>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="JenkinsInstanceCell" textLabel="5qp-Mb-sIk" detailTextLabel="xz5-Fv-3lQ" style="IBUITableViewCellStyleSubtitle" id="CtS-nF-e6u">
@@ -118,6 +122,7 @@
                             <outlet property="delegate" destination="20v-Qr-N6F" id="sYT-KX-kNa"/>
                         </connections>
                     </tableView>
+                    <toolbarItems/>
                     <connections>
                         <outlet property="addServerButton" destination="NI9-Fl-PLX" id="Vor-ta-rYX"/>
                     </connections>
@@ -150,6 +155,23 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
+                        <view key="tableFooterView" contentMode="scaleToFill" id="ay0-hu-GJh">
+                            <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="boO-F4-8DS">
+                                    <rect key="frame" x="8" y="14" width="584" height="30"/>
+                                    <state key="normal" title="Delete">
+                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                </button>
+                            </subviews>
+                            <constraints>
+                                <constraint firstAttribute="trailing" secondItem="boO-F4-8DS" secondAttribute="trailing" constant="8" id="aDd-Rr-fv3"/>
+                                <constraint firstAttribute="bottom" secondItem="boO-F4-8DS" secondAttribute="bottom" id="ex3-t7-LSH"/>
+                                <constraint firstItem="boO-F4-8DS" firstAttribute="leading" secondItem="ay0-hu-GJh" secondAttribute="leading" constant="8" id="mTg-oP-H69"/>
+                            </constraints>
+                        </view>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SwitchCell" id="ENL-wY-42J">
                                 <autoresizingMask key="autoresizingMask"/>
@@ -159,8 +181,7 @@
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="daG-dn-HgX">
                                             <rect key="frame" x="8" y="11" width="42" height="21"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="42" id="KXU-n3-DmT"/>
-                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="42" id="RB4-Ub-5wi"/>
+                                                <constraint firstAttribute="width" constant="42" id="Uf0-ar-LtV"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -168,8 +189,9 @@
                                         </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="daG-dn-HgX" firstAttribute="leading" secondItem="tfT-dg-8x6" secondAttribute="leadingMargin" id="P0B-yS-rKF"/>
-                                        <constraint firstItem="daG-dn-HgX" firstAttribute="top" secondItem="tfT-dg-8x6" secondAttribute="topMargin" constant="3" id="dTn-ib-PH3"/>
+                                        <constraint firstItem="daG-dn-HgX" firstAttribute="top" secondItem="tfT-dg-8x6" secondAttribute="topMargin" constant="3" id="Gs8-0U-Mds"/>
+                                        <constraint firstItem="daG-dn-HgX" firstAttribute="leading" secondItem="tfT-dg-8x6" secondAttribute="leadingMargin" constant="-7" id="J7l-1S-IBP"/>
+                                        <constraint firstItem="daG-dn-HgX" firstAttribute="centerY" secondItem="tfT-dg-8x6" secondAttribute="centerY" id="s1H-u4-EP1"/>
                                     </constraints>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -429,9 +451,9 @@
         <image name="logo.png" width="40" height="40"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="TkT-ak-Muz"/>
-        <segue reference="Gcw-vz-jDd"/>
-        <segue reference="T6A-mv-LGP"/>
+        <segue reference="wNa-42-HRK"/>
+        <segue reference="ZGx-hL-vHC"/>
         <segue reference="PUT-gz-wxJ"/>
+        <segue reference="T6A-mv-LGP"/>
     </inferredMetricsTieBreakers>
 </document>
