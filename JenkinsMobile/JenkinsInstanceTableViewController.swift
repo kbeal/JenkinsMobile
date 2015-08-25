@@ -56,7 +56,35 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     }
     
     // MARK: - Text Field Delegate
-    func textFieldShouldEndEditing(textField: UITextField) -> Bool {
+    func textFieldValueChanged(textField: KDBTextField) {
+        self.validate(textField)
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        self.jinstance.managedObjectContext?.undoManager?.beginUndoGrouping()
+        let kdbTextField: KDBTextField = textField as! KDBTextField
+        let validated = self.validate(textField)
+        
+        if (validated) {
+            switch kdbTextField.type {
+            case .Name:
+                self.jinstance.name = textField.text
+            case .URL:
+                self.jinstance.url = textField.text
+            case .Username:
+                self.jinstance.username = textField.text
+            case .Password:
+                self.jinstance.password = textField.text
+            default:
+                println("invalid textfieldtype")
+                abort()
+            }
+        }
+       
+        self.jinstance.managedObjectContext?.undoManager?.endUndoGrouping()
+    }
+    
+    func validate(textField: UITextField) -> Bool {
         var validated = true
         let kdbTextField: KDBTextField = textField as! KDBTextField
         var error: NSError? = nil
@@ -79,25 +107,6 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         }
         
         return validated
-    }
-    
-    func textFieldDidEndEditing(textField: UITextField) {
-        self.jinstance.managedObjectContext?.undoManager?.beginUndoGrouping()
-        let kdbTextField: KDBTextField = textField as! KDBTextField
-        switch kdbTextField.type {
-        case .Name:
-            self.jinstance.name = textField.text
-        case .URL:
-            self.jinstance.url = textField.text
-        case .Username:
-            self.jinstance.username = textField.text
-        case .Password:
-            self.jinstance.password = textField.text
-        default:
-            println("invalid textfieldtype")
-            abort()
-        }
-        self.jinstance.managedObjectContext?.undoManager?.endUndoGrouping()
     }
     
     // MARK: - Table view data source
@@ -136,6 +145,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         cell.addConstraint(NSLayoutConstraint(item: textField, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: cell.contentView, attribute: NSLayoutAttribute.Bottom, multiplier: 1, constant: -8))
         cell.addConstraint(NSLayoutConstraint(item: textField, attribute: NSLayoutAttribute.Trailing, relatedBy: NSLayoutRelation.Equal, toItem: cell.detailTextLabel, attribute: NSLayoutAttribute.Trailing, multiplier: 1, constant: 0))
         
+        textField.addTarget(self, action: "textFieldValueChanged:", forControlEvents: UIControlEvents.EditingChanged)
     }
     
     func configureSwitchCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
