@@ -223,6 +223,20 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         return cell
     }
     
+    // MARK: - UIActionSheetDelegate
+
+    @IBAction func deleteButtonTapped(sender: UIButton) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+        let deleteAction = UIAlertAction(title: "Delete", style: .Destructive) { (action) in
+            self.managedObjectContext?.deleteObject(self.jinstance)
+            self.performSegueWithIdentifier("jenkinsInstanceDoneSegue", sender: self)
+        }
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "jenkinsInstanceDoneSegue") {
