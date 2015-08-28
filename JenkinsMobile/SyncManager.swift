@@ -250,7 +250,6 @@ import CoreData
         let ji: JenkinsInstance = values[RequestedObjectKey] as! JenkinsInstance
         
         ji.managedObjectContext?.performBlock({
-            values[JenkinsInstanceCurrentKey] = false
             values[JenkinsInstanceEnabledKey] = true
             values[JenkinsInstanceAuthenticatedKey] = true
             values[JenkinsInstanceLastSyncResultKey] = "200: OK"

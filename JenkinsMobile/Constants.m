@@ -122,7 +122,6 @@ NSString * const BuildLastSyncResultKey = @"lastSyncResult";
 #pragma mark - JenkinsInstance Keys
 NSString * const JenkinsInstanceNameKey = @"name";
 NSString * const JenkinsInstanceURLKey = @"url";
-NSString * const JenkinsInstanceCurrentKey = @"current";
 NSString * const JenkinsInstanceJobsKey = @"jobs";
 NSString * const JenkinsInstanceEnabledKey = @"enabled";
 NSString * const JenkinsInstanceUsernameKey = @"username";

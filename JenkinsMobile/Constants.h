@@ -121,7 +121,6 @@ extern NSString * const BuildLastSyncResultKey;
 #pragma mark - JenkinsInstance Keys
 extern NSString * const JenkinsInstanceNameKey;
 extern NSString * const JenkinsInstanceURLKey;
-extern NSString * const JenkinsInstanceCurrentKey;
 extern NSString * const JenkinsInstanceJobsKey;
 extern NSString * const JenkinsInstanceEnabledKey;
 extern NSString * const JenkinsInstanceUsernameKey;

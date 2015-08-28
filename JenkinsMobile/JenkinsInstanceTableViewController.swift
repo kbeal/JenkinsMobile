@@ -14,6 +14,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     var managedObjectContext: NSManagedObjectContext?
     var showCredentialsFields: Bool?
     var syncMgr: SyncManager?
+    var saveChanges: Bool?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,10 +22,36 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         self.showCredentialsFields = self.jinstance.shouldAuthenticate.boolValue
         self.syncMgr = SyncManager.sharedInstance;
         self.managedObjectContext = self.syncMgr?.mainMOC
+        self.saveChanges = true
+        
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: "handleSingleTap:")
+        tapRecognizer.numberOfTapsRequired = 1
+        self.view.addGestureRecognizer(tapRecognizer)
+        
+        self.setTitle()
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.view.window?.endEditing(true)
+        if (saveChanges!.boolValue) {
+            self.syncMgr?.saveMainContext()
+        }
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    func setTitle() {
+        if (self.jinstance.name != nil) {
+            self.navigationItem.title = self.jinstance.name
+        } else {
+            self.navigationItem.title = "Add Jenkins Instance"
+        }
+    }
+    func handleSingleTap(recognizer: UITapGestureRecognizer) {
+        self.view.endEditing(true)
     }
     
     func stateChanged(switchView: KDBSwitch) {
@@ -64,8 +91,8 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         self.jinstance.managedObjectContext?.undoManager?.beginUndoGrouping()
         let kdbTextField: KDBTextField = textField as! KDBTextField
         let validated = self.validate(textField)
-        
-        if (validated) {
+
+        if (validated && saveChanges!.boolValue) {
             switch kdbTextField.type! {
             case .Name:
                 self.jinstance.name = textField.text
@@ -95,6 +122,10 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             validated = self.jinstance.validateName(kdbTextField.text, withMessage: &message)
         case .URL:
             validated = self.jinstance.validateURL(kdbTextField.text, withMessage: &message)
+        case .Username:
+            validated = self.jinstance.validateUsername(kdbTextField.text, withMessage: &message)
+        case .Password:
+            validated = self.jinstance.validatePassword(kdbTextField.text, withMessage: &message)
         default:
             validated = true
         }
@@ -170,6 +201,9 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
                 labelText = "URL"
                 textFieldText = jinstance.url
                 textFieldType = .URL
+                cell.textField?.keyboardType = .URL
+                cell.textField?.autocapitalizationType = .None
+                cell.textField?.autocorrectionType = .No
             default:
                 textFieldText = ""
             }
@@ -179,12 +213,17 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
                 labelText = "Username"
                 textFieldText = jinstance.username
                 textFieldType = .Username
+                cell.textField?.autocapitalizationType = .None
+                cell.textField?.autocorrectionType = .No
             case 2:
                 labelText = "Password"
                 if (jinstance.password != nil) {
                     textFieldText = generateRandomPasswordMask()
                 }
                 textFieldType = .Password
+                cell.textField?.secureTextEntry = true
+                cell.textField?.autocapitalizationType = .None
+                cell.textField?.autocorrectionType = .No
             default:
                 textFieldText = ""
             }
@@ -230,9 +269,9 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "jenkinsInstanceDoneSegue") {
-            //self.syncMgr?.saveContext(self.managedObjectContext)
-            self.syncMgr?.saveMainContext()
+            self.saveChanges = true
         } else {
+            self.saveChanges = false
             self.jinstance.managedObjectContext?.undoManager?.undo()
         }
     }
