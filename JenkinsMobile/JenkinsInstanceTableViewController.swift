@@ -66,7 +66,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         let validated = self.validate(textField)
         
         if (validated) {
-            switch kdbTextField.type {
+            switch kdbTextField.type! {
             case .Name:
                 self.jinstance.name = textField.text
             case .URL:
@@ -90,7 +90,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         var error: NSError? = nil
         var message: NSString? = nil
         
-        switch kdbTextField.type {
+        switch kdbTextField.type! {
         case .Name:
             validated = self.jinstance.validateName(kdbTextField.text, withMessage: &message)
         case .URL:
@@ -134,20 +134,6 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         return rows
     }
     
-    func configureTextField(cell: UITableViewCell, textFieldText: String?, type: TextFieldType) {
-        cell.detailTextLabel?.hidden = true
-        cell.viewWithTag(3)?.removeFromSuperview()
-        let textField: KDBTextField = KDBTextField(type: type, text: textFieldText, delegate: self)
-
-        cell.contentView.addSubview(textField)
-        cell.addConstraint(NSLayoutConstraint(item: textField, attribute: NSLayoutAttribute.Leading, relatedBy: NSLayoutRelation.Equal, toItem: cell.textLabel, attribute: NSLayoutAttribute.Trailing, multiplier: 1, constant: 8))
-        cell.addConstraint(NSLayoutConstraint(item: textField, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal, toItem: cell.contentView, attribute: NSLayoutAttribute.Top, multiplier: 1, constant: 8))
-        cell.addConstraint(NSLayoutConstraint(item: textField, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal, toItem: cell.contentView, attribute: NSLayoutAttribute.Bottom, multiplier: 1, constant: -8))
-        cell.addConstraint(NSLayoutConstraint(item: textField, attribute: NSLayoutAttribute.Trailing, relatedBy: NSLayoutRelation.Equal, toItem: cell.detailTextLabel, attribute: NSLayoutAttribute.Trailing, multiplier: 1, constant: 0))
-        
-        textField.addTarget(self, action: "textFieldValueChanged:", forControlEvents: UIControlEvents.EditingChanged)
-    }
-    
     func configureSwitchCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
         let switchView = KDBSwitch(frame: CGRectZero)
         if indexPath.section == 1 {
@@ -166,22 +152,22 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
                 switchView.setOn(self.jinstance.enabled.boolValue, animated: false)
             }
         }
-        //cell.delegate = self
         cell.accessoryView = switchView
     }
     
-    func configureTextEntryCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
+    func configureTextEntryCell(cell: KDBTextFieldTableViewCell, atIndexPath indexPath: NSIndexPath) {
         var textFieldText: String?
         var textFieldType: TextFieldType?
+        var labelText: String?
         switch indexPath.section {
         case 0:
             switch indexPath.row {
             case 0:
-                cell.textLabel?.text = "Name"
+                labelText = "Name"
                 textFieldText = jinstance.name
                 textFieldType = .Name
             case 1:
-                cell.textLabel?.text = "URL"
+                labelText = "URL"
                 textFieldText = jinstance.url
                 textFieldType = .URL
             default:
@@ -190,12 +176,11 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         case 1:
             switch indexPath.row {
             case 1:
-                cell.textLabel?.text = "Username"
+                labelText = "Username"
                 textFieldText = jinstance.username
                 textFieldType = .Username
             case 2:
-                cell.textLabel?.text = "Password"
-                println(jinstance.password)
+                labelText = "Password"
                 if (jinstance.password != nil) {
                     textFieldText = generateRandomPasswordMask()
                 }
@@ -207,7 +192,11 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             println("Invalid section")
             abort()
         }
-        self.configureTextField(cell,textFieldText: textFieldText,type: textFieldType!)
+
+        cell.textField?.delegate = self
+        cell.textField?.text = textFieldText
+        cell.textField?.type = textFieldType!
+        cell.label?.text = labelText
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -216,8 +205,9 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! UITableViewCell
             self.configureSwitchCell(cell, atIndexPath: indexPath)
         } else {
-            cell = tableView.dequeueReusableCellWithIdentifier("TextEntryCell", forIndexPath: indexPath) as! UITableViewCell
-            self.configureTextEntryCell(cell, atIndexPath: indexPath)
+            let tfcell = tableView.dequeueReusableCellWithIdentifier("TextEntryCell", forIndexPath: indexPath) as! KDBTextFieldTableViewCell
+            self.configureTextEntryCell(tfcell, atIndexPath: indexPath)
+            cell = tfcell
         }
         
         return cell

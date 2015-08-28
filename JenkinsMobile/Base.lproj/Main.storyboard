@@ -180,43 +180,37 @@
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ENL-wY-42J" id="tfT-dg-8x6">
                                     <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TextEntryCell" id="Rkl-hW-86U" customClass="KDBTextFieldTableViewCell" customModule="JenkinsMobile" customModuleProvider="target">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Rkl-hW-86U" id="NoW-z3-jTF">
+                                    <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="daG-dn-HgX">
-                                            <rect key="frame" x="8" y="11" width="42" height="21"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="42" id="Uf0-ar-LtV"/>
-                                            </constraints>
+                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="right" contentVerticalAlignment="center" textAlignment="right" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="byz-B7-lvS" userLabel="TextField" customClass="KDBTextField" customModule="JenkinsMobile" customModuleProvider="target">
+                                            <rect key="frame" x="579" y="11" width="13" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <textInputTraits key="textInputTraits"/>
+                                        </textField>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bqW-Tw-jJi">
+                                            <rect key="frame" x="8" y="11" width="42" height="20.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="daG-dn-HgX" firstAttribute="top" secondItem="tfT-dg-8x6" secondAttribute="topMargin" constant="3" id="Gs8-0U-Mds"/>
-                                        <constraint firstItem="daG-dn-HgX" firstAttribute="leading" secondItem="tfT-dg-8x6" secondAttribute="leadingMargin" constant="-7" id="J7l-1S-IBP"/>
-                                        <constraint firstItem="daG-dn-HgX" firstAttribute="centerY" secondItem="tfT-dg-8x6" secondAttribute="centerY" id="s1H-u4-EP1"/>
+                                        <constraint firstAttribute="centerY" secondItem="byz-B7-lvS" secondAttribute="centerY" id="EL8-XM-N1O"/>
+                                        <constraint firstItem="byz-B7-lvS" firstAttribute="leading" secondItem="bqW-Tw-jJi" secondAttribute="trailing" constant="8" id="JyU-f3-Z78"/>
+                                        <constraint firstAttribute="centerY" secondItem="bqW-Tw-jJi" secondAttribute="centerY" id="N4G-Ji-Kx7"/>
+                                        <constraint firstItem="bqW-Tw-jJi" firstAttribute="leading" secondItem="NoW-z3-jTF" secondAttribute="leadingMargin" id="bhS-tI-Gv0"/>
+                                        <constraint firstItem="byz-B7-lvS" firstAttribute="trailing" secondItem="NoW-z3-jTF" secondAttribute="trailingMargin" id="rWN-nj-bhe"/>
                                     </constraints>
                                 </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TextEntryCell" textLabel="ti4-9k-Xho" detailTextLabel="Mj9-dj-aN9" style="IBUITableViewCellStyleValue1" id="eTn-Hu-VGh">
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="eTn-Hu-VGh" id="l2h-rY-L3h">
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ti4-9k-Xho">
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Mj9-dj-aN9">
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                            <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="label" destination="bqW-Tw-jJi" id="3nV-jh-GiV"/>
+                                    <outlet property="textField" destination="byz-B7-lvS" id="C1d-3B-0NR"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <sections/>
