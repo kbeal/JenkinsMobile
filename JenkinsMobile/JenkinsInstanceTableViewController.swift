@@ -14,6 +14,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     var managedObjectContext: NSManagedObjectContext?
     var showCredentialsFields: Bool?
     var syncMgr: SyncManager?
+    var saveChanges: Bool?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,6 +22,15 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         self.showCredentialsFields = self.jinstance.shouldAuthenticate.boolValue
         self.syncMgr = SyncManager.sharedInstance;
         self.managedObjectContext = self.syncMgr?.mainMOC
+        self.saveChanges = true
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.view.window?.endEditing(true)
+        if (saveChanges!.boolValue) {
+            self.syncMgr?.saveMainContext()
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -64,8 +74,8 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         self.jinstance.managedObjectContext?.undoManager?.beginUndoGrouping()
         let kdbTextField: KDBTextField = textField as! KDBTextField
         let validated = self.validate(textField)
-        
-        if (validated) {
+
+        if (validated && saveChanges!.boolValue) {
             switch kdbTextField.type! {
             case .Name:
                 self.jinstance.name = textField.text
@@ -230,9 +240,9 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     // MARK: - Navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "jenkinsInstanceDoneSegue") {
-            //self.syncMgr?.saveContext(self.managedObjectContext)
-            self.syncMgr?.saveMainContext()
+            self.saveChanges = true
         } else {
+            self.saveChanges = false
             self.jinstance.managedObjectContext?.undoManager?.undo()
         }
     }

@@ -15,13 +15,7 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.managedObjectContext = SyncManager.sharedInstance.currentJenkinsInstance?.managedObjectContext
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        self.managedObjectContext = SyncManager.sharedInstance.mainMOC
     }
 
     override func didReceiveMemoryWarning() {
@@ -100,8 +94,7 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
         if (segue.identifier == "showJenkinsInstance") {
             destination.jinstance = self.fetchedResultsController.objectAtIndexPath(self.tableView.indexPathForSelectedRow()!) as! JenkinsInstance
         } else {
-            let newInstanceValues = [ JenkinsInstanceCurrentKey: true ]
-            destination.jinstance = JenkinsInstance.createJenkinsInstanceWithValues(newInstanceValues, inManagedObjectContext: self.managedObjectContext)
+            destination.jinstance = JenkinsInstance.createJenkinsInstanceWithValues(nil, inManagedObjectContext: self.managedObjectContext)
         }
     }
     

@@ -51,20 +51,20 @@
     return instance;
 }
 
-+ (JenkinsInstance *)getCurrentJenkinsInstanceFromManagedObjectContext:(NSManagedObjectContext *) context
-{
-    __block JenkinsInstance *instance = nil;
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    
-    [context performBlockAndWait:^{
-        request.entity = [NSEntityDescription entityForName:@"JenkinsInstance" inManagedObjectContext:context];
-        request.predicate = [NSPredicate predicateWithFormat:@"current = %d", 1];
-        NSError *executeFetchError = nil;
-        instance = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
-    }];
-    
-    return instance;
-}
+//+ (JenkinsInstance *)getCurrentJenkinsInstanceFromManagedObjectContext:(NSManagedObjectContext *) context
+//{
+//    __block JenkinsInstance *instance = nil;
+//    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+//    
+//    [context performBlockAndWait:^{
+//        request.entity = [NSEntityDescription entityForName:@"JenkinsInstance" inManagedObjectContext:context];
+//        request.predicate = [NSPredicate predicateWithFormat:@"current = %d", 1];
+//        NSError *executeFetchError = nil;
+//        instance = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
+//    }];
+//    
+//    return instance;
+//}
 
 // Removes /api/json and /api/json/ from the end of URL's
 + (NSString *) removeApiFromURL:(NSURL *) url
@@ -102,7 +102,7 @@
 {
     self.name = [values objectForKey:JenkinsInstanceNameKey];
     self.url = [values objectForKey:JenkinsInstanceURLKey];
-    self.current = [values objectForKey:JenkinsInstanceCurrentKey];
+    //self.current = [values objectForKey:JenkinsInstanceCurrentKey];
     //self.enabled = [values objectForKey:JenkinsInstanceEnabledKey];
     self.username = [values objectForKey:JenkinsInstanceUsernameKey];
     self.authenticated = [values objectForKey:JenkinsInstanceAuthenticatedKey];

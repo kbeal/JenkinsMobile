@@ -32,15 +32,15 @@
     
     //NSURL *jenkinsURL = [NSURL URLWithString:@"https://jenkins.qa.ubuntu.com"];
     //NSURL *jenkinsURL = [NSURL URLWithString:@"http://ci.thermofisher.com/jenkins"];
-    NSURL *jenkinsURL = [NSURL URLWithString:@"https://snowman:8443/jenkins/"];
+    //NSURL *jenkinsURL = [NSURL URLWithString:@"https://snowman:8443/jenkins/"];
     
-    JenkinsInstance *ji = [self createJenkinsInstanceWithURL:jenkinsURL];
-    mgr.currentJenkinsInstance = ji;
+    //JenkinsInstance *ji = [self createJenkinsInstanceWithURL:jenkinsURL];
+    //mgr.currentJenkinsInstance = ji;
     mgr.requestHandler = [[KDBJenkinsRequestHandler alloc] init];
     mgr.masterMOC = self.masterMOC;
     mgr.mainMOC = self.mainMOC;
     
-    [mgr syncJenkinsInstance:ji];
+    //[mgr syncJenkinsInstance:ji];
     
     /*
     SWRevealViewController *revealViewController = (SWRevealViewController *)self.window.rootViewController;
@@ -98,22 +98,22 @@
     return YES;
 }
 
-- (JenkinsInstance *) createJenkinsInstanceWithURL:(NSURL *) url
-{
-    NSArray *jenkinskeys = [NSArray arrayWithObjects:JenkinsInstanceNameKey,JenkinsInstanceURLKey,JenkinsInstanceCurrentKey,JenkinsInstanceEnabledKey,JenkinsInstanceUsernameKey, nil];
-    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",[url absoluteString],[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES],@"jenkinsadmin", nil];
-    NSDictionary *jenkins = [NSDictionary dictionaryWithObjects:jenkinsvalues forKeys:jenkinskeys];
-    
-    JenkinsInstance *jinstance = [JenkinsInstance fetchJenkinsInstanceWithURL:[url absoluteString] fromManagedObjectContext:self.mainMOC];
-    if (jinstance == nil) {
-        jinstance = [JenkinsInstance createJenkinsInstanceWithValues:jenkins inManagedObjectContext:self.mainMOC];
-        jinstance.password = @"changeme";
-        jinstance.shouldAuthenticate = [NSNumber numberWithBool:YES];
-        jinstance.allowInvalidSSLCertificate = [NSNumber numberWithBool:YES];
-        [self saveMainContext];
-    }
-    return jinstance;
-}
+//- (JenkinsInstance *) createJenkinsInstanceWithURL:(NSURL *) url
+//{
+//    NSArray *jenkinskeys = [NSArray arrayWithObjects:JenkinsInstanceNameKey,JenkinsInstanceURLKey,JenkinsInstanceCurrentKey,JenkinsInstanceEnabledKey,JenkinsInstanceUsernameKey, nil];
+//    NSArray *jenkinsvalues = [NSArray arrayWithObjects:@"TestInstance",[url absoluteString],[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES],@"jenkinsadmin", nil];
+//    NSDictionary *jenkins = [NSDictionary dictionaryWithObjects:jenkinsvalues forKeys:jenkinskeys];
+//    
+//    JenkinsInstance *jinstance = [JenkinsInstance fetchJenkinsInstanceWithURL:[url absoluteString] fromManagedObjectContext:self.mainMOC];
+//    if (jinstance == nil) {
+//        jinstance = [JenkinsInstance createJenkinsInstanceWithValues:jenkins inManagedObjectContext:self.mainMOC];
+//        jinstance.password = @"changeme";
+//        jinstance.shouldAuthenticate = [NSNumber numberWithBool:YES];
+//        jinstance.allowInvalidSSLCertificate = [NSNumber numberWithBool:YES];
+//        [self saveMainContext];
+//    }
+//    return jinstance;
+//}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
