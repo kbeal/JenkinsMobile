@@ -64,6 +64,12 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             self.showCredentialsFields = switchView.on
             self.jinstance.shouldAuthenticate = NSNumber(bool: switchView.on)
             self.tableView.reloadData()
+        case SwitchViewType.Active:
+            if (switchView.on.boolValue) {
+                self.syncMgr?.currentJenkinsInstance = self.jinstance
+            } else {
+                self.syncMgr?.currentJenkinsInstance = nil
+            }
         default:
             println("invalid SwitchTableViewCellType")
             abort()
@@ -167,9 +173,9 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     
     func configureSwitchCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
         let switchView = KDBSwitch(frame: CGRectZero)
+        switchView.addTarget(self, action: "stateChanged:", forControlEvents: UIControlEvents.ValueChanged)
         if indexPath.section == 1 {
             cell.textLabel?.text = "Authenticate?"
-            switchView.addTarget(self, action: "stateChanged:", forControlEvents: UIControlEvents.ValueChanged)
             switchView.switchType = .UseAuthentication
             switchView.setOn(self.jinstance.shouldAuthenticate.boolValue, animated: false)
         } else {
@@ -180,7 +186,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             } else {
                 switchView.switchType = .Active
                 cell.textLabel?.text = "Active?"
-                switchView.setOn(self.jinstance.enabled.boolValue, animated: false)
+                switchView.setOn((self.jinstance.url == self.syncMgr?.currentJenkinsInstance?.url), animated: false)
             }
         }
         cell.accessoryView = switchView

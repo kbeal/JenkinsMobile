@@ -13,7 +13,15 @@ import CoreData
     
     var masterMOC: NSManagedObjectContext?
     var mainMOC: NSManagedObjectContext?
-    var currentJenkinsInstance: JenkinsInstance?    
+    
+    var currentJenkinsInstance: JenkinsInstance? {
+        didSet {
+            if (currentJenkinsInstance != nil) {
+                self.syncJenkinsInstance(currentJenkinsInstance!)
+            }
+        }
+    }
+    
     private var jobSyncQueue = UniqueQueue<Job>()
     private var viewSyncQueue = UniqueQueue<View>()
     private var buildSyncQueue = UniqueQueue<Build>()
@@ -22,6 +30,8 @@ import CoreData
     //var currentBuildsTimer: NSTimer
     var requestHandler: KDBJenkinsRequestHandler?
     
+    
+    // MARK: - Init and Setup
     public class var sharedInstance : SyncManager {
         struct Static {
             static let instance : SyncManager = SyncManager()
@@ -84,6 +94,7 @@ import CoreData
     
     public func jobSyncQueueSize() -> Int { return jobSyncQueue.count() }
     
+    // MARK: - Sync Objects
     func syncAllJobs(jenkinsInstance: JenkinsInstance) {
         masterMOC?.performBlock({
             if let bgji: JenkinsInstance = self.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance {
@@ -154,6 +165,7 @@ import CoreData
         self.requestHandler!.importDetailsForActiveConfiguration(ac)
     }
     
+    // MARK: - Responses Received
     func jobDetailResponseReceived(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
@@ -168,6 +180,70 @@ import CoreData
         })
     }
     
+    func viewDetailResponseReceived(notification: NSNotification) {
+        assert(self.masterMOC != nil, "master managed object context not set")
+        var values: Dictionary = notification.userInfo!
+        let view = values[RequestedObjectKey] as! View
+        
+        view.managedObjectContext?.performBlock({
+            values[ViewLastSyncResultKey] = "200: OK"
+            values[ViewJenkinsInstanceKey] = view.rel_View_JenkinsInstance
+            view.setValues(values)
+            self.saveContext(view.managedObjectContext)
+        })
+        
+        // TODO: fix so that this works
+        //self.syncAllJobsForView(view!)
+    }
+    
+    func jenkinsInstanceDetailResponseReceived(notification: NSNotification) {
+        assert(self.masterMOC != nil, "main managed object context not set")
+        var values: Dictionary = notification.userInfo!
+        let ji: JenkinsInstance = values[RequestedObjectKey] as! JenkinsInstance
+        
+        ji.managedObjectContext?.performBlock({
+            values[JenkinsInstanceEnabledKey] = true
+            values[JenkinsInstanceAuthenticatedKey] = true
+            values[JenkinsInstanceLastSyncResultKey] = "200: OK"
+            values[JenkinsInstanceNameKey] = ji.name
+            values[JenkinsInstanceURLKey] = ji.url
+            values[JenkinsInstanceUsernameKey] = ji.username
+            
+            ji.setValues(values)
+            self.saveContext(ji.managedObjectContext)
+            self.syncAllJobs(ji)
+            self.syncAllViews(ji)
+        })
+    }
+    
+    func buildDetailResponseReceived(notification: NSNotification) {
+        assert(self.masterMOC != nil, "master managed object context not set")
+        var values: Dictionary = notification.userInfo!
+        let build: Build = values[RequestedObjectKey] as! Build
+        
+        build.managedObjectContext?.performBlock({
+            values[BuildLastSyncResultKey] = "200: OK"
+            build.setValues(values)
+            self.saveContext(build.managedObjectContext)
+        })
+    }
+    
+    func activeConfigurationDetailResponseReceived(notification: NSNotification) {
+        assert(self.masterMOC != nil, "master managed object context not set")
+        var values: Dictionary = notification.userInfo!
+        let ac: ActiveConfiguration = values[RequestedObjectKey] as! ActiveConfiguration
+        let job = ac.rel_ActiveConfiguration_Job
+        
+        ac.managedObjectContext?.performBlock({
+            values[ActiveConfigurationLastSyncResultKey] = "200: OK"
+            values[ActiveConfigurationJobKey] = job
+            values[ActiveConfigurationLastSyncKey] = NSDate()
+            ac.setValues(values)
+            self.saveContext(ac.managedObjectContext)
+        })
+    }
+    
+    // MARK: - Requests that Failed
     func jobDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set!!")
         let userInfo: Dictionary = notification.userInfo!
@@ -196,22 +272,6 @@ import CoreData
                 self.saveContext(job.managedObjectContext)
             })
         }
-    }
-    
-    func viewDetailResponseReceived(notification: NSNotification) {
-        assert(self.masterMOC != nil, "master managed object context not set")
-        var values: Dictionary = notification.userInfo!
-        let view = values[RequestedObjectKey] as! View
-        
-        view.managedObjectContext?.performBlock({
-            values[ViewLastSyncResultKey] = "200: OK"
-            values[ViewJenkinsInstanceKey] = view.rel_View_JenkinsInstance
-            view.setValues(values)
-            self.saveContext(view.managedObjectContext)
-        })
-        
-        // TODO: fix so that this works
-        //self.syncAllJobsForView(view!)
     }
     
     func viewDetailRequestFailed(notification: NSNotification) {
@@ -244,26 +304,6 @@ import CoreData
         }
     }
     
-    func jenkinsInstanceDetailResponseReceived(notification: NSNotification) {
-        assert(self.masterMOC != nil, "main managed object context not set")
-        var values: Dictionary = notification.userInfo!
-        let ji: JenkinsInstance = values[RequestedObjectKey] as! JenkinsInstance
-        
-        ji.managedObjectContext?.performBlock({
-            values[JenkinsInstanceEnabledKey] = true
-            values[JenkinsInstanceAuthenticatedKey] = true
-            values[JenkinsInstanceLastSyncResultKey] = "200: OK"
-            values[JenkinsInstanceNameKey] = ji.name
-            values[JenkinsInstanceURLKey] = ji.url
-            values[JenkinsInstanceUsernameKey] = ji.username
-            
-            ji.setValues(values)
-            self.saveContext(ji.managedObjectContext)            
-            self.syncAllJobs(ji)
-            self.syncAllViews(ji)
-        })
-    }
-    
     func jenkinsInstanceDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         let userInfo: Dictionary = notification.userInfo!
@@ -289,18 +329,6 @@ import CoreData
             println(requestError.localizedDescription)
             disableJenkinsInstance(ji,message: requestError.localizedDescription)
         }
-    }
-    
-    func buildDetailResponseReceived(notification: NSNotification) {
-        assert(self.masterMOC != nil, "master managed object context not set")
-        var values: Dictionary = notification.userInfo!
-        let build: Build = values[RequestedObjectKey] as! Build
-        
-        build.managedObjectContext?.performBlock({
-            values[BuildLastSyncResultKey] = "200: OK"
-            build.setValues(values)
-            self.saveContext(build.managedObjectContext)
-        })
     }
     
     func buildDetailRequestFailed(notification: NSNotification) {
@@ -333,21 +361,6 @@ import CoreData
         }
     }
     
-    func activeConfigurationDetailResponseReceived(notification: NSNotification) {
-        assert(self.masterMOC != nil, "master managed object context not set")
-        var values: Dictionary = notification.userInfo!
-        let ac: ActiveConfiguration = values[RequestedObjectKey] as! ActiveConfiguration
-        let job = ac.rel_ActiveConfiguration_Job
-        
-        ac.managedObjectContext?.performBlock({
-            values[ActiveConfigurationLastSyncResultKey] = "200: OK"
-            values[ActiveConfigurationJobKey] = job
-            values[ActiveConfigurationLastSyncKey] = NSDate()
-            ac.setValues(values)
-            self.saveContext(ac.managedObjectContext)
-        })
-    }
-    
     func activeConfigurationDetailRequestFailed(notification: NSNotification) {
         assert(self.masterMOC != nil, "master managed object context not set")
         let userInfo: Dictionary = notification.userInfo!
@@ -378,6 +391,8 @@ import CoreData
         }
     }
 
+    // MARK: - Helper methods
+    // TODO: Should these go in the JenkinsInstance model?
     func unauthenticateJenkinsInstance(ji: JenkinsInstance, message: String) {
         ji.managedObjectContext?.performBlock({
             ji.authenticated = false
@@ -394,6 +409,7 @@ import CoreData
         })
     }
     
+    // MARK: NSManagedObjectContext management
     // takes an NSManagedObject and if it isn't already on a background thread
     // ie. on the main queue NSManagedObjectContext
     // looks it up by NSManagedObjectID from the background NSManagedObjectContext
