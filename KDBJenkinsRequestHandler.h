@@ -21,5 +21,6 @@
 - (void) importDetailsForBuild: (Build *) build;
 //- (void) importProgressForBuild:(NSNumber *) buildNumber ofJobAtURL:(NSString *) jobURL;
 - (void) importDetailsForJenkinsInstance: (JenkinsInstance *) jinstance;
+- (void) pingJenkinsInstance: (JenkinsInstance *) jinstance;
 
 @end

@@ -26,6 +26,8 @@ extern NSString * const BuildProgressResponseReceivedNotification;
 extern NSString * const ActiveConfigurationDetailResponseReceivedNotification;
 extern NSString * const ActiveConfigurationDetailRequestFailedNotification;
 extern NSString * const JobTestResultsImageResponseReceivedNotification;
+extern NSString * const JenkinsInstancePingResponseReceivedNotification;
+extern NSString * const JenkinsInstancePingRequestFailedNotification;
 
 #pragma mark - View keys
 extern NSString * const ViewURLKey;

@@ -57,6 +57,44 @@ class RequestHandlerTests: XCTestCase {
         }
     }
     
+    func testJenkinsPing() {
+        let requestReceivedNotificationExpection = expectationForNotification(JenkinsInstancePingResponseReceivedNotification, object: self.requestHandler, handler: {
+            (notification: NSNotification!) -> Bool in
+            return true
+        })
+        
+        let requestFailedNotificationExpectation = expectationForNotification(JenkinsInstancePingRequestFailedNotification, object: self.requestHandler, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let userInfo: Dictionary = notification.userInfo!
+            let requestError: NSError = userInfo[RequestErrorKey] as! NSError
+            let errorUserInfo: Dictionary = requestError.userInfo!
+            let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
+            
+            if (url.absoluteString == "http://www.google.com/api/json/") {
+                expectationFulfilled = true
+            }
+
+            return expectationFulfilled
+        })
+        
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "JIPingRequestTestInstance", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceEnabledKey: true]
+        let jenkinsInstanceValues2 = [JenkinsInstanceNameKey: "JIPingRequestTestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json/", JenkinsInstanceEnabledKey: true]
+        let jinstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
+        let jinstance2 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues2 as [NSObject : AnyObject], inManagedObjectContext: self.context)
+        
+        jinstance.allowInvalidSSLCertificate = true
+
+        saveContext()
+        requestHandler.pingJenkinsInstance(jinstance)
+        requestHandler.pingJenkinsInstance(jinstance2)
+        
+        // wait for expectations
+        waitForExpectationsWithTimeout(3, handler: { error in
+            
+        })
+    }
+    
     func testJenkinsInstanceDetailRequest() {
         let requestReceivedNotificationExpectation = expectationForNotification(JenkinsInstanceDetailResponseReceivedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
