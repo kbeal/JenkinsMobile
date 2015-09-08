@@ -156,11 +156,54 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="ay0-hu-GJh">
-                            <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                            <rect key="frame" x="0.0" y="211.5" width="600" height="118"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jWM-8V-WUQ">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="30"/>
+                                    <subviews>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="csu-la-P5g">
+                                            <rect key="frame" x="198" y="5" width="20" height="20"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="20" id="LTJ-Pr-fsv"/>
+                                                <constraint firstAttribute="width" constant="20" id="zrc-xK-nlp"/>
+                                            </constraints>
+                                        </activityIndicatorView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Connection Successful" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cXx-Um-8IL">
+                                            <rect key="frame" x="226" y="6" width="149" height="17"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <color key="backgroundColor" name="controlHighlightColor" catalog="System" colorSpace="catalog"/>
+                                    <constraints>
+                                        <constraint firstAttribute="centerY" secondItem="cXx-Um-8IL" secondAttribute="centerY" id="3T2-Dd-HIi"/>
+                                        <constraint firstAttribute="centerY" secondItem="csu-la-P5g" secondAttribute="centerY" id="Bcu-p1-1xs"/>
+                                        <constraint firstAttribute="centerX" secondItem="cXx-Um-8IL" secondAttribute="centerX" id="DVB-Af-74f"/>
+                                        <constraint firstItem="cXx-Um-8IL" firstAttribute="leading" secondItem="csu-la-P5g" secondAttribute="trailing" constant="8" id="MSg-pQ-OkS"/>
+                                        <constraint firstAttribute="height" constant="30" id="o4j-9c-GBZ"/>
+                                    </constraints>
+                                </view>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D4s-EX-Wtm" userLabel="Test">
+                                    <rect key="frame" x="8" y="30" width="584" height="44"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="44" id="Hzh-xm-1So"/>
+                                        <constraint firstAttribute="width" constant="584" id="hAg-Al-mTS"/>
+                                    </constraints>
+                                    <state key="normal" title="Test">
+                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="testButtonTapped:" destination="U2y-ax-vZu" eventType="touchUpInside" id="mx5-F3-6MI"/>
+                                    </connections>
+                                </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="boO-F4-8DS">
-                                    <rect key="frame" x="8" y="14" width="584" height="30"/>
+                                    <rect key="frame" x="8" y="74" width="584" height="44"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="584" id="eg3-Yt-wMT"/>
+                                        <constraint firstAttribute="height" constant="44" id="lPe-Ea-oHb"/>
+                                    </constraints>
                                     <state key="normal" title="Delete">
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
@@ -170,9 +213,13 @@
                                 </button>
                             </subviews>
                             <constraints>
-                                <constraint firstAttribute="trailing" secondItem="boO-F4-8DS" secondAttribute="trailing" constant="8" id="aDd-Rr-fv3"/>
-                                <constraint firstAttribute="bottom" secondItem="boO-F4-8DS" secondAttribute="bottom" id="ex3-t7-LSH"/>
-                                <constraint firstItem="boO-F4-8DS" firstAttribute="leading" secondItem="ay0-hu-GJh" secondAttribute="leading" constant="8" id="mTg-oP-H69"/>
+                                <constraint firstItem="jWM-8V-WUQ" firstAttribute="top" secondItem="ay0-hu-GJh" secondAttribute="top" id="8AO-do-Hn5"/>
+                                <constraint firstAttribute="centerX" secondItem="jWM-8V-WUQ" secondAttribute="centerX" id="BMl-cX-P7h"/>
+                                <constraint firstItem="D4s-EX-Wtm" firstAttribute="top" secondItem="jWM-8V-WUQ" secondAttribute="bottom" id="GEu-Z1-mru"/>
+                                <constraint firstItem="jWM-8V-WUQ" firstAttribute="centerX" secondItem="boO-F4-8DS" secondAttribute="centerX" id="WaS-5q-DQ1"/>
+                                <constraint firstItem="jWM-8V-WUQ" firstAttribute="centerX" secondItem="D4s-EX-Wtm" secondAttribute="centerX" id="gyU-aN-Tbn"/>
+                                <constraint firstItem="boO-F4-8DS" firstAttribute="top" secondItem="D4s-EX-Wtm" secondAttribute="bottom" id="hzM-jA-1qw"/>
+                                <constraint firstItem="jWM-8V-WUQ" firstAttribute="leading" secondItem="ay0-hu-GJh" secondAttribute="leading" id="mDW-eF-Swl"/>
                             </constraints>
                         </view>
                         <prototypes>
@@ -231,6 +278,13 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="actionsContainerView" destination="ay0-hu-GJh" id="NWE-KC-apg"/>
+                        <outlet property="testActivityIndicator" destination="csu-la-P5g" id="UHP-mZ-oFc"/>
+                        <outlet property="testResultLabel" destination="cXx-Um-8IL" id="FMN-mu-s2O"/>
+                        <outlet property="testResultView" destination="jWM-8V-WUQ" id="2GL-xL-MUo"/>
+                        <outlet property="testResultViewHeightConstraint" destination="o4j-9c-GBZ" id="3cM-wP-D0o"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Uqy-Td-JYj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

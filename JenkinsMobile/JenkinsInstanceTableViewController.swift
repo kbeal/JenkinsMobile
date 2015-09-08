@@ -15,7 +15,13 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     var showCredentialsFields: Bool?
     var syncMgr: SyncManager?
     var saveChanges: Bool?
-
+    var testingConnection: Bool?
+    @IBOutlet weak var testResultLabel: UILabel?
+    @IBOutlet weak var testResultView: UIView?
+    @IBOutlet weak var testResultViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var actionsContainerView: UIView?
+    @IBOutlet weak var testActivityIndicator: UIActivityIndicatorView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,6 +34,13 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         tapRecognizer.numberOfTapsRequired = 1
         self.view.addGestureRecognizer(tapRecognizer)
         
+        // setting the result view's height contraint's constant to 0 makes the view not
+        // take up any space while hidden
+        self.testResultViewHeightConstraint.constant = 0
+        self.testResultView?.hidden = true
+        self.testResultLabel?.hidden = true
+        
+        self.initObservers()
         self.setTitle()
     }
     
@@ -43,6 +56,11 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         super.didReceiveMemoryWarning()
     }
     
+    func initObservers() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstancePingResponseReceived:"), name: JenkinsInstancePingResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstancePingRequestFailed:"), name: JenkinsInstancePingRequestFailedNotification, object: nil)
+    }
+    
     func setTitle() {
         if (self.jinstance.name != nil) {
             self.navigationItem.title = self.jinstance.name
@@ -50,8 +68,24 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             self.navigationItem.title = "Add Jenkins Instance"
         }
     }
+    
     func handleSingleTap(recognizer: UITapGestureRecognizer) {
         self.view.endEditing(true)
+    }
+    
+    func toggleTestResultsView(show: Bool) {
+        if (show.boolValue) {
+            self.testResultViewHeightConstraint.constant = 30
+        } else {
+            self.testResultViewHeightConstraint.constant = 0
+        }
+        
+        UIView.transitionWithView(self.actionsContainerView!, duration: 0.25, options: UIViewAnimationOptions.CurveEaseInOut,
+            animations: {
+                self.testResultView?.hidden = !show
+                self.actionsContainerView?.layoutIfNeeded()
+                self.testResultLabel?.hidden = !show
+            }, completion: nil)
     }
     
     func stateChanged(switchView: KDBSwitch) {
@@ -258,8 +292,39 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         return cell
     }
     
-    // MARK: - UIActionSheetDelegate
+    @IBAction func testButtonTapped(sender: UIButton) {
+        self.testActivityIndicator?.startAnimating()
+        self.testResultLabel?.text = "Connecting..."
+        self.testResultView?.backgroundColor = UIColor.lightGrayColor()
+        self.toggleTestResultsView(true)
+        
+        let requestHandler = KDBJenkinsRequestHandler()
+        requestHandler.pingJenkinsInstance(self.jinstance)
 
+        // TODO: test authentication
+    }
+    
+    // MARK: - Observers
+    func jenkinsInstancePingResponseReceived(notification: NSNotification) {
+        // Update the results view to green success
+        UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.CurveEaseInOut, animations: {
+            self.testResultLabel?.text = "\u{2713} Success!"
+            self.testResultView?.backgroundColor = UIColor.greenColor()
+            self.testActivityIndicator?.hidden = true
+        }, completion: nil)
+        
+        // after displaying the success message for 2 seconds, remove the test results view
+        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(2 * Double(NSEC_PER_SEC)))
+        dispatch_after(delayTime, dispatch_get_main_queue()) {
+            self.toggleTestResultsView(false)
+        }
+    }
+    
+    func jenkinsInstancePingRequestFailed(notification: NSNotification) {
+        println("can't find instance :(")
+    }
+    
+    // MARK: - UIActionSheetDelegate
     @IBAction func deleteButtonTapped(sender: UIButton) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
         let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
