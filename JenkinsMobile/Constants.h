@@ -28,6 +28,8 @@ extern NSString * const ActiveConfigurationDetailRequestFailedNotification;
 extern NSString * const JobTestResultsImageResponseReceivedNotification;
 extern NSString * const JenkinsInstancePingResponseReceivedNotification;
 extern NSString * const JenkinsInstancePingRequestFailedNotification;
+extern NSString * const JenkinsInstanceAuthenticationResponseReceivedNotification;
+extern NSString * const JenkinsInstanceAuthenticationRequestFailedNotification;
 
 #pragma mark - View keys
 extern NSString * const ViewURLKey;
@@ -139,5 +141,8 @@ extern NSString * const RequestErrorKey;
 
 #pragma mark - RequestHandler Keys
 extern NSString * const RequestedObjectKey;
+
+#pragma mark - SyncManager Keys
+extern NSString * const SyncManagerCurrentJenkinsInstance;
 
 @end

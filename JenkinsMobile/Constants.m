@@ -24,6 +24,8 @@ NSString * const JenkinsInstanceDetailResponseReceivedNotification = @"JenkinsIn
 NSString * const JenkinsInstanceDetailRequestFailedNotification = @"JenkinsInstanceDetailRequestFailed";
 NSString * const JenkinsInstancePingResponseReceivedNotification = @"JenkinsInstancePingResponseReceived";
 NSString * const JenkinsInstancePingRequestFailedNotification = @"JenkinsInstancePingRequestFailed";
+NSString * const JenkinsInstanceAuthenticationResponseReceivedNotification = @"JenkinsInstanceAuthenticationResponseReceived";
+NSString * const JenkinsInstanceAuthenticationRequestFailedNotification = @"JenkinsInstanceAuthenticationRequestFailed";
 NSString * const BuildDetailResponseReceivedNotification = @"BuildDetailResponseReceived";
 NSString * const BuildDetailRequestFailedNotification = @"BuildDetailRequestFailed";
 NSString * const ActiveConfigurationDetailResponseReceivedNotification = @"ActiveConfigurationDetailResponseReceived";
@@ -140,5 +142,8 @@ NSString * const RequestErrorKey = @"requestError";
 
 #pragma mark - RequestHandler Keys
 NSString * const RequestedObjectKey = @"requestedObject";
+
+#pragma mark - SyncManager Keys
+NSString * const SyncManagerCurrentJenkinsInstance = @"currentJenkinsInstance";
 
 @end

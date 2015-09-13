@@ -40,7 +40,7 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
         cell.detailTextLabel?.text = jinstance.url
         
         if let currentJI: JenkinsInstance = SyncManager.sharedInstance.currentJenkinsInstance {
-            if (currentJI.url == jinstance.url) {
+            if ((jinstance.url != nil) && (currentJI.url == jinstance.url)) {
                 if (currentJI.shouldAuthenticate.boolValue) {
                     if (currentJI.authenticated.boolValue) {
                         cell.imageView?.image = StatusCircle.imageForCircle(UIColor.blueColor())

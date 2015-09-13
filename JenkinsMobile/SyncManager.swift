@@ -11,13 +11,14 @@ import CoreData
 
 @objc public class SyncManager {
     
-    var masterMOC: NSManagedObjectContext?
-    var mainMOC: NSManagedObjectContext?
+    var masterMOC: NSManagedObjectContext
+    var mainMOC: NSManagedObjectContext
     
     var currentJenkinsInstance: JenkinsInstance? {
         didSet {
             if (currentJenkinsInstance != nil) {
                 self.syncJenkinsInstance(currentJenkinsInstance!)
+                self.updateCurrentURLPref(currentJenkinsInstance!.url)
             }
         }
     }
@@ -40,8 +41,15 @@ import CoreData
     }
     
     public init() {
+        let appDelegate = UIApplication.sharedApplication().delegate as! KDBAppDelegate
+        self.masterMOC = appDelegate.masterMOC
+        self.mainMOC = appDelegate.mainMOC
         initTimer()
         initObservers()
+        let defaults = NSUserDefaults.standardUserDefaults()
+        if let url: String? = defaults.stringForKey(SyncManagerCurrentJenkinsInstance) {
+            self.currentJenkinsInstance = JenkinsInstance.fetchJenkinsInstanceWithURL(url, fromManagedObjectContext: self.mainMOC)
+        }
     }
     
     func initTimer() {
@@ -69,7 +77,7 @@ import CoreData
     func syncTimerTick() {
         if (jobSyncQueue.count() > 0) {
             // pop a job from the jobQueue and sync it
-            self.masterMOC?.performBlock({
+            self.masterMOC.performBlock({
                 let job = self.jobSyncQueue.pop()!
                 self.syncJob(job)
             })
@@ -77,7 +85,7 @@ import CoreData
         
         if (viewSyncQueue.count() > 0) {
             // pop a view from the jobQueue and sync it
-            self.masterMOC?.performBlock({
+            self.masterMOC.performBlock({
                 let view = self.viewSyncQueue.pop()!
                 self.syncView(view)
             })
@@ -85,18 +93,23 @@ import CoreData
         
         if (buildSyncQueue.count() > 0) {
             // pop a build from the jobQueue and sync it
-            self.masterMOC?.performBlock({
+            self.masterMOC.performBlock({
                 let build = self.buildSyncQueue.pop()!
                 self.syncBuild(build)
             })
         }
     }
     
+    func updateCurrentURLPref(newURL: String) {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.setObject(newURL, forKey: SyncManagerCurrentJenkinsInstance)
+    }
+    
     public func jobSyncQueueSize() -> Int { return jobSyncQueue.count() }
     
     // MARK: - Sync Objects
     func syncAllJobs(jenkinsInstance: JenkinsInstance) {
-        masterMOC?.performBlock({
+        masterMOC.performBlock({
             if let bgji: JenkinsInstance = self.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance {
                 let allJobs = bgji.rel_Jobs
                 for job in allJobs {
@@ -109,7 +122,7 @@ import CoreData
     }
     
     func syncAllViews(jenkinsInstance: JenkinsInstance) {
-        masterMOC?.performBlock({
+        masterMOC.performBlock({
             if let bgji: JenkinsInstance = self.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance {
                 let allViews = bgji.rel_Views
                 for view in allViews {
@@ -122,7 +135,7 @@ import CoreData
     }
     
     func syncAllJobsForView(view: View) {
-        masterMOC?.performBlock({
+        masterMOC.performBlock({
             let viewjobs = view.rel_View_Jobs
             for job in viewjobs {
                 self.jobSyncQueue.push(job as! Job)
@@ -131,7 +144,7 @@ import CoreData
     }
     
     func syncSubViewsForView(view: View) {
-        masterMOC?.performBlock({
+        masterMOC.performBlock({
             let subviews = view.rel_View_Views
             for subview in subviews {
                 self.viewSyncQueue.push(subview as! View)
@@ -167,7 +180,6 @@ import CoreData
     
     // MARK: - Responses Received
     func jobDetailResponseReceived(notification: NSNotification) {
-        assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
         let job = values[RequestedObjectKey] as! Job
         
@@ -181,7 +193,6 @@ import CoreData
     }
     
     func viewDetailResponseReceived(notification: NSNotification) {
-        assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
         let view = values[RequestedObjectKey] as! View
         
@@ -197,7 +208,6 @@ import CoreData
     }
     
     func jenkinsInstanceDetailResponseReceived(notification: NSNotification) {
-        assert(self.masterMOC != nil, "main managed object context not set")
         var values: Dictionary = notification.userInfo!
         let ji: JenkinsInstance = values[RequestedObjectKey] as! JenkinsInstance
         
@@ -217,7 +227,6 @@ import CoreData
     }
     
     func buildDetailResponseReceived(notification: NSNotification) {
-        assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
         let build: Build = values[RequestedObjectKey] as! Build
         
@@ -229,7 +238,6 @@ import CoreData
     }
     
     func activeConfigurationDetailResponseReceived(notification: NSNotification) {
-        assert(self.masterMOC != nil, "master managed object context not set")
         var values: Dictionary = notification.userInfo!
         let ac: ActiveConfiguration = values[RequestedObjectKey] as! ActiveConfiguration
         let job = ac.rel_ActiveConfiguration_Job
@@ -245,7 +253,6 @@ import CoreData
     
     // MARK: - Requests that Failed
     func jobDetailRequestFailed(notification: NSNotification) {
-        assert(self.masterMOC != nil, "master managed object context not set!!")
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
@@ -275,7 +282,6 @@ import CoreData
     }
     
     func viewDetailRequestFailed(notification: NSNotification) {
-        assert(self.masterMOC != nil, "master managed object context not set")
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
@@ -305,7 +311,6 @@ import CoreData
     }
     
     func jenkinsInstanceDetailRequestFailed(notification: NSNotification) {
-        assert(self.masterMOC != nil, "master managed object context not set")
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
@@ -332,7 +337,6 @@ import CoreData
     }
     
     func buildDetailRequestFailed(notification: NSNotification) {
-        assert(self.masterMOC != nil, "master managed object context not set")
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
@@ -362,7 +366,6 @@ import CoreData
     }
     
     func activeConfigurationDetailRequestFailed(notification: NSNotification) {
-        assert(self.masterMOC != nil, "master managed object context not set")
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         let errorUserInfo: Dictionary = requestError.userInfo!
@@ -417,7 +420,7 @@ import CoreData
         var bgobj: NSManagedObject? = obj
         if obj.managedObjectContext?.concurrencyType == NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType {
             var error: NSError? = nil
-            bgobj = self.masterMOC?.existingObjectWithID(obj.objectID, error: &error)
+            bgobj = self.masterMOC.existingObjectWithID(obj.objectID, error: &error)
             if bgobj == nil {
                println("Error retrieving object from background context: \(error?.localizedDescription)\n\(error?.userInfo)")
             }
@@ -428,7 +431,7 @@ import CoreData
     // saves the main managedObjectContext and then also updates the masterManagedObjectContext
     func saveMainContext() {
         self.saveContext(self.mainMOC)
-        self.masterMOC?.performBlock({
+        self.masterMOC.performBlock({
             self.saveContext(self.masterMOC)
         })
     }

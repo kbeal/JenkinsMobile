@@ -59,6 +59,8 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     func initObservers() {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstancePingResponseReceived:"), name: JenkinsInstancePingResponseReceivedNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstancePingRequestFailed:"), name: JenkinsInstancePingRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceAuthenticateReceived:"), name: JenkinsInstanceAuthenticationResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceAuthenticateFailed:"), name: JenkinsInstanceAuthenticationRequestFailedNotification, object: nil)
     }
     
     func setTitle() {
@@ -86,6 +88,22 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
                 self.actionsContainerView?.layoutIfNeeded()
                 self.testResultLabel?.hidden = !show
             }, completion: nil)
+    }
+    
+    func updateTestResultsView(color: UIColor, message: String, duration: Double, showActivityIndicator: Bool) {
+        // Update the results view to green success
+        UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.CurveEaseInOut, animations: {
+            self.testResultLabel?.text = message
+            self.testResultView?.backgroundColor = color
+            self.testActivityIndicator?.hidden = !showActivityIndicator
+            }, completion: nil)
+        
+        // remove the view after showing it for specified duration
+        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(duration * Double(NSEC_PER_SEC)))
+        dispatch_after(delayTime, dispatch_get_main_queue()) {
+            self.toggleTestResultsView(false)
+        }
+
     }
     
     func stateChanged(switchView: KDBSwitch) {
@@ -293,35 +311,41 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     }
     
     @IBAction func testButtonTapped(sender: UIButton) {
+        self.testActivityIndicator?.hidden = false
         self.testActivityIndicator?.startAnimating()
         self.testResultLabel?.text = "Connecting..."
         self.testResultView?.backgroundColor = UIColor.lightGrayColor()
         self.toggleTestResultsView(true)
         
         let requestHandler = KDBJenkinsRequestHandler()
+        // test connection
         requestHandler.pingJenkinsInstance(self.jinstance)
-
-        // TODO: test authentication
     }
     
     // MARK: - Observers
     func jenkinsInstancePingResponseReceived(notification: NSNotification) {
-        // Update the results view to green success
-        UIView.animateWithDuration(0.5, delay: 0, options: UIViewAnimationOptions.CurveEaseInOut, animations: {
-            self.testResultLabel?.text = "\u{2713} Success!"
-            self.testResultView?.backgroundColor = UIColor.greenColor()
-            self.testActivityIndicator?.hidden = true
-        }, completion: nil)
-        
-        // after displaying the success message for 2 seconds, remove the test results view
-        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(2 * Double(NSEC_PER_SEC)))
-        dispatch_after(delayTime, dispatch_get_main_queue()) {
-            self.toggleTestResultsView(false)
+        if (self.jinstance.shouldAuthenticate.boolValue) {
+            let requestHandler = KDBJenkinsRequestHandler()
+            // test authentication
+            requestHandler.authenticateJenkinsInstance(self.jinstance)
+        } else {
+            // Update the results view to green success
+            self.updateTestResultsView(UIColor.greenColor(), message: "\u{2713} Success", duration: 2, showActivityIndicator: false)
         }
+
     }
     
     func jenkinsInstancePingRequestFailed(notification: NSNotification) {
-        println("can't find instance :(")
+        self.updateTestResultsView(UIColor.redColor(), message: "Unable to reach server.", duration: 3, showActivityIndicator: false)
+    }
+    
+    func jenkinsInstanceAuthenticateReceived(notification: NSNotification) {
+        // Update the results view to green success
+        self.updateTestResultsView(UIColor.greenColor(), message: "\u{2713} Success", duration: 2, showActivityIndicator: false)
+    }
+    
+    func jenkinsInstanceAuthenticateFailed(notification: NSNotification) {
+        self.updateTestResultsView(UIColor.redColor(), message: "Authentication failed.", duration: 3, showActivityIndicator: false)
     }
     
     // MARK: - UIActionSheetDelegate
@@ -341,6 +365,9 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "jenkinsInstanceDoneSegue") {
             self.saveChanges = true
+            if (self.jinstance.enabled.boolValue) {
+                self.syncMgr?.syncJenkinsInstance(self.jinstance)
+            }
         } else {
             self.saveChanges = false
             self.jinstance.managedObjectContext?.undoManager?.undo()

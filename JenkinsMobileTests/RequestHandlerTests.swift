@@ -78,7 +78,7 @@ class RequestHandlerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "JIPingRequestTestInstance", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceEnabledKey: true]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "JIPingRequestTestInstance", JenkinsInstanceURLKey: "http://localhost:8080", JenkinsInstanceEnabledKey: true]
         let jenkinsInstanceValues2 = [JenkinsInstanceNameKey: "JIPingRequestTestInstance", JenkinsInstanceURLKey: "http://www.google.com/api/json/", JenkinsInstanceEnabledKey: true]
         let jinstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         let jinstance2 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues2 as [NSObject : AnyObject], inManagedObjectContext: self.context)
@@ -88,6 +88,45 @@ class RequestHandlerTests: XCTestCase {
         saveContext()
         requestHandler.pingJenkinsInstance(jinstance)
         requestHandler.pingJenkinsInstance(jinstance2)
+        
+        // wait for expectations
+        waitForExpectationsWithTimeout(3, handler: { error in
+            
+        })
+    }
+    
+    func testJenkinsAuthentication() {
+        let requestReceivedNotificationExpection = expectationForNotification(JenkinsInstanceAuthenticationResponseReceivedNotification, object: self.requestHandler, handler: {
+            (notification: NSNotification!) -> Bool in
+            return true
+        })
+        
+        let requestFailedNotificationExpectation = expectationForNotification(JenkinsInstanceAuthenticationRequestFailedNotification, object: self.requestHandler, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let userInfo: Dictionary = notification.userInfo!
+            let requestError: NSError = userInfo[RequestErrorKey] as! NSError
+            let errorUserInfo: Dictionary = requestError.userInfo!
+            let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
+            
+            if (url.absoluteString == "http://localhost:8080") {
+                expectationFulfilled = true
+            }
+            
+            return expectationFulfilled
+        })
+        
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "JIAuthRequestTestInstance", JenkinsInstanceURLKey: "http://localhost:8080", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstanceShouldAuthenticateKey: true]
+        let jinstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1, inManagedObjectContext: self.context)
+        jinstance.password = "password"
+        
+        saveContext()
+        
+        requestHandler.authenticateJenkinsInstance(jinstance)
+        
+        jinstance.username = "user"
+        
+        requestHandler.authenticateJenkinsInstance(jinstance)
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in

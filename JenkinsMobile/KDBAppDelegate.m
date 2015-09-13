@@ -37,8 +37,8 @@
     //JenkinsInstance *ji = [self createJenkinsInstanceWithURL:jenkinsURL];
     //mgr.currentJenkinsInstance = ji;
     mgr.requestHandler = [[KDBJenkinsRequestHandler alloc] init];
-    mgr.masterMOC = self.masterMOC;
-    mgr.mainMOC = self.mainMOC;
+//    mgr.masterMOC = self.masterMOC;
+//    mgr.mainMOC = self.mainMOC;
     
     //[mgr syncJenkinsInstance:ji];
     
