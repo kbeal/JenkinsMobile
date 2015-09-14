@@ -35,8 +35,6 @@ class SyncManagerTests: XCTestCase {
         
         coord.addPersistentStoreWithType(NSInMemoryStoreType, configuration: nil, URL: nil, options: nil, error: nil)
         context!.persistentStoreCoordinator = coord
-        mgr.mainMOC = context;
-        mgr.masterMOC = context;
         mgr.requestHandler = requestHandler
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]

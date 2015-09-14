@@ -26,8 +26,6 @@ class RequestHandlerTests: XCTestCase {
         context = NSManagedObjectContext(concurrencyType: NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType)        
         coord.addPersistentStoreWithType(NSInMemoryStoreType, configuration: nil, URL: nil, options: nil, error: nil)
         context!.persistentStoreCoordinator = coord
-        mgr.mainMOC = context;
-        mgr.masterMOC = context;
         mgr.requestHandler = requestHandler
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "https://snowman:8443/jenkins/"]
