@@ -257,6 +257,90 @@
     [operation start];
 }
 
+- (void) pingJenkinsInstance: (JenkinsInstance *) jinstance
+{
+    NSURL *requestURL = [NSURL URLWithString:@"login" relativeToURL:[NSURL URLWithString:jinstance.url]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    NSURL *jinstanceURL = [NSURL URLWithString:jinstance.url];
+    NSLog(@"%@%@",@"Pinging details for Jenkins at URL: ",requestURL.absoluteString);
+    
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
+    [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
+    
+    AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"%@%@",@"Ping response received for JenkinsInstance at url: ",jinstanceURL);
+        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstancePingResponseReceivedNotification object:self userInfo:nil];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"%@%@",@"Failed to receive ping response for jenkins at url: ",requestURL.absoluteString);
+        // since the JenkinsInstance actually exists, we need to inject it's url so that coredata can find it.
+        NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
+        [errUserInfo setObject:jinstanceURL forKey:NSErrorFailingURLKey];
+        NSError *newError = [[NSError alloc] initWithDomain:error.domain code:error.code userInfo:errUserInfo];
+        NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:newError, nil] forKeys:[NSArray arrayWithObjects:RequestErrorKey, nil]];
+        
+        if (operation.response) {
+            [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
+        }
+        [info setObject:jinstance forKey:RequestedObjectKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstancePingRequestFailedNotification object:self userInfo:info];
+    }];
+    
+    [operation start];
+}
+
+- (void) authenticateJenkinsInstance:(JenkinsInstance *)jinstance
+{
+    NSURL *requestURL = [NSURL URLWithString:@"api/json?tree=nodeDescription" relativeToURL:[NSURL URLWithString:jinstance.url]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    NSLog(@"%@%@",@"Authenticating with Jenkins at URL: ",requestURL.absoluteString);
+    NSString *username = jinstance.username;
+    NSString *password = jinstance.password;
+    NSURL *jinstanceURL = [NSURL URLWithString:jinstance.url];
+    
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
+    [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
+    
+    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:username password:password];
+    manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"%@%@",@"Authentication response received for JenkinsInstance at url: ",jinstanceURL);
+        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceAuthenticationResponseReceivedNotification object:self userInfo:nil];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"%@%@",@"Failed to authenticate with jenkins at url: ",requestURL.absoluteString);
+        // since the JenkinsInstance actually exists, we need to inject it's url so that coredata can find it.
+        NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
+        [errUserInfo setObject:jinstanceURL forKey:NSErrorFailingURLKey];
+        NSError *newError = [[NSError alloc] initWithDomain:error.domain code:error.code userInfo:errUserInfo];
+        NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:newError, nil] forKeys:[NSArray arrayWithObjects:RequestErrorKey, nil]];
+        
+        if (operation.response) {
+            [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
+        }
+        [info setObject:jinstance forKey:RequestedObjectKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceAuthenticationRequestFailedNotification object:self userInfo:info];
+    }];
+    
+    [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {
+        if ([request.allHTTPHeaderFields objectForKey:@"Authorization"] != nil) {
+            return request;
+        } else {
+            NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+            NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+            NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+            NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+            [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+            return urlRequest;
+        }
+    }];
+    
+    [operation start];
+}
+
 - (void) importDetailsForJenkinsInstance: (JenkinsInstance *) jinstance
 {
     NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:[NSURL URLWithString:jinstance.url]];

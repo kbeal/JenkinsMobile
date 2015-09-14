@@ -40,7 +40,7 @@ class SyncManagerTests: XCTestCase {
         mgr.requestHandler = requestHandler
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
-        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
+        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         
         context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: self.context)})
         self.jenkinsInstance?.password = "admin"
@@ -218,7 +218,7 @@ class SyncManagerTests: XCTestCase {
         let jobs = [jobObj1, jobObj2, jobObj3, jobObj4]
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
-        let values = [JenkinsInstanceNameKey: "QA Ubuntu", JenkinsInstanceURLKey: "https://jenkins.qa.ubuntu.com/", JenkinsInstanceJobsKey: jobs, JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstancePrimaryViewKey: primaryView]
+        let values = [JenkinsInstanceNameKey: "QA Ubuntu", JenkinsInstanceURLKey: "https://jenkins.qa.ubuntu.com/", JenkinsInstanceJobsKey: jobs, JenkinsInstanceEnabledKey: true, JenkinsInstancePrimaryViewKey: primaryView]
 
         JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values as [NSObject : AnyObject], inManagedObjectContext: context!)
         
@@ -234,7 +234,6 @@ class SyncManagerTests: XCTestCase {
         XCTAssertEqual(jenkinss!.count, 1, "jenkinss count is wrong. Should be 1 got: \(jenkinss!.count) instead")
         XCTAssertEqual(ji.name, "QA Ubuntu", "jenkins instance name is wrong. should be QA Ubuntu, got: \(ji.name) instead")
         XCTAssertEqual(ji.rel_Jobs.count, 4, "jenkins instance job count is wrong. should be 4, got:\(ji.rel_Jobs.count) instead")
-        XCTAssertEqual(ji.current, 0, "jenkins current should be false")
     }
     
     /*
@@ -344,9 +343,10 @@ class SyncManagerTests: XCTestCase {
         })
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstanceAuthenticatedKey: true, JenkinsInstancePrimaryViewKey: primaryView, JenkinsInstanceShouldAuthenticateKey: true]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstanceAuthenticatedKey: true, JenkinsInstancePrimaryViewKey: primaryView]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.allowInvalidSSLCertificate = true
+        jinstance1.shouldAuthenticate = true
         jinstance1.password = "password"
         saveContext()
         
@@ -379,7 +379,7 @@ class SyncManagerTests: XCTestCase {
         })
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin", JenkinsInstancePrimaryViewKey: primaryView]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin", JenkinsInstancePrimaryViewKey: primaryView]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.allowInvalidSSLCertificate = true
         jinstance1.password = "changeme"
@@ -426,7 +426,7 @@ class SyncManagerTests: XCTestCase {
         })
         
         let primaryView = [ViewNameKey: "Test", ViewURLKey: "https://snowman:8443/jenkins/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin", JenkinsInstancePrimaryViewKey: primaryView]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin", JenkinsInstancePrimaryViewKey: primaryView]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.password = "changeme"
         jinstance1.allowInvalidSSLCertificate = true;
@@ -458,10 +458,11 @@ class SyncManagerTests: XCTestCase {
         })
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView, JenkinsInstanceShouldAuthenticateKey: true]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.password = "password1"
         jinstance1.allowInvalidSSLCertificate = true;
+        jinstance1.shouldAuthenticate = true
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
@@ -491,7 +492,7 @@ class SyncManagerTests: XCTestCase {
         })
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://jenkins:8080/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView, JenkinsInstanceShouldAuthenticateKey: true]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://jenkins:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView, JenkinsInstanceShouldAuthenticateKey: true]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.password = "password"
         jinstance1.allowInvalidSSLCertificate = true;
@@ -890,7 +891,7 @@ class SyncManagerTests: XCTestCase {
         let viewURLStr = "https://snowman:8443/jenkins/view/All/"
         let viewURL = NSURL(string: viewURLStr)
         let primaryView = [ViewNameKey: "Nunya", ViewURLKey: "http://jenkins:8080/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceCurrentKey: false, JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin", JenkinsInstancePrimaryViewKey: primaryView]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://snowman:8080/jenkins/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin", JenkinsInstancePrimaryViewKey: primaryView]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.password = "changeme"
         jinstance1.allowInvalidSSLCertificate = true;

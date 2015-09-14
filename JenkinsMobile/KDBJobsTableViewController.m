@@ -7,6 +7,7 @@
 //
 
 #import "KDBJobsTableViewController.h"
+#import "SWRevealViewController.h"
 
 @interface KDBJobsTableViewController ()
 
@@ -14,10 +15,20 @@
 
 @implementation KDBJobsTableViewController
 
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.syncMgr = [SyncManager sharedInstance];    
-    [self setNavTitleAndPrompt];
+    self.syncMgr = [SyncManager sharedInstance];
+    self.managedObjectContext = self.syncMgr.mainMOC;    
+    [self setNavTitleAndButton];
+    
+    SWRevealViewController *revealViewController = self.revealViewController;
+    if (revealViewController) {
+        [self.sidebarButton setTarget: self.revealViewController];
+        [self.sidebarButton setAction: @selector( revealToggle: )];
+        [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    }
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -26,11 +37,12 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
-- (void) setNavTitleAndPrompt {
-    self.navigationItem.prompt = self.syncMgr.currentJenkinsInstance.name;
+- (void) setNavTitleAndButton {
     if (self.parentView) {
-        self.navigationItem.title = [NSString stringWithFormat:@"%@%@",self.parentView.name,@" Jobs"];
+        self.navigationItem.leftBarButtonItem = nil;
+        self.navigationItem.title = self.parentView.name;
     } else {
+        self.navigationItem.leftBarButtonItem.image = [[UIImage imageNamed:@"logo.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
         self.navigationItem.title = @"All Jobs";
     }
 }

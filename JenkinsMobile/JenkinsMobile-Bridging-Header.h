@@ -10,3 +10,4 @@
 #import "ActiveConfiguration+More.h"
 #import "View+More.h"
 #import "Build+More.h"
+#import "KDBAppDelegate.h"

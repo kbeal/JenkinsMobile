@@ -19,4 +19,6 @@
 @property (strong, nonatomic) SyncManager *syncMgr;
 @property (strong, nonatomic) View *parentView;
 
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
+
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "KDBViewsTableViewController.h"
+#import "SWRevealViewController.h"
 
 @interface KDBViewsTableViewController ()
 
@@ -17,7 +18,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.syncMgr = [SyncManager sharedInstance];
-    [self setNavTitleAndPrompt];
+    self.managedObjectContext = self.syncMgr.mainMOC;
+
+    SWRevealViewController *revealViewController = self.revealViewController;
+    if (revealViewController) {
+        [self.sidebarButton setTarget: self.revealViewController];
+        [self.sidebarButton setAction: @selector( revealToggle: )];
+        [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    }
+    
+    [self setNavTitleAndButton];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -25,12 +35,12 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
-- (void) setNavTitleAndPrompt {
-    self.navigationItem.prompt = self.syncMgr.currentJenkinsInstance.name;
+- (void) setNavTitleAndButton {
     if (self.parentView) {
+        self.navigationItem.leftBarButtonItem = nil;
         self.navigationItem.title = self.parentView.name;
     } else {
-
+        self.navigationItem.leftBarButtonItem.image = [[UIImage imageNamed:@"logo.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
         self.navigationItem.title = @"Views";
     }
 }
@@ -71,12 +81,14 @@
 {
     // Return the number of sections.
     return [[self.fetchedResultsController sections] count];
+    //return 0;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     id <NSFetchedResultsSectionInfo> sectionInfo = [self.fetchedResultsController sections][section];
     return [sectionInfo numberOfObjects];
+    //return 0;
 }
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath

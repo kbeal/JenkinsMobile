@@ -22,6 +22,10 @@ NSString * const BuildProgressResponseReceivedNotification = @"BuildProgressResp
 NSString * const JobTestResultsImageResponseReceivedNotification = @"JobTestResultsImageResponseReceived";
 NSString * const JenkinsInstanceDetailResponseReceivedNotification = @"JenkinsInstanceDetailResponseReceived";
 NSString * const JenkinsInstanceDetailRequestFailedNotification = @"JenkinsInstanceDetailRequestFailed";
+NSString * const JenkinsInstancePingResponseReceivedNotification = @"JenkinsInstancePingResponseReceived";
+NSString * const JenkinsInstancePingRequestFailedNotification = @"JenkinsInstancePingRequestFailed";
+NSString * const JenkinsInstanceAuthenticationResponseReceivedNotification = @"JenkinsInstanceAuthenticationResponseReceived";
+NSString * const JenkinsInstanceAuthenticationRequestFailedNotification = @"JenkinsInstanceAuthenticationRequestFailed";
 NSString * const BuildDetailResponseReceivedNotification = @"BuildDetailResponseReceived";
 NSString * const BuildDetailRequestFailedNotification = @"BuildDetailRequestFailed";
 NSString * const ActiveConfigurationDetailResponseReceivedNotification = @"ActiveConfigurationDetailResponseReceived";
@@ -122,7 +126,6 @@ NSString * const BuildLastSyncResultKey = @"lastSyncResult";
 #pragma mark - JenkinsInstance Keys
 NSString * const JenkinsInstanceNameKey = @"name";
 NSString * const JenkinsInstanceURLKey = @"url";
-NSString * const JenkinsInstanceCurrentKey = @"current";
 NSString * const JenkinsInstanceJobsKey = @"jobs";
 NSString * const JenkinsInstanceEnabledKey = @"enabled";
 NSString * const JenkinsInstanceUsernameKey = @"username";
@@ -139,5 +142,8 @@ NSString * const RequestErrorKey = @"requestError";
 
 #pragma mark - RequestHandler Keys
 NSString * const RequestedObjectKey = @"requestedObject";
+
+#pragma mark - SyncManager Keys
+NSString * const SyncManagerCurrentJenkinsInstance = @"currentJenkinsInstance";
 
 @end

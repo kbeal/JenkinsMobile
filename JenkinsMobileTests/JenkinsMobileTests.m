@@ -31,6 +31,7 @@
     [coord addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:nil];
     _context = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
     [_context setPersistentStoreCoordinator: coord];
+    [_context setUndoManager:[[NSUndoManager alloc] init]];
 
     NSArray *viewKeys = [NSArray arrayWithObjects:ViewNameKey,ViewURLKey, nil];
     NSArray *priViewVals = [NSArray arrayWithObjects:@"All",@"http://tomcat:8080/", nil];
@@ -290,7 +291,6 @@
     
     XCTAssert([instance.name isEqualToString:@"TestInstance"], @"name is wrong");
     XCTAssert([instance.url isEqualToString:@"http://ci.kylebeal.com/"], @"url is wrong");
-    XCTAssert([instance.current isEqualToNumber:[NSNumber numberWithBool:YES]], @"not current instance");
     XCTAssert([instance.username isEqualToString:@"admin"], @"username is wrong");
     XCTAssert([instance.password isEqualToString:@"password"], @"password is wrong");
     XCTAssert(instance.rel_Views.count==2,@"views count is wrong");
@@ -304,12 +304,6 @@
         }
     }
     XCTAssert([savedPrimaryView.url isEqualToString:@"http://ci.kylebeal.com/view/View1/"],@"primary view url is wrong; got %@", savedPrimaryView.url);
-}
-
-- (void) testGetCurrentJenkinsInstance
-{
-    JenkinsInstance *current = [JenkinsInstance getCurrentJenkinsInstanceFromManagedObjectContext:_context];
-    XCTAssertEqualObjects(current, _jinstance, @"instances aren't equal");
 }
 
 - (void) testUpdatingJob
@@ -692,6 +686,37 @@
     NSURL *url2 = [NSURL URLWithString:url2str];
     XCTAssertEqualObjects(@"http://www.google.com", [JenkinsInstance removeApiFromURL:url1]);
     XCTAssertEqualObjects(@"http://www.google.com/ci/jenkins", [JenkinsInstance removeApiFromURL:url2]);
+}
+
+- (void) testValidateURL
+{
+    NSString *url = nil;
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",nil];
+    NSArray *keys = [NSArray arrayWithObjects:JenkinsInstanceNameKey,nil];
+    NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    JenkinsInstance *instance = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
+    
+    NSError *error = nil;
+    BOOL valid = [instance validateValue:&url forKey:JenkinsInstanceURLKey error:&error];
+    
+    XCTAssertFalse(valid);
+}
+
+-(void) testValidateUsername
+{
+    NSString *invalidusername = @"";
+    NSString *validusername = @"admin";
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",nil];
+    NSArray *keys = [NSArray arrayWithObjects:JenkinsInstanceNameKey,nil];
+    NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    JenkinsInstance *instance = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
+    
+    NSString *message = nil;
+    BOOL invalid = [instance validateUsername:invalidusername withMessage:&message];
+    BOOL valid = [instance validateUsername:validusername withMessage:&message];
+    
+    XCTAssertFalse(invalid);
+    XCTAssertTrue(valid);
 }
 
 - (void) deleteAllRecordsForEntity: (NSString *) entityName

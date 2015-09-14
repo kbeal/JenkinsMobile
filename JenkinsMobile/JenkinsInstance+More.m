@@ -51,21 +51,6 @@
     return instance;
 }
 
-+ (JenkinsInstance *)getCurrentJenkinsInstanceFromManagedObjectContext:(NSManagedObjectContext *) context
-{
-    __block JenkinsInstance *instance = nil;
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    
-    [context performBlockAndWait:^{
-        request.entity = [NSEntityDescription entityForName:@"JenkinsInstance" inManagedObjectContext:context];
-        request.predicate = [NSPredicate predicateWithFormat:@"current = %d", 1];
-        NSError *executeFetchError = nil;
-        instance = [[context executeFetchRequest:request error:&executeFetchError] lastObject];
-    }];
-    
-    return instance;
-}
-
 // Removes /api/json and /api/json/ from the end of URL's
 + (NSString *) removeApiFromURL:(NSURL *) url
 {
@@ -102,15 +87,70 @@
 {
     self.name = [values objectForKey:JenkinsInstanceNameKey];
     self.url = [values objectForKey:JenkinsInstanceURLKey];
-    self.current = [values objectForKey:JenkinsInstanceCurrentKey];
-    self.enabled = [values objectForKey:JenkinsInstanceEnabledKey];
+    //self.current = [values objectForKey:JenkinsInstanceCurrentKey];
+    //self.enabled = [values objectForKey:JenkinsInstanceEnabledKey];
     self.username = [values objectForKey:JenkinsInstanceUsernameKey];
     self.authenticated = [values objectForKey:JenkinsInstanceAuthenticatedKey];
     self.primaryView = [values objectForKeyedSubscript:JenkinsInstancePrimaryViewKey];
-    self.shouldAuthenticate = [values objectForKey:JenkinsInstanceShouldAuthenticateKey];
+    //self.shouldAuthenticate = [values objectForKey:JenkinsInstanceShouldAuthenticateKey];
     [self createJobs:[values objectForKey:JenkinsInstanceJobsKey]];
     [self createViews:[values objectForKey:JenkinsInstanceViewsKey]];
     self.lastSyncResult = [values objectForKey:JenkinsInstanceLastSyncResultKey];
+}
+
+- (BOOL)validateURL:(NSString *) newURL withMessage:(NSString **) message; {
+    NSError *error = nil;
+    BOOL validated = [self validateValue:&newURL forKey:JenkinsInstanceURLKey error:&error];
+    
+    if (!validated) {
+        *message = @"URL cannot be empty";
+    }
+    
+    return validated;
+}
+
+- (BOOL)validateName:(NSString *) newName withMessage:(NSString **) message;{
+    NSError *error = nil;
+    BOOL validated = [self validateValue:&newName forKey:JenkinsInstanceNameKey error:&error];
+    
+    if (!validated) {
+        *message = @"Name cannot be empty";
+    }
+    
+    return validated;
+}
+
+- (BOOL)validateUsername:(NSString *) newUsername withMessage:(NSString **) message {
+    NSError *error = nil;
+    
+    BOOL validated = true;
+    if (self.shouldAuthenticate) {
+        validated = [self validateValue:&newUsername forKey:JenkinsInstanceUsernameKey error:&error];
+        NSString *notBlank = @"^(?!\\s*$).+";
+        NSPredicate *regexTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", notBlank];
+        validated = [regexTest evaluateWithObject:newUsername];
+    }
+    
+    if (!validated) {
+        *message = @"Username cannot be empty";
+    }
+    
+    return validated;
+}
+
+- (BOOL)validatePassword:(NSString *) newPassword withMessage:(NSString **) message {
+    BOOL validated = true;
+    if (self.shouldAuthenticate) {
+        NSString *notBlank = @"^(?!\\s*$).+";
+        NSPredicate *regexTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", notBlank];
+        validated = [regexTest evaluateWithObject:newPassword];
+    }
+    
+    if (!validated) {
+        *message = @"Password cannot be empty";
+    }
+    
+    return validated;
 }
 
 // your local delegate's favorite method!
