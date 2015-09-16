@@ -13,20 +13,15 @@ import JenkinsMobile
 class UniqueQueueTests: XCTestCase {
     
     var jenkinsInstance: JenkinsInstance?
-    var context: NSManagedObjectContext?    
+    let datamgr: DataManager = DataManager.sharedInstance
+    var context: NSManagedObjectContext!
     
     override func setUp() {
-        let modelURL = NSBundle.mainBundle().URLForResource("JenkinsMobile", withExtension: "momd")
-        let model = NSManagedObjectModel(contentsOfURL: modelURL!)
-        let coord = NSPersistentStoreCoordinator(managedObjectModel: model!)
-        context = NSManagedObjectContext(concurrencyType: NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType)
-        coord.addPersistentStoreWithType(NSInMemoryStoreType, configuration: nil, URL: nil, options: nil, error: nil)
-        context!.persistentStoreCoordinator = coord
-        
+        context = datamgr.mainMOC
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
         let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         
-        self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: self.context)
+        self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: datamgr.mainMOC)
     }
 
     func testUniqueQueueIter() {
@@ -76,7 +71,7 @@ class UniqueQueueTests: XCTestCase {
         var itmcnt = 0
         
         for item in uq {
-            var popped = uq.pop()
+            let popped = uq.pop()
             XCTAssertEqual(popped!, item, "popped item is not correct")
             itmcnt = itmcnt + 1
         }

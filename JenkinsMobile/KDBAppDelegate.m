@@ -12,23 +12,18 @@
 #import "KDBJobDetailViewController.h"
 #import "JenkinsInstance+More.h"
 #import "KDBJenkinsRequestHandler.h"
-#import "JenkinsMobile-Swift.h"
+//#import "JenkinsMobile-Swift.h"
 #import "Constants.h"
 
 @implementation KDBAppDelegate
 
-@synthesize masterMOC = _masterMOC;
-@synthesize mainMOC = _mainMOC;
-@synthesize managedObjectModel = _managedObjectModel;
-@synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
-
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    [notificationCenter addObserver:self selector:@selector(contextChanged:) name:NSManagedObjectContextDidSaveNotification object:self.masterMOC];
-    [self mainMOC];
+//    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+//    [notificationCenter addObserver:self selector:@selector(contextChanged:) name:NSManagedObjectContextDidSaveNotification object:self.masterMOC];
+//    [self mainMOC];
     
-    SyncManager *mgr = [SyncManager sharedInstance];
+    //SyncManager *mgr = [SyncManager sharedInstance];
     
     //NSURL *jenkinsURL = [NSURL URLWithString:@"https://jenkins.qa.ubuntu.com"];
     //NSURL *jenkinsURL = [NSURL URLWithString:@"http://ci.thermofisher.com/jenkins"];
@@ -36,7 +31,7 @@
     
     //JenkinsInstance *ji = [self createJenkinsInstanceWithURL:jenkinsURL];
     //mgr.currentJenkinsInstance = ji;
-    mgr.requestHandler = [[KDBJenkinsRequestHandler alloc] init];
+    //mgr.requestHandler = [[KDBJenkinsRequestHandler alloc] init];
 //    mgr.masterMOC = self.masterMOC;
 //    mgr.mainMOC = self.mainMOC;
     
@@ -130,15 +125,15 @@
     return YES;
 }
 
-- (void) contextChanged: (NSNotification *) notification
-{
-    // Only interested in merging from master into main.
-    if ([notification object] != self.masterMOC) return;
-    
-    [_mainMOC performBlock:^{
-        [_mainMOC mergeChangesFromContextDidSaveNotification:notification];
-    }];
-}
+//- (void) contextChanged: (NSNotification *) notification
+//{
+//    // Only interested in merging from master into main.
+//    if ([notification object] != self.masterMOC) return;
+//    
+//    [_mainMOC performBlock:^{
+//        [_mainMOC mergeChangesFromContextDidSaveNotification:notification];
+//    }];
+//}
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
@@ -165,142 +160,8 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Saves changes in the application's managed object context before the application terminates.
-    [self saveContext];
-}
-
-- (void)saveContext
-{
-    NSManagedObjectContext *managedObjectContext = self.masterMOC;
-    if (managedObjectContext != nil) {
-        [self.masterMOC performBlock:^{
-            NSError *error = nil;
-            if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
-                 // Replace this implementation with code to handle the error appropriately.
-                 // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
-                NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-                abort();
-            }
-        }];
-    }
-}
-
-- (void)saveMainContext
-{
-    NSManagedObjectContext *managedObjectContext = self.mainMOC;
-    if (managedObjectContext != nil) {
-        NSError *error = nil;
-        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
-            // Replace this implementation with code to handle the error appropriately.
-            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
-        [self saveContext];
-    }
-}
-
-#pragma mark - Core Data stack
-
-// Returns the master managed object context for the application.
-// This context writes to disk in a background thread
-// If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
-- (NSManagedObjectContext *)masterMOC
-{
-    @synchronized(_masterMOC) {
-        if (_masterMOC != nil) {
-            return _masterMOC;
-        }
-        
-        NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-        if (coordinator != nil) {
-            _masterMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-            [_masterMOC setPersistentStoreCoordinator:coordinator];
-        }
-        return _masterMOC;
-    }
-}
-
-// Returns the main managed object context for the application.
-// This context is for UI use as it exists on the main thread
-// If the context doesn't already exist, it is created and bound to the master managed object context
-- (NSManagedObjectContext *)mainMOC
-{
-    @synchronized(_mainMOC) {
-        if (_mainMOC != nil) {
-            return _mainMOC;
-        }
-        
-        _mainMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
-        [_mainMOC setUndoManager:nil];
-        [_mainMOC setParentContext:_masterMOC];
-        NSUndoManager *undoManager = [[NSUndoManager alloc] init];
-        [_mainMOC setUndoManager:undoManager];
-        
-        return _mainMOC;
-    }
-}
-
-// Returns the managed object model for the application.
-// If the model doesn't already exist, it is created from the application's model.
-- (NSManagedObjectModel *)managedObjectModel
-{
-    if (_managedObjectModel != nil) {
-        return _managedObjectModel;
-    }
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"JenkinsMobile" withExtension:@"momd"];
-    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
-    return _managedObjectModel;
-}
-
-// Returns the persistent store coordinator for the application.
-// If the coordinator doesn't already exist, it is created and the application's store added to it.
-- (NSPersistentStoreCoordinator *)persistentStoreCoordinator
-{
-    if (_persistentStoreCoordinator != nil) {
-        return _persistentStoreCoordinator;
-    }
-    
-    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"JenkinsMobile.sqlite"];
-    
-    NSError *error = nil;
-    _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
-        /*
-         Replace this implementation with code to handle the error appropriately.
-         
-         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
-         
-         Typical reasons for an error here include:
-         * The persistent store is not accessible;
-         * The schema for the persistent store is incompatible with current managed object model.
-         Check the error message to determine what the actual problem was.
-         
-         
-         If the persistent store is not accessible, there is typically something wrong with the file path. Often, a file URL is pointing into the application's resources directory instead of a writeable directory.
-         
-         If you encounter schema incompatibility errors during development, you can reduce their frequency by:
-         * Simply deleting the existing store:
-         [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]
-         
-         * Performing automatic lightweight migration by passing the following dictionary as the options parameter:
-         @{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES}
-         
-         Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
-         
-         */
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }    
-    
-    return _persistentStoreCoordinator;
-}
-
-#pragma mark - Application's Documents directory
-
-// Returns the URL to the application's Documents directory.
-- (NSURL *)applicationDocumentsDirectory
-{
-    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+    // TODO: update for datamanager
+    //[self saveContext];
 }
 
 @end

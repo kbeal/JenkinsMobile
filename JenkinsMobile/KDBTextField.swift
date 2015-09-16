@@ -30,7 +30,7 @@ class KDBTextField: UITextField {
         self.layer.borderColor = UIColor.clearColor().CGColor
     }
 
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
 

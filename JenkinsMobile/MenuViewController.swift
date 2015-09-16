@@ -30,7 +30,7 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let sectionInfo = self.fetchedResultsController.sections![section] as! NSFetchedResultsSectionInfo
+        let sectionInfo = self.fetchedResultsController.sections![section] 
         return sectionInfo.numberOfObjects
     }
 
@@ -58,8 +58,8 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("JenkinsInstanceCell", forIndexPath: indexPath) as! UITableViewCell
-        self.configureCell(cell, atIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier("JenkinsInstanceCell", forIndexPath: indexPath) 
+        //sell, atIndexPath: indexPath)
         return cell
     }
 
@@ -108,7 +108,7 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
         let destination: JenkinsInstanceTableViewController = destinationNavController.topViewController as! JenkinsInstanceTableViewController
         
         if (segue.identifier == "showJenkinsInstance") {
-            destination.jinstance = self.fetchedResultsController.objectAtIndexPath(self.tableView.indexPathForSelectedRow()!) as! JenkinsInstance
+            destination.jinstance = self.fetchedResultsController.objectAtIndexPath(self.tableView.indexPathForSelectedRow!) as! JenkinsInstance
         } else {
             destination.jinstance = JenkinsInstance.createJenkinsInstanceWithValues(nil, inManagedObjectContext: self.managedObjectContext)
         }
@@ -131,11 +131,13 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
         aFetchedResultsController.delegate = self
         self._fetchedResultsController = aFetchedResultsController
         
-        // perform initial model fetch
-        var e: NSError?
-        if !self._fetchedResultsController!.performFetch(&e) {
-            println("fetch error: \(e!.localizedDescription)")
-            abort();
+        do {
+            try _fetchedResultsController!.performFetch()
+        } catch {
+            // Replace this implementation with code to handle the error appropriately.
+            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+            //print("Unresolved error \(error), \(error.userInfo)")
+            abort()
         }
         
         return self._fetchedResultsController!

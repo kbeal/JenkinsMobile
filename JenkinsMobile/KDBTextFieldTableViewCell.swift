@@ -13,7 +13,7 @@ class KDBTextFieldTableViewCell: UITableViewCell {
     @IBOutlet weak var textField: KDBTextField?
     @IBOutlet weak var label: UILabel?
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.textLabel?.backgroundColor = UIColor.redColor()
     }

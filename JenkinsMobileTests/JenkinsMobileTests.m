@@ -13,8 +13,11 @@
 #import "Build+More.h"
 #import "Constants.h"
 #import "ActiveConfiguration+More.h"
+#import "JenkinsMobileTests-Swift.h"
+#import "JenkinsMobile-Swift.h"
 
 @interface JenkinsMobileTests : XCTestCase
+@property (nonatomic, strong) DataManager *datamgr;
 @property (nonatomic, strong) NSManagedObjectContext *context;
 @property (nonatomic, strong) JenkinsInstance *jinstance;
 
@@ -25,14 +28,8 @@
 - (void)setUp
 {
     [super setUp];
-
-    NSManagedObjectModel *model = [NSManagedObjectModel mergedModelFromBundles: nil];
-    NSPersistentStoreCoordinator *coord = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel: model];
-    [coord addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:nil];
-    _context = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
-    [_context setPersistentStoreCoordinator: coord];
-    [_context setUndoManager:[[NSUndoManager alloc] init]];
-
+    self.datamgr = [DataManager sharedInstance];
+    self.context = self.datamgr.masterMOC;
     NSArray *viewKeys = [NSArray arrayWithObjects:ViewNameKey,ViewURLKey, nil];
     NSArray *priViewVals = [NSArray arrayWithObjects:@"All",@"http://tomcat:8080/", nil];
     NSDictionary *primaryView = [NSDictionary dictionaryWithObjects:priViewVals forKeys:viewKeys];

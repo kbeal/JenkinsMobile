@@ -11,6 +11,7 @@
 #import "Job+More.h"
 #import "UICKeyChainStore.h"
 #import "View+More.h"
+#import "JenkinsMobile-Swift.h"
 
 @implementation JenkinsInstance (More)
 
@@ -93,9 +94,14 @@
     self.authenticated = [values objectForKey:JenkinsInstanceAuthenticatedKey];
     self.primaryView = [values objectForKeyedSubscript:JenkinsInstancePrimaryViewKey];
     //self.shouldAuthenticate = [values objectForKey:JenkinsInstanceShouldAuthenticateKey];
-    [self createJobs:[values objectForKey:JenkinsInstanceJobsKey]];
+    
     [self createViews:[values objectForKey:JenkinsInstanceViewsKey]];
     self.lastSyncResult = [values objectForKey:JenkinsInstanceLastSyncResultKey];
+    
+    DataManager *datamgr = [DataManager sharedInstance];
+    [datamgr.masterMOC performBlock:^{
+        [self createJobs:[values objectForKey:JenkinsInstanceJobsKey]];
+    }];
 }
 
 - (BOOL)validateURL:(NSString *) newURL withMessage:(NSString **) message; {
@@ -156,18 +162,31 @@
 // your local delegate's favorite method!
 - (void)createJobs:(NSArray *) jobValues
 {
-    NSMutableSet *currentJobs = (NSMutableSet*)self.rel_Jobs;
-    NSMutableArray *currentJobNames = [[NSMutableArray alloc] init];
-    for (Job *job in currentJobs) {
-        [currentJobNames addObject:job.name];
-    }
-    
-    for (NSDictionary *job in jobValues) {
-        if (![currentJobNames containsObject:[job objectForKey:JobNameKey]]) {
-            NSMutableDictionary *mutjob = [NSMutableDictionary dictionaryWithDictionary:job];
-            [mutjob setObject:self forKey:JobJenkinsInstanceKey];
-            Job *newJob = [Job createJobWithValues:mutjob inManagedObjectContext:self.managedObjectContext];
-            [currentJobs addObject:newJob];
+    if (jobValues.count > 0) {
+        DataManager *datamgr = [DataManager sharedInstance];
+        // try to fetch the JenkinsInstance on a backgrond context.
+        JenkinsInstance *bgji = (JenkinsInstance *)[datamgr ensureObjectOnBackgroundThread:self];
+        // only create jobs if instance exists on master context.
+        // Will only exist if it has been persisted to disk.
+        if (bgji != nil) {
+            NSMutableSet *currentJobs = (NSMutableSet*)bgji.rel_Jobs;
+            NSMutableArray *currentJobNames = [[NSMutableArray alloc] init];
+            for (Job *job in currentJobs) {
+                [currentJobNames addObject:job.name];
+            }
+            
+            for (NSDictionary *job in jobValues) {
+                if (![currentJobNames containsObject:[job objectForKey:JobNameKey]]) {
+                    NSMutableDictionary *mutjob = [NSMutableDictionary dictionaryWithDictionary:job];
+                    [mutjob setObject:bgji forKey:JobJenkinsInstanceKey];
+                    //NSAssert(bgji.managedObjectContext==datamgr.masterMOC, @"wrong moc!!");
+                    Job *newJob = [Job createJobWithValues:mutjob inManagedObjectContext:datamgr.masterMOC];
+                    [currentJobs addObject:newJob];
+                    [bgji addRel_JobsObject:newJob];
+                }
+            }
+            //NSLog(@"%@%lu%@",@"saving after adding ", (unsigned long)jobValues.count,@" jobs!!");
+            [datamgr saveContext:datamgr.masterMOC];
         }
     }
 }

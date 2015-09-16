@@ -18,7 +18,7 @@ enum SwitchViewType {
 class KDBSwitch: UISwitch {
     var switchType: SwitchViewType?
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     

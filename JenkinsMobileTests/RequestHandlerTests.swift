@@ -14,61 +14,41 @@ class RequestHandlerTests: XCTestCase {
     
     let requestHandler = KDBJenkinsRequestHandler()
     let mgr = SyncManager.sharedInstance
-    var context: NSManagedObjectContext?
+    let datamgr = DataManager.sharedInstance
+    var context: NSManagedObjectContext!
     var jenkinsInstance: JenkinsInstance?
     
     override func setUp() {
         super.setUp()
         
-        let modelURL = NSBundle.mainBundle().URLForResource("JenkinsMobile", withExtension: "momd")
-        let model = NSManagedObjectModel(contentsOfURL: modelURL!)
-        let coord = NSPersistentStoreCoordinator(managedObjectModel: model!)
-        context = NSManagedObjectContext(concurrencyType: NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType)        
-        coord.addPersistentStoreWithType(NSInMemoryStoreType, configuration: nil, URL: nil, options: nil, error: nil)
-        context!.persistentStoreCoordinator = coord
-        mgr.requestHandler = requestHandler
+        self.context = self.datamgr.mainMOC
         
-        let primaryView = [ViewNameKey: "All", ViewURLKey: "https://snowman:8443/jenkins/"]
-        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "PrimaryTestInstance", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
+        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8080/"]
+        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "PrimaryTestInstance", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         
-        context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: self.context)})
+        context.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: self.context)})
         self.jenkinsInstance?.password = "admin"
         
         saveContext()
     }
     
     func saveContext () {
-        var error: NSError? = nil
-        if context == nil {
-            return
-        }
-        if !context!.hasChanges {
-            return
-        }
-        let saveResult: Bool = context!.save(&error)
-        
-        if (!saveResult) {
-            println("Error saving context: \(error?.localizedDescription)\n\(error?.userInfo)")
-            abort()
-        } else {
-            //println("Successfully saved test managed object context")
-        }
+        self.datamgr.saveMainContext()
     }
     
     func testJenkinsPing() {
-        let requestReceivedNotificationExpection = expectationForNotification(JenkinsInstancePingResponseReceivedNotification, object: self.requestHandler, handler: {
+        _ = expectationForNotification(JenkinsInstancePingResponseReceivedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
             return true
         })
         
-        let requestFailedNotificationExpectation = expectationForNotification(JenkinsInstancePingRequestFailedNotification, object: self.requestHandler, handler: {
+        _ = expectationForNotification(JenkinsInstancePingRequestFailedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo: Dictionary = notification.userInfo!
             let requestError: NSError = userInfo[RequestErrorKey] as! NSError
-            let errorUserInfo: Dictionary = requestError.userInfo!
+            let errorUserInfo: Dictionary = requestError.userInfo
             let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
-            
             if (url.absoluteString == "http://www.google.com/api/json/") {
                 expectationFulfilled = true
             }
@@ -94,17 +74,17 @@ class RequestHandlerTests: XCTestCase {
     }
     
     func testJenkinsAuthentication() {
-        let requestReceivedNotificationExpection = expectationForNotification(JenkinsInstanceAuthenticationResponseReceivedNotification, object: self.requestHandler, handler: {
+        _ = expectationForNotification(JenkinsInstanceAuthenticationResponseReceivedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
             return true
         })
         
-        let requestFailedNotificationExpectation = expectationForNotification(JenkinsInstanceAuthenticationRequestFailedNotification, object: self.requestHandler, handler: {
+        _ = expectationForNotification(JenkinsInstanceAuthenticationRequestFailedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo: Dictionary = notification.userInfo!
             let requestError: NSError = userInfo[RequestErrorKey] as! NSError
-            let errorUserInfo: Dictionary = requestError.userInfo!
+            let errorUserInfo: Dictionary = requestError.userInfo
             let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
             
             if (url.absoluteString == "http://localhost:8080") {
@@ -133,23 +113,23 @@ class RequestHandlerTests: XCTestCase {
     }
     
     func testJenkinsInstanceDetailRequest() {
-        let requestReceivedNotificationExpectation = expectationForNotification(JenkinsInstanceDetailResponseReceivedNotification, object: self.requestHandler, handler: {
+        _ = expectationForNotification(JenkinsInstanceDetailResponseReceivedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
             let jinstance: JenkinsInstance = userInfo[RequestedObjectKey] as! JenkinsInstance
-            if jinstance.url == "https://snowman:8443/jenkins/" {
+            if jinstance.url == "http://localhost:8080/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
         })
         
-        let requestFailedNotificationExpectation = expectationForNotification(JenkinsInstanceDetailRequestFailedNotification, object: self.requestHandler, handler: {
+        _ = expectationForNotification(JenkinsInstanceDetailRequestFailedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo: Dictionary = notification.userInfo!
             let requestError: NSError = userInfo[RequestErrorKey] as! NSError
-            let errorUserInfo: Dictionary = requestError.userInfo!
+            let errorUserInfo: Dictionary = requestError.userInfo
             let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
             
             if url.absoluteString == "http://www.google.com/jenkins" {
@@ -158,13 +138,13 @@ class RequestHandlerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let primaryView = [ViewNameKey: "All", ViewURLKey: "https://snowman:8443/jenkins/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "JIDetailRequestTestInstance", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin", JenkinsInstancePrimaryViewKey: primaryView]
+        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8080/"]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "JIDetailRequestTestInstance", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         let jenkinsInstanceValues2 = [JenkinsInstanceNameKey: "JIDetailRequestFailure", JenkinsInstanceURLKey: "http://www.google.com/jenkins", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         let jinstance2 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues2 as [NSObject : AnyObject], inManagedObjectContext: self.context)
         jinstance1.allowInvalidSSLCertificate = true
-        jinstance1.password = "changeme"
+        jinstance1.password = "password"
         jinstance2.password = "admin"
         saveContext()
         
@@ -178,24 +158,24 @@ class RequestHandlerTests: XCTestCase {
     }
     
     func testJobDetailRequest() {
-        let requestReceivedNotificationExpectation = expectationForNotification(JobDetailResponseReceivedNotification, object: self.requestHandler, handler: {
+        _ = expectationForNotification(JobDetailResponseReceivedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
             let job: Job = userInfo[RequestedObjectKey] as! Job
             
-            if job.url == "https://snowman:8443/jenkins/job/Job1/" {
+            if job.url == "http://localhost:8080/job/Job1/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
         })
         
-        let requestFailedNotificationExpectation = expectationForNotification(JobDetailRequestFailedNotification, object: self.requestHandler, handler: {
+        _ = expectationForNotification(JobDetailRequestFailedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo: Dictionary = notification.userInfo!
             let requestError: NSError = userInfo[RequestErrorKey] as! NSError
-            let errorUserInfo: Dictionary = requestError.userInfo!
+            let errorUserInfo: Dictionary = requestError.userInfo
             let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
             
             if url.absoluteString == "http://www.google.com/jenkins/job/Job1/" {
@@ -204,13 +184,13 @@ class RequestHandlerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jobvals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "https://snowman:8443/jenkins/job/Job1/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobvals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://localhost:8080/job/Job1/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
         let jobvals2 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com/jenkins/job/Job1/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
         let job2 = Job.createJobWithValues(jobvals2, inManagedObjectContext: context)
         jenkinsInstance?.allowInvalidSSLCertificate = true
-        jenkinsInstance?.username = "jenkinsadmin"
-        jenkinsInstance?.password = "changeme"
+        jenkinsInstance?.username = "admin"
+        jenkinsInstance?.password = "password"
         saveContext()
         
         requestHandler.importDetailsForJob(job)
@@ -223,24 +203,24 @@ class RequestHandlerTests: XCTestCase {
     }
     
     func testViewDetailRequest() {
-        let requestReceivedNotificationExpectation = expectationForNotification(ViewDetailResponseReceivedNotification, object: self.requestHandler, handler: {
+        _ = expectationForNotification(ViewDetailResponseReceivedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
             let view: View = userInfo[RequestedObjectKey] as! View
             
-            if view.url == "https://snowman:8443/jenkins/view/All/" {
+            if view.url == "http://localhost:8080/view/All/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
         })
         
-        let requestFailedNotificationExpectation = expectationForNotification(ViewDetailRequestFailedNotification, object: self.requestHandler, handler: {
+        _ = expectationForNotification(ViewDetailRequestFailedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo: Dictionary = notification.userInfo!
             let requestError: NSError = userInfo[RequestErrorKey] as! NSError
-            let errorUserInfo: Dictionary = requestError.userInfo!
+            let errorUserInfo: Dictionary = requestError.userInfo
             let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
             
             if url.absoluteString == "http://www.google.com/jenkins/view/View1/" {
@@ -249,13 +229,13 @@ class RequestHandlerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let viewVals = [ViewNameKey: "View1", ViewURLKey: "https://snowman:8443/jenkins/view/All/", ViewJenkinsInstanceKey: jenkinsInstance!]
+        let viewVals = [ViewNameKey: "View1", ViewURLKey: "http://localhost:8080/view/All/", ViewJenkinsInstanceKey: jenkinsInstance!]
         let viewVals2 = [ViewNameKey: "View2", ViewURLKey: "http://www.google.com/jenkins/view/View1/", ViewJenkinsInstanceKey: jenkinsInstance!]
         let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context)
         let view2 = View.createViewWithValues(viewVals2, inManagedObjectContext: context)
         jenkinsInstance?.allowInvalidSSLCertificate = true
-        jenkinsInstance?.username = "jenkinsadmin"
-        jenkinsInstance?.password = "changeme"
+        jenkinsInstance?.username = "admin"
+        jenkinsInstance?.password = "password"
         saveContext()
         
         requestHandler.importDetailsForView(view1)
@@ -268,44 +248,42 @@ class RequestHandlerTests: XCTestCase {
     }
     
     func testActiveConfigurationDetailRequest() {
-        let requestReceivedNotificationExpectation = expectationForNotification(ActiveConfigurationDetailResponseReceivedNotification, object: self.requestHandler, handler: {
+        _ = expectationForNotification(ActiveConfigurationDetailResponseReceivedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
             let ac: ActiveConfiguration = userInfo[RequestedObjectKey] as! ActiveConfiguration
             
-            if ac.url == "https://snowman:8443/jenkins/job/Job2/config=10/" {
+            if ac.url == "http://localhost:8080/job/Job2/config1=10,config2=test/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
         })
         
-        let requestFailedNotificationExpectation = expectationForNotification(ActiveConfigurationDetailRequestFailedNotification, object: self.requestHandler, handler: {
+        _ = expectationForNotification(ActiveConfigurationDetailRequestFailedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo: Dictionary = notification.userInfo!
             let requestError: NSError = userInfo[RequestErrorKey] as! NSError
-            let errorUserInfo: Dictionary = requestError.userInfo!
+            let errorUserInfo: Dictionary = requestError.userInfo
             let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
             
-            if url.absoluteString == "http://www.google.com/jenkins/job/Job1/config1=true/" {
+            if url.absoluteString == "http://www.google.com/jenkins/job/Job1/config1=true,config2=test/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
         })
         
-        let jobvals = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "https://snowman:8443/jenkins/job/Job2/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobvals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://localhost:8080/job/Job2/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
-        let jobvals2 = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com/jenkins/job/Job1/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
-        let job2 = Job.createJobWithValues(jobvals2, inManagedObjectContext: context)
         
-        let acVals = [ActiveConfigurationNameKey: "config=1", ActiveConfigurationURLKey: "https://snowman:8443/jenkins/job/Job2/config=10/", ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
-        let acVals2 = [ActiveConfigurationNameKey: "config=2", ActiveConfigurationURLKey: "http://www.google.com/jenkins/job/Job1/config1=true/", ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
+        let acVals = [ActiveConfigurationNameKey: "config1=10", ActiveConfigurationURLKey: "http://localhost:8080/job/Job2/config1=10,config2=test/", ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
+        let acVals2 = [ActiveConfigurationNameKey: "config=2", ActiveConfigurationURLKey: "http://www.google.com/jenkins/job/Job1/config1=true,config2=test/", ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
         let ac = ActiveConfiguration.createActiveConfigurationWithValues(acVals, inManagedObjectContext: self.context)
         let ac2 = ActiveConfiguration.createActiveConfigurationWithValues(acVals2, inManagedObjectContext: self.context)
         jenkinsInstance?.allowInvalidSSLCertificate = true
-        jenkinsInstance?.username = "jenkinsadmin"
-        jenkinsInstance?.password = "changeme"
+        jenkinsInstance?.username = "admin"
+        jenkinsInstance?.password = "password"
         saveContext()
         
         requestHandler.importDetailsForActiveConfiguration(ac)
@@ -318,24 +296,24 @@ class RequestHandlerTests: XCTestCase {
     }
     
     func testBuildDetailRequest() {
-        let requestReceivedNotificationExpectation = expectationForNotification(BuildDetailResponseReceivedNotification, object: self.requestHandler, handler: {
+        _ = expectationForNotification(BuildDetailResponseReceivedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo = notification.userInfo!
             let build: Build = userInfo[RequestedObjectKey] as! Build
             
-            if build.url == "https://snowman:8443/jenkins/job/Job1/1/" {
+            if build.url == "http://localhost:8080/job/Job1/1/" {
                 expectationFulfilled=true
             }
             return expectationFulfilled
         })
         
-        let requestFailedNotificationExpectation = expectationForNotification(BuildDetailRequestFailedNotification, object: self.requestHandler, handler: {
+        _ = expectationForNotification(BuildDetailRequestFailedNotification, object: self.requestHandler, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
             let userInfo: Dictionary = notification.userInfo!
             let requestError: NSError = userInfo[RequestErrorKey] as! NSError
-            let errorUserInfo: Dictionary = requestError.userInfo!
+            let errorUserInfo: Dictionary = requestError.userInfo
             let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
             
             if url.absoluteString == "http://www.google.com/jenkins/job/Job1/1/" {
@@ -347,13 +325,13 @@ class RequestHandlerTests: XCTestCase {
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/TestJob/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         
-        let buildVals = [BuildJobKey: job, BuildURLKey: "https://snowman:8443/jenkins/job/Job1/1/", BuildNumberKey: 1]
+        let buildVals = [BuildJobKey: job, BuildURLKey: "http://localhost:8080/job/Job1/1/", BuildNumberKey: 1]
         let buildVals2 = [BuildJobKey: job, BuildURLKey: "http://www.google.com/jenkins/job/Job1/1/", BuildNumberKey: 1]
         let build1 = Build.createBuildWithValues(buildVals, inManagedObjectContext: self.context)
         let build2 = Build.createBuildWithValues(buildVals2, inManagedObjectContext: self.context)
         jenkinsInstance?.allowInvalidSSLCertificate = true
-        jenkinsInstance?.username = "jenkinsadmin"
-        jenkinsInstance?.password = "changeme"
+        jenkinsInstance?.username = "admin"
+        jenkinsInstance?.password = "password"
         saveContext()
         
         requestHandler.importDetailsForBuild(build1)

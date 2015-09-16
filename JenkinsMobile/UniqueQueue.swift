@@ -33,7 +33,7 @@ public class UniqueQueue<T: Hashable> {
     
     func push(newItem: T) {
         dispatch_sync(lockQueue, {
-            if let existingItem = self.itemsDict[newItem] {
+            if let _ = self.itemsDict[newItem] {
                 return
             } else {
                 self.itemsArray.append(newItem)

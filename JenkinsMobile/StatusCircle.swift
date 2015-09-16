@@ -17,10 +17,10 @@ class StatusCircle {
     static func imageForCircle(color: UIColor) -> UIImage {
         // create the context
         UIGraphicsBeginImageContextWithOptions(canvasSize, false, 0)
-        let context = UIGraphicsGetCurrentContext()
+        //let context = UIGraphicsGetCurrentContext()
         
         // setup the circle size
-        var circleRect: CGRect = CGRectMake(0, 0, canvasSize.width, canvasSize.height)
+        let circleRect: CGRect = CGRectMake(0, 0, canvasSize.width, canvasSize.height)
         
         // Draw the Circle
         let path = UIBezierPath(ovalInRect: circleRect)

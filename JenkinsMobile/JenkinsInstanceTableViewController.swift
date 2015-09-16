@@ -16,6 +16,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     var syncMgr: SyncManager?
     var saveChanges: Bool?
     var testingConnection: Bool?
+    var activeInstance: Bool = false
     @IBOutlet weak var testResultLabel: UILabel?
     @IBOutlet weak var testResultView: UIView?
     @IBOutlet weak var testResultViewHeightConstraint: NSLayoutConstraint!
@@ -40,6 +41,10 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         self.testResultView?.hidden = true
         self.testResultLabel?.hidden = true
         
+        if (self.jinstance.url == self.syncMgr?.currentJenkinsInstance?.url) {
+            self.activeInstance = true
+        }
+        
         self.initObservers()
         self.setTitle()
     }
@@ -48,7 +53,8 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         super.viewWillDisappear(animated)
         self.view.window?.endEditing(true)
         if (saveChanges!.boolValue) {
-            self.syncMgr?.saveMainContext()
+            let datamgr = DataManager.sharedInstance
+            datamgr.saveMainContext()
         }
     }
     
@@ -117,13 +123,9 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             self.jinstance.shouldAuthenticate = NSNumber(bool: switchView.on)
             self.tableView.reloadData()
         case SwitchViewType.Active:
-            if (switchView.on.boolValue) {
-                self.syncMgr?.currentJenkinsInstance = self.jinstance
-            } else {
-                self.syncMgr?.currentJenkinsInstance = nil
-            }
+            self.activeInstance = switchView.on.boolValue
         default:
-            println("invalid SwitchTableViewCellType")
+            print("invalid SwitchTableViewCellType")
             abort()
         }
     }
@@ -134,7 +136,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         let strlen: Int = lowerBound + Int(arc4random()) % (upperBound - lowerBound)
         var randPasswordMask = "•"
         
-        for i in 1...strlen {
+        for _ in 1...strlen {
             randPasswordMask += "•"
         }
         return randPasswordMask
@@ -161,7 +163,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             case .Password:
                 self.jinstance.password = textField.text
             default:
-                println("invalid textfieldtype")
+                print("invalid textfieldtype")
                 abort()
             }
         }
@@ -172,7 +174,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     func validate(textField: UITextField) -> Bool {
         var validated = true
         let kdbTextField: KDBTextField = textField as! KDBTextField
-        var error: NSError? = nil
+        //var error: NSError? = nil
         var message: NSString? = nil
         
         switch kdbTextField.type! {
@@ -286,7 +288,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
                 textFieldText = ""
             }
         default:
-            println("Invalid section")
+            print("Invalid section")
             abort()
         }
 
@@ -299,7 +301,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell: UITableViewCell!
         if ((indexPath.section == 1 && indexPath.row == 0) || (indexPath.section == 2)) {
-            cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! UITableViewCell
+            cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) 
             self.configureSwitchCell(cell, atIndexPath: indexPath)
         } else {
             let tfcell = tableView.dequeueReusableCellWithIdentifier("TextEntryCell", forIndexPath: indexPath) as! KDBTextFieldTableViewCell
@@ -365,8 +367,10 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "jenkinsInstanceDoneSegue") {
             self.saveChanges = true
-            if (self.jinstance.enabled.boolValue) {
-                self.syncMgr?.syncJenkinsInstance(self.jinstance)
+            if (self.activeInstance.boolValue) {
+                self.syncMgr?.currentJenkinsInstance = self.jinstance
+            } else {
+                self.syncMgr?.currentJenkinsInstance = nil
             }
         } else {
             self.saveChanges = false

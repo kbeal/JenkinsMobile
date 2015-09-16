@@ -9,8 +9,9 @@
 import Foundation
 import CoreData
 
-@objc public class SyncManager {
-    
+public class SyncManager: NSObject {
+
+    var dataMgr: DataManager = DataManager.sharedInstance
     var masterMOC: NSManagedObjectContext
     var mainMOC: NSManagedObjectContext
     
@@ -29,7 +30,7 @@ import CoreData
     private var syncTimer: NSTimer?
     //var currentBuilds: NSMutableArray
     //var currentBuildsTimer: NSTimer
-    var requestHandler: KDBJenkinsRequestHandler?
+    var requestHandler: KDBJenkinsRequestHandler
     
     
     // MARK: - Init and Setup
@@ -40,10 +41,11 @@ import CoreData
         return Static.instance
     }
     
-    public init() {
-        let appDelegate = UIApplication.sharedApplication().delegate as! KDBAppDelegate
-        self.masterMOC = appDelegate.masterMOC
-        self.mainMOC = appDelegate.mainMOC
+    public override init() {
+        self.masterMOC = dataMgr.masterMOC
+        self.mainMOC = dataMgr.mainMOC
+        self.requestHandler = KDBJenkinsRequestHandler()
+        super.init()
         initTimer()
         initObservers()
         let defaults = NSUserDefaults.standardUserDefaults()
@@ -108,33 +110,33 @@ import CoreData
     public func jobSyncQueueSize() -> Int { return jobSyncQueue.count() }
     
     // MARK: - Sync Objects
-    func syncAllJobs(jenkinsInstance: JenkinsInstance) {
+    public func syncAllJobs(jenkinsInstance: JenkinsInstance) {
         masterMOC.performBlock({
-            if let bgji: JenkinsInstance = self.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance {
+            if let bgji: JenkinsInstance = self.dataMgr.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance {
                 let allJobs = bgji.rel_Jobs
                 for job in allJobs {
                     self.jobSyncQueue.push(job as! Job)
                 }
             } else {
-                println("Error syncing all Jobs: Unable to retrieve JenkinsInstance from background context.")
+                print("Error syncing all Jobs: Unable to retrieve JenkinsInstance from background context.")
             }
         })
     }
     
-    func syncAllViews(jenkinsInstance: JenkinsInstance) {
+    public func syncAllViews(jenkinsInstance: JenkinsInstance) {
         masterMOC.performBlock({
-            if let bgji: JenkinsInstance = self.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance {
+            if let bgji: JenkinsInstance = self.dataMgr.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance {
                 let allViews = bgji.rel_Views
                 for view in allViews {
                     self.viewSyncQueue.push(view as! View)
                 }
             } else {
-                println("Error syncing all Views: Unable to retrieve JenkinsInstance from background context.")
+                print("Error syncing all Views: Unable to retrieve JenkinsInstance from background context.")
             }
         })
     }
     
-    func syncAllJobsForView(view: View) {
+    public func syncAllJobsForView(view: View) {
         masterMOC.performBlock({
             let viewjobs = view.rel_View_Jobs
             for job in viewjobs {
@@ -143,7 +145,7 @@ import CoreData
         })
     }
     
-    func syncSubViewsForView(view: View) {
+    public func syncSubViewsForView(view: View) {
         masterMOC.performBlock({
             let subviews = view.rel_View_Views
             for subview in subviews {
@@ -152,30 +154,25 @@ import CoreData
         })
     }
     
-    func syncJenkinsInstance(instance: JenkinsInstance) {
-        assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!!")
-        self.requestHandler!.importDetailsForJenkinsInstance(instance)
+    public func syncJenkinsInstance(instance: JenkinsInstance) {
+        self.requestHandler.importDetailsForJenkinsInstance(instance)
     }
     
-    func syncView(view: View) {
+    public func syncView(view: View) {
         // sync view details and queue all jobs in view for sync
-        assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!!")
-        self.requestHandler!.importDetailsForView(view)
+        self.requestHandler.importDetailsForView(view)
     }
     
-    func syncJob(job: Job) {
-        assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
-        self.requestHandler!.importDetailsForJob(job)
+    public func syncJob(job: Job) {
+        self.requestHandler.importDetailsForJob(job)
     }
     
-    func syncBuild(build: Build) {
-        assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
-        self.requestHandler!.importDetailsForBuild(build)
+    public func syncBuild(build: Build) {
+        self.requestHandler.importDetailsForBuild(build)
     }
     
-    func syncActiveConfiguration(ac: ActiveConfiguration) {
-        assert(self.requestHandler != nil, "sync manager's requestHandler is nil!!")
-        self.requestHandler!.importDetailsForActiveConfiguration(ac)
+    public func syncActiveConfiguration(ac: ActiveConfiguration) {
+        self.requestHandler.importDetailsForActiveConfiguration(ac)
     }
     
     // MARK: - Responses Received
@@ -218,11 +215,13 @@ import CoreData
             values[JenkinsInstanceNameKey] = ji.name
             values[JenkinsInstanceURLKey] = ji.url
             values[JenkinsInstanceUsernameKey] = ji.username
-            
+
             ji.setValues(values)
             self.saveContext(ji.managedObjectContext)
-            self.syncAllJobs(ji)
-            self.syncAllViews(ji)
+            self.saveContext(self.dataMgr.masterMOC)
+            // TODO: uncomment
+            //self.syncAllJobs(ji)
+            //self.syncAllViews(ji)
         })
     }
     
@@ -255,9 +254,8 @@ import CoreData
     func jobDetailRequestFailed(notification: NSNotification) {
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
-        let errorUserInfo: Dictionary = requestError.userInfo!
+        //let errorUserInfo: Dictionary = requestError.userInfo
         let job: Job = userInfo[RequestedObjectKey] as! Job
-        
         switch requestError.code {
         case NSURLErrorBadServerResponse:
             let status: Int = userInfo[StatusCodeKey] as! Int
@@ -284,7 +282,7 @@ import CoreData
     func viewDetailRequestFailed(notification: NSNotification) {
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
-        let errorUserInfo: Dictionary = requestError.userInfo!
+        //let errorUserInfo: Dictionary = requestError.userInfo
         let view: View = userInfo[RequestedObjectKey] as! View
         
         switch requestError.code {
@@ -313,7 +311,7 @@ import CoreData
     func jenkinsInstanceDetailRequestFailed(notification: NSNotification) {
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
-        let errorUserInfo: Dictionary = requestError.userInfo!
+        //let errorUserInfo: Dictionary = requestError.userInfo
         let ji: JenkinsInstance = userInfo[RequestedObjectKey] as! JenkinsInstance
         
         switch requestError.code {
@@ -331,7 +329,7 @@ import CoreData
                 disableJenkinsInstance(ji,message: message)
             }
         default:
-            println(requestError.localizedDescription)
+            print(requestError.localizedDescription)
             disableJenkinsInstance(ji,message: requestError.localizedDescription)
         }
     }
@@ -339,7 +337,7 @@ import CoreData
     func buildDetailRequestFailed(notification: NSNotification) {
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
-        let errorUserInfo: Dictionary = requestError.userInfo!
+        //let errorUserInfo: Dictionary = requestError.userInfo
         let build: Build = userInfo[RequestedObjectKey] as! Build
         
         switch requestError.code {
@@ -368,7 +366,7 @@ import CoreData
     func activeConfigurationDetailRequestFailed(notification: NSNotification) {
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
-        let errorUserInfo: Dictionary = requestError.userInfo!
+        //let errorUserInfo: Dictionary = requestError.userInfo
         let ac: ActiveConfiguration = userInfo[RequestedObjectKey] as! ActiveConfiguration
         
         switch requestError.code {
@@ -413,44 +411,7 @@ import CoreData
     }
     
     // MARK: NSManagedObjectContext management
-    // takes an NSManagedObject and if it isn't already on a background thread
-    // ie. on the main queue NSManagedObjectContext
-    // looks it up by NSManagedObjectID from the background NSManagedObjectContext
-    func ensureObjectOnBackgroundThread(obj: NSManagedObject) -> NSManagedObject? {
-        var bgobj: NSManagedObject? = obj
-        if obj.managedObjectContext?.concurrencyType == NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType {
-            var error: NSError? = nil
-            bgobj = self.masterMOC.existingObjectWithID(obj.objectID, error: &error)
-            if bgobj == nil {
-               println("Error retrieving object from background context: \(error?.localizedDescription)\n\(error?.userInfo)")
-            }
-        }
-        return bgobj
-    }
-    
-    // saves the main managedObjectContext and then also updates the masterManagedObjectContext
-    func saveMainContext() {
-        self.saveContext(self.mainMOC)
-        self.masterMOC.performBlock({
-            self.saveContext(self.masterMOC)
-        })
-    }
-    
-    func saveContext(moc: NSManagedObjectContext?) {
-        var error: NSError? = nil
-        if moc == nil {
-            return
-        }
-        if !moc!.hasChanges {
-            return
-        }
-        let saveResult: Bool = moc!.save(&error)
-        
-        if (!saveResult) {
-            println("Error saving context: \(error?.localizedDescription)\n\(error?.userInfo)")
-            abort()
-        } else {
-            //println("Successfully saved master managed object context")
-        }
+    func saveContext(context: NSManagedObjectContext?) {
+        self.dataMgr.saveContext(context!)
     }
 }
