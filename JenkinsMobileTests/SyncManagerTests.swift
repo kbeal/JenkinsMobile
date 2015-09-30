@@ -21,7 +21,8 @@ class SyncManagerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        context = self.datamgr.mainMOC
+        //context = self.datamgr.mainMOC
+        context = self.datamgr.masterMOC
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8080/"]
         let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://localhost:8080", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         
@@ -47,6 +48,66 @@ class SyncManagerTests: XCTestCase {
         _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
+            let insertedObjs: NSSet? = notification.userInfo![NSInsertedObjectsKey] as! NSSet?
+            if insertedObjs != nil {
+                for obj in insertedObjs! {
+                    if let view = obj as? View {
+                        if view.rel_View_Views.count==3 && view.name == "GrandParent" {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        let viewURL = "http://localhost:8080/view/GrandParent/"
+        let viewVals = [ViewNameKey: "GrandParent", ViewURLKey: viewURL, ViewJenkinsInstanceKey: jenkinsInstance!]
+        let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context)
+        //saveContext()
+        
+        self.mgr.syncView(view1)
+        
+        // wait for expectations
+        waitForExpectationsWithTimeout(3, handler: { error in
+            
+        })
+    }
+    
+    func testSyncJenkinsInstanceViews() {
+        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
+            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
+            if updatedObjects != nil {
+                for obj in updatedObjects! {
+                    if let ji = obj as? JenkinsInstance {
+                        if ji.rel_Views.count == 3 {
+                            expectationFulfilled=true
+                        }
+                    }
+                }
+            }
+            return expectationFulfilled
+        })
+        
+        let jiVals = [JenkinsInstanceNameKey: "Test", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceUsernameKey: "admin"]
+        let ji = JenkinsInstance.createJenkinsInstanceWithValues(jiVals, inManagedObjectContext: context)
+        ji.password = "password"
+        saveContext()
+        
+        self.mgr.syncViewsForJenkinsInstance(ji)
+        
+        // wait for expectations
+        waitForExpectationsWithTimeout(3, handler: { error in
+            
+        })
+    }
+    
+    func testSyncViewChildViews() {
+        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
+            (notification: NSNotification!) -> Bool in
+            var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
                 for obj in updatedObjects! {
@@ -65,7 +126,7 @@ class SyncManagerTests: XCTestCase {
         let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context)
         saveContext()
         
-        self.mgr.syncView(view1)
+        self.mgr.syncChildViewsForView(view1)
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in
@@ -211,7 +272,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.url == "http://localhost:8080" && ji.rel_Jobs.count == jobcount {
+                        if ji.url == "http://localhost:8080/" && ji.rel_Jobs.count == jobcount {
                             expectationFulfilled=true
                         }
                     }

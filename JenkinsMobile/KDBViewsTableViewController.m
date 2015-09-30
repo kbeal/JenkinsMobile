@@ -8,6 +8,7 @@
 
 #import "KDBViewsTableViewController.h"
 #import "SWRevealViewController.h"
+#import "Constants.h"
 
 @interface KDBViewsTableViewController ()
 
@@ -19,6 +20,8 @@
     [super viewDidLoad];
     self.syncMgr = [SyncManager sharedInstance];
     self.managedObjectContext = self.syncMgr.mainMOC;
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self action:@selector(fireRefreshRequest) forControlEvents:UIControlEventValueChanged];
 
     SWRevealViewController *revealViewController = self.revealViewController;
     if (revealViewController) {
@@ -28,11 +31,20 @@
     }
     
     [self setNavTitleAndButton];
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    [self initObservers];
+    [self fireRefreshRequest];
+}
+
+- (void) viewWillAppear:(BOOL)animated {
+    [self refreshData:nil];
+}
+
+- (void) initObservers {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshData:) name:SyncManagerCurrentJenkinsInstanceChangedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefresh:) name:JenkinsInstanceViewsResponseReceivedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefresh:) name:JenkinsInstanceViewsRequestFailedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefresh:) name:ViewChildViewsResponseReceivedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefresh:) name:ViewChildViewsRequestFailedNotification object:nil];
 }
 
 - (void) setNavTitleAndButton {
@@ -50,16 +62,44 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Table view delegate
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    View *selectedView = [[self fetchedResultsController] objectAtIndexPath:[self.tableView indexPathForSelectedRow]];
-    if (selectedView.rel_View_Views.count > 0) {
-        [self performSegueWithIdentifier:@"showChildViews" sender:self];
-    } else {
-        [self performSegueWithIdentifier:@"showJobs" sender:self];        
+-(void) fireRefreshRequest {
+    if (self.parentView) {
+        [self.syncMgr syncChildViewsForView:self.parentView];
+    } else if (self.syncMgr.currentJenkinsInstance != nil){
+        [self.syncMgr syncViewsForJenkinsInstance:self.syncMgr.currentJenkinsInstance];
     }
+}
+
+-(void) endRefresh:(NSNotification *) notification {
     
+    if ((notification.name == JenkinsInstanceViewsResponseReceivedNotification || notification.name == JenkinsInstanceViewsRequestFailedNotification) && self.parentView == nil) {
+        if (self.syncMgr.currentJenkinsInstance == notification.userInfo[RequestedObjectKey]) {
+            [self.refreshControl endRefreshing];
+            if (notification.name == JenkinsInstanceViewsRequestFailedNotification) {
+                [self showFailureNotification];
+            }
+        }
+    } else if ((notification.name == ViewChildViewsResponseReceivedNotification || notification.name == ViewChildViewsRequestFailedNotification) && self.parentView != nil) {
+        if (self.parentView == notification.userInfo[RequestedObjectKey]) {
+            [self.refreshControl endRefreshing];
+            if (notification.name == ViewChildViewsRequestFailedNotification) {
+                [self showFailureNotification];
+            }
+        }
+    }
+}
+
+-(void) showFailureNotification {
+    UIAlertAction *acceptFailure = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Failed To Refresh" message:@"Unable to refresh Views. Check connection and credentials." preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:acceptFailure];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+#pragma mark - Table view delegate
+-(void) refreshData:(NSNotification *) notification {
+    self.fetchedResultsController = nil;
+    [self.tableView reloadData];
 }
 
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -91,15 +131,21 @@
     //return 0;
 }
 
-- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath forView:(View *)view
 {
-    View *view = [self.fetchedResultsController objectAtIndexPath:indexPath];
     cell.textLabel.text = view.name;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ViewCell" forIndexPath:indexPath];
-    [self configureCell:cell atIndexPath:indexPath];
+    View *view = [[self fetchedResultsController] objectAtIndexPath:indexPath];
+    UITableViewCell *cell ;
+
+    if (view.rel_View_Views.count > 0) {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"ParentViewCell" forIndexPath:indexPath];
+    } else {
+        cell = [tableView dequeueReusableCellWithIdentifier:@"ViewCell" forIndexPath:indexPath];
+    }
+    [self configureCell:cell atIndexPath:indexPath forView:view];
     return cell;
 }
 
@@ -145,14 +191,12 @@
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
     if ([[segue identifier] isEqualToString:@"showChildViews"]) {
-        UINavigationController *newViewsNC = [segue destinationViewController];
-        KDBViewsTableViewController *newViewsTVC = (KDBViewsTableViewController *)newViewsNC.topViewController;
+        KDBViewsTableViewController *newViewsTVC = [segue destinationViewController];
         //View *selectedView = [[self fetchedResultsController] objectAtIndexPath:[self.tableView indexPathForSelectedRow]];
         [newViewsTVC setManagedObjectContext:self.managedObjectContext];
         [newViewsTVC setParentView:[[self fetchedResultsController] objectAtIndexPath:[self.tableView indexPathForSelectedRow]]];
     } else if ([[segue identifier] isEqualToString:@"showJobs"]) {
-        UINavigationController *jobsNC = [segue destinationViewController];
-        KDBJobsTableViewController *jobsTVC = (KDBJobsTableViewController *)jobsNC.topViewController;
+        KDBJobsTableViewController *jobsTVC = [segue destinationViewController];
         [jobsTVC setManagedObjectContext:self.managedObjectContext];
         [jobsTVC setParentView:[[self fetchedResultsController] objectAtIndexPath:[self.tableView indexPathForSelectedRow]]];
     }
@@ -166,7 +210,6 @@
     }
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    // Edit the entity name as appropriate.
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"View" inManagedObjectContext:self.managedObjectContext];
     [fetchRequest setEntity:entity];
 
@@ -174,8 +217,9 @@
     if (self.parentView) {
         predicate = [NSPredicate predicateWithFormat:@"rel_ParentView == %@", self.parentView];
     } else {
-        predicate = [NSPredicate predicateWithFormat:@"rel_View_JenkinsInstance == %@", self.syncMgr.currentJenkinsInstance];
+        predicate = [NSPredicate predicateWithFormat:@"rel_View_JenkinsInstance == %@ AND rel_ParentView == nil", self.syncMgr.currentJenkinsInstance];
     }
+
     fetchRequest.predicate = predicate;
     
     // Set the batch size to a suitable number.
@@ -229,18 +273,21 @@
       newIndexPath:(NSIndexPath *)newIndexPath
 {
     UITableView *tableView = self.tableView;
+    View *view =[self.fetchedResultsController objectAtIndexPath:newIndexPath];
     
     switch(type) {
         case NSFetchedResultsChangeInsert:
+            NSLog(@"%@%@",@"inserting view with name: ",view.name);
             [tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationFade];
             break;
             
         case NSFetchedResultsChangeDelete:
+            NSLog(@"%@%@",@"deleting view with name: ",view.name);            
             [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
             break;
             
         case NSFetchedResultsChangeUpdate:
-            [self configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
+            [self configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath forView:view];
             break;
             
         case NSFetchedResultsChangeMove:

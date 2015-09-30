@@ -84,10 +84,22 @@
     }
 }
 
+- (void) setUrl:(NSString *)url
+{
+    [self willChangeValueForKey:@"url"];
+    if (![self.url isEqualToString:url]) {
+        [self deleteAllJobs];
+        [self deleteAllViews];
+    }
+    [self setPrimitiveValue:url forKey:@"url"];
+    [self didChangeValueForKey:@"url"];
+}
+
 - (void)setValues:(NSDictionary *) values
 {
     self.name = [values objectForKey:JenkinsInstanceNameKey];
     self.url = [values objectForKey:JenkinsInstanceURLKey];
+    [self correctURL];
     //self.current = [values objectForKey:JenkinsInstanceCurrentKey];
     //self.enabled = [values objectForKey:JenkinsInstanceEnabledKey];
     self.username = [values objectForKey:JenkinsInstanceUsernameKey];
@@ -102,6 +114,13 @@
     [datamgr.masterMOC performBlock:^{
         [self createJobs:[values objectForKey:JenkinsInstanceJobsKey]];
     }];
+}
+
+- (void)updateValues:(NSDictionary *) values
+{
+    if ([values objectForKey:JenkinsInstanceViewsKey]) {
+        [self createViews:[values objectForKey:JenkinsInstanceViewsKey]];
+    }
 }
 
 - (BOOL)validateURL:(NSString *) newURL withMessage:(NSString **) message; {
@@ -159,6 +178,14 @@
     return validated;
 }
 
+// ensures that this instance's URL ends with a '/'
+- (void)correctURL
+{
+    if ( (self.url != nil) && (![self.url isEqualToString:@""]) && (![self.url hasSuffix:@"/"]) ) {
+        self.url = [NSString stringWithFormat:@"%@%@",self.url,@"/"];
+    }
+}
+
 // your local delegate's favorite method!
 - (void)createJobs:(NSArray *) jobValues
 {
@@ -212,6 +239,30 @@
             [currentViews addObject:newView];
         }
     }
+}
+
+- (void) deleteAllJobs
+{
+    for (Job *job in self.rel_Jobs) {
+        [self.managedObjectContext deleteObject:job];
+    }
+    /* TODO: implement batch delete
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Job"];
+    request.predicate = [NSPredicate predicateWithFormat:@"rel_Job_JenkinsInstance == %@", self];
+    NSBatchDeleteRequest *delete = [[NSBatchDeleteRequest alloc] initWithFetchRequest:request];
+    
+    NSError *deleteError = nil;
+    [self.managedObjectContext.persistentStoreCoordinator executeRequest:delete withContext:self.managedObjectContext error:&deleteError];
+     */
+
+}
+
+- (void) deleteAllViews
+{
+    for (View *view in self.rel_Views) {
+        [self.managedObjectContext deleteObject:view];
+    }
+    // TODO: implement batch delete
 }
 
 @end

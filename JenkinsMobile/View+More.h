@@ -11,6 +11,7 @@
 @interface View (More)
 
 - (void)setValues:(NSDictionary *) values;
+- (void)updateValues:(NSDictionary *) values;
 
 + (View *)createViewWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
 + (View *)fetchViewWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;

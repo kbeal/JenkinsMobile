@@ -16,10 +16,14 @@ extern double MaxJobSyncAge;
 extern NSString * const SelectedJobChangedNotification;
 extern NSString * const JenkinsInstanceDetailResponseReceivedNotification;
 extern NSString * const JenkinsInstanceDetailRequestFailedNotification;
+extern NSString * const JenkinsInstanceViewsResponseReceivedNotification;
+extern NSString * const JenkinsInstanceViewsRequestFailedNotification;
 extern NSString * const JobDetailResponseReceivedNotification;
 extern NSString * const JobDetailRequestFailedNotification;
 extern NSString * const ViewDetailResponseReceivedNotification;
 extern NSString * const ViewDetailRequestFailedNotification;
+extern NSString * const ViewChildViewsResponseReceivedNotification;
+extern NSString * const ViewChildViewsRequestFailedNotification;
 extern NSString * const BuildDetailResponseReceivedNotification;
 extern NSString * const BuildDetailRequestFailedNotification;
 extern NSString * const BuildProgressResponseReceivedNotification;
@@ -30,6 +34,7 @@ extern NSString * const JenkinsInstancePingResponseReceivedNotification;
 extern NSString * const JenkinsInstancePingRequestFailedNotification;
 extern NSString * const JenkinsInstanceAuthenticationResponseReceivedNotification;
 extern NSString * const JenkinsInstanceAuthenticationRequestFailedNotification;
+extern NSString * const SyncManagerCurrentJenkinsInstanceChangedNotification;
 
 #pragma mark - View keys
 extern NSString * const ViewURLKey;

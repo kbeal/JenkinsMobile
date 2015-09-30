@@ -49,15 +49,6 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         self.setTitle()
     }
     
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.view.window?.endEditing(true)
-        if (saveChanges!.boolValue) {
-            let datamgr = DataManager.sharedInstance
-            datamgr.saveMainContext()
-        }
-    }
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -124,9 +115,6 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             self.tableView.reloadData()
         case SwitchViewType.Active:
             self.activeInstance = switchView.on.boolValue
-        default:
-            print("invalid SwitchTableViewCellType")
-            abort()
         }
     }
     
@@ -157,18 +145,36 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             case .Name:
                 self.jinstance.name = textField.text
             case .URL:
-                self.jinstance.url = textField.text
+                if (self.jinstance.url != nil && self.jinstance.url != "" && self.jinstance.url != textField.text) {
+                    urlFieldChanged(textField)
+                } else {
+                    self.jinstance.url = textField.text
+                    self.jinstance.correctURL()
+                    textField.text = self.jinstance.url
+                }
             case .Username:
                 self.jinstance.username = textField.text
             case .Password:
                 self.jinstance.password = textField.text
-            default:
-                print("invalid textfieldtype")
-                abort()
             }
         }
        
         self.jinstance.managedObjectContext?.undoManager?.endUndoGrouping()
+    }
+        
+    func urlFieldChanged(textField: UITextField) {
+        let alert = UIAlertController(title: "Update Server URL", message: "Updating the URL will force a complete re-sync, deleting all previously synced data. Continue?", preferredStyle: UIAlertControllerStyle.Alert)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel) { (action) in
+            textField.text = self.jinstance.url
+        }
+        let updateAction = UIAlertAction(title: "Update", style: .Destructive) { (action) in
+            self.jinstance.url = textField.text
+            self.jinstance.correctURL()
+            textField.text = self.jinstance.url
+        }
+        alert.addAction(updateAction)
+        alert.addAction(cancelAction)
+        self.presentViewController(alert, animated: true, completion: nil)
     }
     
     func validate(textField: UITextField) -> Bool {
@@ -186,8 +192,6 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             validated = self.jinstance.validateUsername(kdbTextField.text, withMessage: &message)
         case .Password:
             validated = self.jinstance.validatePassword(kdbTextField.text, withMessage: &message)
-        default:
-            validated = true
         }
         
         if (!validated) {
@@ -342,6 +346,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     }
     
     func jenkinsInstanceAuthenticateReceived(notification: NSNotification) {
+        self.jinstance.authenticated = true
         // Update the results view to green success
         self.updateTestResultsView(UIColor.greenColor(), message: "\u{2713} Success", duration: 2, showActivityIndicator: false)
     }
@@ -355,7 +360,14 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
         let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
         let deleteAction = UIAlertAction(title: "Delete", style: .Destructive) { (action) in
+            if (self.syncMgr?.currentJenkinsInstance == self.jinstance) {
+                self.syncMgr?.currentJenkinsInstance = nil
+            }
             self.managedObjectContext?.deleteObject(self.jinstance)
+            self.managedObjectContext?.performBlockAndWait({
+                self.syncMgr?.saveContext(self.managedObjectContext)
+            })
+            self.activeInstance = false
             self.performSegueWithIdentifier("jenkinsInstanceDoneSegue", sender: self)
         }
         alert.addAction(deleteAction)
@@ -364,15 +376,33 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     }
     
     // MARK: - Navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if (segue.identifier == "jenkinsInstanceDoneSegue") {
-            self.saveChanges = true
-            if (self.activeInstance.boolValue) {
-                self.syncMgr?.currentJenkinsInstance = self.jinstance
-            } else {
-                self.syncMgr?.currentJenkinsInstance = nil
-            }
+    @IBAction func doneButtonTapped(sender: UIBarButtonItem) {
+        self.saveChanges = true
+        self.view.window?.endEditing(true)
+        let datamgr = DataManager.sharedInstance
+        datamgr.saveContext(datamgr.mainMOC)
+        datamgr.masterMOC.performBlockAndWait({
+            datamgr.saveContext(datamgr.masterMOC)
+        })
+        
+        do {
+            try self.jinstance.managedObjectContext?.obtainPermanentIDsForObjects([self.jinstance])
+        } catch {
+            print("Error obtaining permanet ID for JenkinsInstance")
+            abort()
+        }
+        
+        if (self.activeInstance.boolValue) {
+            self.syncMgr?.currentJenkinsInstance = self.jinstance
         } else {
+            self.syncMgr?.currentJenkinsInstance = nil
+        }
+
+        self.performSegueWithIdentifier("jenkinsInstanceDoneSegue", sender: self)
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if (segue.identifier != "jenkinsInstanceDoneSegue") {
             self.saveChanges = false
             self.jinstance.managedObjectContext?.undoManager?.undo()
         }

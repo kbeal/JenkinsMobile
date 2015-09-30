@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="eKZ-33-6Jp">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="14F1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="eKZ-33-6Jp">
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -101,14 +100,14 @@
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Boom" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5qp-Mb-sIk">
-                                            <rect key="frame" x="15" y="6" width="42.5" height="19.5"/>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5qp-Mb-sIk">
+                                            <rect key="frame" x="15" y="6" width="31.5" height="19.5"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="xz5-Fv-3lQ">
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="xz5-Fv-3lQ">
                                             <rect key="frame" x="15" y="25.5" width="40.5" height="13.5"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="11"/>
@@ -283,7 +282,7 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Done" id="XAC-dt-Sgq">
                             <connections>
-                                <segue destination="20v-Qr-N6F" kind="custom" identifier="jenkinsInstanceDoneSegue" customClass="DismissSegue" customModule="JenkinsMobile" id="CPU-IM-53X"/>
+                                <action selector="doneButtonTapped:" destination="U2y-ax-vZu" id="Clo-wY-VnX"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -293,11 +292,12 @@
                         <outlet property="testResultLabel" destination="cXx-Um-8IL" id="FMN-mu-s2O"/>
                         <outlet property="testResultView" destination="jWM-8V-WUQ" id="2GL-xL-MUo"/>
                         <outlet property="testResultViewHeightConstraint" destination="o4j-9c-GBZ" id="3cM-wP-D0o"/>
+                        <segue destination="20v-Qr-N6F" kind="custom" identifier="jenkinsInstanceDoneSegue" customClass="DismissSegue" customModule="JenkinsMobile" id="maD-Zs-txT"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Uqy-Td-JYj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1653" y="-964"/>
+            <point key="canvasLocation" x="1324" y="-879"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="ziT-nW-2Rb">
@@ -321,7 +321,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ViewCell" textLabel="iYg-U7-NoW" imageView="5ih-xb-Rvs" style="IBUITableViewCellStyleDefault" id="RtF-PF-19C">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ParentViewCell" textLabel="iYg-U7-NoW" imageView="5ih-xb-Rvs" style="IBUITableViewCellStyleDefault" id="RtF-PF-19C">
                                 <rect key="frame" x="0.0" y="86" width="600" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RtF-PF-19C" id="Wwe-3K-3zi">
@@ -341,6 +341,33 @@
                                         </imageView>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="ZAy-iI-4w0" kind="show" identifier="showChildViews" id="ndj-eJ-cR0"/>
+                                </connections>
+                            </tableViewCell>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ViewCell" textLabel="fHp-ud-Uky" imageView="32m-Nw-68k" style="IBUITableViewCellStyleDefault" id="9q6-1d-gh7">
+                                <rect key="frame" x="0.0" y="130" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9q6-1d-gh7" id="cNW-0w-CkL">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fHp-ud-Uky">
+                                            <rect key="frame" x="70" y="0.0" width="515" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" image="folder.png" id="32m-Nw-68k">
+                                            <rect key="frame" x="15" y="1" width="40" height="40"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </imageView>
+                                    </subviews>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="jhQ-zG-oVb" kind="show" identifier="showJobs" id="9wF-Gc-rYZ"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -356,13 +383,11 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="sidebarButton" destination="SXj-Gc-uqC" id="Tid-hk-nGh"/>
-                        <segue destination="CWw-Fc-R3P" kind="show" identifier="showJobs" id="ZGx-hL-vHC"/>
-                        <segue destination="S9n-1Q-FwG" kind="show" identifier="showChildViews" id="wNa-42-HRK"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FoB-9n-c7X" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3164" y="-295"/>
+            <point key="canvasLocation" x="3177" y="-288"/>
         </scene>
         <!--Views Navigation Controller-->
         <scene sceneID="ol8-bU-CcN">
@@ -523,9 +548,9 @@
         <image name="logo.png" width="40" height="40"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="wNa-42-HRK"/>
-        <segue reference="ZGx-hL-vHC"/>
+        <segue reference="3G3-aD-8Sm"/>
+        <segue reference="9wF-Gc-rYZ"/>
         <segue reference="PUT-gz-wxJ"/>
-        <segue reference="T6A-mv-LGP"/>
+        <segue reference="maD-Zs-txT"/>
     </inferredMetricsTieBreakers>
 </document>

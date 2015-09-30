@@ -18,6 +18,7 @@
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) SyncManager *syncMgr;
 @property (strong, nonatomic) View *parentView;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
 

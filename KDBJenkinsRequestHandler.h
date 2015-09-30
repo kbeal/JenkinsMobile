@@ -17,10 +17,12 @@
 
 - (void) importDetailsForJob:(Job *) job;
 - (void) importDetailsForView: (View *) view;
+- (void) importChildViewsForView: (View *) view;
 - (void) importDetailsForActiveConfiguration: (ActiveConfiguration *) ac;
 - (void) importDetailsForBuild: (Build *) build;
 //- (void) importProgressForBuild:(NSNumber *) buildNumber ofJobAtURL:(NSString *) jobURL;
 - (void) importDetailsForJenkinsInstance: (JenkinsInstance *) jinstance;
+- (void) importViewsForJenkinsInstance: (JenkinsInstance *) jinstance;
 - (void) pingJenkinsInstance: (JenkinsInstance *) jinstance;
 - (void) authenticateJenkinsInstance: (JenkinsInstance *) jinstance;
 

@@ -25,7 +25,10 @@
     NSString *jobURL = job.url;
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
-    manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
+    AFSecurityPolicy *secPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    [secPolicy setValidatesDomainName:NO];
+    [secPolicy setAllowInvalidCertificates:jinstance.allowInvalidSSLCertificate.boolValue];
+    [manager setSecurityPolicy:secPolicy];
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
@@ -86,7 +89,10 @@
     BOOL shouldAuthenticate = [jinstance.shouldAuthenticate boolValue];
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
-    manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
+    AFSecurityPolicy *secPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    [secPolicy setValidatesDomainName:NO];
+    [secPolicy setAllowInvalidCertificates:jinstance.allowInvalidSSLCertificate.boolValue];
+    [manager setSecurityPolicy:secPolicy];
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
@@ -135,6 +141,71 @@
     [operation start];
 }
 
+- (void) importChildViewsForView: (View *) view
+{
+    NSString *viewURL = view.url;
+    NSURL *requestURL = [NSURL URLWithString:@"api/json?tree=name,url,views[name,url]" relativeToURL:[NSURL URLWithString:view.url]];
+    NSLog(@"%@%@",@"Requesting child views for View at URL: ",requestURL.absoluteString);
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    
+    JenkinsInstance *jinstance = (JenkinsInstance *)view.rel_View_JenkinsInstance;
+    NSString *username = jinstance.username;
+    NSString *password = jinstance.password;
+    BOOL shouldAuthenticate = [jinstance.shouldAuthenticate boolValue];
+    
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    AFSecurityPolicy *secPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    [secPolicy setValidatesDomainName:NO];
+    [secPolicy setAllowInvalidCertificates:jinstance.allowInvalidSSLCertificate.boolValue];
+    [manager setSecurityPolicy:secPolicy];
+    [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    if (shouldAuthenticate) {
+        [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
+        manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    }
+    
+    
+    AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"%@%@",@"Response received for View at URL: ",viewURL);
+        NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:responseObject];
+        [info setObject:view forKey:RequestedObjectKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:ViewChildViewsResponseReceivedNotification object:self userInfo:info];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"%@%@",@"Failed to receive response for child views for View at URL: ",viewURL);
+        // since the View actually exists, we need to inject it's url so that coredata can find it.
+        NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
+        [errUserInfo setObject:[NSURL URLWithString:viewURL] forKey:NSErrorFailingURLKey];
+        NSError *newError = [[NSError alloc] initWithDomain:error.domain code:error.code userInfo:errUserInfo];
+        NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:newError, nil] forKeys:[NSArray arrayWithObjects:RequestErrorKey, nil]];
+        
+        if (operation.response) {
+            [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
+        }
+        [info setObject:view forKey:RequestedObjectKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:ViewChildViewsRequestFailedNotification object:self userInfo:info];
+    }];
+    
+    [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {
+        if ([request.allHTTPHeaderFields objectForKey:@"Authorization"] != nil) {
+            return request;
+        }
+        if (shouldAuthenticate) {
+            NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+            NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+            NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+            NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+            [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+            return urlRequest;
+        } else {
+            return request;
+        }
+    }];
+    
+    [operation start];
+}
+
 - (void) importDetailsForActiveConfiguration: (ActiveConfiguration *) ac
 {
     NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:[NSURL URLWithString:ac.url]];
@@ -147,7 +218,10 @@
     BOOL shouldAuthenticate = [jinstance.shouldAuthenticate boolValue];
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
-    manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
+    AFSecurityPolicy *secPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    [secPolicy setValidatesDomainName:NO];
+    [secPolicy setAllowInvalidCertificates:jinstance.allowInvalidSSLCertificate.boolValue];
+    [manager setSecurityPolicy:secPolicy];
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     
     if (shouldAuthenticate) {
@@ -208,7 +282,10 @@
     BOOL shouldAuthenticate = [jinstance.shouldAuthenticate boolValue];
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
-    manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
+    AFSecurityPolicy *secPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    [secPolicy setValidatesDomainName:NO];
+    [secPolicy setAllowInvalidCertificates:jinstance.allowInvalidSSLCertificate.boolValue];
+    [manager setSecurityPolicy:secPolicy];
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     
     if (shouldAuthenticate) {
@@ -266,7 +343,10 @@
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
+    AFSecurityPolicy *secPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    [secPolicy setValidatesDomainName:NO];
+    [secPolicy setAllowInvalidCertificates:jinstance.allowInvalidSSLCertificate.boolValue];
+    [manager setSecurityPolicy:secPolicy];
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     
     AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -300,7 +380,10 @@
     NSURL *jinstanceURL = [NSURL URLWithString:jinstance.url];
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
-    manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
+    AFSecurityPolicy *secPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    [secPolicy setValidatesDomainName:NO];
+    [secPolicy setAllowInvalidCertificates:jinstance.allowInvalidSSLCertificate.boolValue];
+    [manager setSecurityPolicy:secPolicy];
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     
     [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:username password:password];
@@ -343,7 +426,7 @@
 
 - (void) importDetailsForJenkinsInstance: (JenkinsInstance *) jinstance
 {
-    NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:[NSURL URLWithString:jinstance.url]];
+    NSURL *requestURL = [NSURL URLWithString:@"api/json?tree=primaryView[name,url],views[name,url,jobs[name,url],views[name,url]]" relativeToURL:[NSURL URLWithString:jinstance.url]];
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     NSLog(@"%@%@",@"Requesting details for Jenkins at URL: ",requestURL.absoluteString);
     NSString *username = jinstance.username;
@@ -353,7 +436,11 @@
     //NSString *jinstanceName = jinstance.name;
     
     AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
-    manager.securityPolicy.allowInvalidCertificates = jinstance.allowInvalidSSLCertificate.boolValue;
+    AFSecurityPolicy *secPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    [secPolicy setValidatesDomainName:NO];
+    [secPolicy setAllowInvalidCertificates:jinstance.allowInvalidSSLCertificate.boolValue];
+    [manager setSecurityPolicy:secPolicy];
+
     [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
     
     if (shouldAuthenticate) {
@@ -381,6 +468,71 @@
         }
         [info setObject:jinstance forKey:RequestedObjectKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceDetailRequestFailedNotification object:self userInfo:info];
+    }];
+    
+    [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {
+        if ([request.allHTTPHeaderFields objectForKey:@"Authorization"] != nil) {
+            return request;
+        }
+        
+        if (shouldAuthenticate) {
+            NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+            NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+            NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+            NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+            [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+            return urlRequest;
+        } else {
+            return request;
+        }
+    }];
+    
+    [operation start];
+}
+
+- (void) importViewsForJenkinsInstance: (JenkinsInstance *) jinstance
+{
+    NSURL *requestURL = [NSURL URLWithString:@"api/json?tree=views[name,url]" relativeToURL:[NSURL URLWithString:jinstance.url]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    NSLog(@"%@%@",@"Requesting views for Jenkins at URL: ",requestURL.absoluteString);
+    NSString *username = jinstance.username;
+    NSString *password = jinstance.password;
+    BOOL shouldAuthenticate = [jinstance.shouldAuthenticate boolValue];
+    NSURL *jinstanceURL = [NSURL URLWithString:jinstance.url];
+    //NSString *jinstanceName = jinstance.name;
+    
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    AFSecurityPolicy *secPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    [secPolicy setValidatesDomainName:NO];
+    [secPolicy setAllowInvalidCertificates:jinstance.allowInvalidSSLCertificate.boolValue];
+    [manager setSecurityPolicy:secPolicy];
+    [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
+    
+    if (shouldAuthenticate) {
+        [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:username password:password];
+        manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    }
+    
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"%@%@",@"Response received for Views in JenkinsInstance at url: ",jinstanceURL);
+        NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:responseObject];
+        [info setObject:jinstance forKey:RequestedObjectKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceViewsResponseReceivedNotification object:self userInfo:info];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"%@%@",@"Failed to receive response for views in jenkins at url: ",requestURL.absoluteString);
+        // since the JenkinsInstance actually exists, we need to inject it's url so that coredata can find it.
+        NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
+        [errUserInfo setObject:jinstanceURL forKey:NSErrorFailingURLKey];
+        NSError *newError = [[NSError alloc] initWithDomain:error.domain code:error.code userInfo:errUserInfo];
+        NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:newError, nil] forKeys:[NSArray arrayWithObjects:RequestErrorKey, nil]];
+        
+        if (operation.response) {
+            [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
+        }
+        [info setObject:jinstance forKey:RequestedObjectKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceViewsRequestFailedNotification object:self userInfo:info];
     }];
     
     [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {

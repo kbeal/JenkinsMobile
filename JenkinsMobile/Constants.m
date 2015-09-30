@@ -18,10 +18,14 @@ NSString * const JobDetailResponseReceivedNotification = @"JobDetailResponseRece
 NSString * const JobDetailRequestFailedNotification = @"JobDetailRequestFailed";
 NSString * const ViewDetailResponseReceivedNotification = @"ViewDetailResponseReceived";
 NSString * const ViewDetailRequestFailedNotification = @"ViewDetailRequestFailed";
+NSString * const ViewChildViewsResponseReceivedNotification = @"ViewChildViewsResponseReceived";
+NSString * const ViewChildViewsRequestFailedNotification = @"ViewChildViewsRequestFailed";
 NSString * const BuildProgressResponseReceivedNotification = @"BuildProgressResponseReceived";
 NSString * const JobTestResultsImageResponseReceivedNotification = @"JobTestResultsImageResponseReceived";
 NSString * const JenkinsInstanceDetailResponseReceivedNotification = @"JenkinsInstanceDetailResponseReceived";
 NSString * const JenkinsInstanceDetailRequestFailedNotification = @"JenkinsInstanceDetailRequestFailed";
+NSString * const JenkinsInstanceViewsResponseReceivedNotification = @"JenkinsInstanceViewsResponseReceived";
+NSString * const JenkinsInstanceViewsRequestFailedNotification = @"JenkinsInstanceViewsRequestFailed";
 NSString * const JenkinsInstancePingResponseReceivedNotification = @"JenkinsInstancePingResponseReceived";
 NSString * const JenkinsInstancePingRequestFailedNotification = @"JenkinsInstancePingRequestFailed";
 NSString * const JenkinsInstanceAuthenticationResponseReceivedNotification = @"JenkinsInstanceAuthenticationResponseReceived";
@@ -30,6 +34,7 @@ NSString * const BuildDetailResponseReceivedNotification = @"BuildDetailResponse
 NSString * const BuildDetailRequestFailedNotification = @"BuildDetailRequestFailed";
 NSString * const ActiveConfigurationDetailResponseReceivedNotification = @"ActiveConfigurationDetailResponseReceived";
 NSString * const ActiveConfigurationDetailRequestFailedNotification = @"ActiveConfigurationDetailRequestFailed";
+NSString * const SyncManagerCurrentJenkinsInstanceChangedNotification = @"SyncManagerCurrentJenkinsChanged";
 
 #pragma mark - View Keys
 NSString * const ViewURLKey = @"url";

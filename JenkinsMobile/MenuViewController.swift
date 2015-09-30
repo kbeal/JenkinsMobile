@@ -17,6 +17,11 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
         super.viewDidLoad()
         self.managedObjectContext = SyncManager.sharedInstance.mainMOC
     }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        self.tableView.reloadData()
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -24,7 +29,6 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
     }
 
     // MARK: - Table view data source
-
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
@@ -42,7 +46,7 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
         if let currentJI: JenkinsInstance = SyncManager.sharedInstance.currentJenkinsInstance {
             if ((jinstance.url != nil) && (currentJI.url == jinstance.url)) {
                 if (currentJI.shouldAuthenticate.boolValue) {
-                    if (currentJI.authenticated.boolValue) {
+                    if ((jinstance.authenticated != nil) && (currentJI.authenticated.boolValue)) {
                         cell.imageView?.image = StatusCircle.imageForCircle(UIColor.blueColor())
                     } else {
                         cell.imageView?.image = StatusCircle.imageForCircle(UIColor.redColor())
@@ -50,6 +54,8 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
                 } else {
                     cell.imageView?.image = StatusCircle.imageForCircle(UIColor.blueColor())
                 }
+            } else {
+                cell.imageView?.image = StatusCircle.imageForCircle(UIColor.grayColor())
             }
         } else {
             cell.imageView?.image = StatusCircle.imageForCircle(UIColor.grayColor())
@@ -59,7 +65,7 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("JenkinsInstanceCell", forIndexPath: indexPath) 
-        //sell, atIndexPath: indexPath)
+        configureCell(cell, atIndexPath: indexPath)
         return cell
     }
 
@@ -162,8 +168,6 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
                 self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
             case .Delete:
                 self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
-            default:
-                return
             }
     }
     

@@ -13,10 +13,12 @@
 @property (nonatomic, copy) NSString *password;
 
 - (void)setValues:(NSDictionary *) values;
+- (void)updateValues:(NSDictionary *) values;
 - (BOOL)validateURL:(NSString *) newURL withMessage:(NSString **) message;
 - (BOOL)validateName:(NSString *) newName withMessage:(NSString **) message;
 - (BOOL)validateUsername:(NSString *) newUsername withMessage:(NSString **) message;
 - (BOOL)validatePassword:(NSString *) newPassword withMessage:(NSString **) message;
+- (void)correctURL;
 
 + (JenkinsInstance *)createJenkinsInstanceWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
 //+ (JenkinsInstance *)getCurrentJenkinsInstanceFromManagedObjectContext:(NSManagedObjectContext *) context;

@@ -52,6 +52,7 @@
     return missingApi;
 }
 
+// used when all values are present in response data
 - (void)setValues:(NSDictionary *) values
 {
     self.name = NULL_TO_NIL([values objectForKey:@"name"]);
@@ -66,6 +67,28 @@
     [self createChildViews:NULL_TO_NIL([values objectForKey:ViewViewsKey])];
 }
 
+// used when only subset of values are present in response data
+- (void)updateValues:(NSDictionary *) values
+{
+    self.name = [values objectForKey:ViewNameKey]!=NULL ? [values objectForKey:ViewNameKey] : self.name;
+    self.view_description = [values objectForKey:ViewDescriptionKey]!=NULL ? [values objectForKey:ViewDescriptionKey] : self.view_description;
+    self.property = [values objectForKey:ViewPropertyKey]!=NULL ? [values objectForKey:ViewPropertyKey] : self.property;
+    self.lastSyncResult = [values objectForKey:ViewLastSyncResultKey]!=NULL ? [values objectForKey:ViewLastSyncResultKey] : self.lastSyncResult;
+    
+    if ([values objectForKey:ViewURLKey]) {
+        self.url = [values objectForKey:ViewURLKey];
+        [self setCanonicalURL];
+    }
+    
+    if ([values objectForKey:ViewJobsKey]) {
+        [self createJobsFromViewValues:[values objectForKey:ViewJobsKey]];
+    }
+    
+    if ([values objectForKey:ViewViewsKey]) {
+        [self createChildViews:[values objectForKey:ViewViewsKey]];
+    }
+}
+
 // returns the view's canonical URL
 // removes /api/json
 // adds /view/<ViewName> if view is JenkinsInstance's primaryView
@@ -73,10 +96,12 @@
 {
     NSString *canonicalURL;
     canonicalURL = [View removeApiFromURL:[NSURL URLWithString:self.url]];
-    
+
     if ([[self.rel_View_JenkinsInstance.primaryView objectForKey:ViewNameKey] isEqualToString:self.name]) {
-        canonicalURL = [NSString stringWithFormat:@"%@%@%@%@",self.rel_View_JenkinsInstance.url,@"view/",self.name,@"/"];
+        NSString *encodedName = [self.name stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]];
+        canonicalURL = [NSString stringWithFormat:@"%@%@%@%@",self.rel_View_JenkinsInstance.url,@"view/",encodedName,@"/"];
     }
+
     self.url = canonicalURL;
 }
 

@@ -20,6 +20,8 @@ public class SyncManager: NSObject {
             if (currentJenkinsInstance != nil) {
                 self.syncJenkinsInstance(currentJenkinsInstance!)
                 self.updateCurrentURLPref(currentJenkinsInstance!.url)
+                let notification = NSNotification(name: SyncManagerCurrentJenkinsInstanceChangedNotification, object: nil)
+                NSNotificationCenter.defaultCenter().postNotification(notification)
             }
         }
     }
@@ -68,8 +70,12 @@ public class SyncManager: NSObject {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jobDetailRequestFailed:"), name: JobDetailRequestFailedNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceDetailResponseReceived:"), name: JenkinsInstanceDetailResponseReceivedNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceDetailRequestFailed:"), name: JenkinsInstanceDetailRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceViewsResponseReceived:"), name: JenkinsInstanceViewsResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceDetailRequestFailed:"), name: JenkinsInstanceViewsRequestFailedNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("viewDetailResponseReceived:"), name: ViewDetailResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("viewChildViewsResponseReceived:"), name: ViewChildViewsResponseReceivedNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("viewDetailRequestFailed:"), name: ViewDetailRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("viewDetailRequestFailed:"), name: ViewChildViewsRequestFailedNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("buildDetailResponseReceived:"), name: BuildDetailResponseReceivedNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("buildDetailRequestFailed:"), name: BuildDetailRequestFailedNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("activeConfigurationDetailResponseReceived:"), name: ActiveConfigurationDetailResponseReceivedNotification, object: nil)
@@ -137,42 +143,80 @@ public class SyncManager: NSObject {
     }
     
     public func syncAllJobsForView(view: View) {
-        masterMOC.performBlock({
-            let viewjobs = view.rel_View_Jobs
-            for job in viewjobs {
-                self.jobSyncQueue.push(job as! Job)
-            }
-        })
+        if let bgview: View = self.dataMgr.ensureObjectOnBackgroundThread(view) as? View {
+            masterMOC.performBlock({
+                let viewjobs = bgview.rel_View_Jobs
+                for job in viewjobs {
+                    self.jobSyncQueue.push(job as! Job)
+                }
+            })
+        }
     }
     
     public func syncSubViewsForView(view: View) {
-        masterMOC.performBlock({
-            let subviews = view.rel_View_Views
-            for subview in subviews {
-                self.viewSyncQueue.push(subview as! View)
-            }
-        })
+        if let bgview: View = self.dataMgr.ensureObjectOnBackgroundThread(view) as? View {
+            masterMOC.performBlock({
+                let subviews = bgview.rel_View_Views
+                for subview in subviews {
+                    self.viewSyncQueue.push(subview as! View)
+                }
+            })
+        }
     }
     
     public func syncJenkinsInstance(instance: JenkinsInstance) {
-        self.requestHandler.importDetailsForJenkinsInstance(instance)
+        if let bgji: JenkinsInstance = self.dataMgr.ensureObjectOnBackgroundThread(instance) as? JenkinsInstance {
+            self.masterMOC.performBlock({
+                self.requestHandler.importDetailsForJenkinsInstance(bgji)                
+            })
+        }
+    }
+    
+    public func syncViewsForJenkinsInstance(instance: JenkinsInstance) {
+        if let bgji: JenkinsInstance = self.dataMgr.ensureObjectOnBackgroundThread(instance) as? JenkinsInstance {
+            self.masterMOC.performBlock({
+                self.requestHandler.importViewsForJenkinsInstance(bgji)
+            })
+        }
     }
     
     public func syncView(view: View) {
-        // sync view details and queue all jobs in view for sync
-        self.requestHandler.importDetailsForView(view)
+        if let bgview: View = self.dataMgr.ensureObjectOnBackgroundThread(view) as? View {
+            // sync view details and queue all jobs in view for sync
+            self.requestHandler.importDetailsForView(bgview)
+        }
+    }
+    
+    public func syncChildViewsForView(view: View) {
+        if let bgview: View = self.dataMgr.ensureObjectOnBackgroundThread(view) as? View {
+            self.masterMOC.performBlock({
+                self.requestHandler.importChildViewsForView(bgview)
+            })
+        }
     }
     
     public func syncJob(job: Job) {
-        self.requestHandler.importDetailsForJob(job)
+        if let bgjob: Job = self.dataMgr.ensureObjectOnBackgroundThread(job) as? Job {
+            self.masterMOC.performBlock({
+                self.requestHandler.importDetailsForJob(bgjob)
+            })
+        }
     }
     
     public func syncBuild(build: Build) {
-        self.requestHandler.importDetailsForBuild(build)
+        if let bgbuild: Build = self.dataMgr.ensureObjectOnBackgroundThread(build) as? Build {
+            self.masterMOC.performBlock({
+                self.requestHandler.importDetailsForBuild(bgbuild)
+            })
+        }
     }
     
     public func syncActiveConfiguration(ac: ActiveConfiguration) {
-        self.requestHandler.importDetailsForActiveConfiguration(ac)
+        if let bgac: ActiveConfiguration = self.dataMgr.ensureObjectOnBackgroundThread(ac) as? ActiveConfiguration {
+            self.masterMOC.performBlock({
+                self.requestHandler.importDetailsForActiveConfiguration(bgac)
+            })
+        }
     }
     
     // MARK: - Responses Received
@@ -189,6 +233,7 @@ public class SyncManager: NSObject {
         })
     }
     
+    // triggered by successful view details requests
     func viewDetailResponseReceived(notification: NSNotification) {
         var values: Dictionary = notification.userInfo!
         let view = values[RequestedObjectKey] as! View
@@ -196,12 +241,36 @@ public class SyncManager: NSObject {
         view.managedObjectContext?.performBlock({
             values[ViewLastSyncResultKey] = "200: OK"
             values[ViewJenkinsInstanceKey] = view.rel_View_JenkinsInstance
+            values[ViewParentViewKey] = view.rel_ParentView
             view.setValues(values)
             self.saveContext(view.managedObjectContext)
+            self.dataMgr.masterMOC.performBlock({
+                self.dataMgr.saveContext(self.dataMgr.masterMOC)
+            })
         })
         
-        // TODO: fix so that this works
-        //self.syncAllJobsForView(view!)
+        self.syncAllJobsForView(view)
+        self.syncSubViewsForView(view)
+    }
+    
+    // triggered by successful view child views requests
+    func viewChildViewsResponseReceived(notification: NSNotification) {
+        var values: Dictionary = notification.userInfo!
+        let view = values[RequestedObjectKey] as! View
+        
+        view.managedObjectContext?.performBlock({
+            values[ViewLastSyncResultKey] = "200: OK"
+            values[ViewJenkinsInstanceKey] = view.rel_View_JenkinsInstance
+            values[ViewParentViewKey] = view.rel_ParentView
+            view.updateValues(values)
+            self.saveContext(view.managedObjectContext)
+            self.dataMgr.masterMOC.performBlock({
+                self.dataMgr.saveContext(self.dataMgr.masterMOC)
+            })
+        })
+        
+        self.syncAllJobsForView(view)
+        self.syncSubViewsForView(view)
     }
     
     func jenkinsInstanceDetailResponseReceived(notification: NSNotification) {
@@ -223,7 +292,29 @@ public class SyncManager: NSObject {
             })
             // TODO: uncomment
             //self.syncAllJobs(ji)
-            //self.syncAllViews(ji)
+            self.syncAllViews(ji)
+        })
+    }
+    
+    func jenkinsInstanceViewsResponseReceived(notification: NSNotification) {
+        var values: Dictionary = notification.userInfo!
+        let ji: JenkinsInstance = values[RequestedObjectKey] as! JenkinsInstance
+        
+        ji.managedObjectContext?.performBlock({
+            values[JenkinsInstanceEnabledKey] = true
+            values[JenkinsInstanceAuthenticatedKey] = true
+            values[JenkinsInstanceLastSyncResultKey] = "200: OK"
+            values[JenkinsInstanceNameKey] = ji.name
+            values[JenkinsInstanceURLKey] = ji.url
+            values[JenkinsInstanceUsernameKey] = ji.username
+            
+            ji.updateValues(values)
+            self.saveContext(ji.managedObjectContext)
+            self.dataMgr.masterMOC.performBlock({
+                self.dataMgr.saveContext(self.dataMgr.masterMOC)
+            })
+
+            self.syncAllViews(ji)
         })
     }
     
@@ -281,6 +372,7 @@ public class SyncManager: NSObject {
         }
     }
     
+    // triggered by failed view details requests as well as failed view child views requests
     func viewDetailRequestFailed(notification: NSNotification) {
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError

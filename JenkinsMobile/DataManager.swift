@@ -11,6 +11,11 @@ import Foundation
 public class DataManager: NSObject {
     public static let sharedInstance = DataManager()
     
+    public override init() {
+        super.init()
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("contextChanged:"), name: NSManagedObjectContextDidSaveNotification, object: self.masterMOC)
+    }
+    
     public lazy var masterMOC: NSManagedObjectContext = {
         let runningTests = NSClassFromString("XCTestCase") != nil
         if runningTests {
@@ -98,15 +103,14 @@ public class DataManager: NSObject {
     
     }()
     
-    //- (void) contextChanged: (NSNotification *) notification
-    //{
-    //    // Only interested in merging from master into main.
-    //    if ([notification object] != self.masterMOC) return;
-    //
-    //    [_mainMOC performBlock:^{
-    //        [_mainMOC mergeChangesFromContextDidSaveNotification:notification];
-    //    }];
-    //}
+    func contextChanged(notification: NSNotification) {
+        let notificationObject: NSManagedObjectContext = notification.object as! NSManagedObjectContext
+        if (notificationObject != self.masterMOC) { return }
+        
+        self.mainMOC.performBlock({
+            self.mainMOC.mergeChangesFromContextDidSaveNotification(notification)
+        })
+    }
     
     // takes an NSManagedObject and if it isn't already on a background thread
     // ie. on the main queue NSManagedObjectContext
@@ -115,21 +119,16 @@ public class DataManager: NSObject {
     public func ensureObjectOnBackgroundThread(obj: NSManagedObject) -> NSManagedObject? {
         var bgobj: NSManagedObject?
         if obj.managedObjectContext?.concurrencyType == NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType {
-//            do {
-//                // try to get the object's permanent object ID. If the object exists on the main queue context only
-//                // which means it hasn't been persisted to disk yet, it's objectID is temporary and won't return an object
-//                // from the master context.
-//                // obtainPermanentIDsForObjects forces a write to disk in order to determine/obtain the permanent object ID
-//                try obj.managedObjectContext?.obtainPermanentIDsForObjects([obj])
-//            } catch {
-//                print("Error retrieving permanent ID for object")
-//            }
-
-            do {
-                try bgobj = self.masterMOC.existingObjectWithID(obj.objectID)
-            } catch {
-                print("Error retrieving object from background context.")
-            }
+            // try to retrieve the object from the background context
+            self.masterMOC.performBlockAndWait({
+                do {
+                    try bgobj = self.masterMOC.existingObjectWithID(obj.objectID)
+                } catch {
+                    print("Error retrieving object from background context.")
+                }
+            })
+        } else {
+            bgobj = obj
         }
         return bgobj
     }
