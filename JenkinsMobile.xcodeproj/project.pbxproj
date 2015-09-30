@@ -181,6 +181,7 @@
 		8A817A5319638D1400ED7075 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A817A5219638D1400ED7075 /* SpriteKit.framework */; };
 		8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A817AAE196390D700ED7075 /* KDBBallScene.m */; };
 		8A8B57BE19C7B98A004FA446 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8B57BD19C7B98A004FA446 /* SyncManager.swift */; };
+		8A90F6D81BBB6EBD00EA77FA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A90F6D71BBB6EBD00EA77FA /* LaunchScreen.storyboard */; settings = {ASSET_TAGS = (); }; };
 		8A999495197A1439009B82DD /* health-00to19~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999490197A1439009B82DD /* health-00to19~ipad.png */; };
 		8A999496197A1439009B82DD /* health-20to39~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999491197A1439009B82DD /* health-20to39~ipad.png */; };
 		8A999497197A1439009B82DD /* health-40to59~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999492197A1439009B82DD /* health-40to59~ipad.png */; };
@@ -437,6 +438,7 @@
 		8A817AAE196390D700ED7075 /* KDBBallScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBBallScene.m; sourceTree = "<group>"; };
 		8A8B57BC19C7B989004FA446 /* JenkinsMobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JenkinsMobile-Bridging-Header.h"; sourceTree = "<group>"; };
 		8A8B57BD19C7B98A004FA446 /* SyncManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
+		8A90F6D71BBB6EBD00EA77FA /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8A999490197A1439009B82DD /* health-00to19~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-00to19~ipad.png"; sourceTree = "<group>"; };
 		8A999491197A1439009B82DD /* health-20to39~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-20to39~ipad.png"; sourceTree = "<group>"; };
 		8A999492197A1439009B82DD /* health-40to59~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-40to59~ipad.png"; sourceTree = "<group>"; };
@@ -820,6 +822,7 @@
 				8A99949B197AB258009B82DD /* UIButton+RelatedProject.m */,
 				8AC464E019E6179C00AE5A76 /* UniqueQueue.swift */,
 				8AE9636F1B9270F9000F6A0E /* StatusCircle.swift */,
+				8A90F6D71BBB6EBD00EA77FA /* LaunchScreen.storyboard */,
 			);
 			path = JenkinsMobile;
 			sourceTree = "<group>";
@@ -1136,6 +1139,7 @@
 				8A3CB9D318E7C39900D0D160 /* redo.png in Resources */,
 				8A3CB9EA18E7C39900D0D160 /* new-document@2x.png in Resources */,
 				8A3CBA3318E7C39900D0D160 /* application-certificate.png in Resources */,
+				8A90F6D81BBB6EBD00EA77FA /* LaunchScreen.storyboard in Resources */,
 				8A3CB9EB18E7C39900D0D160 /* new-computer.png in Resources */,
 				8A999495197A1439009B82DD /* health-00to19~ipad.png in Resources */,
 				8A3CB9F918E7C39900D0D160 /* hourglass.png in Resources */,
