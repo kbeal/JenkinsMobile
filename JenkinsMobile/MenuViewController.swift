@@ -59,7 +59,7 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("JenkinsInstanceCell", forIndexPath: indexPath) 
-        //sell, atIndexPath: indexPath)
+        configureCell(cell, atIndexPath: indexPath)
         return cell
     }
 
