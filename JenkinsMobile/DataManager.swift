@@ -115,15 +115,15 @@ public class DataManager: NSObject {
     public func ensureObjectOnBackgroundThread(obj: NSManagedObject) -> NSManagedObject? {
         var bgobj: NSManagedObject?
         if obj.managedObjectContext?.concurrencyType == NSManagedObjectContextConcurrencyType.MainQueueConcurrencyType {
-            do {
-                // try to get the object's permanent object ID. If the object exists on the main queue context only
-                // which means it hasn't been persisted to disk yet, it's objectID is temporary and won't return an object
-                // from the master context.
-                // obtainPermanentIDsForObjects forces a write to disk in order to determine/obtain the permanent object ID
-                try obj.managedObjectContext?.obtainPermanentIDsForObjects([obj])
-            } catch {
-                print("Error retrieving permanent ID for object")
-            }
+//            do {
+//                // try to get the object's permanent object ID. If the object exists on the main queue context only
+//                // which means it hasn't been persisted to disk yet, it's objectID is temporary and won't return an object
+//                // from the master context.
+//                // obtainPermanentIDsForObjects forces a write to disk in order to determine/obtain the permanent object ID
+//                try obj.managedObjectContext?.obtainPermanentIDsForObjects([obj])
+//            } catch {
+//                print("Error retrieving permanent ID for object")
+//            }
 
             do {
                 try bgobj = self.masterMOC.existingObjectWithID(obj.objectID)

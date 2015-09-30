@@ -226,6 +226,11 @@ class SyncManagerTests: XCTestCase {
             jobs.append([JobNameKey: uuid, JobColorKey: "blue", JobURLKey: "http://www.google.com"])
         }
 
+        do {
+            try context?.obtainPermanentIDsForObjects([jenkinsInstance!])
+        } catch {
+            print("unable to obtain permanent ID")
+        }
         let newvalues: [NSObject: AnyObject] = [JenkinsInstanceNameKey: self.jenkinsInstance!.name, JenkinsInstanceURLKey: self.jenkinsInstance!.url, JenkinsInstanceJobsKey: jobs]
         
 

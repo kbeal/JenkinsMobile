@@ -218,7 +218,9 @@ public class SyncManager: NSObject {
 
             ji.setValues(values)
             self.saveContext(ji.managedObjectContext)
-            self.saveContext(self.dataMgr.masterMOC)
+            self.dataMgr.masterMOC.performBlock({
+                self.dataMgr.saveContext(self.dataMgr.masterMOC)
+            })
             // TODO: uncomment
             //self.syncAllJobs(ji)
             //self.syncAllViews(ji)
