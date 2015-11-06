@@ -194,14 +194,18 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             validated = self.jinstance.validatePassword(kdbTextField.text, withMessage: &message)
         }
         
-        if (!validated) {
-            kdbTextField.setInvalidBorder()
-            kdbTextField.placeholder = message as? String
-        } else {
-            kdbTextField.setNoBorder()
-        }
+        markTextField(kdbTextField, valid: validated, message: message)
         
         return validated
+    }
+    
+    func markTextField(textField: KDBTextField, valid: Bool, message: NSString?) {
+        if (!valid) {
+            textField.setInvalidBorder()
+            textField.placeholder = message as? String
+        } else {
+            textField.setNoBorder()
+        }
     }
     
     // MARK: - Table view data source
@@ -379,6 +383,18 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     @IBAction func doneButtonTapped(sender: UIBarButtonItem) {
         self.saveChanges = true
         self.view.window?.endEditing(true)
+        var message: NSString? = nil
+        
+        if (self.jinstance.validateInstanceWithMessage(&message)) {
+            saveAndClose()
+        } else {
+            print(message)
+            self.toggleTestResultsView(true)
+            self.updateTestResultsView(UIColor.redColor(), message: "Invalid values. Please provide all fields.", duration: 3, showActivityIndicator: false)
+        }
+    }
+    
+    func saveAndClose() {
         let datamgr = DataManager.sharedInstance
         datamgr.saveContext(datamgr.mainMOC)
         datamgr.masterMOC.performBlockAndWait({
@@ -397,7 +413,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         } else {
             self.syncMgr?.currentJenkinsInstance = nil
         }
-
+        
         self.performSegueWithIdentifier("jenkinsInstanceDoneSegue", sender: self)
     }
     

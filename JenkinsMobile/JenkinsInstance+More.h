@@ -14,6 +14,7 @@
 
 - (void)setValues:(NSDictionary *) values;
 - (void)updateValues:(NSDictionary *) values;
+- (BOOL)validateInstanceWithMessage:(NSString **) message;
 - (BOOL)validateURL:(NSString *) newURL withMessage:(NSString **) message;
 - (BOOL)validateName:(NSString *) newName withMessage:(NSString **) message;
 - (BOOL)validateUsername:(NSString *) newUsername withMessage:(NSString **) message;

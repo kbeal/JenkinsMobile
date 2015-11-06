@@ -123,7 +123,30 @@
     }
 }
 
-- (BOOL)validateURL:(NSString *) newURL withMessage:(NSString **) message; {
+- (BOOL)validateInstanceWithMessage:(NSString **) message
+{
+    NSString *urlMessage;
+    NSString *nameMessage;
+    NSString *usernameMessage;
+    NSString *passwordMessage;
+    BOOL validated = false;
+    
+    validated = [self validateURL:self.url withMessage:&urlMessage];
+    validated = validated && [self validateName:self.name withMessage:&nameMessage];
+    
+    if ([self.shouldAuthenticate boolValue]) {
+        validated = validated && [self validateUsername:self.username withMessage:&usernameMessage];
+        validated = validated && [self validatePassword:self.password withMessage:&passwordMessage];
+    }
+    
+    if (!validated) {
+        *message = [NSString stringWithFormat:@"%@%@%@%@%@%@%@",urlMessage,@" ",nameMessage,@" ",usernameMessage,@" ",passwordMessage];
+    }
+    
+    return validated;
+}
+
+- (BOOL)validateURL:(NSString *) newURL withMessage:(NSString **) message {
     NSError *error = nil;
     BOOL validated = [self validateValue:&newURL forKey:JenkinsInstanceURLKey error:&error];
     
@@ -134,7 +157,7 @@
     return validated;
 }
 
-- (BOOL)validateName:(NSString *) newName withMessage:(NSString **) message;{
+- (BOOL)validateName:(NSString *) newName withMessage:(NSString **) message {
     NSError *error = nil;
     BOOL validated = [self validateValue:&newName forKey:JenkinsInstanceNameKey error:&error];
     
