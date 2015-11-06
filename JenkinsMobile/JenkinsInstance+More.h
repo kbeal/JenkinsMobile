@@ -20,6 +20,8 @@
 - (BOOL)validateUsername:(NSString *) newUsername withMessage:(NSString **) message;
 - (BOOL)validatePassword:(NSString *) newPassword withMessage:(NSString **) message;
 - (void)correctURL;
+- (NSSet *) findJobsToInsertFromBatch: (NSArray *) jobBatch;
+- (void) insertJobBatch: (NSArray *) jobBatch forView: (View *) view;
 
 + (JenkinsInstance *)createJenkinsInstanceWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
 //+ (JenkinsInstance *)getCurrentJenkinsInstanceFromManagedObjectContext:(NSManagedObjectContext *) context;

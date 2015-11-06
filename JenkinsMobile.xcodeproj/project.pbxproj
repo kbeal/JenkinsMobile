@@ -170,9 +170,9 @@
 		8A4ACA641B3A40280088648C /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4ACA631B3A40280088648C /* MenuViewController.swift */; };
 		8A54B7921BA7862900F8D69E /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A54B7911BA7862900F8D69E /* DataManager.swift */; };
 		8A5D1B4C1A788680005C93AD /* RequestHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D1B4B1A788680005C93AD /* RequestHandlerTests.swift */; };
-		8A6133CB1BBCC69F004C70A2 /* folder.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A6133C91BBCC69F004C70A2 /* folder.png */; settings = {ASSET_TAGS = (); }; };
-		8A6133CC1BBCC69F004C70A2 /* folder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A6133CA1BBCC69F004C70A2 /* folder@2x.png */; settings = {ASSET_TAGS = (); }; };
-		8A6133CE1BBCC99D004C70A2 /* attributions in Resources */ = {isa = PBXBuildFile; fileRef = 8A6133CD1BBCC99D004C70A2 /* attributions */; settings = {ASSET_TAGS = (); }; };
+		8A6133CB1BBCC69F004C70A2 /* folder.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A6133C91BBCC69F004C70A2 /* folder.png */; };
+		8A6133CC1BBCC69F004C70A2 /* folder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A6133CA1BBCC69F004C70A2 /* folder@2x.png */; };
+		8A6133CE1BBCC99D004C70A2 /* attributions in Resources */ = {isa = PBXBuildFile; fileRef = 8A6133CD1BBCC99D004C70A2 /* attributions */; };
 		8A6463BA1BAE001400B54D29 /* SyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6463B91BAE001400B54D29 /* SyncManagerTests.swift */; };
 		8A6D731C1A6F268700BFA0A5 /* ActiveConfiguration+More.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A6D731B1A6F268700BFA0A5 /* ActiveConfiguration+More.m */; };
 		8A76B0F2199C3AE200B219C5 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A76B0F1199C3AE200B219C5 /* Constants.m */; };
@@ -182,7 +182,10 @@
 		8A817A5319638D1400ED7075 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A817A5219638D1400ED7075 /* SpriteKit.framework */; };
 		8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A817AAE196390D700ED7075 /* KDBBallScene.m */; };
 		8A8B57BE19C7B98A004FA446 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8B57BD19C7B98A004FA446 /* SyncManager.swift */; };
-		8A90F6D81BBB6EBD00EA77FA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A90F6D71BBB6EBD00EA77FA /* LaunchScreen.storyboard */; settings = {ASSET_TAGS = (); }; };
+		8A8C0A541BF43166008BF8D9 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8C0A531BF43166008BF8D9 /* PerformanceTests.swift */; };
+		8A8C0A561BFAA0CF008BF8D9 /* JobDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8C0A551BFAA0CF008BF8D9 /* JobDictionary.swift */; };
+		8A8C0A581BFAA481008BF8D9 /* JobDictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8C0A571BFAA481008BF8D9 /* JobDictionaryTests.swift */; };
+		8A90F6D81BBB6EBD00EA77FA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A90F6D71BBB6EBD00EA77FA /* LaunchScreen.storyboard */; };
 		8A999495197A1439009B82DD /* health-00to19~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999490197A1439009B82DD /* health-00to19~ipad.png */; };
 		8A999496197A1439009B82DD /* health-20to39~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999491197A1439009B82DD /* health-20to39~ipad.png */; };
 		8A999497197A1439009B82DD /* health-40to59~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A999492197A1439009B82DD /* health-40to59~ipad.png */; };
@@ -431,6 +434,9 @@
 		8A817AAE196390D700ED7075 /* KDBBallScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBBallScene.m; sourceTree = "<group>"; };
 		8A8B57BC19C7B989004FA446 /* JenkinsMobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JenkinsMobile-Bridging-Header.h"; sourceTree = "<group>"; };
 		8A8B57BD19C7B98A004FA446 /* SyncManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
+		8A8C0A531BF43166008BF8D9 /* PerformanceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
+		8A8C0A551BFAA0CF008BF8D9 /* JobDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JobDictionary.swift; sourceTree = "<group>"; };
+		8A8C0A571BFAA481008BF8D9 /* JobDictionaryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JobDictionaryTests.swift; sourceTree = "<group>"; };
 		8A90F6D71BBB6EBD00EA77FA /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8A999490197A1439009B82DD /* health-00to19~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-00to19~ipad.png"; sourceTree = "<group>"; };
 		8A999491197A1439009B82DD /* health-20to39~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "health-20to39~ipad.png"; sourceTree = "<group>"; };
@@ -797,6 +803,7 @@
 				8AE9636F1B9270F9000F6A0E /* StatusCircle.swift */,
 				8A90F6D71BBB6EBD00EA77FA /* LaunchScreen.storyboard */,
 				8A6133CD1BBCC99D004C70A2 /* attributions */,
+				8A8C0A551BFAA0CF008BF8D9 /* JobDictionary.swift */,
 			);
 			path = JenkinsMobile;
 			sourceTree = "<group>";
@@ -822,6 +829,8 @@
 				8A22167C1A09C8D80008CF53 /* TestAppDelegate.h */,
 				8A22167A1A09C8B10008CF53 /* TestAppDelegate.m */,
 				8A2216781A09AE000008CF53 /* UniqueQueueTests.swift */,
+				8A8C0A531BF43166008BF8D9 /* PerformanceTests.swift */,
+				8A8C0A571BFAA481008BF8D9 /* JobDictionaryTests.swift */,
 			);
 			path = JenkinsMobileTests;
 			sourceTree = "<group>";
@@ -1231,6 +1240,7 @@
 				8AA85D6D1AF070C000F8B915 /* KDBMasterViewController.m in Sources */,
 				8A6D731C1A6F268700BFA0A5 /* ActiveConfiguration+More.m in Sources */,
 				8A04ED4F1B1BA2EF005317E1 /* KDBJobsTableViewController.m in Sources */,
+				8A8C0A561BFAA0CF008BF8D9 /* JobDictionary.swift in Sources */,
 				8A4ACA641B3A40280088648C /* MenuViewController.swift in Sources */,
 				8A41D37F1AE86EBD00650CFE /* KDBViewsTableViewController.m in Sources */,
 				8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */,
@@ -1248,11 +1258,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A8C0A541BF43166008BF8D9 /* PerformanceTests.swift in Sources */,
 				8A22167B1A09C8B10008CF53 /* TestAppDelegate.m in Sources */,
 				8A2216791A09AE000008CF53 /* UniqueQueueTests.swift in Sources */,
 				8AC464E219E76F3C00AE5A76 /* UniqueQueue.swift in Sources */,
 				8A6463BA1BAE001400B54D29 /* SyncManagerTests.swift in Sources */,
 				8A5D1B4C1A788680005C93AD /* RequestHandlerTests.swift in Sources */,
+				8A8C0A581BFAA481008BF8D9 /* JobDictionaryTests.swift in Sources */,
 				8AC32A2418E4F3A90002D106 /* JenkinsMobileTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1311,6 +1323,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEFINES_MODULE = YES;
@@ -1332,7 +1345,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = JenkinsMobile;
-				SDKROOT = iphoneos9.0;
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1353,6 +1366,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				DEFINES_MODULE = YES;
@@ -1366,7 +1380,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_NAME = JenkinsMobile;
-				SDKROOT = iphoneos9.0;
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};

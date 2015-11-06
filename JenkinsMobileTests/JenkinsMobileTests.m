@@ -138,6 +138,248 @@
     XCTAssert(newbuilds.count==origbuilds.count+1, @"Build count should incrase by 1 to %luu, instead got %lu",origbuilds.count+1,(unsigned long)newbuilds.count);
 }
 
+- (void) testFindJobsToInsertFromBatch
+{
+    NSArray *jobKeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobColorKey,nil];
+    NSArray *jobVals1 = [NSArray arrayWithObjects:@"Job1",@"http://localhost:8080/job/Job1/",@"blue",nil];
+    NSArray *jobVals2 = [NSArray arrayWithObjects:@"Job2",@"http://localhost:8080/job/Job2/",@"blue",nil];
+    NSArray *jobVals3 = [NSArray arrayWithObjects:@"Job3",@"http://localhost:8080/job/Job3/",@"blue",nil];
+    NSArray *jobVals4 = [NSArray arrayWithObjects:@"Job4",@"http://localhost:8080/job/Job2/",@"blue",nil];
+    NSArray *jobVals5 = [NSArray arrayWithObjects:@"Job5",@"http://localhost:8080/job/Job3/",@"blue",nil];
+    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current",JenkinsInstanceEnabledKey,JenkinsInstanceJobsKey, nil];
+    NSDictionary *jobDict1 = [NSDictionary dictionaryWithObjects:jobVals1 forKeys:jobKeys];
+    NSDictionary *jobDict2 = [NSDictionary dictionaryWithObjects:jobVals2 forKeys:jobKeys];
+    NSDictionary *jobDict3 = [NSDictionary dictionaryWithObjects:jobVals3 forKeys:jobKeys];
+    NSDictionary *jobDict4 = [NSDictionary dictionaryWithObjects:jobVals4 forKeys:jobKeys];
+    NSDictionary *jobDict5 = [NSDictionary dictionaryWithObjects:jobVals5 forKeys:jobKeys];
+    NSArray *jobs = [NSArray arrayWithObjects:jobDict1,jobDict2,jobDict3, nil];
+    NSArray *jobs2 = [NSArray arrayWithObjects:jobDict1,jobDict2,jobDict3,jobDict4,jobDict5, nil];
+
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES],jobs, nil];
+    NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    JenkinsInstance *ji = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
+    
+    XCTAssertEqual(ji.rel_Jobs.count, 3);
+    
+    NSSet *newJobs = [ji findJobsToInsertFromBatch:jobs2];
+    
+    XCTAssertEqual(newJobs.count, 2);
+}
+
+- (void) testInsertJobsBatchJenkinsInstance
+{
+    NSArray *jobKeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobColorKey,nil];
+    NSArray *viewKeys = [NSArray arrayWithObjects:ViewNameKey,ViewURLKey,ViewJenkinsInstanceKey,nil];
+    NSArray *jobVals1 = [NSArray arrayWithObjects:@"Job1",@"http://localhost:8080/job/Job1/",@"blue",nil];
+    NSArray *jobVals2 = [NSArray arrayWithObjects:@"Job2",@"http://localhost:8080/job/Job2/",@"blue",nil];
+    NSArray *jobVals3 = [NSArray arrayWithObjects:@"Job3",@"http://localhost:8080/job/Job3/",@"blue",nil];
+    NSArray *jobVals4 = [NSArray arrayWithObjects:@"Job4",@"http://localhost:8080/job/Job2/",@"blue",nil];
+    NSArray *jobVals5 = [NSArray arrayWithObjects:@"Job5",@"http://localhost:8080/job/Job3/",@"blue",nil];
+    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current",JenkinsInstanceEnabledKey,JenkinsInstanceJobsKey, nil];
+    NSDictionary *jobDict1 = [NSDictionary dictionaryWithObjects:jobVals1 forKeys:jobKeys];
+    NSDictionary *jobDict2 = [NSDictionary dictionaryWithObjects:jobVals2 forKeys:jobKeys];
+    NSDictionary *jobDict3 = [NSDictionary dictionaryWithObjects:jobVals3 forKeys:jobKeys];
+    NSDictionary *jobDict4 = [NSDictionary dictionaryWithObjects:jobVals4 forKeys:jobKeys];
+    NSDictionary *jobDict5 = [NSDictionary dictionaryWithObjects:jobVals5 forKeys:jobKeys];
+    NSArray *jobs = [NSArray arrayWithObjects:jobDict1,jobDict2,jobDict3, nil];
+    NSArray *jobs2 = [NSArray arrayWithObjects:jobDict1,jobDict2,jobDict3,jobDict4,jobDict5, nil];
+
+    
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES],jobs, nil];
+    NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    JenkinsInstance *ji = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
+    
+    XCTAssertEqual(ji.rel_Jobs.count, 3);
+    
+    NSArray *viewVals = [NSArray arrayWithObjects:@"TestView",@"http://localhost:8080/view/TestView/", ji, nil];
+    NSDictionary *viewDict = [NSDictionary dictionaryWithObjects:viewVals forKeys:viewKeys];
+    View *view = [View createViewWithValues:viewDict inManagedObjectContext:_context];
+    [ji insertJobBatch:jobs2 forView:view];
+    
+    XCTAssertEqual(ji.rel_Jobs.count, 5);
+}
+
+- (void) testInsertJobBatchView
+{
+    NSArray *jobKeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobColorKey,JobJenkinsInstanceKey,nil];
+    NSArray *jiKeys = [NSArray arrayWithObjects:@"name",@"url",@"current",JenkinsInstanceEnabledKey,nil];
+    NSArray *viewKeys = [NSArray arrayWithObjects:ViewNameKey,ViewURLKey,ViewJenkinsInstanceKey,nil];
+    NSArray *jobVals1 = [NSArray arrayWithObjects:@"Job1",@"http://localhost:8080/job/Job1/",@"blue",self.jinstance,nil];
+    NSArray *jobVals2 = [NSArray arrayWithObjects:@"Job2",@"http://localhost:8080/job/Job2/",@"blue",self.jinstance,nil];
+    NSArray *jobVals3 = [NSArray arrayWithObjects:@"Job3",@"http://localhost:8080/job/Job3/",@"blue",self.jinstance,nil];
+    NSDictionary *jobDict1 = [NSDictionary dictionaryWithObjects:jobVals1 forKeys:jobKeys];
+    NSDictionary *jobDict2 = [NSDictionary dictionaryWithObjects:jobVals2 forKeys:jobKeys];
+    NSDictionary *jobDict3 = [NSDictionary dictionaryWithObjects:jobVals3 forKeys:jobKeys];
+    NSArray *jobs = [NSArray arrayWithObjects:jobDict1,jobDict2,jobDict3, nil];
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES], nil];
+    NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:jiKeys];
+    JenkinsInstance *ji = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
+    
+    NSArray *viewVals = [NSArray arrayWithObjects:@"TestView",@"http://localhost:8080/view/TestView/", ji, nil];
+    NSDictionary *viewDict = [NSDictionary dictionaryWithObjects:viewVals forKeys:viewKeys];
+    View *view = [View createViewWithValues:viewDict inManagedObjectContext:_context];
+    
+    for (NSDictionary *job in jobs) {
+        [Job createJobWithValues:job inManagedObjectContext:_context];
+    }
+    [view insertJobBatch:jobs];
+    
+    XCTAssertEqual(view.rel_View_Jobs.count, 3);
+}
+
+- (void) testFetchRelatedJobsWithNames
+{
+    NSArray *jobKeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobColorKey,JobJenkinsInstanceKey,nil];
+    NSArray *jiKeys = [NSArray arrayWithObjects:@"name",@"url",@"current",JenkinsInstanceEnabledKey,JenkinsInstanceJobsKey, nil];
+    NSArray *viewKeys = [NSArray arrayWithObjects:ViewNameKey,ViewURLKey,ViewJenkinsInstanceKey,nil];
+    NSArray *jobnames = [NSArray arrayWithObjects:@"Job1",@"Job2",@"Job4",@"Job5", nil];
+    NSArray *jobVals1 = [NSArray arrayWithObjects:@"Job1",@"http://localhost:8080/job/Job1/",@"blue",self.jinstance,nil];
+    NSArray *jobVals2 = [NSArray arrayWithObjects:@"Job2",@"http://localhost:8080/job/Job2/",@"blue",self.jinstance,nil];
+    NSArray *jobVals3 = [NSArray arrayWithObjects:@"Job3",@"http://localhost:8080/job/Job3/",@"blue",self.jinstance,nil];
+    NSArray *jobVals4 = [NSArray arrayWithObjects:@"Job2",@"http://localhost:8080/job/Job4/",@"blue",self.jinstance,nil];
+    NSArray *jobVals5 = [NSArray arrayWithObjects:@"Job3",@"http://localhost:8080/job/Job5/",@"blue",self.jinstance,nil];
+    NSDictionary *jobDict1 = [NSDictionary dictionaryWithObjects:jobVals1 forKeys:jobKeys];
+    NSDictionary *jobDict2 = [NSDictionary dictionaryWithObjects:jobVals2 forKeys:jobKeys];
+    NSDictionary *jobDict3 = [NSDictionary dictionaryWithObjects:jobVals3 forKeys:jobKeys];
+    NSDictionary *jobDict4 = [NSDictionary dictionaryWithObjects:jobVals4 forKeys:jobKeys];
+    NSDictionary *jobDict5 = [NSDictionary dictionaryWithObjects:jobVals5 forKeys:jobKeys];
+    NSArray *jobs = [NSArray arrayWithObjects:jobDict1,jobDict2,jobDict3, nil];
+    NSArray *jobs2 = [NSArray arrayWithObjects:jobDict4,jobDict5,nil];
+    
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES],jobs2, nil];
+    NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:jiKeys];
+    JenkinsInstance *ji = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
+    
+    NSArray *viewVals = [NSArray arrayWithObjects:@"TestView",@"http://localhost:8080/view/TestView/", ji, nil];
+    NSDictionary *viewDict = [NSDictionary dictionaryWithObjects:viewVals forKeys:viewKeys];
+    View *view = [View createViewWithValues:viewDict inManagedObjectContext:_context];
+    
+    for (NSDictionary *job in jobs) {
+        Job *jobmo = [Job createJobWithValues:job inManagedObjectContext:_context];
+        [view addRel_View_JobsObject:jobmo];
+    }
+    XCTAssertEqual(view.rel_View_Jobs.count, 3);
+    XCTAssertEqual(ji.rel_Jobs.count, 2);
+    
+    NSArray *relatedJobs = [view fetchRelatedJobsWithNames:jobnames];
+    XCTAssertEqual(relatedJobs.count, 2);
+}
+
+//- (void) testFindJobsToRelateFromBatch
+//{
+//    NSArray *jobKeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobColorKey,JobJenkinsInstanceKey,nil];
+//    NSArray *viewKeys = [NSArray arrayWithObjects:ViewNameKey,ViewURLKey,ViewJenkinsInstanceKey,nil];
+//    NSArray *jiKeys = [NSArray arrayWithObjects:@"name",@"url",@"current",JenkinsInstanceEnabledKey, nil];
+//    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES], nil];
+//    NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:jiKeys];
+//    JenkinsInstance *ji = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
+//    NSArray *jobVals1 = [NSArray arrayWithObjects:@"Job1",@"http://localhost:8080/job/Job1/",@"blue",ji,nil];
+//    NSArray *jobVals2 = [NSArray arrayWithObjects:@"Job2",@"http://localhost:8080/job/Job2/",@"blue",ji,nil];
+//    NSArray *jobVals3 = [NSArray arrayWithObjects:@"Job3",@"http://localhost:8080/job/Job3/",@"blue",ji,nil];
+//    NSArray *jobVals4 = [NSArray arrayWithObjects:@"Job4",@"http://localhost:8080/job/Job2/",@"blue",ji,nil];
+//    NSArray *jobVals5 = [NSArray arrayWithObjects:@"Job5",@"http://localhost:8080/job/Job3/",@"blue",ji,nil];
+//    NSDictionary *jobDict1 = [NSDictionary dictionaryWithObjects:jobVals1 forKeys:jobKeys];
+//    NSDictionary *jobDict2 = [NSDictionary dictionaryWithObjects:jobVals2 forKeys:jobKeys];
+//    NSDictionary *jobDict3 = [NSDictionary dictionaryWithObjects:jobVals3 forKeys:jobKeys];
+//    NSDictionary *jobDict4 = [NSDictionary dictionaryWithObjects:jobVals4 forKeys:jobKeys];
+//    NSDictionary *jobDict5 = [NSDictionary dictionaryWithObjects:jobVals5 forKeys:jobKeys];
+//    NSArray *jobs = [NSArray arrayWithObjects:jobDict1,jobDict2,jobDict3, nil];
+//    NSArray *jobs2 = [NSArray arrayWithObjects:jobDict1,jobDict2,jobDict3,jobDict4,jobDict5, nil];
+//    NSMutableArray *jobsBatch = [NSMutableArray arrayWithCapacity:jobs2.count];
+//    
+//    Job *jobmo4 = [Job createJobWithValues:jobDict4 inManagedObjectContext:_context];
+//    Job *jobmo5 = [Job createJobWithValues:jobDict5 inManagedObjectContext:_context];
+//    [jobsBatch addObject:jobmo4];
+//    [jobsBatch addObject:jobmo5];
+//    
+//    NSArray *viewVals = [NSArray arrayWithObjects:@"TestView",@"http://localhost:8080/view/TestView/", self.jinstance, nil];
+//    NSDictionary *viewDict = [NSDictionary dictionaryWithObjects:viewVals forKeys:viewKeys];
+//    View *view = [View createViewWithValues:viewDict inManagedObjectContext:_context];
+//    
+//    for (NSDictionary *job in jobs) {
+//        Job *jobmo = [Job createJobWithValues:job inManagedObjectContext:_context];
+//        [view addRel_View_JobsObject:jobmo];
+//    }
+//    XCTAssertEqual(view.rel_View_Jobs.count, 3);
+//    XCTAssertEqual(ji.rel_Jobs.count, 5);
+//    
+//    NSArray *jobsToRelate = [view findJobsToRelateFromBatch:jobsBatch];
+//    XCTAssertEqual(jobsToRelate.count, 2);
+//
+//}
+
+- (void) testFetchJobsWithNamesFromJenkinsInstance
+{
+    int jobscount = 20;
+    NSArray *jobKeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobColorKey,nil];
+    NSArray *keys = [NSArray arrayWithObjects:@"name",@"url",@"current",JenkinsInstanceEnabledKey,JenkinsInstanceJobsKey, nil];
+    NSMutableArray *jobs = [NSMutableArray arrayWithCapacity:jobscount];
+    NSMutableArray *jobnames = [NSMutableArray arrayWithCapacity:jobscount];
+    
+    for (int i=0; i<jobscount; i++) {
+        NSString *jobname = [[NSUUID UUID] UUIDString];
+        [jobnames addObject:jobname];
+        NSArray *jobValues = [NSArray arrayWithObjects:jobname,@"blue",@"http://www.google.com", nil];
+        NSDictionary *job = [NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys];
+        [jobs addObject:job];
+    }
+    
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES],jobs, nil];
+    NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
+    JenkinsInstance *ji = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
+    
+    // add one more random jobname to the array that won't be created as an actual Job and tied to the view.
+    [jobnames addObject:[[NSUUID UUID] UUIDString]];
+    
+    NSArray *jobsWithNames = [Job fetchJobsWithNames:jobnames inManagedObjectContext:_context andJenkinsInstance:ji];
+    
+    XCTAssertEqual(ji.rel_Jobs.count, 20);
+    XCTAssertEqual(jobnames.count, 21);
+    XCTAssertEqual(jobsWithNames.count, 20);
+}
+
+- (void) testRemoveJobsFromBatch
+{
+    NSArray *jobKeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobColorKey,nil];
+    NSArray *jobVals1 = [NSArray arrayWithObjects:@"Job1",@"http://localhost:8080/job/Job1/",@"blue",nil];
+    NSArray *jobVals2 = [NSArray arrayWithObjects:@"Job2",@"http://localhost:8080/job/Job2/",@"blue",nil];
+    NSArray *jobVals3 = [NSArray arrayWithObjects:@"Job3",@"http://localhost:8080/job/Job3/",@"blue",nil];
+    NSDictionary *jobDict1 = [NSDictionary dictionaryWithObjects:jobVals1 forKeys:jobKeys];
+    NSDictionary *jobDict2 = [NSDictionary dictionaryWithObjects:jobVals2 forKeys:jobKeys];
+    NSDictionary *jobDict3 = [NSDictionary dictionaryWithObjects:jobVals3 forKeys:jobKeys];
+    NSArray *jobs = [NSArray arrayWithObjects:jobDict1,jobDict2,jobDict3, nil];
+    NSArray *jobNames = [NSArray arrayWithObjects:@"Job1",@"Job2", nil];
+    NSSet *filteredJobs = [Job removeJobs:jobNames fromBatch:[NSSet setWithArray:jobs]];
+    
+    XCTAssertEqual(filteredJobs.count, 1);
+    XCTAssertEqual([[filteredJobs anyObject] objectForKey:JobNameKey], @"Job3");
+}
+
+- (void) testSplitViewJobsArrayIntoBatches
+{
+    int jobscount = 20500;
+    NSArray *jobKeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobColorKey,nil];
+    NSArray *viewKeys = [NSArray arrayWithObjects:ViewNameKey,ViewURLKey,ViewJobsKey,ViewJenkinsInstanceKey, nil];
+    NSMutableArray *jobs = [NSMutableArray arrayWithCapacity:jobscount];
+    NSArray *viewValues = [NSArray arrayWithObjects:@"TestView",@"http://localhost:8080/view/TestView/",jobs,self.jinstance, nil];
+    NSDictionary *viewDict = [NSDictionary dictionaryWithObjects:viewValues forKeys:viewKeys];
+    View *view = [View createViewWithValues:viewDict inManagedObjectContext:_context];
+    
+    for (int i=0; i<jobscount; i++) {
+        NSArray *jobValues = [NSArray arrayWithObjects:[[NSUUID UUID] UUIDString],@"blue",@"http://www.google.com", nil];
+        NSDictionary *job = [NSDictionary dictionaryWithObjects:jobValues forKeys:jobKeys];
+        [jobs addObject:job];
+    }
+    
+    NSArray *batches = [view splitJobsArrayIntoBatches:jobs];
+    
+    XCTAssertEqual(view.name, @"TestView");
+    XCTAssertEqual(batches.count, 21);
+    XCTAssertEqual([[batches objectAtIndex:0] count], 1000);
+    XCTAssertEqual([[batches objectAtIndex:20] count], 500);
+    XCTAssertTrue([[[batches objectAtIndex:0] objectAtIndex:0] isKindOfClass:[NSDictionary class]]);
+}
+
 - (void)testCreateViewWithValues
 {
     NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"url",@"color", nil];

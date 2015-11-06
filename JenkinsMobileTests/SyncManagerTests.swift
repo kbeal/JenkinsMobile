@@ -263,48 +263,6 @@ class SyncManagerTests: XCTestCase {
         }
     }
 
-    func testPerformanceJenkinsInstanceSaveValues() {
-        let jobcount = 100
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.datamgr.masterMOC, handler: {
-            (notification: NSNotification!) -> Bool in
-            var expectationFulfilled = false
-            let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
-            if updatedObjects != nil {
-                for obj in updatedObjects! {
-                    if let ji = obj as? JenkinsInstance {
-                        if ji.url == "http://localhost:8080/" && ji.rel_Jobs.count == jobcount {
-                            expectationFulfilled=true
-                        }
-                    }
-                }
-            }
-            return expectationFulfilled
-        })
-        
-        var jobs: [Dictionary<String, String>] = []
-        for _ in 1...jobcount {
-            let uuid = NSUUID().UUIDString
-            jobs.append([JobNameKey: uuid, JobColorKey: "blue", JobURLKey: "http://www.google.com"])
-        }
-
-        do {
-            try context?.obtainPermanentIDsForObjects([jenkinsInstance!])
-        } catch {
-            print("unable to obtain permanent ID")
-        }
-        let newvalues: [NSObject: AnyObject] = [JenkinsInstanceNameKey: self.jenkinsInstance!.name, JenkinsInstanceURLKey: self.jenkinsInstance!.url, JenkinsInstanceJobsKey: jobs]
-        
-
-        self.measureBlock({
-            self.jenkinsInstance!.setValues(newvalues)
-        })
-        
-        waitForExpectationsWithTimeout(20, handler: { error in
-            
-        })
-        //XCTAssertEqual(ji.rel_Jobs.count, 20000, "jenkins instance's jobs count is wrong")
-    }
-
     func testJenkinsInstanceUnauthenticated() {
         _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in
@@ -572,7 +530,7 @@ class SyncManagerTests: XCTestCase {
             
         })
     }
-  
+    
     func testViewLastSyncResultOK() {
         _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
             (notification: NSNotification!) -> Bool in

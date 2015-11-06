@@ -105,15 +105,12 @@
     self.username = [values objectForKey:JenkinsInstanceUsernameKey];
     self.authenticated = [values objectForKey:JenkinsInstanceAuthenticatedKey];
     self.primaryView = [values objectForKeyedSubscript:JenkinsInstancePrimaryViewKey];
+    self.lastSyncResult = [values objectForKey:JenkinsInstanceLastSyncResultKey];    
     //self.shouldAuthenticate = [values objectForKey:JenkinsInstanceShouldAuthenticateKey];
     
     [self createViews:[values objectForKey:JenkinsInstanceViewsKey]];
-    self.lastSyncResult = [values objectForKey:JenkinsInstanceLastSyncResultKey];
     
-    DataManager *datamgr = [DataManager sharedInstance];
-    [datamgr.masterMOC performBlock:^{
-        [self createJobs:[values objectForKey:JenkinsInstanceJobsKey]];
-    }];
+    [self createJobs:[values objectForKey:JenkinsInstanceJobsKey]];
 }
 
 - (void)updateValues:(NSDictionary *) values
@@ -209,10 +206,48 @@
     }
 }
 
+// filters down a batch of jobs to those that are new to this JenkinsInstance
+- (NSSet *) findJobsToInsertFromBatch: (NSArray *) jobBatch
+{
+    // lookup this batch of names against the JenkinsInstance
+    NSArray *batchjobsnames = [jobBatch valueForKey:JobNameKey];
+    NSArray *existingJobNames = [[Job fetchJobsWithNames:batchjobsnames inManagedObjectContext:self.managedObjectContext andJenkinsInstance:self] valueForKey:JobNameKey];
+    NSMutableArray *jobDicts = [NSMutableArray arrayWithCapacity:jobBatch.count];
+    
+    for (NSDictionary *job in jobBatch) {
+        [jobDicts addObject:[[JobDictionary alloc] initWithDictionary:job]];
+    }
+    
+    // remove the jobs from the batch that are already imported
+    return [Job removeJobs:existingJobNames fromBatch:[NSSet setWithArray:jobDicts]];
+}
+
+// parses given jobBatch for new jobs and inserts them with a relation to given view
+// makes a blocking save after inserts
+- (void) insertJobBatch: (NSArray *) jobBatch forView: (View *) view
+{
+    DataManager *datamgr = [DataManager sharedInstance];
+    NSSet *newJobs = [self findJobsToInsertFromBatch:jobBatch];
+    // for each job not yet saved
+    for (JobDictionary *job in newJobs) {
+        NSMutableDictionary *mutjob = [NSMutableDictionary dictionaryWithDictionary:job.dictionary];
+        [mutjob setObject:self forKey:JobJenkinsInstanceKey];
+        // create new Job NSMOC
+        Job *newJob = [Job createJobWithValues:mutjob inManagedObjectContext:self.managedObjectContext];
+        // relate it to the view
+        [newJob addRel_Job_ViewsObject:view];
+    }
+    // save our work
+    [self.managedObjectContext performBlockAndWait:^{
+        [datamgr saveContext:self.managedObjectContext];
+    }];
+}
+
 // your local delegate's favorite method!
 - (void)createJobs:(NSArray *) jobValues
 {
-    if (jobValues.count > 0) {
+    DataManager *datamgr = [DataManager sharedInstance];
+    if (jobValues.count > 0 && (self.managedObjectContext == datamgr.masterMOC)) {
         DataManager *datamgr = [DataManager sharedInstance];
         // try to fetch the JenkinsInstance on a backgrond context.
         JenkinsInstance *bgji = (JenkinsInstance *)[datamgr ensureObjectOnBackgroundThread:self];
@@ -253,9 +288,10 @@
         NSMutableDictionary *mutview = [NSMutableDictionary dictionaryWithDictionary:view];
         [mutview setObject:self forKey:ViewJenkinsInstanceKey];
         
-        if ([mutview objectForKey:ViewNameKey] == [self.primaryView objectForKey:ViewNameKey]) {
-            NSString *fullViewURL = [NSString stringWithFormat:@"%@%@%@%@",[mutview objectForKey:ViewURLKey],@"view/",[mutview objectForKey:ViewNameKey],@"/"];
-            [mutview setObject:fullViewURL forKey:ViewURLKey];
+        if ([[mutview objectForKey:ViewNameKey] isEqualToString:[self.primaryView objectForKey:ViewNameKey]] && [[mutview objectForKey:ViewURLKey] isEqualToString:[self.primaryView objectForKey:ViewURLKey]]) {
+            NSString *encodedName = [[mutview objectForKey:ViewNameKey] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]];
+            NSString *canonicalURL = [NSString stringWithFormat:@"%@%@%@%@",self.url,@"view/",encodedName,@"/"];
+            [mutview setObject:canonicalURL forKey:ViewURLKey];
         }
         if (![currentViewURLs containsObject:[mutview objectForKey:ViewURLKey]]) {
             View *newView = [View createViewWithValues:mutview inManagedObjectContext:self.managedObjectContext];

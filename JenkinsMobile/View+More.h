@@ -12,6 +12,10 @@
 
 - (void)setValues:(NSDictionary *) values;
 - (void)updateValues:(NSDictionary *) values;
+- (NSArray *)splitJobsArrayIntoBatches:(NSArray *) jobs;
+- (NSArray *) fetchRelatedJobsWithNames:(NSArray *) names;
+- (NSArray *) findJobsToRelateFromBatch: (NSArray *) jobBatch;
+- (void) insertJobBatch:(NSArray *) jobBatch;
 
 + (View *)createViewWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
 + (View *)fetchViewWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;

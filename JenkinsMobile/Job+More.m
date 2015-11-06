@@ -8,6 +8,7 @@
 
 #import "Job+More.h"
 #import "Constants.h"
+#import "View+More.h"
 
 // Convert any NULL values to nil. Lifted from Kevin Ballard here: http://stackoverflow.com/a/9138033
 #define NULL_TO_NIL(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
@@ -39,6 +40,32 @@
     }
     
     return job;
+}
+
+// Returns array of jobs that exist related to given JenkinsInstance that have name present in given names Array.
+// Return value contains NSManagedObjects
++ (NSArray *)fetchJobsWithNames: (NSArray *) names inManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) jinstance
+{
+    NSArray *jobs = nil;
+    
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    request.entity = [NSEntityDescription entityForName:@"Job" inManagedObjectContext:context];
+    request.predicate = [NSPredicate predicateWithFormat:@"name IN %@ && rel_Job_JenkinsInstance.url = %@", names, jinstance.url];
+    [request setPropertiesToFetch:[NSArray arrayWithObjects:JobNameKey, nil]];
+    NSError *executeFetchError = nil;
+    
+    jobs = [context executeFetchRequest:request error:&executeFetchError];
+    
+    if (executeFetchError) {
+        NSLog(@"[%@, %@] error looking up jobs with names for JenkinsInstance: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), jinstance.name, [executeFetchError localizedDescription]);
+    }
+    
+    return jobs;
+}
+
++ (NSSet *) removeJobs: (NSArray *) jobNames fromBatch: (NSSet *)batchSet
+{
+    return [batchSet filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"NOT name IN %@",jobNames]];
 }
 
 // returns the absolute color of this job
