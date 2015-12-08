@@ -7,7 +7,7 @@
 //
 
 #import "Job.h"
-#import "JenkinsInstance+More.h"
+#import "JenkinsInstance.h"
 
 @interface Job (More)
 
@@ -23,6 +23,5 @@
 + (Job *)fetchJobWithName: (NSString *) name inManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) jinstance;
 + (NSArray *)fetchJobsWithNames: (NSArray *) names inManagedObjectContext: (NSManagedObjectContext *) context andJenkinsInstance: (JenkinsInstance *) jinstance;
 + (NSString *)jobNameFromURL: (NSURL *) jobURL;
-+ (NSSet *) removeJobs: (NSArray *) jobNames fromBatch: (NSSet *)batchSet;
 
 @end

@@ -14,9 +14,14 @@
 
 import Foundation
 
-public class JobDictionary: NSObject {
+public class JobDictionary: NSObject, NSCoding {
     
     var dictionary: NSDictionary!
+    
+    required convenience public init?(coder decoder: NSCoder) {
+        let dictionary = decoder.decodeObjectForKey(JobDictionaryDictionaryKey) as! NSDictionary
+        self.init(dictionary: dictionary)
+    }
     
     public init?(dictionary: NSDictionary) {
         super.init()
@@ -45,5 +50,9 @@ public class JobDictionary: NSObject {
     
     public override func valueForKey(key: String) -> AnyObject? {
         return self.dictionary.valueForKey(key)
+    }
+
+    public func encodeWithCoder(coder: NSCoder) {
+        coder.encodeObject(self.dictionary, forKey: JobDictionaryDictionaryKey)
     }
 }

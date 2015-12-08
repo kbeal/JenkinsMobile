@@ -2,8 +2,8 @@
 //  JenkinsInstance.h
 //  JenkinsMobile
 //
-//  Created by Kyle Beal on 8/28/15.
-//  Copyright (c) 2015 Kyle Beal. All rights reserved.
+//  Created by Kyle Beal on 12/8/15.
+//  Copyright © 2015 Kyle Beal. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,31 +11,31 @@
 
 @class Job, View;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface JenkinsInstance : NSManagedObject
 
-@property (nonatomic, retain) NSNumber * allowInvalidSSLCertificate;
-@property (nonatomic, retain) NSNumber * authenticated;
-@property (nonatomic, retain) NSNumber * enabled;
-@property (nonatomic, retain) NSString * lastSyncResult;
-@property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) id primaryView;
-@property (nonatomic, retain) NSNumber * shouldAuthenticate;
-@property (nonatomic, retain) NSString * url;
-@property (nonatomic, retain) NSString * username;
-@property (nonatomic, retain) NSSet *rel_Jobs;
-@property (nonatomic, retain) NSSet *rel_Views;
-@end
+@property (nonatomic, copy) NSString *password;
 
-@interface JenkinsInstance (CoreDataGeneratedAccessors)
+- (void)setValues:(NSDictionary *) values;
+- (void)updateValues:(NSDictionary *) values;
+- (BOOL)validateInstanceWithMessage:(NSString * _Nullable * _Nullable) message;
+- (BOOL)validateURL:(NSString *) newURL withMessage:(NSString * _Nullable * _Nullable) message;
+- (BOOL)validateName:(NSString *) newName withMessage:(NSString * _Nullable * _Nullable) message;
+- (BOOL)validateUsername:(NSString *) newUsername withMessage:(NSString * _Nullable * _Nullable) message;
+- (BOOL)validatePassword:(NSString *) newPassword withMessage:(NSString * _Nullable * _Nullable) message;
+- (void)correctURL;
+- (NSSet *)findJobsToCreate:(NSSet *) responseJobs;
+- (NSSet *)findExistingJobs:(NSSet *) responseJobs;
+- (NSSet *)findOrCreateJobs:(NSSet *)jobs inView:(View *) view;
 
-- (void)addRel_JobsObject:(Job *)value;
-- (void)removeRel_JobsObject:(Job *)value;
-- (void)addRel_Jobs:(NSSet *)values;
-- (void)removeRel_Jobs:(NSSet *)values;
-
-- (void)addRel_ViewsObject:(View *)value;
-- (void)removeRel_ViewsObject:(View *)value;
-- (void)addRel_Views:(NSSet *)values;
-- (void)removeRel_Views:(NSSet *)values;
++ (JenkinsInstance *)createJenkinsInstanceWithValues:(NSDictionary * _Nullable)values inManagedObjectContext:(NSManagedObjectContext *)context;
++ (JenkinsInstance *)fetchJenkinsInstanceWithURL: (NSString *) url fromManagedObjectContext: (NSManagedObjectContext *) context;
++ (JenkinsInstance *)findOrCreateJenkinsInstanceWithValues:(NSDictionary *)values inManagedObjectContext:(NSManagedObjectContext *)context;
++ (NSString *) removeApiFromURL:(NSURL *) url;
 
 @end
+
+NS_ASSUME_NONNULL_END
+
+#import "JenkinsInstance+CoreDataProperties.h"

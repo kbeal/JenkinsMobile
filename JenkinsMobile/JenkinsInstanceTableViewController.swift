@@ -26,7 +26,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.showCredentialsFields = self.jinstance.shouldAuthenticate.boolValue
+        self.showCredentialsFields = self.jinstance.shouldAuthenticate!.boolValue
         self.syncMgr = SyncManager.sharedInstance;
         self.managedObjectContext = self.syncMgr?.mainMOC
         self.saveChanges = true
@@ -155,7 +155,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             case .Username:
                 self.jinstance.username = textField.text
             case .Password:
-                self.jinstance.password = textField.text
+                self.jinstance.password = textField.text!
             }
         }
        
@@ -185,13 +185,13 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         
         switch kdbTextField.type! {
         case .Name:
-            validated = self.jinstance.validateName(kdbTextField.text, withMessage: &message)
+            validated = self.jinstance.validateName(kdbTextField.text!, withMessage: &message)
         case .URL:
-            validated = self.jinstance.validateURL(kdbTextField.text, withMessage: &message)
+            validated = self.jinstance.validateURL(kdbTextField.text!, withMessage: &message)
         case .Username:
-            validated = self.jinstance.validateUsername(kdbTextField.text, withMessage: &message)
+            validated = self.jinstance.validateUsername(kdbTextField.text!, withMessage: &message)
         case .Password:
-            validated = self.jinstance.validatePassword(kdbTextField.text, withMessage: &message)
+            validated = self.jinstance.validatePassword(kdbTextField.text!, withMessage: &message)
         }
         
         markTextField(kdbTextField, valid: validated, message: message)
@@ -222,7 +222,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             rows = 2
         case 1: // authentication
             rows = 1
-            if (self.jinstance.shouldAuthenticate.boolValue) {
+            if (self.jinstance.shouldAuthenticate!.boolValue) {
                 rows = 3
             }
         case 2: // other
@@ -239,12 +239,12 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         if indexPath.section == 1 {
             cell.textLabel?.text = "Authenticate?"
             switchView.switchType = .UseAuthentication
-            switchView.setOn(self.jinstance.shouldAuthenticate.boolValue, animated: false)
+            switchView.setOn(self.jinstance.shouldAuthenticate!.boolValue, animated: false)
         } else {
             if indexPath.row == 0 {
                 switchView.switchType = .AllowInvalidSSL
                 cell.textLabel?.text = "Allow Invalid SSL Certificate?"
-                switchView.setOn(self.jinstance.allowInvalidSSLCertificate.boolValue, animated: false)
+                switchView.setOn(self.jinstance.allowInvalidSSLCertificate!.boolValue, animated: false)
             } else {
                 switchView.switchType = .Active
                 cell.textLabel?.text = "Active?"
@@ -285,7 +285,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
                 cell.textField?.autocorrectionType = .No
             case 2:
                 labelText = "Password"
-                if (jinstance.password != nil) {
+                if (!jinstance.password.isEmpty) {
                     textFieldText = generateRandomPasswordMask()
                 }
                 textFieldType = .Password
@@ -334,7 +334,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     
     // MARK: - Observers
     func jenkinsInstancePingResponseReceived(notification: NSNotification) {
-        if (self.jinstance.shouldAuthenticate.boolValue) {
+        if (self.jinstance.shouldAuthenticate!.boolValue) {
             let requestHandler = KDBJenkinsRequestHandler()
             // test authentication
             requestHandler.authenticateJenkinsInstance(self.jinstance)

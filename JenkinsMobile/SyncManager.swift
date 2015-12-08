@@ -19,7 +19,7 @@ public class SyncManager: NSObject {
         didSet {
             if (currentJenkinsInstance != nil) {
                 self.syncJenkinsInstance(currentJenkinsInstance!)
-                self.updateCurrentURLPref(currentJenkinsInstance!.url)
+                self.updateCurrentURLPref(currentJenkinsInstance!.url!)
                 let notification = NSNotification(name: SyncManagerCurrentJenkinsInstanceChangedNotification, object: nil)
                 NSNotificationCenter.defaultCenter().postNotification(notification)
             }
@@ -51,7 +51,7 @@ public class SyncManager: NSObject {
         initTimer()
         initObservers()
         let defaults = NSUserDefaults.standardUserDefaults()
-        if let url: String? = defaults.stringForKey(SyncManagerCurrentJenkinsInstance) {
+        if let url: String = defaults.stringForKey(SyncManagerCurrentJenkinsInstance) {
             self.currentJenkinsInstance = JenkinsInstance.fetchJenkinsInstanceWithURL(url, fromManagedObjectContext: self.mainMOC)
         }
     }
@@ -120,8 +120,8 @@ public class SyncManager: NSObject {
         masterMOC.performBlock({
             if let bgji: JenkinsInstance = self.dataMgr.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance {
                 let allJobs = bgji.rel_Jobs
-                for job in allJobs {
-                    self.jobSyncQueue.push(job as! Job)
+                for job in allJobs! {
+                    self.jobSyncQueue.push(job)
                 }
             } else {
                 print("Error syncing all Jobs: Unable to retrieve JenkinsInstance from background context.")
@@ -133,8 +133,8 @@ public class SyncManager: NSObject {
         masterMOC.performBlock({
             if let bgji: JenkinsInstance = self.dataMgr.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance {
                 let allViews = bgji.rel_Views
-                for view in allViews {
-                    self.viewSyncQueue.push(view as! View)
+                for view in allViews! {
+                    self.viewSyncQueue.push(view)
                 }
             } else {
                 print("Error syncing all Views: Unable to retrieve JenkinsInstance from background context.")
@@ -146,8 +146,8 @@ public class SyncManager: NSObject {
         if let bgview: View = self.dataMgr.ensureObjectOnBackgroundThread(view) as? View {
             masterMOC.performBlock({
                 let viewjobs = bgview.rel_View_Jobs
-                for job in viewjobs {
-                    self.jobSyncQueue.push(job as! Job)
+                for job in viewjobs! {
+                    self.jobSyncQueue.push(job)
                 }
             })
         }
@@ -157,8 +157,8 @@ public class SyncManager: NSObject {
         if let bgview: View = self.dataMgr.ensureObjectOnBackgroundThread(view) as? View {
             masterMOC.performBlock({
                 let subviews = bgview.rel_View_Views
-                for subview in subviews {
-                    self.viewSyncQueue.push(subview as! View)
+                for subview in subviews! {
+                    self.viewSyncQueue.push(subview)
                 }
             })
         }

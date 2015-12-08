@@ -8,7 +8,7 @@
 
 #import "Job+More.h"
 #import "Constants.h"
-#import "View+More.h"
+#import "View.h"
 
 // Convert any NULL values to nil. Lifted from Kevin Ballard here: http://stackoverflow.com/a/9138033
 #define NULL_TO_NIL(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
@@ -61,11 +61,6 @@
     }
     
     return jobs;
-}
-
-+ (NSSet *) removeJobs: (NSArray *) jobNames fromBatch: (NSSet *)batchSet
-{
-    return [batchSet filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"NOT name IN %@",jobNames]];
 }
 
 // returns the absolute color of this job

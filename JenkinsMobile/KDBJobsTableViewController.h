@@ -8,9 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-#import "JenkinsInstance+More.h"
+#import "JenkinsInstance.h"
 #import "Job+More.h"
-#import "View+More.h"
+#import "View.h"
 #import "JenkinsMobile-Swift.h"
 @interface KDBJobsTableViewController : UITableViewController <NSFetchedResultsControllerDelegate>
 

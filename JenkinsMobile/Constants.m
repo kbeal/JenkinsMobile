@@ -151,4 +151,7 @@ NSString * const RequestedObjectKey = @"requestedObject";
 #pragma mark - SyncManager Keys
 NSString * const SyncManagerCurrentJenkinsInstance = @"currentJenkinsInstance";
 
+#pragma makr - JobDictionaryKeys
+NSString * const JobDictionaryDictionaryKey = @"dictionary";
+
 @end

@@ -150,4 +150,7 @@ extern NSString * const RequestedObjectKey;
 #pragma mark - SyncManager Keys
 extern NSString * const SyncManagerCurrentJenkinsInstance;
 
+#pragma mark - JobDictionary Keys
+extern NSString * const JobDictionaryDictionaryKey;
+
 @end

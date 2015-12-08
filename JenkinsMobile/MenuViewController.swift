@@ -45,8 +45,8 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
         
         if let currentJI: JenkinsInstance = SyncManager.sharedInstance.currentJenkinsInstance {
             if ((jinstance.url != nil) && (currentJI.url == jinstance.url)) {
-                if (currentJI.shouldAuthenticate.boolValue) {
-                    if ((jinstance.authenticated != nil) && (currentJI.authenticated.boolValue)) {
+                if (currentJI.shouldAuthenticate!.boolValue) {
+                    if ((jinstance.authenticated != nil) && (currentJI.authenticated!.boolValue)) {
                         cell.imageView?.image = StatusCircle.imageForCircle(UIColor.blueColor())
                     } else {
                         cell.imageView?.image = StatusCircle.imageForCircle(UIColor.redColor())
@@ -116,7 +116,7 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
         if (segue.identifier == "showJenkinsInstance") {
             destination.jinstance = self.fetchedResultsController.objectAtIndexPath(self.tableView.indexPathForSelectedRow!) as! JenkinsInstance
         } else {
-            destination.jinstance = JenkinsInstance.createJenkinsInstanceWithValues(nil, inManagedObjectContext: self.managedObjectContext)
+            destination.jinstance = JenkinsInstance.createJenkinsInstanceWithValues(nil, inManagedObjectContext: self.managedObjectContext!)
         }
     }
     

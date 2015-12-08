@@ -10,7 +10,7 @@
 
 #import "KDBMasterViewController.h"
 #import "KDBJobDetailViewController.h"
-#import "JenkinsInstance+More.h"
+#import "JenkinsInstance.h"
 #import "KDBJenkinsRequestHandler.h"
 //#import "JenkinsMobile-Swift.h"
 #import "Constants.h"

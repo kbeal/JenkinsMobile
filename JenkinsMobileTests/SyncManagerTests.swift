@@ -26,7 +26,7 @@ class SyncManagerTests: XCTestCase {
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8080/"]
         let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://localhost:8080", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         
-        context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: self.context)})
+        context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: self.context!)})
         self.jenkinsInstance?.password = "password"
         self.jenkinsInstance?.allowInvalidSSLCertificate = true
         
@@ -52,7 +52,7 @@ class SyncManagerTests: XCTestCase {
             if insertedObjs != nil {
                 for obj in insertedObjs! {
                     if let view = obj as? View {
-                        if view.rel_View_Views.count==3 && view.name == "GrandParent" {
+                        if view.rel_View_Views!.count==3 && view.name == "GrandParent" {
                             expectationFulfilled=true
                         }
                     }
@@ -63,7 +63,7 @@ class SyncManagerTests: XCTestCase {
         
         let viewURL = "http://localhost:8080/view/GrandParent/"
         let viewVals = [ViewNameKey: "GrandParent", ViewURLKey: viewURL, ViewJenkinsInstanceKey: jenkinsInstance!]
-        let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context)
+        let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context!)
         //saveContext()
         
         self.mgr.syncView(view1)
@@ -82,7 +82,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.rel_Views.count == 3 {
+                        if ji.rel_Views!.count == 3 {
                             expectationFulfilled=true
                         }
                     }
@@ -92,7 +92,7 @@ class SyncManagerTests: XCTestCase {
         })
         
         let jiVals = [JenkinsInstanceNameKey: "Test", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceUsernameKey: "admin"]
-        let ji = JenkinsInstance.createJenkinsInstanceWithValues(jiVals, inManagedObjectContext: context)
+        let ji = JenkinsInstance.createJenkinsInstanceWithValues(jiVals, inManagedObjectContext: context!)
         ji.password = "password"
         saveContext()
         
@@ -112,7 +112,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let view = obj as? View {
-                        if view.rel_View_Views.count==3 && view.name == "GrandParent" {
+                        if view.rel_View_Views!.count==3 && view.name == "GrandParent" {
                             expectationFulfilled=true
                         }
                     }
@@ -123,7 +123,7 @@ class SyncManagerTests: XCTestCase {
         
         let viewURL = "http://localhost:8080/view/GrandParent/"
         let viewVals = [ViewNameKey: "GrandParent", ViewURLKey: viewURL, ViewJenkinsInstanceKey: jenkinsInstance!]
-        let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context)
+        let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context!)
         saveContext()
         
         self.mgr.syncChildViewsForView(view1)
@@ -271,7 +271,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.url == "http://localhost:8080/" && ji.enabled.boolValue && !ji.authenticated.boolValue {
+                        if ji.url == "http://localhost:8080/" && ji.enabled!.boolValue && !ji.authenticated!.boolValue {
                             expectationFulfilled=true
                         }
                     }
@@ -281,14 +281,14 @@ class SyncManagerTests: XCTestCase {
         })
         
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstanceAuthenticatedKey: true]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
         jinstance1.allowInvalidSSLCertificate = true
         jinstance1.shouldAuthenticate = true
         jinstance1.password = "password1"
         saveContext()
         
-        XCTAssert(jinstance1.enabled.boolValue, "jenkins instance should be enabled")
-        XCTAssert(jinstance1.authenticated.boolValue, "jenkins instance should be authenticated")
+        XCTAssert(jinstance1.enabled!.boolValue, "jenkins instance should be enabled")
+        XCTAssert(jinstance1.authenticated!.boolValue, "jenkins instance should be authenticated")
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
         requestHandler.importDetailsForJenkinsInstance(jinstance1)
@@ -306,7 +306,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.url == "http://localhost:8080/" && ji.enabled.boolValue && ji.authenticated.boolValue {
+                        if ji.url == "http://localhost:8080/" && ji.enabled!.boolValue && ji.authenticated!.boolValue {
                             expectationFulfilled=true
                         }
                     }
@@ -316,14 +316,14 @@ class SyncManagerTests: XCTestCase {
         })
         
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
         jinstance1.allowInvalidSSLCertificate = true
         jinstance1.password = "password"
         jinstance1.authenticated = false
         saveContext()
         
-        XCTAssert(jinstance1.enabled.boolValue, "jenkins instance should be enabled")
-        XCTAssertFalse(jinstance1.authenticated.boolValue, "jenkins instance should not be authenticated")
+        XCTAssert(jinstance1.enabled!.boolValue, "jenkins instance should be enabled")
+        XCTAssertFalse(jinstance1.authenticated!.boolValue, "jenkins instance should not be authenticated")
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
         requestHandler.importDetailsForJenkinsInstance(jinstance1)
@@ -344,7 +344,7 @@ class SyncManagerTests: XCTestCase {
                         if ji.lastSyncResult == "200: OK" && ji.url == "http://localhost:8080/" {
                             expectationFulfilled=true
                         } else {
-                            print(ji.url + ": " + ji.lastSyncResult)
+                            print(ji.url! + ": " + ji.lastSyncResult!)
                         }
                     }
                 }
@@ -354,7 +354,7 @@ class SyncManagerTests: XCTestCase {
         
         let primaryView = [ViewNameKey: "Test", ViewURLKey: "http://localhost:8080/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
         jinstance1.password = "password"
         jinstance1.allowInvalidSSLCertificate = true;
         saveContext()
@@ -386,7 +386,7 @@ class SyncManagerTests: XCTestCase {
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
         jinstance1.password = "password1"
         jinstance1.allowInvalidSSLCertificate = true;
         jinstance1.shouldAuthenticate = true
@@ -420,7 +420,7 @@ class SyncManagerTests: XCTestCase {
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8080/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView, JenkinsInstanceShouldAuthenticateKey: true]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
         jinstance1.password = "password"
         jinstance1.allowInvalidSSLCertificate = true;
         saveContext()
@@ -550,11 +550,11 @@ class SyncManagerTests: XCTestCase {
         
         let viewURLStr = "http://localhost:8080/view/GrandParent/"
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
+        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
         jinstance1.password = "password"
         jinstance1.allowInvalidSSLCertificate = true;
         let childViewVals1 = [ViewNameKey: "All", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jinstance1]
-        let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context)
+        let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
@@ -587,7 +587,7 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.shouldAuthenticate = true
         let viewURLStr = "http://localhost:8080/view/GrandParent/"
         let childViewVals1 = [ViewNameKey: "GrandParent", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jenkinsInstance!]
-        let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context)
+        let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
@@ -620,7 +620,7 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.shouldAuthenticate = true
         let viewURLStr = "http://localhost:8080/view/GrandParent/"
         let childViewVals1 = [ViewNameKey: "GrandParent", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jenkinsInstance!]
-        let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context)
+        let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
