@@ -227,6 +227,9 @@
 		8AE904B819BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE904B719BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m */; };
 		8AE9636B1B8FDCEB000F6A0E /* KDBTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE9636A1B8FDCEB000F6A0E /* KDBTextFieldTableViewCell.swift */; };
 		8AE963701B9270F9000F6A0E /* StatusCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE9636F1B9270F9000F6A0E /* StatusCircle.swift */; };
+		8AF4970E1C1A242200D95025 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A76B0F1199C3AE200B219C5 /* Constants.m */; };
+		8AF497111C1A334800D95025 /* delete-all-jobs.groovy in Resources */ = {isa = PBXBuildFile; fileRef = 8AF497101C1A334800D95025 /* delete-all-jobs.groovy */; };
+		8AF497151C1A37AF00D95025 /* batch-create-jobs.groovy in Resources */ = {isa = PBXBuildFile; fileRef = 8AF497141C1A37AF00D95025 /* batch-create-jobs.groovy */; };
 		8AFBC11F19468806008EDC9D /* KDBMasterBuildListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */; };
 		8AFC02191B5883EA00D2B78E /* DismissSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC02181B5883EA00D2B78E /* DismissSegue.swift */; };
 		8AFC021A1B58865F00D2B78E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A41D37A1AE86C7C00650CFE /* Main.storyboard */; };
@@ -495,6 +498,8 @@
 		8AE904B719BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJobTestResultsTableViewCell.m; sourceTree = "<group>"; };
 		8AE9636A1B8FDCEB000F6A0E /* KDBTextFieldTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDBTextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		8AE9636F1B9270F9000F6A0E /* StatusCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusCircle.swift; sourceTree = "<group>"; };
+		8AF497101C1A334800D95025 /* delete-all-jobs.groovy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "delete-all-jobs.groovy"; sourceTree = "<group>"; };
+		8AF497141C1A37AF00D95025 /* batch-create-jobs.groovy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "batch-create-jobs.groovy"; sourceTree = "<group>"; };
 		8AFBC11D19468806008EDC9D /* KDBMasterBuildListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBMasterBuildListTableViewController.h; sourceTree = "<group>"; };
 		8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBMasterBuildListTableViewController.m; sourceTree = "<group>"; };
 		8AFC02181B5883EA00D2B78E /* DismissSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DismissSegue.swift; sourceTree = "<group>"; };
@@ -713,6 +718,7 @@
 		8AC329E018E4F3A80002D106 = {
 			isa = PBXGroup;
 			children = (
+				8AF4970F1C1A332A00D95025 /* Scripts */,
 				8AC329F418E4F3A90002D106 /* JenkinsMobile */,
 				8AC32A1D18E4F3A90002D106 /* JenkinsMobileTests */,
 				8AC329EB18E4F3A90002D106 /* Frameworks */,
@@ -862,6 +868,15 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
+		8AF4970F1C1A332A00D95025 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				8AF497101C1A334800D95025 /* delete-all-jobs.groovy */,
+				8AF497141C1A37AF00D95025 /* batch-create-jobs.groovy */,
+			);
+			name = Scripts;
+			sourceTree = "<group>";
+		};
 		8AFDD5121947CFA5008F2791 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
@@ -893,6 +908,7 @@
 				8AC329E618E4F3A90002D106 /* Frameworks */,
 				8AC329E718E4F3A90002D106 /* Resources */,
 				E1B247C120C4EFCEA9377427 /* Copy Pods Resources */,
+				47F8873D74BF1B94461EC276 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -912,6 +928,7 @@
 				8AC32A1218E4F3A90002D106 /* Frameworks */,
 				8AC32A1318E4F3A90002D106 /* Resources */,
 				EAFFA0E4A66F1B2F8F338B4D /* Copy Pods Resources */,
+				E1BF489FCC1A74941121006C /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1089,6 +1106,7 @@
 				8A3CB9C118E7C39900D0D160 /* star-gold.png in Resources */,
 				8A3CB9D518E7C39900D0D160 /* previous.png in Resources */,
 				8A3CBA1318E7C39900D0D160 /* gear2.png in Resources */,
+				8AF497151C1A37AF00D95025 /* batch-create-jobs.groovy in Resources */,
 				8A3CBA3718E7C39900D0D160 /* accept-24x24.png in Resources */,
 				8A3CB9BC18E7C39900D0D160 /* star@2x.png in Resources */,
 				8A3CBA0F18E7C39900D0D160 /* graph.png in Resources */,
@@ -1117,6 +1135,7 @@
 				8A24ABE8195135500094F772 /* blue@2x.png in Resources */,
 				8A3CB9B418E7C39900D0D160 /* undo@2x.png in Resources */,
 				8A3CB9B518E7C39900D0D160 /* terminal.png in Resources */,
+				8AF497111C1A334800D95025 /* delete-all-jobs.groovy in Resources */,
 				8A3CBA2C18E7C39900D0D160 /* clipboard@2x.png in Resources */,
 				8A17654E191D9E4200E108DF /* svn-icon.png in Resources */,
 				8A3CBA2918E7C39900D0D160 /* clock.png in Resources */,
@@ -1143,6 +1162,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		47F8873D74BF1B94461EC276 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		51A3492D30CD1625FCC64ADF /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1186,6 +1220,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E1BF489FCC1A74941121006C /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		EAFFA0E4A66F1B2F8F338B4D /* Copy Pods Resources */ = {
@@ -1266,6 +1315,7 @@
 				8A5D1B4C1A788680005C93AD /* RequestHandlerTests.swift in Sources */,
 				8A8C0A581BFAA481008BF8D9 /* JobDictionaryTests.swift in Sources */,
 				8AC32A2418E4F3A90002D106 /* JenkinsMobileTests.m in Sources */,
+				8AF4970E1C1A242200D95025 /* Constants.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1440,11 +1490,6 @@
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/JenkinsMobile.app/JenkinsMobile";
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JenkinsMobile/JenkinsMobile-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1475,11 +1520,6 @@
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/JenkinsMobile.app/JenkinsMobile";
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "JenkinsMobile/JenkinsMobile-Prefix.pch";
 				HEADER_SEARCH_PATHS = (

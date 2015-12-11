@@ -182,8 +182,10 @@ public class SyncManager: NSObject {
     
     public func syncView(view: View) {
         if let bgview: View = self.dataMgr.ensureObjectOnBackgroundThread(view) as? View {
-            // sync view details and queue all jobs in view for sync
-            self.requestHandler.importDetailsForView(bgview)
+            self.masterMOC.performBlock({
+                // sync view details and queue all jobs in view for sync
+                self.requestHandler.importDetailsForView(bgview)
+            })
         }
     }
     
@@ -249,7 +251,7 @@ public class SyncManager: NSObject {
             })
         })
         
-        self.syncAllJobsForView(view)
+        //self.syncAllJobsForView(view)
         self.syncSubViewsForView(view)
     }
     
@@ -278,6 +280,9 @@ public class SyncManager: NSObject {
         let ji: JenkinsInstance = values[RequestedObjectKey] as! JenkinsInstance
         
         ji.managedObjectContext?.performBlock({
+            if (ji.lastSyncResult == nil) {
+                self.notifyOfNewLargeInstance(values,url: ji.url!)
+            }
             values[JenkinsInstanceEnabledKey] = true
             values[JenkinsInstanceAuthenticatedKey] = true
             values[JenkinsInstanceLastSyncResultKey] = "200: OK"
@@ -290,10 +295,30 @@ public class SyncManager: NSObject {
             self.dataMgr.masterMOC.performBlock({
                 self.dataMgr.saveContext(self.dataMgr.masterMOC)
             })
-            // TODO: uncomment
-            //self.syncAllJobs(ji)
+            // post notification that we're done saving this JenkinsInstance
+            let notification = NSNotification(name: JenkinsInstanceDidSaveNotification, object: nil, userInfo: [JenkinsInstanceURLKey: ji.url!])
+            NSNotificationCenter.defaultCenter().postNotification(notification)
+
             self.syncAllViews(ji)
         })
+    }
+    
+    // sends notification if this instance has > 1,000 jobs
+    func notifyOfNewLargeInstance(values: [NSObject: AnyObject], url: String) {
+        let views: [[String: AnyObject]] = values[JenkinsInstanceViewsKey] as! [[String: AnyObject]]
+        var largestJobCnt = 0
+        for view in views {
+            let jobs: [[String: String]] = view[ViewJobsKey] as! [[String: String]]
+            if (jobs.count > largestJobCnt) {
+                largestJobCnt = jobs.count
+            }
+        }
+        
+        if (largestJobCnt > 1000) {
+            // post notification that we're saving a new JenkinsInstance
+            let notification = NSNotification(name: NewLargeJenkinsInstanceDetailResponseReceivedNotification, object: nil, userInfo: [JenkinsInstanceURLKey: url])
+            NSNotificationCenter.defaultCenter().postNotification(notification)
+        }
     }
     
     func jenkinsInstanceViewsResponseReceived(notification: NSNotification) {

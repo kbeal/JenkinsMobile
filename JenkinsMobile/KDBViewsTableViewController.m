@@ -9,6 +9,7 @@
 #import "KDBViewsTableViewController.h"
 #import "SWRevealViewController.h"
 #import "Constants.h"
+#import "SVProgressHUD.h"
 
 @interface KDBViewsTableViewController ()
 
@@ -51,6 +52,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefresh:) name:JenkinsInstanceViewsRequestFailedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefresh:) name:ViewChildViewsResponseReceivedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endRefresh:) name:ViewChildViewsRequestFailedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newLargeJenkinsInstanceResponseReceived:) name:NewLargeJenkinsInstanceDetailResponseReceivedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(jenkinsInstanceDidSave:) name:JenkinsInstanceDidSaveNotification object:nil];
 }
 
 - (void) setNavTitleAndButton {
@@ -73,6 +76,28 @@
         [self.syncMgr syncChildViewsForView:self.parentView];
     } else if (self.syncMgr.currentJenkinsInstance != nil){
         [self.syncMgr syncViewsForJenkinsInstance:self.syncMgr.currentJenkinsInstance];
+    }
+}
+
+-(void) newLargeJenkinsInstanceResponseReceived:(NSNotification *) notification {
+    NSString *notificationURL = notification.userInfo[JenkinsInstanceURLKey];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *currentInstanceURL = [defaults stringForKey:SyncManagerCurrentJenkinsInstance];
+    if ([currentInstanceURL isEqualToString:notificationURL]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [SVProgressHUD showWithStatus:@"Please wait..." maskType:SVProgressHUDMaskTypeBlack];
+        });
+    }
+}
+
+-(void) jenkinsInstanceDidSave:(NSNotification *) notification {
+    NSString *notificationURL = notification.userInfo[JenkinsInstanceURLKey];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *currentInstanceURL = [defaults stringForKey:SyncManagerCurrentJenkinsInstance];
+    if ([currentInstanceURL isEqualToString:notificationURL]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [SVProgressHUD dismiss];
+        });
     }
 }
 

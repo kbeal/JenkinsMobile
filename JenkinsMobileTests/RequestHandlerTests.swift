@@ -214,7 +214,7 @@ class RequestHandlerTests: XCTestCase {
             return true
         })
         
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "snowman", JenkinsInstanceURLKey: "https://snowman:8443/jenkins/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin"]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "snowman", JenkinsInstanceURLKey: "https://snowman.normans.local:8443/jenkins/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "jenkinsadmin"]
 
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context)
 

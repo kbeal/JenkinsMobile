@@ -4,3 +4,4 @@ link_with 'JenkinsMobile', 'JenkinsMobileTests'
 
 pod 'UICKeyChainStore'
 pod 'AFNetworking', '~> 2.6'
+pod 'SVProgressHUD'
