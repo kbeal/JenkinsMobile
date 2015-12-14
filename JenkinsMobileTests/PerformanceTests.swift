@@ -32,6 +32,7 @@ class PerformanceTests: XCTestCase {
     }
     
     override func tearDown() {
+        self.jenkinsInstance?.managedObjectContext?.deleteObject(self.jenkinsInstance!)
         saveContext()
     }
     
@@ -101,7 +102,7 @@ class PerformanceTests: XCTestCase {
     }
 
     func testPerformanceViewSaveValues() {
-        let jobcount = 20000
+        let jobcount = 1000
         _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.datamgr.masterMOC, handler: {
             (notification: NSNotification!) -> Bool in
             var expectationFulfilled = false
@@ -128,9 +129,6 @@ class PerformanceTests: XCTestCase {
         
         self.measureBlock({
             View.createViewWithValues(values, inManagedObjectContext: self.datamgr.masterMOC)
-            //            self.datamgr.masterMOC.performBlockAndWait({
-            //                self.datamgr.saveContext(self.datamgr.masterMOC)
-            //            })
         })
         
         waitForExpectationsWithTimeout(20, handler: { error in

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MenuViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+class MenuViewController: UITableViewController, NSFetchedResultsControllerDelegate, SubMenuDelegate {
     
     @IBOutlet weak var addServerButton: UIButton!
     var managedObjectContext: NSManagedObjectContext?
@@ -118,8 +118,18 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
         } else {
             destination.jinstance = JenkinsInstance.createJenkinsInstanceWithValues(nil, inManagedObjectContext: self.managedObjectContext!)
         }
+        destination.subMenuDelegate = self
     }
     
+    // MARK: - SubMenu Delegate
+    func revealToggle() {
+        let time = dispatch_time(dispatch_time_t(DISPATCH_TIME_NOW), Int64(0.5 * Double(NSEC_PER_SEC)))
+        dispatch_after(time, dispatch_get_main_queue()) {
+            let revealVC = self.revealViewController()
+            revealVC.revealToggleAnimated(true)
+        }
+    }
+
     // MARK: - Fetched Results Controller Delegate
     var fetchedResultsController: NSFetchedResultsController {
         if self._fetchedResultsController != nil {

@@ -272,7 +272,7 @@ public class SyncManager: NSObject {
         })
         
         self.syncAllJobsForView(view)
-        self.syncSubViewsForView(view)
+        //self.syncSubViewsForView(view)
     }
     
     func jenkinsInstanceDetailResponseReceived(notification: NSNotification) {

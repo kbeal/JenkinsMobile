@@ -2,7 +2,7 @@
 //  JenkinsInstance+CoreDataProperties.h
 //  JenkinsMobile
 //
-//  Created by Kyle Beal on 12/8/15.
+//  Created by Kyle Beal on 12/18/15.
 //  Copyright © 2015 Kyle Beal. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
@@ -18,13 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSNumber *allowInvalidSSLCertificate;
 @property (nullable, nonatomic, retain) NSNumber *authenticated;
 @property (nullable, nonatomic, retain) NSNumber *enabled;
+@property (nullable, nonatomic, retain) NSData *jobsflat;
 @property (nullable, nonatomic, retain) NSString *lastSyncResult;
 @property (nullable, nonatomic, retain) NSString *name;
 @property (nullable, nonatomic, retain) id primaryView;
 @property (nullable, nonatomic, retain) NSNumber *shouldAuthenticate;
 @property (nullable, nonatomic, retain) NSString *url;
 @property (nullable, nonatomic, retain) NSString *username;
-@property (nullable, nonatomic, retain) id jobs;
 @property (nullable, nonatomic, retain) NSSet<Job *> *rel_Jobs;
 @property (nullable, nonatomic, retain) NSSet<View *> *rel_Views;
 

@@ -25,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)validateUsername:(NSString *) newUsername withMessage:(NSString * _Nullable * _Nullable) message;
 - (BOOL)validatePassword:(NSString *) newPassword withMessage:(NSString * _Nullable * _Nullable) message;
 - (void)correctURL;
+- (void)setJobs:(NSSet *) jobsSet;
+- (NSSet *)getJobs;
 - (NSSet *)findJobsToCreate:(NSSet *) responseJobs;
 - (NSSet *)findExistingJobs:(NSSet *) responseJobs;
 - (NSSet *)findOrCreateJobs:(NSSet *)jobs inView:(View *) view;

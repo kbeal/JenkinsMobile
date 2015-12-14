@@ -87,6 +87,16 @@
     }
 }
 
+- (NSSet *)getJobs
+{
+    return [NSKeyedUnarchiver unarchiveObjectWithData:self.jobsflat];
+}
+
+- (void)setJobs:(NSSet *) jobsSet
+{
+    self.jobsflat = [NSKeyedArchiver archivedDataWithRootObject:jobsSet];
+}
+
 - (void) setUrl:(NSString *)url
 {
     [self willChangeValueForKey:@"url"];
@@ -213,7 +223,7 @@
 - (NSSet *)findJobsToCreate:(NSSet *) responseJobs
 {
     // get names of Jobs already related to this JenkinsInstance
-    NSSet *relatedJobs = (NSSet *)self.jobs;
+    NSSet *relatedJobs = [self getJobs];
     NSSet *relatedJobNames = [relatedJobs valueForKey:JobNameKey];
     // find jobs (not managed objects) needing to be created
     return [responseJobs filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"NOT name IN %@",relatedJobNames]];
@@ -223,7 +233,7 @@
 - (NSSet *)findExistingJobs:(NSSet *) responseJobs
 {
     // get names of Jobs already related to this JenkinsInstance
-    NSSet *relatedJobs = (NSSet *)self.jobs;
+    NSSet *relatedJobs = [self getJobs];
     NSSet *relatedJobNames = [relatedJobs valueForKey:JobNameKey];
     // find jobs (not managed objects) needing to be created
     return [responseJobs filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"name IN %@",relatedJobNames]];
@@ -261,7 +271,13 @@
                 [newJob addRel_Job_ViewsObject:view];
                 [managedJobs addObject:newJob];
             }
-            self.jobs = jobs;
+            
+            if ([self getJobs] == nil) {
+                [self setJobs:jobsToCreate];
+            } else {
+                [self setJobs:[[self getJobs] setByAddingObjectsFromSet:jobsToCreate]];
+            }
+            
             [self addRel_Jobs:managedJobs];
             [datamgr saveContext:datamgr.masterMOC];
         }

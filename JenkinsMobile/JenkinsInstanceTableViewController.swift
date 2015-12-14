@@ -11,6 +11,7 @@ import UIKit
 class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDelegate {
     
     var jinstance: JenkinsInstance!
+    var subMenuDelegate: SubMenuDelegate!
     var managedObjectContext: NSManagedObjectContext?
     var showCredentialsFields: Bool?
     var syncMgr: SyncManager?
@@ -376,7 +377,11 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             self.managedObjectContext?.performBlockAndWait({
                 self.syncMgr?.saveContext(self.managedObjectContext)
             })
+            self.syncMgr?.masterMOC.performBlockAndWait({
+                self.syncMgr?.saveContext(self.syncMgr?.masterMOC)
+            })
             self.activeInstance = false
+            self.saveChanges = true
             self.performSegueWithIdentifier("jenkinsInstanceDoneSegue", sender: self)
         }
         alert.addAction(deleteAction)
@@ -428,10 +433,16 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
             self.jinstance.managedObjectContext?.undoManager?.undo()
         }
         
+        if (segue.identifier == "jenkinsInstanceDoneSegue") {
+            self.subMenuDelegate.revealToggle()
+        }
+        
         if (segue.identifier == "jenkinsInstanceCancelSegue") {
-            let datamgr = DataManager.sharedInstance
-            datamgr.mainMOC.deleteObject(self.jinstance)
-            datamgr.saveContext(datamgr.mainMOC)
+            if (self.jinstance.objectID.temporaryID) {
+                let datamgr = DataManager.sharedInstance
+                datamgr.mainMOC.deleteObject(self.jinstance)
+                datamgr.saveContext(datamgr.mainMOC)
+            }
         }
     }
 }

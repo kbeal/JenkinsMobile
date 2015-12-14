@@ -203,6 +203,7 @@
     XCTAssert(jobsflat.count==1,"@view's jobs count should be 1");
     XCTAssert(views.count==1, @"view count should be 4, instead got %lu", (unsigned long)views.count);
     XCTAssert(_jinstance.rel_Jobs.count==1, @"jenkins instance's related job count should be 1, got %lu instead",(unsigned long)_jinstance.rel_Jobs.count);
+    XCTAssertEqual([[_jinstance getJobs] count],1,@"job count wrong");
     
 }
 

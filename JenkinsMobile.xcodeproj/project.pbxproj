@@ -22,6 +22,7 @@
 		8A23EF17196B89AE0001DDE3 /* health-80plus@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A23EF15196B89AE0001DDE3 /* health-80plus@2x.png */; };
 		8A24ABE8195135500094F772 /* blue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A24ABE6195135500094F772 /* blue@2x.png */; };
 		8A24ABEA195139180094F772 /* blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A24ABE9195139180094F772 /* blue.png */; };
+		8A3172EF1C24B6A60088D331 /* SubMenuDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3172EE1C24B6A60088D331 /* SubMenuDelegate.swift */; };
 		8A399274199455D70071CF08 /* KDBJobTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A399273199455D70071CF08 /* KDBJobTableViewCell.m */; };
 		8A39927619945AE90071CF08 /* balls40.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 8A39927519945AE90071CF08 /* balls40.atlas */; };
 		8A3CB9A918E7C39900D0D160 /* yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3CB91918E7C39800D0D160 /* yellow.png */; };
@@ -181,7 +182,6 @@
 		8A76B0F2199C3AE200B219C5 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A76B0F1199C3AE200B219C5 /* Constants.m */; };
 		8A779FD71B7C227E00678BC0 /* KDBSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A779FD61B7C227E00678BC0 /* KDBSwitch.swift */; };
 		8A779FDB1B7D636A00678BC0 /* KDBTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A779FDA1B7D636A00678BC0 /* KDBTextField.swift */; };
-		8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */; };
 		8A817A5319638D1400ED7075 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A817A5219638D1400ED7075 /* SpriteKit.framework */; };
 		8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A817AAE196390D700ED7075 /* KDBBallScene.m */; };
 		8A8B57BE19C7B98A004FA446 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8B57BD19C7B98A004FA446 /* SyncManager.swift */; };
@@ -266,6 +266,7 @@
 		8A24ABE6195135500094F772 /* blue@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blue@2x.png"; sourceTree = "<group>"; };
 		8A24ABE9195139180094F772 /* blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blue.png; sourceTree = "<group>"; };
 		8A2C310019905C2000D67DBA /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		8A3172EE1C24B6A60088D331 /* SubMenuDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubMenuDelegate.swift; sourceTree = "<group>"; };
 		8A399272199455D60071CF08 /* KDBJobTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBJobTableViewCell.h; sourceTree = "<group>"; };
 		8A399273199455D70071CF08 /* KDBJobTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJobTableViewCell.m; sourceTree = "<group>"; };
 		8A39927519945AE90071CF08 /* balls40.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = balls40.atlas; sourceTree = "<group>"; };
@@ -436,8 +437,6 @@
 		8A76B0F1199C3AE200B219C5 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		8A779FD61B7C227E00678BC0 /* KDBSwitch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDBSwitch.swift; sourceTree = "<group>"; };
 		8A779FDA1B7D636A00678BC0 /* KDBTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDBTextField.swift; sourceTree = "<group>"; };
-		8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBViewPickerViewController.h; sourceTree = "<group>"; };
-		8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBViewPickerViewController.m; sourceTree = "<group>"; };
 		8A817A5219638D1400ED7075 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		8A817AAD196390D700ED7075 /* KDBBallScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBBallScene.h; sourceTree = "<group>"; };
 		8A817AAE196390D700ED7075 /* KDBBallScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBBallScene.m; sourceTree = "<group>"; };
@@ -790,8 +789,6 @@
 				8A0409FF192599D400B25073 /* KDBRelatedProjectsViewController.m */,
 				8A779FD61B7C227E00678BC0 /* KDBSwitch.swift */,
 				8A779FDA1B7D636A00678BC0 /* KDBTextField.swift */,
-				8A7CDAD518E722940079F3F1 /* KDBViewPickerViewController.h */,
-				8A7CDAD618E722940079F3F1 /* KDBViewPickerViewController.m */,
 				8A41D37D1AE86EBD00650CFE /* KDBViewsTableViewController.h */,
 				8A41D37E1AE86EBD00650CFE /* KDBViewsTableViewController.m */,
 				8AC32A0318E4F3A90002D106 /* Main_iPad.storyboard */,
@@ -883,6 +880,7 @@
 				8AFDD5141947CFEA008F2791 /* KDBViewPickerDelegate.h */,
 				8AFDD5131947CFCA008F2791 /* KDBMasterViewControllerDelegate.h */,
 				8AFDD5151947D421008F2791 /* KDBDetailViewControllerDelegate.h */,
+				8A3172EE1C24B6A60088D331 /* SubMenuDelegate.swift */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -1282,8 +1280,8 @@
 				8A040A00192599D400B25073 /* KDBRelatedProjectsViewController.m in Sources */,
 				8AC464E119E6179C00AE5A76 /* UniqueQueue.swift in Sources */,
 				8AA1CD371A9EA94500F977B0 /* ActiveConfiguration.m in Sources */,
+				8A3172EF1C24B6A60088D331 /* SubMenuDelegate.swift in Sources */,
 				8A779FD71B7C227E00678BC0 /* KDBSwitch.swift in Sources */,
-				8A7CDAD718E722940079F3F1 /* KDBViewPickerViewController.m in Sources */,
 				8AC329FF18E4F3A90002D106 /* KDBAppDelegate.m in Sources */,
 				8AE3B95C18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m in Sources */,
 				8A76B0F2199C3AE200B219C5 /* Constants.m in Sources */,
