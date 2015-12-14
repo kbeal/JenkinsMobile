@@ -321,15 +321,20 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     }
     
     @IBAction func testButtonTapped(sender: UIButton) {
-        self.testActivityIndicator?.hidden = false
-        self.testActivityIndicator?.startAnimating()
-        self.testResultLabel?.text = "Connecting..."
-        self.testResultView?.backgroundColor = UIColor.lightGrayColor()
-        self.toggleTestResultsView(true)
-        
-        let requestHandler = KDBJenkinsRequestHandler()
-        // test connection
-        requestHandler.pingJenkinsInstance(self.jinstance)
+        var message: NSString? = nil
+        if let url = self.jinstance.url {
+            if (self.jinstance.validateURL(url, withMessage: &message)) {
+                self.testActivityIndicator?.hidden = false
+                self.testActivityIndicator?.startAnimating()
+                self.testResultLabel?.text = "Connecting..."
+                self.testResultView?.backgroundColor = UIColor.lightGrayColor()
+                self.toggleTestResultsView(true)
+                
+                let requestHandler = KDBJenkinsRequestHandler()
+                // test connection
+                requestHandler.pingJenkinsInstance(self.jinstance)
+            }
+        }
     }
     
     // MARK: - Observers
@@ -421,6 +426,12 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         if (segue.identifier != "jenkinsInstanceDoneSegue") {
             self.saveChanges = false
             self.jinstance.managedObjectContext?.undoManager?.undo()
+        }
+        
+        if (segue.identifier == "jenkinsInstanceCancelSegue") {
+            let datamgr = DataManager.sharedInstance
+            datamgr.mainMOC.deleteObject(self.jinstance)
+            datamgr.saveContext(datamgr.mainMOC)
         }
     }
 }
