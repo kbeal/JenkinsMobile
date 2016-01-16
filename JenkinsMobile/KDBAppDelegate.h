@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface KDBAppDelegate : UIResponder <UIApplicationDelegate>
+@interface KDBAppDelegate : UIResponder <UIApplicationDelegate, UISplitViewControllerDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 

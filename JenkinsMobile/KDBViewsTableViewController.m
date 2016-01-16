@@ -227,8 +227,7 @@
         [newViewsTVC setManagedObjectContext:self.managedObjectContext];
         [newViewsTVC setParentView:[[self fetchedResultsController] objectAtIndexPath:[self.tableView indexPathForSelectedRow]]];
     } else if ([[segue identifier] isEqualToString:@"showJobs"]) {
-        KDBJobsTableViewController *jobsTVC = [segue destinationViewController];
-        [jobsTVC setManagedObjectContext:self.managedObjectContext];
+        JobsTableViewController *jobsTVC = [segue destinationViewController];
         [jobsTVC setParentView:[[self fetchedResultsController] objectAtIndexPath:[self.tableView indexPathForSelectedRow]]];
     }
 }

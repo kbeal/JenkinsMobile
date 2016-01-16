@@ -426,7 +426,7 @@
 
 - (void) importDetailsForJenkinsInstance: (JenkinsInstance *) jinstance
 {
-    NSURL *requestURL = [NSURL URLWithString:@"api/json?tree=primaryView[name,url],views[name,url,jobs[name,url],views[name,url]]" relativeToURL:[NSURL URLWithString:jinstance.url]];
+    NSURL *requestURL = [NSURL URLWithString:@"api/json?tree=primaryView[name,url],views[name,url,jobs[name,url,color],views[name,url]]" relativeToURL:[NSURL URLWithString:jinstance.url]];
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     NSLog(@"%@%@",@"Requesting details for Jenkins at URL: ",requestURL.absoluteString);
     NSString *username = jinstance.username;

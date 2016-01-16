@@ -23,8 +23,8 @@ class SyncManagerTests: XCTestCase {
         
         //context = self.datamgr.mainMOC
         context = self.datamgr.masterMOC
-        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8080/"]
-        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://localhost:8080", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
+        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8081/"]
+        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://localhost:8081", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         
         context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: self.context!)})
         self.jenkinsInstance?.password = "password"
@@ -52,7 +52,8 @@ class SyncManagerTests: XCTestCase {
             if insertedObjs != nil {
                 for obj in insertedObjs! {
                     if let view = obj as? View {
-                        if view.rel_View_Views!.count==3 && view.name == "GrandParent" {
+                        let job = view.rel_View_Jobs!.first!
+                        if view.rel_View_Jobs?.count == 1 && view.name == "Name With Spaces" && job.color == "blue" {
                             expectationFulfilled=true
                         }
                     }
@@ -61,8 +62,8 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let viewURL = "http://localhost:8080/view/GrandParent/"
-        let viewVals = [ViewNameKey: "GrandParent", ViewURLKey: viewURL, ViewJenkinsInstanceKey: jenkinsInstance!]
+        let viewURL = "http://localhost:8081/view/Name%20With%20Spaces/"
+        let viewVals = [ViewNameKey: "Name With Spaces", ViewURLKey: viewURL, ViewJenkinsInstanceKey: jenkinsInstance!]
         let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context!)
         //saveContext()
         
@@ -91,7 +92,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jiVals = [JenkinsInstanceNameKey: "Test", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceUsernameKey: "admin"]
+        let jiVals = [JenkinsInstanceNameKey: "Test", JenkinsInstanceURLKey: "http://localhost:8081/", JenkinsInstanceUsernameKey: "admin"]
         let ji = JenkinsInstance.createJenkinsInstanceWithValues(jiVals, inManagedObjectContext: context!)
         ji.password = "password"
         saveContext()
@@ -121,7 +122,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let viewURL = "http://localhost:8080/view/GrandParent/"
+        let viewURL = "http://localhost:8081/view/GrandParent/"
         let viewVals = [ViewNameKey: "GrandParent", ViewURLKey: viewURL, ViewJenkinsInstanceKey: jenkinsInstance!]
         let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context!)
         saveContext()
@@ -142,7 +143,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let job = obj as? Job {
-                        if job.url == "http://localhost:8080/job/Job3/" {
+                        if job.url == "http://localhost:8080/job/Job3/"  && job.color == "blue" {
                             expectationFulfilled=true
                         }
                     }
@@ -151,7 +152,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jobVals1 = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://localhost:8080/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobVals1 = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         saveContext()
         self.mgr.syncJob(job)
@@ -182,7 +183,7 @@ class SyncManagerTests: XCTestCase {
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/TestJob/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         
-        let buildURL = "http://localhost:8080/job/Job3/1/"
+        let buildURL = "http://localhost:8081/job/Job3/1/"
         
         let buildVals = [BuildJobKey: job, BuildURLKey: buildURL, BuildNumberKey: 1]
         let build1 = Build.createBuildWithValues(buildVals, inManagedObjectContext: self.context)
@@ -213,10 +214,10 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jobvals = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://localhost:8080/job/Job2/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobvals = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job2/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
         
-        let ac1 = [ActiveConfigurationColorKey:"blue",ActiveConfigurationNameKey:"config=1",ActiveConfigurationJobKey:job,ActiveConfigurationURLKey:"http://localhost:8080/job/Job2/config1=10,config2=test/"]
+        let ac1 = [ActiveConfigurationColorKey:"blue",ActiveConfigurationNameKey:"config=1",ActiveConfigurationJobKey:job,ActiveConfigurationURLKey:"http://localhost:8081/job/Job2/config1=10,config2=test/"]
         let activeConf1 = ActiveConfiguration.createActiveConfigurationWithValues(ac1, inManagedObjectContext: context!)
         saveContext()
         
@@ -242,7 +243,7 @@ class SyncManagerTests: XCTestCase {
     
     func testJenkinsInstanceFindOrCreated() {
         
-        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
+        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8081/"]
         let values = [JenkinsInstanceNameKey: "QA Ubuntu", JenkinsInstanceURLKey: "https://jenkins.qa.ubuntu.com/", JenkinsInstanceEnabledKey: true, JenkinsInstancePrimaryViewKey: primaryView]
 
         JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values as [NSObject : AnyObject], inManagedObjectContext: context!)
@@ -271,7 +272,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.url == "http://localhost:8080/" && ji.enabled!.boolValue && !ji.authenticated!.boolValue {
+                        if ji.url == "http://localhost:8081/" && ji.enabled!.boolValue && !ji.authenticated!.boolValue {
                             expectationFulfilled=true
                         }
                     }
@@ -280,7 +281,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstanceAuthenticatedKey: true]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8081/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstanceAuthenticatedKey: true]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
         jinstance1.allowInvalidSSLCertificate = true
         jinstance1.shouldAuthenticate = true
@@ -306,7 +307,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.url == "http://localhost:8080/" && ji.enabled!.boolValue && ji.authenticated!.boolValue {
+                        if ji.url == "http://localhost:8081/" && ji.enabled!.boolValue && ji.authenticated!.boolValue {
                             expectationFulfilled=true
                         }
                     }
@@ -315,7 +316,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8081/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
         jinstance1.allowInvalidSSLCertificate = true
         jinstance1.password = "password"
@@ -341,7 +342,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.lastSyncResult == "200: OK" && ji.url == "http://localhost:8080/" {
+                        if ji.lastSyncResult == "200: OK" && ji.url == "http://localhost:8081/" {
                             expectationFulfilled=true
                         } else {
                             print(ji.url! + ": " + ji.lastSyncResult!)
@@ -352,8 +353,8 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let primaryView = [ViewNameKey: "Test", ViewURLKey: "http://localhost:8080/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
+        let primaryView = [ViewNameKey: "Test", ViewURLKey: "http://localhost:8081/"]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8081/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
         jinstance1.password = "password"
         jinstance1.allowInvalidSSLCertificate = true;
@@ -375,7 +376,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.lastSyncResult == "401: unauthorized" && ji.url == "http://localhost:8080/" {
+                        if ji.lastSyncResult == "401: unauthorized" && ji.url == "http://localhost:8081/" {
                             expectationFulfilled=true
                         }
                     }
@@ -384,8 +385,8 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView]
+        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8081/"]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8081/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
         jinstance1.password = "password1"
         jinstance1.allowInvalidSSLCertificate = true;
@@ -409,7 +410,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
-                        if ji.lastSyncResult == "403: forbidden" && ji.url == "http://localhost:8080/" {
+                        if ji.lastSyncResult == "403: forbidden" && ji.url == "http://localhost:8081/" {
                             expectationFulfilled=true
                         }
                     }
@@ -418,8 +419,8 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8080/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView, JenkinsInstanceShouldAuthenticateKey: true]
+        let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8081/"]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8081/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView, JenkinsInstanceShouldAuthenticateKey: true]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
         jinstance1.password = "password"
         jinstance1.allowInvalidSSLCertificate = true;
@@ -450,7 +451,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jobURLStr = "http://localhost:8080/job/Job1/"
+        let jobURLStr = "http://localhost:8081/job/Job1/"
         jenkinsInstance?.username = "admin"
         jenkinsInstance?.password = "password"
         let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: jobURLStr, JobJenkinsInstanceKey: jenkinsInstance!]
@@ -485,7 +486,7 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password1"
         jenkinsInstance?.shouldAuthenticate = true
-        let jobURLStr = "http://localhost:8080/job/Job3/"
+        let jobURLStr = "http://localhost:8081/job/Job3/"
         let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: jobURLStr, JobJenkinsInstanceKey: jenkinsInstance!]
         let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
         saveContext()
@@ -518,7 +519,7 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password"
         jenkinsInstance?.shouldAuthenticate = true
-        let jobURLStr = "http://localhost:8080/job/Job3/"
+        let jobURLStr = "http://localhost:8081/job/Job3/"
         let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: jobURLStr, JobJenkinsInstanceKey: jenkinsInstance!]
         let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
         saveContext()
@@ -548,8 +549,8 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let viewURLStr = "http://localhost:8080/view/GrandParent/"
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
+        let viewURLStr = "http://localhost:8081/view/GrandParent/"
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8081/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
         let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
         jinstance1.password = "password"
         jinstance1.allowInvalidSSLCertificate = true;
@@ -585,7 +586,7 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password1"
         jenkinsInstance?.shouldAuthenticate = true
-        let viewURLStr = "http://localhost:8080/view/GrandParent/"
+        let viewURLStr = "http://localhost:8081/view/GrandParent/"
         let childViewVals1 = [ViewNameKey: "GrandParent", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jenkinsInstance!]
         let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context!)
         saveContext()
@@ -606,7 +607,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let view = obj as? View {
-                        if view.lastSyncResult == "403: forbidden" && view.url == "http://localhost:8080/view/GrandParent/" {
+                        if view.lastSyncResult == "403: forbidden" && view.url == "http://localhost:8081/view/GrandParent/" {
                             expectationFulfilled=true
                         }
                     }
@@ -618,7 +619,7 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password"
         jenkinsInstance?.shouldAuthenticate = true
-        let viewURLStr = "http://localhost:8080/view/GrandParent/"
+        let viewURLStr = "http://localhost:8081/view/GrandParent/"
         let childViewVals1 = [ViewNameKey: "GrandParent", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jenkinsInstance!]
         let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context!)
         saveContext()
@@ -635,16 +636,16 @@ class SyncManagerTests: XCTestCase {
         let now = (NSDate().timeIntervalSince1970) * 1000
         let fourSecondsAgo = now - 4000000
         let tenSecondsAgo = now - 10000000
-        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins:8080/job/TestJob", JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins:8081/job/TestJob", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         
         // should only sync
         // if building and duration (currentTime - build.timestamp) is within 80% of estimatedDuration
-        let buildVals1 = [BuildBuildingKey: false, BuildEstimatedDurationKey: 120000, BuildTimestampKey: now, BuildJobKey: job, BuildNumberKey: 100, BuildURLKey: "http://jenkins:8080/job/TestJob/100"]
-        let buildVals2 = [BuildBuildingKey: true, BuildEstimatedDurationKey: 120000, BuildTimestampKey: now, BuildJobKey: job, BuildNumberKey: 101, BuildURLKey: "http://jenkins:8080/job/TestJob/101"]
-        let buildVals3 = [BuildBuildingKey: true, BuildEstimatedDurationKey: 5000, BuildTimestampKey: fourSecondsAgo, BuildJobKey: job, BuildNumberKey: 102, BuildURLKey: "http://jenkins:8080/job/TestJob/102"]
-        let buildVals4 = [BuildBuildingKey: true, BuildEstimatedDurationKey: 5000, BuildTimestampKey: tenSecondsAgo, BuildJobKey: job, BuildNumberKey: 103, BuildURLKey: "http://jenkins:8080/job/TestJob/103"]
-        let buildVals5 = [BuildJobKey: job, BuildNumberKey: 103, BuildURLKey: "http://jenkins:8080/job/TestJob/103"]
+        let buildVals1 = [BuildBuildingKey: false, BuildEstimatedDurationKey: 120000, BuildTimestampKey: now, BuildJobKey: job, BuildNumberKey: 100, BuildURLKey: "http://jenkins:8081/job/TestJob/100"]
+        let buildVals2 = [BuildBuildingKey: true, BuildEstimatedDurationKey: 120000, BuildTimestampKey: now, BuildJobKey: job, BuildNumberKey: 101, BuildURLKey: "http://jenkins:8081/job/TestJob/101"]
+        let buildVals3 = [BuildBuildingKey: true, BuildEstimatedDurationKey: 5000, BuildTimestampKey: fourSecondsAgo, BuildJobKey: job, BuildNumberKey: 102, BuildURLKey: "http://jenkins:8081/job/TestJob/102"]
+        let buildVals4 = [BuildBuildingKey: true, BuildEstimatedDurationKey: 5000, BuildTimestampKey: tenSecondsAgo, BuildJobKey: job, BuildNumberKey: 103, BuildURLKey: "http://jenkins:8081/job/TestJob/103"]
+        let buildVals5 = [BuildJobKey: job, BuildNumberKey: 103, BuildURLKey: "http://jenkins:8081/job/TestJob/103"]
         
         let build1 = Build.createBuildWithValues(buildVals1, inManagedObjectContext: context)
         let build2 = Build.createBuildWithValues(buildVals2, inManagedObjectContext: context)
@@ -676,10 +677,10 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let buildURLStr = "http://localhost:8080/job/Job1/1/"
+        let buildURLStr = "http://localhost:8081/job/Job1/1/"
         jenkinsInstance?.username = "admin"
         jenkinsInstance?.password = "password"
-        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://snowman:8081/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         let buildVals1 = [BuildBuildingKey: false, BuildEstimatedDurationKey: 120000, BuildJobKey: job, BuildNumberKey: 100, BuildURLKey: buildURLStr]
         let build = Build.createBuildWithValues(buildVals1, inManagedObjectContext: self.context)
@@ -713,8 +714,8 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password1"
         jenkinsInstance?.shouldAuthenticate = true
-        let buildURLStr = "http://localhost:8080/job/Job3/1/"
-        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://localhost:8080/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let buildURLStr = "http://localhost:8081/job/Job3/1/"
+        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         let buildVals1 = [BuildBuildingKey: false, BuildEstimatedDurationKey: 120000, BuildJobKey: job, BuildNumberKey: 100, BuildURLKey: buildURLStr]
         let build = Build.createBuildWithValues(buildVals1, inManagedObjectContext: self.context)
@@ -736,7 +737,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let build = obj as? Build {
-                        if build.lastSyncResult == "403: forbidden" && build.url == "http://localhost:8080/job/Job3/1/" {
+                        if build.lastSyncResult == "403: forbidden" && build.url == "http://localhost:8081/job/Job3/1/" {
                             expectationFulfilled=true
                         }
                     }
@@ -747,8 +748,8 @@ class SyncManagerTests: XCTestCase {
         
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password"
-        let buildURLStr = "http://localhost:8080/job/Job3/1/"
-        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://localhost:8080/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let buildURLStr = "http://localhost:8081/job/Job3/1/"
+        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         let buildVals1 = [BuildBuildingKey: false, BuildEstimatedDurationKey: 120000, BuildJobKey: job, BuildNumberKey: 100, BuildURLKey: buildURLStr]
         let build = Build.createBuildWithValues(buildVals1, inManagedObjectContext: self.context)
@@ -779,10 +780,10 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jobVals1 = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://localhost:8080/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobVals1 = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         
-        let acURL = "http://localhost:8080/job/Job2/config1=10,config2=test/"
+        let acURL = "http://localhost:8081/job/Job2/config1=10,config2=test/"
         
         let acVals = [ActiveConfigurationNameKey: "config1=10,config2=test", ActiveConfigurationURLKey: acURL, ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
         let ac = ActiveConfiguration.createActiveConfigurationWithValues(acVals, inManagedObjectContext: self.context)
@@ -804,7 +805,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ac = obj as? ActiveConfiguration {
-                        if ac.lastSyncResult == "401: unauthorized" && ac.url == "http://localhost:8080/job/Job2/config1=10,config2=test/" {
+                        if ac.lastSyncResult == "401: unauthorized" && ac.url == "http://localhost:8081/job/Job2/config1=10,config2=test/" {
                             expectationFulfilled=true
                         }
                     }
@@ -816,10 +817,10 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password1"
         jenkinsInstance?.shouldAuthenticate = true
-        let jobVals1 = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://localhost:8080/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobVals1 = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         
-        let acURL = "http://localhost:8080/job/Job2/config1=10,config2=test/"
+        let acURL = "http://localhost:8081/job/Job2/config1=10,config2=test/"
         
         let acVals = [ActiveConfigurationNameKey: "config1=10,config2=test", ActiveConfigurationURLKey: acURL, ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
         let ac = ActiveConfiguration.createActiveConfigurationWithValues(acVals, inManagedObjectContext: self.context)
@@ -841,7 +842,7 @@ class SyncManagerTests: XCTestCase {
             if updatedObjects != nil {
                 for obj in updatedObjects! {
                     if let ac = obj as? ActiveConfiguration {
-                        if ac.lastSyncResult == "403: forbidden" && ac.url == "http://localhost:8080/job/Job2/config1=10,config2=test/" {
+                        if ac.lastSyncResult == "403: forbidden" && ac.url == "http://localhost:8081/job/Job2/config1=10,config2=test/" {
                             expectationFulfilled=true
                         }
                     }
@@ -852,10 +853,10 @@ class SyncManagerTests: XCTestCase {
         
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password"
-        let jobVals1 = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://localhost:8080/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobVals1 = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
         
-        let acURL = "http://localhost:8080/job/Job2/config1=10,config2=test/"
+        let acURL = "http://localhost:8081/job/Job2/config1=10,config2=test/"
         
         let acVals = [ActiveConfigurationNameKey: "config1=10,config2=test", ActiveConfigurationURLKey: acURL, ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
         let ac = ActiveConfiguration.createActiveConfigurationWithValues(acVals, inManagedObjectContext: self.context)

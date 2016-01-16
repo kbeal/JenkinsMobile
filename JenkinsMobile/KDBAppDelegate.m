@@ -60,4 +60,16 @@
     //[self saveContext];
 }
 
+#pragma Mark - Split View Delegate
+- (BOOL) splitViewController:(UISplitViewController *)splitViewController showDetailViewController:(UIViewController *)vc sender:(id)sender {
+    if (splitViewController.collapsed) {
+        UITabBarController *tbController = splitViewController.viewControllers[0];
+        UINavigationController *destNavController = (UINavigationController *) vc;
+        UINavigationController *selectedTab = (UINavigationController *) tbController.selectedViewController;
+        [selectedTab pushViewController:destNavController.topViewController animated:YES];
+        return YES;
+    }
+    return NO;
+}
+
 @end
