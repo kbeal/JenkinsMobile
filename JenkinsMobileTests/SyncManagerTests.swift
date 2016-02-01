@@ -144,7 +144,14 @@ class SyncManagerTests: XCTestCase {
                 for obj in updatedObjects! {
                     if let job = obj as? Job {
                         if job.url == "http://localhost:8080/job/Job3/"  && job.color == "blue" {
-                            expectationFulfilled=true
+                            if let
+                                firstbuild = job.firstBuild as! NSDictionary?,
+                                building   = firstbuild[BuildBuildingKey] as! Bool?
+                            {
+                                if !building {
+                                    expectationFulfilled=true
+                                }
+                            }
                         }
                     }
                 }
@@ -153,7 +160,7 @@ class SyncManagerTests: XCTestCase {
         })
         
         let jobVals1 = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
         saveContext()
         self.mgr.syncJob(job)
         
@@ -181,15 +188,15 @@ class SyncManagerTests: XCTestCase {
         })
         
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/TestJob/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
         
         let buildURL = "http://localhost:8081/job/Job3/1/"
         
         let buildVals = [BuildJobKey: job, BuildURLKey: buildURL, BuildNumberKey: 1]
-        let build1 = Build.createBuildWithValues(buildVals, inManagedObjectContext: self.context)
+        let build1 = Build.createBuildWithValues(buildVals, inManagedObjectContext: self.context!)
         saveContext()
         
-        self.mgr.syncBuild(build1)
+        self.mgr.syncBuild(build1!)
         
         // wait for expectations
         waitForExpectationsWithTimeout(3, handler: { error in
@@ -215,7 +222,7 @@ class SyncManagerTests: XCTestCase {
         })
         
         let jobvals = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job2/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
+        let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context!)
         
         let ac1 = [ActiveConfigurationColorKey:"blue",ActiveConfigurationNameKey:"config=1",ActiveConfigurationJobKey:job,ActiveConfigurationURLKey:"http://localhost:8081/job/Job2/config1=10,config2=test/"]
         let activeConf1 = ActiveConfiguration.createActiveConfigurationWithValues(ac1, inManagedObjectContext: context!)
@@ -236,7 +243,7 @@ class SyncManagerTests: XCTestCase {
     
     func testJobShouldSync() {
         let jobvals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context)
+        let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context!)
         
         XCTAssertFalse(job.shouldSync(), "shouldsync should be false")
     }
@@ -455,7 +462,7 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.username = "admin"
         jenkinsInstance?.password = "password"
         let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: jobURLStr, JobJenkinsInstanceKey: jenkinsInstance!]
-        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
+        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
@@ -488,7 +495,7 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.shouldAuthenticate = true
         let jobURLStr = "http://localhost:8081/job/Job3/"
         let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: jobURLStr, JobJenkinsInstanceKey: jenkinsInstance!]
-        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
+        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
@@ -521,7 +528,7 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.shouldAuthenticate = true
         let jobURLStr = "http://localhost:8081/job/Job3/"
         let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: jobURLStr, JobJenkinsInstanceKey: jenkinsInstance!]
-        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
+        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
@@ -637,7 +644,7 @@ class SyncManagerTests: XCTestCase {
         let fourSecondsAgo = now - 4000000
         let tenSecondsAgo = now - 10000000
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins:8081/job/TestJob", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
         
         // should only sync
         // if building and duration (currentTime - build.timestamp) is within 80% of estimatedDuration
@@ -647,17 +654,17 @@ class SyncManagerTests: XCTestCase {
         let buildVals4 = [BuildBuildingKey: true, BuildEstimatedDurationKey: 5000, BuildTimestampKey: tenSecondsAgo, BuildJobKey: job, BuildNumberKey: 103, BuildURLKey: "http://jenkins:8081/job/TestJob/103"]
         let buildVals5 = [BuildJobKey: job, BuildNumberKey: 103, BuildURLKey: "http://jenkins:8081/job/TestJob/103"]
         
-        let build1 = Build.createBuildWithValues(buildVals1, inManagedObjectContext: context)
-        let build2 = Build.createBuildWithValues(buildVals2, inManagedObjectContext: context)
-        let build3 = Build.createBuildWithValues(buildVals3, inManagedObjectContext: context)
-        let build4 = Build.createBuildWithValues(buildVals4, inManagedObjectContext: context)
-        let build5 = Build.createBuildWithValues(buildVals5, inManagedObjectContext: context)
+        let build1 = Build.createBuildWithValues(buildVals1, inManagedObjectContext: context!)
+        let build2 = Build.createBuildWithValues(buildVals2, inManagedObjectContext: context!)
+        let build3 = Build.createBuildWithValues(buildVals3, inManagedObjectContext: context!)
+        let build4 = Build.createBuildWithValues(buildVals4, inManagedObjectContext: context!)
+        let build5 = Build.createBuildWithValues(buildVals5, inManagedObjectContext: context!)
         
-        XCTAssertFalse(build1.shouldSync(), "build1 should not sync because its building value is false")
-        XCTAssertFalse(build2.shouldSync(), "build2 should not sync because it was just kicked off")
-        XCTAssertTrue(build3.shouldSync(), "build3 should sync because it's close to completion time")
-        XCTAssertTrue(build4.shouldSync(), "build4 should sync because it's after estimated completion time and it's still building")
-        XCTAssertTrue(build5.shouldSync(), "build5 should sync because it hasn't synced yet")
+        XCTAssertFalse(build1!.shouldSync(), "build1 should not sync because its building value is false")
+        XCTAssertFalse(build2!.shouldSync(), "build2 should not sync because it was just kicked off")
+        XCTAssertTrue(build3!.shouldSync(), "build3 should sync because it's close to completion time")
+        XCTAssertTrue(build4!.shouldSync(), "build4 should sync because it's after estimated completion time and it's still building")
+        XCTAssertTrue(build5!.shouldSync(), "build5 should sync because it hasn't synced yet")
     }
     
     func testBuildLastSyncResultOK() {
@@ -681,9 +688,9 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.username = "admin"
         jenkinsInstance?.password = "password"
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://snowman:8081/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
         let buildVals1 = [BuildBuildingKey: false, BuildEstimatedDurationKey: 120000, BuildJobKey: job, BuildNumberKey: 100, BuildURLKey: buildURLStr]
-        let build = Build.createBuildWithValues(buildVals1, inManagedObjectContext: self.context)
+        let build = Build.createBuildWithValues(buildVals1, inManagedObjectContext: self.context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
@@ -716,9 +723,9 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.shouldAuthenticate = true
         let buildURLStr = "http://localhost:8081/job/Job3/1/"
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
         let buildVals1 = [BuildBuildingKey: false, BuildEstimatedDurationKey: 120000, BuildJobKey: job, BuildNumberKey: 100, BuildURLKey: buildURLStr]
-        let build = Build.createBuildWithValues(buildVals1, inManagedObjectContext: self.context)
+        let build = Build.createBuildWithValues(buildVals1, inManagedObjectContext: self.context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
@@ -750,9 +757,9 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.password = "password"
         let buildURLStr = "http://localhost:8081/job/Job3/1/"
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
         let buildVals1 = [BuildBuildingKey: false, BuildEstimatedDurationKey: 120000, BuildJobKey: job, BuildNumberKey: 100, BuildURLKey: buildURLStr]
-        let build = Build.createBuildWithValues(buildVals1, inManagedObjectContext: self.context)
+        let build = Build.createBuildWithValues(buildVals1, inManagedObjectContext: self.context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
@@ -781,7 +788,7 @@ class SyncManagerTests: XCTestCase {
         })
         
         let jobVals1 = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
         
         let acURL = "http://localhost:8081/job/Job2/config1=10,config2=test/"
         
@@ -818,7 +825,7 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.password = "password1"
         jenkinsInstance?.shouldAuthenticate = true
         let jobVals1 = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
         
         let acURL = "http://localhost:8081/job/Job2/config1=10,config2=test/"
         
@@ -854,7 +861,7 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password"
         let jobVals1 = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context)
+        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
         
         let acURL = "http://localhost:8081/job/Job2/config1=10,config2=test/"
         

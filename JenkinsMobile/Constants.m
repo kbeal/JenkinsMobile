@@ -21,6 +21,7 @@ NSString * const ViewDetailRequestFailedNotification = @"ViewDetailRequestFailed
 NSString * const ViewChildViewsResponseReceivedNotification = @"ViewChildViewsResponseReceived";
 NSString * const ViewChildViewsRequestFailedNotification = @"ViewChildViewsRequestFailed";
 NSString * const BuildProgressResponseReceivedNotification = @"BuildProgressResponseReceived";
+NSString * const BuildProgressRequestFailedNotification = @"BuildProgressRequestFailed";
 NSString * const JobTestResultsImageResponseReceivedNotification = @"JobTestResultsImageResponseReceived";
 NSString * const JenkinsInstanceDetailResponseReceivedNotification = @"JenkinsInstanceDetailResponseReceived";
 NSString * const NewLargeJenkinsInstanceDetailResponseReceivedNotification = @"NewLargeJenkinsInstanceDetailResponseReceived";
@@ -77,6 +78,11 @@ NSString * const JobHealthReportKey = @"healthReport";
 NSString * const JobLastSyncKey = @"lastSync";
 NSString * const JobRequestErrorKey = @"jobRequestError";
 NSString * const JobLastSyncResultKey = @"lastSyncResult";
+NSString * const JobHealthReportIconKey = @"iconUrl";
+NSString * const JobHealthReportIconClassNameKey = @"iconClassName";
+NSString * const JobPermalinkNameKey = @"permalinkName";
+NSString * const JobPermalinkKey = @"permalink";
+NSString * const JobBuildsKey = @"builds";
 
 #pragma mark - Active Configuration Keys
 NSString * const ActiveConfigurationURLKey = @"url";
@@ -129,6 +135,7 @@ NSString * const BuildKeepLogKey = @"keepLog";
 NSString * const BuildIDKey = @"id";
 NSString * const BuildFullDisplayNameKey = @"fullDisplayName";
 NSString * const BuildLastSyncResultKey = @"lastSyncResult";
+NSString * const BuildExecutorProgressKey = @"progress";
 
 #pragma mark - JenkinsInstance Keys
 NSString * const JenkinsInstanceNameKey = @"name";
@@ -155,5 +162,11 @@ NSString * const SyncManagerCurrentJenkinsInstance = @"currentJenkinsInstance";
 
 #pragma makr - JobDictionaryKeys
 NSString * const JobDictionaryDictionaryKey = @"dictionary";
+
+#pragma mark - BuildDictionary Keys
+NSString * const BuildDictionaryDictionaryKey = @"dictionary";
+
+#pragma mark - ViewController Keys
+double const StatusBallAnimationDuration = 1.5;
 
 @end

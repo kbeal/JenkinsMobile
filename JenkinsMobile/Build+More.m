@@ -8,6 +8,7 @@
 
 #import "Build+More.h"
 #import "Constants.h"
+#import "Job.h"
 
 // Convert any NULL values to nil. Lifted from Kevin Ballard here: http://stackoverflow.com/a/9138033
 #define NULL_TO_NIL(obj) ({ __typeof__ (obj) __obj = (obj); __obj == [NSNull null] ? nil : obj; })
@@ -40,6 +41,27 @@
     return build;
 }
 
+// Returns array of buildss that exist related to given Job that have number present in given numbers Array.
+// Return value contains NSManagedObjects
++ (NSArray *)fetchBuildsWithNumbers: (NSArray *) numbers forJob: (Job *) job
+{
+    NSArray *builds = nil;
+    
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    request.entity = [NSEntityDescription entityForName:@"Build" inManagedObjectContext:job.managedObjectContext];
+    request.predicate = [NSPredicate predicateWithFormat:@"number IN %@ && rel_Build_Job = %@", numbers, job];
+    [request setPropertiesToFetch:[NSArray arrayWithObjects:BuildNumberKey, nil]];
+    NSError *executeFetchError = nil;
+    
+    builds = [job.managedObjectContext executeFetchRequest:request error:&executeFetchError];
+    
+    if (executeFetchError) {
+        NSLog(@"[%@, %@] error looking up builds with numbers for Job: %@ with error: %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd), job.name, [executeFetchError localizedDescription]);
+    }
+    
+    return builds;
+}
+
 // Removes /api/json and /api/json/ from the end of URL's
 + (NSString *) removeApiFromURL:(NSURL *) url
 {
@@ -51,6 +73,16 @@
     }
     return missingApi;
 }
+
++ (NSString *) getColorForResult:(NSString *) result
+{
+    NSArray *colors = [NSArray arrayWithObjects:@"red",@"blue", nil];
+    NSArray *results = [NSArray arrayWithObjects:@"FAILURE",@"SUCCESS", nil];
+    NSDictionary *colorResultMap = [NSDictionary dictionaryWithObjects:colors forKeys:results];
+    return [colorResultMap objectForKey:result];
+}
+
++ (BOOL) colorIsBuilding:(NSString * _Nonnull) color { return [color rangeOfString:@"anime"].length > 0 ? true : false; }
 
 - (BOOL) shouldSync
 {
@@ -71,6 +103,14 @@
     }
     
     return shouldSync;
+}
+
+// only sets values returned by a build progress query
+- (void)setProgressUpdateValues:(NSDictionary *) values
+{
+    self.result = NULL_TO_NIL([values objectForKey:@"result"]);
+    self.executor = NULL_TO_NIL([values objectForKey:@"executor"]);
+    self.building = NULL_TO_NIL([values objectForKey:@"building"]);
 }
 
 - (void)setValues:(NSDictionary *) values

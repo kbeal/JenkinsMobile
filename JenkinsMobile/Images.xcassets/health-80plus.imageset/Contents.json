@@ -2,7 +2,75 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "health-80plus.pdf"
+      "filename" : "health-80plus-72.png",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "health-80plus-144.png",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "health-80plus-216.png",
+      "scale" : "3x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "health-80plus-73.png",
+      "height-class" : "regular",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "health-80plus-145.png",
+      "height-class" : "regular",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "health-80plus-217.png",
+      "height-class" : "regular",
+      "scale" : "3x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "health-80plus-74.png",
+      "width-class" : "regular",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "health-80plus-146.png",
+      "width-class" : "regular",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "health-80plus-218.png",
+      "width-class" : "regular",
+      "scale" : "3x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "health-80plus-120.png",
+      "width-class" : "regular",
+      "height-class" : "regular",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "health-80plus-240.png",
+      "width-class" : "regular",
+      "height-class" : "regular",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "health-80plus-360.png",
+      "width-class" : "regular",
+      "height-class" : "regular",
+      "scale" : "3x"
     }
   ],
   "info" : {

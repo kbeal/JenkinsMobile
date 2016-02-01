@@ -14,7 +14,7 @@
 
 - (void) importDetailsForJob:(Job *) job;
 {
-    NSURL *requestURL = [NSURL URLWithString:@"api/json" relativeToURL:[NSURL URLWithString:job.url]];
+    NSURL *requestURL = [NSURL URLWithString:@"api/json?depth=1" relativeToURL:[NSURL URLWithString:job.url]];
     NSLog(@"%@%@",@"Requesting details for Job at URL: ",requestURL.absoluteString);
     NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
     
@@ -55,6 +55,69 @@
         }
         [info setObject:job forKey:RequestedObjectKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:JobDetailRequestFailedNotification object:self userInfo:info];
+    }];
+    
+    [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {
+        if ([request.allHTTPHeaderFields objectForKey:@"Authorization"] != nil) {
+            return request;
+        }
+        if (shouldAuthenticate) {
+            NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+            NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+            NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+            NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+            [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+            return urlRequest;
+        } else {
+            return request;
+        }
+    }];
+    
+    [operation start];
+}
+
+- (void) importProgressForBuild:(Build *) build onJenkinsInstance:(JenkinsInstance *) jinstance
+{
+    NSURL *requestURL = [NSURL URLWithString:@"api/json?tree=result,number,url,building,executor[*]" relativeToURL:[NSURL URLWithString:build.url]];
+    NSLog(@"%@%@",@"Requesting progress of Build at URL: ",requestURL.absoluteString);
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    
+    NSString *username = jinstance.username;
+    NSString *password = jinstance.password;
+    BOOL shouldAuthenticate = [jinstance.shouldAuthenticate boolValue];
+    NSString *buildURL = build.url;
+    
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    AFSecurityPolicy *secPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    [secPolicy setValidatesDomainName:NO];
+    [secPolicy setAllowInvalidCertificates:jinstance.allowInvalidSSLCertificate.boolValue];
+    [manager setSecurityPolicy:secPolicy];
+    [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    if (shouldAuthenticate) {
+        [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:jinstance.username password:jinstance.password];
+        manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    }
+    
+    AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"%@%@",@"Response received for progress of build at url: ",buildURL);
+        NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:responseObject];
+        [info setObject:build forKey:RequestedObjectKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:BuildProgressResponseReceivedNotification object:self userInfo:info];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"%@%@",@"Failed to receive response for progress of build at url: ",buildURL);
+        // since the Job actually exists, we need to inject it's url so that coredata can find it.
+        NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
+        [errUserInfo setObject:[NSURL URLWithString:buildURL] forKey:NSErrorFailingURLKey];
+        NSError *newError = [[NSError alloc] initWithDomain:error.domain code:error.code userInfo:errUserInfo];
+        NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:newError, nil] forKeys:[NSArray arrayWithObjects:RequestErrorKey, nil]];
+        
+        if (operation.response) {
+            [info setObject:[NSNumber numberWithLong:[operation.response statusCode]] forKey:StatusCodeKey];
+        }
+        [info setObject:build forKey:RequestedObjectKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:BuildProgressRequestFailedNotification object:self userInfo:info];
     }];
     
     [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {
@@ -304,7 +367,7 @@
         NSLog(@"%@%@",@"Failed to receive response for Build at url: ",requestURL.absoluteString);
         // since the Build actually exists, we need to inject it's url so that coredata can find it.
         NSMutableDictionary *errUserInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
-        [errUserInfo setObject:[NSURL URLWithString:build.url] forKey:NSErrorFailingURLKey];
+        [errUserInfo setObject:[NSURL URLWithString:requestURL.absoluteString] forKey:NSErrorFailingURLKey];
         NSError *newError = [[NSError alloc] initWithDomain:error.domain code:error.code userInfo:errUserInfo];
         NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjects:[NSArray arrayWithObjects:newError, nil] forKeys:[NSArray arrayWithObjects:RequestErrorKey, nil]];
         
@@ -406,6 +469,47 @@
         }
         [info setObject:jinstance forKey:RequestedObjectKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:JenkinsInstanceAuthenticationRequestFailedNotification object:self userInfo:info];
+    }];
+    
+    [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {
+        if ([request.allHTTPHeaderFields objectForKey:@"Authorization"] != nil) {
+            return request;
+        } else {
+            NSMutableURLRequest *urlRequest = [[NSMutableURLRequest alloc] initWithURL:request.URL cachePolicy:request.cachePolicy timeoutInterval:request.timeoutInterval];
+            NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+            NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+            NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
+            [urlRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+            return urlRequest;
+        }
+    }];
+    
+    [operation start];
+}
+
+// very simple method for testing purposes, not intended to be called by runtime/user
+- (void) kickOffBuildWithURL: (NSString *) url andUsername: (NSString *) username andPassword: (NSString *) password
+{
+    NSURL *requestURL = [NSURL URLWithString:url];
+    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+    NSLog(@"%@%@",@"Kicking off job at URL: ",requestURL.absoluteString);
+    
+    AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:requestURL];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    AFSecurityPolicy *secPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+    [secPolicy setValidatesDomainName:NO];
+    [secPolicy setAllowInvalidCertificates:true];
+    [manager setSecurityPolicy:secPolicy];
+    [manager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
+    
+    [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:username password:password];
+    manager.credential = [NSURLCredential credentialWithUser:username password:password persistence:NSURLCredentialPersistenceNone];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    AFHTTPRequestOperation *operation = [manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"%@%@",@"Job kicked off at url: ",url);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"%@%@",@"Failed to kick off job at url: ",requestURL.absoluteString);
     }];
     
     [operation setRedirectResponseBlock:^NSURLRequest *(NSURLConnection *connection, NSURLRequest *request, NSURLResponse *redirectResponse) {
@@ -578,39 +682,6 @@
     
     [operation start];
 }
-
-- (void) importProgressForBuild:(NSNumber *) buildNumber ofJobAtURL:(NSString *) jobURL
-{
-    NSString *buildURL = [NSString stringWithFormat:@"%@%d",jobURL,[buildNumber intValue]];
-    NSURL *requestURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@%@%@%@%@",buildURL,@"/api/json?tree=",BuildBuildingKey,@",",BuildTimestampKey,@",",BuildEstimatedDurationKey]];
-    
-    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
-    //AFNetworking asynchronous url request
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc]
-                                         initWithRequest:request];
-    
-    operation.responseSerializer = [AFJSONResponseSerializer serializer];
-    
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"%@%@",@"response received for build progress at url: ",buildURL);
-        
-        NSNumber *building = [NSNumber numberWithBool:[[responseObject objectForKey:BuildBuildingKey] boolValue]];
-        NSNumber *timestamp = [NSNumber numberWithDouble:[[responseObject objectForKey:BuildTimestampKey] doubleValue]];
-        NSNumber *estimatedDuration = [NSNumber numberWithDouble:[[responseObject objectForKey:BuildEstimatedDurationKey] doubleValue]];
-
-        NSArray *keys = [NSArray arrayWithObjects:JobURLKey,BuildNumberKey,BuildBuildingKey,BuildTimestampKey,BuildEstimatedDurationKey, nil];
-        NSArray *objs = [NSArray arrayWithObjects:jobURL,buildNumber,building,timestamp,estimatedDuration,nil];
-
-        NSDictionary *userInfoDict = [NSDictionary dictionaryWithObjects:objs forKeys:keys];
-        [[NSNotificationCenter defaultCenter] postNotificationName:BuildProgressResponseReceivedNotification object:self userInfo:userInfoDict];
-
-//        [self persistJobAtURL:jobURL withValues:responseObject];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        // Handle error
-        NSLog(@"Request Failed: %@, %@", error, error.userInfo);
-    }];
-    
-    [operation start];
-} */
+ */
 
 @end

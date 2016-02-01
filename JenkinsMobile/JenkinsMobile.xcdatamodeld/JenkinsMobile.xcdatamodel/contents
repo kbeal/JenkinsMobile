@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15C50" minimumToolsVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15D21" minimumToolsVersion="Automatic">
     <entity name="ActiveConfiguration" representedClassName="ActiveConfiguration" syncable="YES">
         <attribute name="actions" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="activeConfiguration_description" optional="YES" attributeType="String" syncable="YES"/>
@@ -54,7 +54,7 @@
         <attribute name="timestamp" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="url" attributeType="String" indexed="YES" syncable="YES"/>
         <relationship name="rel_Build_ActiveConfiguration" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActiveConfiguration" inverseName="rel_ActiveConfiguration_Builds" inverseEntity="ActiveConfiguration" syncable="YES"/>
-        <relationship name="rel_Build_Job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="rel_Job_Builds" inverseEntity="Job" syncable="YES"/>
+        <relationship name="rel_Build_Job" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="rel_Job_Builds" inverseEntity="Job" syncable="YES"/>
     </entity>
     <entity name="JenkinsInstance" representedClassName="JenkinsInstance">
         <attribute name="allowInvalidSSLCertificate" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -75,26 +75,27 @@
         <attribute name="actions" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="activeConfigurations" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="buildable" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="builds" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="color" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="concurrentBuild" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="displayName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="displayNameOrNull" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="downstreamProjects" optional="YES" attributeType="Transformable" syncable="YES"/>
-        <attribute name="firstBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="firstBuild" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="healthReport" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="inQueue" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="job_description" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="keepDependencies" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="lastBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="lastCompletedBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="lastFailedBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="lastImportedBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="lastStableBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="lastSuccessfulBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="lastBuild" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="lastCompletedBuild" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="lastFailedBuild" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="lastImportedBuild" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="lastStableBuild" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="lastSuccessfulBuild" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="lastSync" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="lastSyncResult" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="lastUnstableBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="lastUnsuccessfulBuild" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="lastUnstableBuild" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="lastUnsuccessfulBuild" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="nextBuildNumber" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="property" optional="YES" attributeType="Transformable" syncable="YES"/>
@@ -121,9 +122,9 @@
     </entity>
     <elements>
         <element name="ActiveConfiguration" positionX="81" positionY="225" width="128" height="525"/>
-        <element name="Build" positionX="-117" positionY="369" width="128" height="343"/>
+        <element name="Build" positionX="-117" positionY="369" width="128" height="345"/>
         <element name="JenkinsInstance" positionX="-18" positionY="101" width="128" height="225"/>
-        <element name="Job" positionX="135" positionY="224" width="128" height="555"/>
+        <element name="Job" positionX="135" positionY="224" width="128" height="570"/>
         <element name="View" positionX="313" positionY="83" width="128" height="195"/>
     </elements>
 </model>

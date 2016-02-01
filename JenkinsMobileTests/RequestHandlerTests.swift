@@ -464,7 +464,7 @@ class RequestHandlerTests: XCTestCase {
             let errorUserInfo: Dictionary = requestError.userInfo
             let url: NSURL = errorUserInfo[NSErrorFailingURLKey] as! NSURL
             
-            if url.absoluteString == "http://www.google.com/jenkins/job/Job1/1/" {
+            if url.absoluteString == "http://www.google.com/jenkins/job/Job1/1/api/json" {
                 expectationFulfilled=true
             }
             return expectationFulfilled

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Job+More.h"
+#import "Job.h"
 #import "Build+More.h"
 #import "JenkinsMobile-Swift.h"
 

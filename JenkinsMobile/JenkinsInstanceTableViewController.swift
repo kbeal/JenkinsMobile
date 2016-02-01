@@ -32,7 +32,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
         self.managedObjectContext = self.syncMgr?.mainMOC
         self.saveChanges = true
         
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: "handleSingleTap:")
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(JenkinsInstanceTableViewController.handleSingleTap(_:)))
         tapRecognizer.numberOfTapsRequired = 1
         self.view.addGestureRecognizer(tapRecognizer)
         
@@ -55,10 +55,10 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     }
     
     func initObservers() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstancePingResponseReceived:"), name: JenkinsInstancePingResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstancePingRequestFailed:"), name: JenkinsInstancePingRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceAuthenticateReceived:"), name: JenkinsInstanceAuthenticationResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceAuthenticateFailed:"), name: JenkinsInstanceAuthenticationRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(JenkinsInstanceTableViewController.jenkinsInstancePingResponseReceived(_:)), name: JenkinsInstancePingResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(JenkinsInstanceTableViewController.jenkinsInstancePingRequestFailed(_:)), name: JenkinsInstancePingRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(JenkinsInstanceTableViewController.jenkinsInstanceAuthenticateReceived(_:)), name: JenkinsInstanceAuthenticationResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(JenkinsInstanceTableViewController.jenkinsInstanceAuthenticateFailed(_:)), name: JenkinsInstanceAuthenticationRequestFailedNotification, object: nil)
     }
     
     func setTitle() {
@@ -236,7 +236,7 @@ class JenkinsInstanceTableViewController: UITableViewController, UITextFieldDele
     
     func configureSwitchCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
         let switchView = KDBSwitch(frame: CGRectZero)
-        switchView.addTarget(self, action: "stateChanged:", forControlEvents: UIControlEvents.ValueChanged)
+        switchView.addTarget(self, action: #selector(JenkinsInstanceTableViewController.stateChanged(_:)), forControlEvents: UIControlEvents.ValueChanged)
         if indexPath.section == 1 {
             cell.textLabel?.text = "Authenticate?"
             switchView.switchType = .UseAuthentication

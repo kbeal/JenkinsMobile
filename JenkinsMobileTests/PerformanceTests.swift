@@ -52,7 +52,7 @@ class PerformanceTests: XCTestCase {
         for i in 1...existingJobCount {
             let uuid = NSUUID().UUIDString
             let vals: [String: AnyObject] = [JobNameKey: uuid, JobURLKey: "http://localhost:8080/job/"+uuid, JobColorKey: "blue", JobJenkinsInstanceKey: self.jenkinsInstance!]
-            Job.createJobWithValues(vals, inManagedObjectContext: self.context)
+            Job.createJobWithValues(vals, inManagedObjectContext: self.context!)
             // save half of the names up to jobBatchCount
             if ((i%2 == 0) && (existingJobNames.count < jobBatchCount)){
                 existingJobNames.append(uuid)
@@ -61,7 +61,7 @@ class PerformanceTests: XCTestCase {
         
         let knownuuid = NSUUID().UUIDString
         let knownVals: [String: AnyObject] = [JobNameKey: knownuuid, JobURLKey: "http://localhost:8080/job/"+knownuuid, JobColorKey: "blue", JobJenkinsInstanceKey: self.jenkinsInstance!]
-        Job.createJobWithValues(knownVals, inManagedObjectContext: self.context)
+        Job.createJobWithValues(knownVals, inManagedObjectContext: self.context!)
         jobNames.append(knownuuid)
         
         for _ in 1...jobBatchCount {
@@ -74,7 +74,7 @@ class PerformanceTests: XCTestCase {
         XCTAssertEqual(existingJobNames.count, jobBatchCount)
         
         self.measureBlock({
-            let jobs = Job.fetchJobsWithNames(jobNames, inManagedObjectContext: self.context, andJenkinsInstance: self.jenkinsInstance)
+            let jobs = Job.fetchJobsWithNames(jobNames, inManagedObjectContext: self.context!, andJenkinsInstance: self.jenkinsInstance!)
             XCTAssertEqual(jobs.count, 1)
             //let existingJobs = Job.fetchJobsWithNames(existingJobNames, inManagedObjectContext: self.context, andJenkinsInstance: self.jenkinsInstance)
             //XCTAssertEqual(existingJobs.count, jobBatchCount)

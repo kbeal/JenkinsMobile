@@ -8,7 +8,7 @@
 
 #import "JenkinsInstance.h"
 #import "Constants.h"
-#import "Job+More.h"
+#import "Job.h"
 #import "UICKeyChainStore.h"
 #import "View.h"
 #import "JenkinsMobile-Swift.h"
@@ -235,15 +235,15 @@
     // get names of Jobs already related to this JenkinsInstance
     NSSet *relatedJobs = [self getJobs];
     NSSet *relatedJobNames = [relatedJobs valueForKey:JobNameKey];
-    // find jobs (not managed objects) needing to be created
+    // find jobs (not managed objects) already created
     return [responseJobs filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"name IN %@",relatedJobNames]];
 }
 
 // your local delegate's favorite method!
-// takes an NSSet of JobDictionaries and returns and NSSet of Job managed objects
+// takes an NSSet of JobDictionaries and returns a NSSet of Job managed objects
 // jobs - NSSet of JobDictionaries
 // view - View to relate to Jobs needing created
-- (NSSet *)findOrCreateJobs:(NSSet *)jobs inView:(View *) view;
+- (NSSet *)findOrCreateJobs:(NSSet *)jobs inView:(View *) view
 {
     NSMutableSet *managedJobs = [NSMutableSet setWithCapacity:jobs.count];
     DataManager *datamgr = [DataManager sharedInstance];

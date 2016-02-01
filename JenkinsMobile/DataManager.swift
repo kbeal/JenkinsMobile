@@ -13,7 +13,7 @@ public class DataManager: NSObject {
     
     public override init() {
         super.init()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("contextChanged:"), name: NSManagedObjectContextDidSaveNotification, object: self.masterMOC)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DataManager.contextChanged(_:)), name: NSManagedObjectContextDidSaveNotification, object: self.masterMOC)
     }
     
     public lazy var masterMOC: NSManagedObjectContext = {

@@ -8,7 +8,8 @@
 
 #import "View.h"
 #import "Constants.h"
-#import "Job+More.h"
+#import "Job.h"
+#import "JenkinsInstance.h"
 #import "JenkinsMobile-Swift.h"
 
 // Convert any NULL values to nil. Lifted from Kevin Ballard here: http://stackoverflow.com/a/9138033
@@ -51,15 +52,6 @@
         missingApi = [[url absoluteString] substringToIndex:[[url absoluteString] length]-10];
     }
     return missingApi;
-}
-
-- (NSArray *) findRelatedJobsWithNames:(NSArray *) names;
-{
-    NSArray *jobs = nil;
-    
-
-    
-    return jobs;
 }
 
 // used when all values are present in response data

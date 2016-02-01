@@ -1,5 +1,5 @@
 //
-//  JobBatch.swift
+//  JobDictionary.swift
 //  JenkinsMobile
 //
 //  Custom NSDictionary that provides a specialized hashing function

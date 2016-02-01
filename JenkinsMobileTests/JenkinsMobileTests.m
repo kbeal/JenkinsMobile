@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "Job+More.h"
+#import "Job.h"
 #import "View.h"
 #import "JenkinsInstance.h"
 #import "Build+More.h"
@@ -147,12 +147,10 @@
     NSArray *jobVals2 = [NSArray arrayWithObjects:@"Job2",@"http://localhost:8080/job/Job2/",@"blue",self.jinstance,nil];
     NSArray *jobVals3 = [NSArray arrayWithObjects:@"Job3",@"http://localhost:8080/job/Job3/",@"blue",self.jinstance,nil];
     NSArray *jobVals4 = [NSArray arrayWithObjects:@"Job2",@"http://localhost:8080/job/Job4/",@"blue",self.jinstance,nil];
-    NSArray *jobVals5 = [NSArray arrayWithObjects:@"Job3",@"http://localhost:8080/job/Job5/",@"blue",self.jinstance,nil];
     NSDictionary *jobDict1 = [NSDictionary dictionaryWithObjects:jobVals1 forKeys:jobKeys];
     NSDictionary *jobDict2 = [NSDictionary dictionaryWithObjects:jobVals2 forKeys:jobKeys];
     NSDictionary *jobDict3 = [NSDictionary dictionaryWithObjects:jobVals3 forKeys:jobKeys];
     NSDictionary *jobDict4 = [NSDictionary dictionaryWithObjects:jobVals4 forKeys:jobKeys];
-    NSDictionary *jobDict5 = [NSDictionary dictionaryWithObjects:jobVals5 forKeys:jobKeys];
     NSArray *jobs = [NSArray arrayWithObjects:jobDict1,jobDict2,jobDict3,jobDict4, nil];
     
     NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES], nil];
@@ -174,6 +172,42 @@
     
     NSSet *jobsToRelate = [view findJobsInResponseToRelate:responseSet];
     XCTAssertEqual(jobsToRelate.count, 3);
+}
+
+- (void) testFindBuildsInResponseToRelate
+{
+    NSArray *jobKeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobColorKey,JobJenkinsInstanceKey,nil];
+    NSArray *jiKeys = [NSArray arrayWithObjects:@"name",@"url",@"current",JenkinsInstanceEnabledKey, nil];
+    NSArray *buildKeys = [NSArray arrayWithObjects:BuildNumberKey,BuildURLKey, nil];
+    NSArray *buildVals1 = [NSArray arrayWithObjects:[NSNumber numberWithInt:1],@"http://localhost:8080/job/Job1/1",nil];
+    NSArray *buildVals2 = [NSArray arrayWithObjects:[NSNumber numberWithInt:2],@"http://localhost:8080/job/Job1/2",nil];
+    NSArray *buildVals3 = [NSArray arrayWithObjects:[NSNumber numberWithInt:3],@"http://localhost:8080/job/Job1/3",nil];
+    NSArray *buildVals4 = [NSArray arrayWithObjects:[NSNumber numberWithInt:1],@"http://localhost:8080/job/Job1/1",nil];
+    NSDictionary *buildDict1 = [NSDictionary dictionaryWithObjects:buildVals1 forKeys:buildKeys];
+    NSDictionary *buildDict2 = [NSDictionary dictionaryWithObjects:buildVals2 forKeys:buildKeys];
+    NSDictionary *buildDict3 = [NSDictionary dictionaryWithObjects:buildVals3 forKeys:buildKeys];
+    NSDictionary *buildDict4 = [NSDictionary dictionaryWithObjects:buildVals4 forKeys:buildKeys];
+    NSArray *builds = [NSArray arrayWithObjects:buildDict1,buildDict2,buildDict3,buildDict4, nil];
+    
+    NSArray *values = [NSArray arrayWithObjects:@"TestInstance",@"http://tomcat:8080/",[NSNumber numberWithBool:YES],[NSNumber numberWithBool:YES], nil];
+    NSDictionary *instancevalues = [NSDictionary dictionaryWithObjects:values forKeys:jiKeys];
+    JenkinsInstance *ji = [JenkinsInstance createJenkinsInstanceWithValues:instancevalues inManagedObjectContext:_context];
+    
+    NSArray *jobVals = [NSArray arrayWithObjects:@"Job1",@"http://localhost:8080/job/Job1",@"blue", ji, nil];
+    NSDictionary *jobDict = [NSDictionary dictionaryWithObjects:jobVals forKeys:jobKeys];
+    Job *job = [Job createJobWithValues:jobDict inManagedObjectContext:_context];
+    
+    NSMutableSet *responseSet = [NSMutableSet setWithCapacity:builds.count];
+    for (NSDictionary *build in builds) {
+        Build *buildmo = [Build createBuildWithValues:build inManagedObjectContext:_context];
+        [job addRel_Job_BuildsObject:buildmo];
+        BuildDictionary *buildDict = [[BuildDictionary alloc] initWithDictionary:build];
+        [responseSet addObject:buildDict];
+    }
+    XCTAssertEqual(job.rel_Job_Builds.count, 4);
+    
+    NSSet *buildsToRelate = [job findBuildsInResponseToRelate:responseSet];
+    XCTAssertEqual(buildsToRelate.count, 3);
 }
 
 - (void)testCreateViewWithValues
@@ -264,7 +298,7 @@
     NSDictionary *activeConfigurations1 = [NSDictionary dictionaryWithObjects:activeConfigurationsValues1 forKeys:activeConfigurationsKeys];
     NSDictionary *activeConfigurations2 = [NSDictionary dictionaryWithObjects:activeConfigurationsValues2 forKeys:activeConfigurationsKeys];
     NSArray *activeConfigurations = [NSArray arrayWithObjects:activeConfigurations1,activeConfigurations2, nil];
-    UIImage *testImage = [UIImage imageNamed:@"blue.png"];
+    UIImage *testImage = [UIImage imageNamed:@"images/blue-master.png"];
     
     NSArray *jobKeys = [NSArray arrayWithObjects:@"name",@"color",@"url",@"buildable",@"concurrentBuild",@"displayName",@"firstBuild",@"lastBuild",@"lastCompletedBuild",@"lastFailedBuild",@"lastStableBuild",@"lastSuccessfulBuild",@"lastUnstableBuild",@"lastUnsuccessfulBuild",@"nextBuildNumber",@"inQueue",@"description",@"keepDependencies",@"upstreamProjects",@"downstreamProjects",@"healthReport",JobActiveConfigurationsKey,JobTestResultsImageKey,nil ];
     
@@ -280,14 +314,18 @@
     XCTAssertEqualObjects(job.buildable, [NSNumber numberWithBool:YES], @"job should be buildable, is not");
     XCTAssertEqualObjects(job.concurrentBuild, [NSNumber numberWithBool:NO], @"job should be a concurrent build is actually %@", [job.concurrentBuild stringValue]);
     XCTAssertEqual(job.displayName, @"Test1", @"display name is wrong, is actually %@", job.displayName);
-    XCTAssertEqualObjects(job.firstBuild, [NSNumber numberWithInt:1], @"first build number is wrong");
-    XCTAssertEqualObjects(job.lastBuild, [NSNumber numberWithInt:1], @"last build number is wrong");
-    XCTAssertEqualObjects(job.lastCompletedBuild, [NSNumber numberWithInt:1], @"last complete build number is wrong");
-    XCTAssertEqualObjects(job.lastFailedBuild, [NSNumber numberWithInt:1], @"last fail build number is wrong");
-    XCTAssertEqualObjects(job.lastStableBuild, [NSNumber numberWithInt:1], @"last stable build number is wrong");
-    XCTAssertEqualObjects(job.lastSuccessfulBuild, [NSNumber numberWithInt:1], @"last successful build number is wrong");
-    XCTAssertEqualObjects(job.lastUnstableBuild, [NSNumber numberWithInt:1], @"last unstable build number is wrong");
-    XCTAssertEqualObjects(job.lastUnsuccessfulBuild, [NSNumber numberWithInt:1], @"last unsuccessful build number is wrong");
+    
+    
+    XCTAssertEqualObjects([job.firstBuild objectForKey:BuildNumberKey], [NSNumber numberWithInt:1], @"first build number is wrong");
+    XCTAssertEqualObjects([job.lastBuild objectForKey:BuildNumberKey], [NSNumber numberWithInt:1], @"last build number is wrong");
+    XCTAssertEqualObjects([job.lastCompletedBuild objectForKey:BuildNumberKey], [NSNumber numberWithInt:1], @"last complete build number is wrong");
+    XCTAssertEqualObjects([job.lastFailedBuild objectForKey:BuildNumberKey], [NSNumber numberWithInt:1], @"last fail build number is wrong");
+    XCTAssertEqualObjects([job.lastStableBuild objectForKey:BuildNumberKey], [NSNumber numberWithInt:1], @"last stable build number is wrong");
+    XCTAssertEqualObjects([job.lastSuccessfulBuild objectForKey:BuildNumberKey], [NSNumber numberWithInt:1], @"last successful build number is wrong");
+    XCTAssertEqualObjects([job.lastUnstableBuild objectForKey:BuildNumberKey], [NSNumber numberWithInt:1], @"last unstable build number is wrong");
+    XCTAssertEqualObjects([job.lastUnsuccessfulBuild objectForKey:BuildNumberKey], [NSNumber numberWithInt:1], @"last unsuccessful build number is wrong");
+    
+    
     XCTAssertEqualObjects(job.nextBuildNumber, [NSNumber numberWithInt:2], @"next build number is wrong");
     XCTAssertEqualObjects(job.inQueue, [NSNumber numberWithBool:NO], @"in queue should be false, is actually %@", [job.inQueue stringValue]);
     XCTAssertEqual(job.job_description, @"Test1 Description", @"job description is wrong is actually %@", job.job_description);
@@ -303,6 +341,64 @@
     XCTAssert([[[job.activeConfigurations objectAtIndex:1] objectForKey:@"color"] isEqualToString:@"red"], @"active config has wrong color %@", [[job.activeConfigurations objectAtIndex:1] objectForKey:@"color"]);
     XCTAssertTrue([job.getTestResultsImage isKindOfClass:[UIImage class]], @"%@%@",@"test results image is not UIImage, returned ",NSStringFromClass([job.getTestResultsImage class]));
     XCTAssertNotNil(job.testResultsImage, @"job's test results image is nil");
+}
+
+- (void)testCreateJobWithBuilds
+{
+    NSArray *buildkeys = [NSArray arrayWithObjects:BuildNumberKey,BuildURLKey,nil];
+    NSArray *buildvalues1 = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com",nil];
+    NSArray *buildvalues2 = [NSArray arrayWithObjects:[NSNumber numberWithInt:101],@"http://www.google.com",nil];
+    NSArray *buildvalues3 = [NSArray arrayWithObjects:[NSNumber numberWithInt:102],@"http://www.google.com",nil];
+    NSArray *buildvalues4 = [NSArray arrayWithObjects:[NSNumber numberWithInt:103],@"http://www.google.com",nil];
+    NSDictionary *buildvals1 = [NSDictionary dictionaryWithObjects:buildvalues1 forKeys:buildkeys];
+    NSDictionary *buildvals2 = [NSDictionary dictionaryWithObjects:buildvalues2 forKeys:buildkeys];
+    NSDictionary *buildvals3 = [NSDictionary dictionaryWithObjects:buildvalues3 forKeys:buildkeys];
+    NSDictionary *buildvals4 = [NSDictionary dictionaryWithObjects:buildvalues4 forKeys:buildkeys];
+    NSArray *builds = [[NSArray alloc] initWithObjects:buildvals1,buildvals2,buildvals3,buildvals4, nil];
+    NSArray *jobkeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobColorKey,JobBuildsKey,JobJenkinsInstanceKey,nil];
+    NSArray *jobvalues = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue",builds,_jinstance,nil];
+    NSDictionary *jobdict = [NSDictionary dictionaryWithObjects:jobvalues forKeys:jobkeys];
+    
+    Job *job = [Job createJobWithValues:jobdict inManagedObjectContext:_context];
+    
+    XCTAssert([job.name isEqualToString:@"Job1"], @"job name should be Job1, is actually %@",job.name);
+    XCTAssertEqual(job.rel_Job_Builds.count,4);
+}
+
+- (void) testFetchLatestBuilds
+{
+    NSArray *buildkeys = [NSArray arrayWithObjects:BuildNumberKey,BuildURLKey,nil];
+    NSArray *buildvalues1 = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com",nil];
+    NSArray *buildvalues2 = [NSArray arrayWithObjects:[NSNumber numberWithInt:101],@"http://www.google.com",nil];
+    NSArray *buildvalues3 = [NSArray arrayWithObjects:[NSNumber numberWithInt:102],@"http://www.google.com",nil];
+    NSArray *buildvalues4 = [NSArray arrayWithObjects:[NSNumber numberWithInt:103],@"http://www.google.com",nil];
+    NSDictionary *buildvals1 = [NSDictionary dictionaryWithObjects:buildvalues1 forKeys:buildkeys];
+    NSDictionary *buildvals2 = [NSDictionary dictionaryWithObjects:buildvalues2 forKeys:buildkeys];
+    NSDictionary *buildvals3 = [NSDictionary dictionaryWithObjects:buildvalues3 forKeys:buildkeys];
+    NSDictionary *buildvals4 = [NSDictionary dictionaryWithObjects:buildvalues4 forKeys:buildkeys];
+    NSArray *builds = [[NSArray alloc] initWithObjects:buildvals1,buildvals2,buildvals3,buildvals4, nil];
+    NSArray *jobkeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobColorKey,JobBuildsKey,JobJenkinsInstanceKey,nil];
+    NSArray *jobvalues = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue",builds,_jinstance,nil];
+    NSDictionary *jobdict = [NSDictionary dictionaryWithObjects:jobvalues forKeys:jobkeys];
+    
+    Job *job = [Job createJobWithValues:jobdict inManagedObjectContext:_context];
+    NSArray *fetchedbuilds = [job fetchLatestBuilds:10];
+    
+    NSMutableArray *morebuilds = [[NSMutableArray alloc] initWithCapacity:100];
+    for (int i=100; i<200; i++) {
+        NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:i],@"http://www.google.com",nil];
+        NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
+        [morebuilds addObject:buildvals];
+    }
+    NSArray *jobvalues2 = [NSArray arrayWithObjects:@"Job2",@"http://www.google.com",@"blue",morebuilds,_jinstance,nil];
+    NSDictionary *jobdict2 = [NSDictionary dictionaryWithObjects:jobvalues2 forKeys:jobkeys];
+    Job *job2 = [Job createJobWithValues:jobdict2 inManagedObjectContext:_context];
+    
+    NSArray *fetchedbuilds2 = [job2 fetchLatestBuilds:20];
+    
+    XCTAssertEqual(fetchedbuilds.count, 4);
+    XCTAssertEqual(job2.rel_Job_Builds.count, 100);
+    XCTAssertEqual(fetchedbuilds2.count, 20);
 }
 
 - (void)testCreateJobWithMinimalValues
@@ -326,7 +422,7 @@
 
     Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context];
     
-    [job setTestResultsImageWithImage:[UIImage imageNamed:@"blue.png"]];
+    [job setTestResultsImageWithImage:[UIImage imageNamed:@"images/blue-master.png"]];
     
     XCTAssertNotNil(job.testResultsImage, @"job's test results image is nil");
 }
@@ -338,7 +434,7 @@
     NSDictionary *jobvalues = [NSDictionary dictionaryWithObjects:values forKeys:keys];
 
     Job *job = [Job createJobWithValues:jobvalues inManagedObjectContext:_context];
-    [job setTestResultsImageWithImage:[UIImage imageNamed:@"blue.png"]];
+    [job setTestResultsImageWithImage:[UIImage imageNamed:@"images/blue-master.png"]];
     
     XCTAssertTrue([job.getTestResultsImage isKindOfClass:[UIImage class]], @"%@%@",@"test results image is not UIImage, returned ",NSStringFromClass([job.getTestResultsImage class]));
     

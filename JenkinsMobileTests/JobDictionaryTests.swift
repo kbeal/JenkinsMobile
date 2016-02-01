@@ -2,7 +2,7 @@
 //  JobDictionaryTests.swift
 //  JenkinsMobile
 //
-//  Tests our custom NSDictionary implementation that's called JobBatch
+//  Tests our custom NSDictionary implementation that's called JobDictionary
 //
 //  Created by Kyle Beal on 11/16/15.
 //  Copyright © 2015 Kyle Beal. All rights reserved.

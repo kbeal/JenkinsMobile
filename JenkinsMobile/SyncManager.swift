@@ -60,26 +60,27 @@ public class SyncManager: NSObject {
         let runningTests = NSClassFromString("XCTestCase") != nil
         if !runningTests {
             // only start the timer if we aren't running unit tests
-            syncTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: Selector("syncTimerTick"), userInfo: nil, repeats: true)
+            syncTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: #selector(SyncManager.syncTimerTick), userInfo: nil, repeats: true)
         }
     }
     
     // set up any NSNotificationCenter observers
     func initObservers() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jobDetailResponseReceived:"), name: JobDetailResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jobDetailRequestFailed:"), name: JobDetailRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceDetailResponseReceived:"), name: JenkinsInstanceDetailResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceDetailRequestFailed:"), name: JenkinsInstanceDetailRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceViewsResponseReceived:"), name: JenkinsInstanceViewsResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("jenkinsInstanceDetailRequestFailed:"), name: JenkinsInstanceViewsRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("viewDetailResponseReceived:"), name: ViewDetailResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("viewChildViewsResponseReceived:"), name: ViewChildViewsResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("viewDetailRequestFailed:"), name: ViewDetailRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("viewDetailRequestFailed:"), name: ViewChildViewsRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("buildDetailResponseReceived:"), name: BuildDetailResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("buildDetailRequestFailed:"), name: BuildDetailRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("activeConfigurationDetailResponseReceived:"), name: ActiveConfigurationDetailResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("activeConfigurationDetailRequestFailed:"), name: ActiveConfigurationDetailRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.jobDetailResponseReceived(_:)), name: JobDetailResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.jobDetailRequestFailed(_:)), name: JobDetailRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.jenkinsInstanceDetailResponseReceived(_:)), name: JenkinsInstanceDetailResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.jenkinsInstanceDetailRequestFailed(_:)), name: JenkinsInstanceDetailRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.jenkinsInstanceViewsResponseReceived(_:)), name: JenkinsInstanceViewsResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.jenkinsInstanceDetailRequestFailed(_:)), name: JenkinsInstanceViewsRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.viewDetailResponseReceived(_:)), name: ViewDetailResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.viewChildViewsResponseReceived(_:)), name: ViewChildViewsResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.viewDetailRequestFailed(_:)), name: ViewDetailRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.viewDetailRequestFailed(_:)), name: ViewChildViewsRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.buildDetailResponseReceived(_:)), name: BuildDetailResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.buildDetailRequestFailed(_:)), name: BuildDetailRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.activeConfigurationDetailResponseReceived(_:)), name: ActiveConfigurationDetailResponseReceivedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.activeConfigurationDetailRequestFailed(_:)), name: ActiveConfigurationDetailRequestFailedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.buildProgressResponseReceived(_:)), name: BuildProgressResponseReceivedNotification, object: nil)
     }
     
     func syncTimerTick() {
@@ -205,6 +206,18 @@ public class SyncManager: NSObject {
         }
     }
     
+    public func syncLatestBuildsForJob(job: Job, numberOfBuilds: Int32) {
+        if let bgjob: Job = self.dataMgr.ensureObjectOnBackgroundThread(job) as? Job {
+            self.masterMOC.performBlock({
+                if let latestBuilds: [Build] = bgjob.fetchLatestBuilds(numberOfBuilds) as? [Build] {
+                    for build: Build in latestBuilds {
+                        self.buildSyncQueue.push(build)
+                    }
+                }
+            })
+        }
+    }
+    
     public func syncBuild(build: Build) {
         if let bgbuild: Build = self.dataMgr.ensureObjectOnBackgroundThread(build) as? Build {
             self.masterMOC.performBlock({
@@ -217,6 +230,15 @@ public class SyncManager: NSObject {
         if let bgac: ActiveConfiguration = self.dataMgr.ensureObjectOnBackgroundThread(ac) as? ActiveConfiguration {
             self.masterMOC.performBlock({
                 self.requestHandler.importDetailsForActiveConfiguration(bgac)
+            })
+        }
+    }
+    
+    public func syncProgressForBuild(build: Build, jenkinsInstance: JenkinsInstance) {
+        if let bgbuild: Build = self.dataMgr.ensureObjectOnBackgroundThread(build) as? Build,
+            let bgji: JenkinsInstance = self.dataMgr.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance{
+            self.masterMOC.performBlock({
+                self.requestHandler.importProgressForBuild(bgbuild, onJenkinsInstance: bgji)
             })
         }
     }
@@ -349,6 +371,7 @@ public class SyncManager: NSObject {
         
         build.managedObjectContext?.performBlock({
             values[BuildLastSyncResultKey] = "200: OK"
+            values[BuildJobKey] = build.rel_Build_Job
             build.setValues(values)
             self.saveContext(build.managedObjectContext)
         })
@@ -365,6 +388,22 @@ public class SyncManager: NSObject {
             values[ActiveConfigurationLastSyncKey] = NSDate()
             ac.setValues(values)
             self.saveContext(ac.managedObjectContext)
+        })
+    }
+    
+    func buildProgressResponseReceived(notification: NSNotification) {
+        var values: Dictionary = notification.userInfo!
+        let build: Build = values[RequestedObjectKey] as! Build
+        
+        build.managedObjectContext?.performBlock({
+            build.setProgressUpdateValues(values)
+            
+            // if we switched to building to not building, re-query the job itself
+            if let _ = build.changedValues()[BuildBuildingKey] {
+                self.syncJob(build.rel_Build_Job)
+            }
+            
+            self.saveContext(build.managedObjectContext)
         })
     }
     

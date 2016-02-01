@@ -22,7 +22,7 @@ class KDBJenkinsTableViewController: UITableViewController {
     func initRevealToggle() {
         if self.revealViewController() != nil {
             sidebarButton!.target = self.revealViewController()
-            sidebarButton!.action = "revealToggle:"
+            sidebarButton!.action = #selector(SWRevealViewController.revealToggle(_:))
             self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         }
     }

@@ -10,11 +10,14 @@
 
 @interface Build (More)
 
-- (void)setValues:(NSDictionary *) values;
+- (void)setValues:(NSDictionary * _Nonnull) values;
 - (BOOL) shouldSync;
+- (void)setProgressUpdateValues:(NSDictionary * _Nonnull) values;
 
-+ (Build *) createBuildWithValues:(NSDictionary *) values inManagedObjectContext:(NSManagedObjectContext *)context;
-+ (Build *) fetchBuildWithURL:(NSString *)url inContext:(NSManagedObjectContext *) context;
-+ (NSString *) removeApiFromURL:(NSURL *) url;
-
++ (Build * _Nullable) createBuildWithValues:(NSDictionary * _Nonnull) values inManagedObjectContext:(NSManagedObjectContext * _Nonnull)context;
++ (Build * _Nullable) fetchBuildWithURL:(NSString * _Nonnull)url inContext:(NSManagedObjectContext * _Nonnull) context;
++ (NSArray * _Nullable)fetchBuildsWithNumbers: (NSArray * _Nonnull) numbers forJob: (Job * _Nonnull) job;
++ (NSString * _Nullable) getColorForResult:(NSString * _Nullable) result;
++ (NSString * _Nonnull) removeApiFromURL:(NSURL * _Nonnull) url;
++ (BOOL) colorIsBuilding:(NSString * _Nonnull) color;
 @end

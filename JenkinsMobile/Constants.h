@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Constants : NSObject
-
 extern double MaxJobSyncAge;
 
 #pragma mark - Notifications
@@ -29,6 +27,7 @@ extern NSString * const ViewChildViewsRequestFailedNotification;
 extern NSString * const BuildDetailResponseReceivedNotification;
 extern NSString * const BuildDetailRequestFailedNotification;
 extern NSString * const BuildProgressResponseReceivedNotification;
+extern NSString * const BuildProgressRequestFailedNotification;
 extern NSString * const ActiveConfigurationDetailResponseReceivedNotification;
 extern NSString * const ActiveConfigurationDetailRequestFailedNotification;
 extern NSString * const JobTestResultsImageResponseReceivedNotification;
@@ -77,6 +76,11 @@ extern NSString * const JobHealthReportKey;
 extern NSString * const JobLastSyncKey;
 extern NSString * const JobRequestErrorKey;
 extern NSString * const JobLastSyncResultKey;
+extern NSString * const JobHealthReportIconKey;
+extern NSString * const JobHealthReportIconClassNameKey;
+extern NSString * const JobPermalinkNameKey;
+extern NSString * const JobPermalinkKey;
+extern NSString * const JobBuildsKey;
 
 #pragma mark - ActiveConfiguration keys
 extern NSString * const ActiveConfigurationURLKey;
@@ -128,6 +132,7 @@ extern NSString * const BuildKeepLogKey;
 extern NSString * const BuildIDKey;
 extern NSString * const BuildFullDisplayNameKey;
 extern NSString * const BuildLastSyncResultKey;
+extern NSString * const BuildExecutorProgressKey;
 
 #pragma mark - JenkinsInstance Keys
 extern NSString * const JenkinsInstanceNameKey;
@@ -155,4 +160,11 @@ extern NSString * const SyncManagerCurrentJenkinsInstance;
 #pragma mark - JobDictionary Keys
 extern NSString * const JobDictionaryDictionaryKey;
 
+#pragma mark - BuildDictionary Keys
+extern NSString * const BuildDictionaryDictionaryKey;
+
+#pragma mark - ViewController Keys
+extern double const StatusBallAnimationDuration;
+
+@interface Constants : NSObject
 @end
