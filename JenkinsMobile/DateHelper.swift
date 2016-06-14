@@ -14,6 +14,10 @@ public class DateHelper {
         return NSDateFormatter.localizedStringFromDate(date, dateStyle: .ShortStyle, timeStyle: .ShortStyle)
     }
     
+    public static func dateStringFromDate(date: NSDate) -> String {
+        return NSDateFormatter.localizedStringFromDate(date, dateStyle: .ShortStyle, timeStyle: .ShortStyle)
+    }
+    
     public static func relativeDateStringFromTimestamp(timestamp: Double) -> String? {
         var relativeString: String?
         let date: NSDate = NSDate(timeIntervalSince1970: timestamp/1000)

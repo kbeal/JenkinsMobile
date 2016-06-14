@@ -75,6 +75,7 @@
 		8AC464E219E76F3C00AE5A76 /* UniqueQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC464E019E6179C00AE5A76 /* UniqueQueue.swift */; };
 		8ACE012B1C618418009488DD /* Job+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ACE012A1C618418009488DD /* Job+CoreDataProperties.m */; };
 		8AD3B759191C684F00DB7439 /* KDBBuildsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AD3B758191C684F00DB7439 /* KDBBuildsTableViewController.m */; };
+		8ADD08B51CE6A1DE005F5007 /* BuildDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADD08B41CE6A1DE005F5007 /* BuildDetailViewController.swift */; };
 		8AE348731C471B1A0066A5C7 /* JobDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE348721C471B1A0066A5C7 /* JobDetailViewController.swift */; };
 		8AE3B95C18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE3B95B18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m */; };
 		8AE904B819BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AE904B719BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m */; };
@@ -191,6 +192,7 @@
 		8ACE012A1C618418009488DD /* Job+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Job+CoreDataProperties.m"; sourceTree = "<group>"; };
 		8AD3B757191C684F00DB7439 /* KDBBuildsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBBuildsTableViewController.h; sourceTree = "<group>"; };
 		8AD3B758191C684F00DB7439 /* KDBBuildsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBBuildsTableViewController.m; sourceTree = "<group>"; };
+		8ADD08B41CE6A1DE005F5007 /* BuildDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuildDetailViewController.swift; sourceTree = "<group>"; };
 		8AE348721C471B1A0066A5C7 /* JobDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JobDetailViewController.swift; sourceTree = "<group>"; };
 		8AE3B95A18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KDBJenkinsRequestHandler.h; path = ../KDBJenkinsRequestHandler.h; sourceTree = "<group>"; };
 		8AE3B95B18EF6D5F00E061C1 /* KDBJenkinsRequestHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KDBJenkinsRequestHandler.m; path = ../KDBJenkinsRequestHandler.m; sourceTree = "<group>"; };
@@ -338,6 +340,7 @@
 				8A6133CD1BBCC99D004C70A2 /* attributions */,
 				8A8C0A551BFAA0CF008BF8D9 /* JobDictionary.swift */,
 				8AE348721C471B1A0066A5C7 /* JobDetailViewController.swift */,
+				8ADD08B41CE6A1DE005F5007 /* BuildDetailViewController.swift */,
 				8A10C3291C4AEB4400A8CAFB /* KDBJenkinsTableViewController.swift */,
 				8A10C32B1C4AF1EF00A8CAFB /* JobsTableViewController.swift */,
 				8ABC1B3D1C6D817E008764EF /* DeviceTypes.swift */,
@@ -665,6 +668,7 @@
 				8A76B0F2199C3AE200B219C5 /* Constants.m in Sources */,
 				8AA85D6D1AF070C000F8B915 /* KDBMasterViewController.m in Sources */,
 				8A6D731C1A6F268700BFA0A5 /* ActiveConfiguration+More.m in Sources */,
+				8ADD08B51CE6A1DE005F5007 /* BuildDetailViewController.swift in Sources */,
 				8A8C0A561BFAA0CF008BF8D9 /* JobDictionary.swift in Sources */,
 				8A4ACA641B3A40280088648C /* MenuViewController.swift in Sources */,
 				8A41D37F1AE86EBD00650CFE /* KDBViewsTableViewController.m in Sources */,

@@ -609,6 +609,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
                     self.configureBuildHistoryCell(cell, indexPath: indexPath)
                     break
                 case 2:
+                    // active configurations
                     if let acs = self.job!.activeConfigurations as? [[String: AnyObject]] {
                         self.configureConfigurationCell(cell, configuration: acs[indexPath.row])
                     }
@@ -637,5 +638,57 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         }
 
         return cell
+    }
+    
+    // MARK: - Navigation
+    override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
+        var perform = false
+        if identifier == "showBuildDetail" {
+            // only segue to build details if we in the right view mode
+            // and table section
+            let index: NSIndexPath = (self.tableView?.indexPathForSelectedRow)!
+            if index.section == 0 {
+                if let modeSwitcher = self.viewModeSwitcher {
+                    if modeSwitcher.selectedSegmentIndex < 2 {
+                        perform = true
+                    }
+                }
+            }
+        }
+        return perform
+    }
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "showBuildDetail" {
+            let buildDetailNavController = segue.destinationViewController as! UINavigationController
+            let buildDetailVC = buildDetailNavController.topViewController as! BuildDetailViewController
+            let index: NSIndexPath = (self.tableView?.indexPathForSelectedRow)!
+
+            if index.section == 0 {
+                // switch on selected segment
+                if let modeSwitcher = self.viewModeSwitcher {
+                    switch modeSwitcher.selectedSegmentIndex {
+                    // status, permalinks mode
+                    case 0:
+                        let permalinkwrapper: [String: AnyObject?] = self.permalinks[index.row]
+                        if let permalink = permalinkwrapper[JobPermalinkKey] as! [String: AnyObject]? {
+                            let buildURL: String = permalink[BuildURLKey] as! String
+                            let build = Build.fetchBuildWithURL(buildURL, inContext: syncMgr.mainMOC)
+                            buildDetailVC.build = build
+                        }
+                    //history mode
+                    case 1:
+                        if let latest = self.latestBuilds,
+                            let build = latest[index.row] as? Build {
+                            buildDetailVC.build = build
+                        }
+                    default:
+                        buildDetailVC.build = nil
+                    }
+                }
+            } else {
+                // upstream or downstream
+            }
+            //buildDetailVC.build = self.fetchedResultsController.objectAtIndexPath(self.tableView.indexPathForSelectedRow!) as? Job
+        }
     }
 }
