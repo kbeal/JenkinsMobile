@@ -10,6 +10,7 @@ import UIKit
 
 class BuildDetailViewController: UIViewController , UITableViewDataSource, UITableViewDelegate {
     
+    let syncMgr = SyncManager.sharedInstance
     var build: Build?
     @IBOutlet weak var statusBallView: UIImageView?
     @IBOutlet weak var tableView: UITableView?
@@ -23,14 +24,37 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
         super.viewDidLoad()
 
         if self.build != nil {
-            self.updateLabels()
-            self.updateJobStatusIcon()
+            //observe changes to model
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BuildDetailViewController.handleDataModelChange(_:)), name: NSManagedObjectContextDidSaveNotification, object: syncMgr.masterMOC)
+            // sync this job with latest from server
+            syncMgr.syncBuild(self.build!)
         }
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func handleDataModelChange(notification: NSNotification) {
+        if let userInfo = notification.userInfo {
+            let updatedObjects = userInfo[NSUpdatedObjectsKey] as! NSSet as! Set<NSManagedObject>
+            for obj: NSManagedObject in updatedObjects {
+                if obj.objectID == self.build?.objectID {
+                    self.updateDisplay()
+                }
+            }
+        }
+    }
+    
+    func updateDisplay() {
+        dispatch_async(dispatch_get_main_queue(), {
+            if self.build != nil {
+                self.updateLabels()
+                self.updateJobStatusIcon()
+                self.updateBuildProgressView()
+            }
+        })
     }
     
     func updateLabels() {
@@ -43,6 +67,41 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
             self.startImageViewAnimation(self.statusBallView!, color: self.build!.rel_Build_Job.color!)
         } else {
             self.stopImageViewAnimation(self.statusBallView!, color: Build.getColorForResult(self.build!.result)!)
+        }
+    }
+    
+    func updateBuildProgressView() {
+        if self.build!.building.boolValue {
+            self.updateProgressViewObservedProgress()
+            
+            // create and start build status timer
+//            if self.lastBuildSyncTimer == nil {
+//                self.setTimer(self.syncIntervalForBuild(self.lastbuild!.estimatedDuration.doubleValue))
+//            }
+            
+            // show progress view
+            self.progressView?.hidden = false
+            
+        } else {
+            // hide progress view
+            self.progressView?.hidden = true
+            // stop build status timer, set to nil
+            //self.lastBuildSyncTimer?.invalidate()
+            //self.lastBuildSyncTimer = nil
+        }
+    }
+    
+    func updateProgressViewObservedProgress() {
+        // if the progressview is already observing progress of a build
+        if let observedBuildProgress: BuildProgress = self.progressView?.observedProgress as? BuildProgress {
+            // ensure that its the latest build
+            if observedBuildProgress.buildToWatch.objectID != self.build!.objectID {
+                // observe project of last build
+                self.progressView?.observedProgress = BuildProgress(build: self.build!)
+            }
+        } else {
+            // observe project of last build
+            self.progressView?.observedProgress = BuildProgress(build: self.build!)
         }
     }
     

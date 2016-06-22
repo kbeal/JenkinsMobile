@@ -410,6 +410,24 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         //cell.preservesSuperviewLayoutMargins = false
     }
     
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        // if the status view mode is selected
+        if self.viewModeSwitcher?.selectedSegmentIndex == 0 {
+            // if the selected row is the last row in the permalinks section
+            if ( (indexPath.section == 0) && (indexPath.row == (self.tableView!.numberOfRowsInSection(indexPath.section) - 1))) {
+                // goto the all builds view
+                print("all builds")
+            } else {
+                // else goto build detail
+                self.performSegueWithIdentifier("showBuildDetail", sender: self)
+            }
+        } else {
+            // else goto build detail
+            self.performSegueWithIdentifier("showBuildDetail", sender: self)
+        }
+        self.tableView?.deselectRowAtIndexPath(indexPath, animated: true)
+    }
+    
     // MARK: - Table view data source
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         var numSections: Int = 1

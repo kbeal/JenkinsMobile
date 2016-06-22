@@ -450,9 +450,6 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
-                                        <connections>
-                                            <segue destination="PWN-ae-BQ2" kind="showDetail" identifier="showBuildDetail" id="1Q4-nO-GNk"/>
-                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
@@ -507,6 +504,7 @@
                         <outlet property="statusBallView" destination="lEd-fq-DEE" id="jEb-hQ-eRc"/>
                         <outlet property="tableView" destination="6Hx-9q-DzB" id="0yJ-Jk-FOr"/>
                         <outlet property="viewModeSwitcher" destination="cof-fR-Bg1" id="cSR-Bl-SmU"/>
+                        <segue destination="PWN-ae-BQ2" kind="showDetail" identifier="showBuildDetail" id="cvn-cM-BQk"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2Cc-Tk-6uo" userLabel="First Responder" sceneMemberID="firstResponder"/>
