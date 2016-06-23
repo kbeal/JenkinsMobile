@@ -58,6 +58,14 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         self.configureViewModeSwitcher()
     }
     
+    override func viewDidDisappear(animated: Bool) {
+        print("****** job detail view will disappear")
+        // stop build status timer, set to nil
+        self.lastBuildSyncTimer?.invalidate()
+        self.lastBuildSyncTimer = nil
+        super.viewWillDisappear(animated)
+    }
+    
     // updates last segment to 'Configurations' if this job has active configs
     func configureViewModeSwitcher() {
         if self.jobHasACS {
@@ -68,7 +76,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func setTimer(interval: Double) {
-        lastBuildSyncTimer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: #selector(JobDetailViewController.lastBuildSyncTimerTick), userInfo: nil, repeats: true)
+        self.lastBuildSyncTimer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: #selector(lastBuildSyncTimerTick), userInfo: nil, repeats: true)
         self.lastBuildSyncTimerTick()
     }
     
@@ -138,7 +146,6 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     func lastBuildSyncTimerTick() {
         // query build progress
         if self.lastbuild != nil {
-            print("********** syncing progress for build \(self.lastbuild!.number.integerValue)")
             self.syncMgr.syncProgressForBuild(self.lastbuild!, jenkinsInstance: self.job!.rel_Job_JenkinsInstance!)
         }
     }

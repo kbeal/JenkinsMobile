@@ -12,6 +12,7 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     
     let syncMgr = SyncManager.sharedInstance
     var build: Build?
+    var buildSyncTimer: NSTimer?
     @IBOutlet weak var statusBallView: UIImageView?
     @IBOutlet weak var tableView: UITableView?
     @IBOutlet weak var emptyTableView: UIView?
@@ -29,6 +30,14 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
             // sync this job with latest from server
             syncMgr.syncBuild(self.build!)
         }
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        print("****** build detail view will disappear")
+        // stop build status timer, set to nil
+        self.buildSyncTimer?.invalidate()
+        self.buildSyncTimer = nil
+        super.viewWillDisappear(animated)
     }
 
     override func didReceiveMemoryWarning() {
@@ -75,9 +84,9 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
             self.updateProgressViewObservedProgress()
             
             // create and start build status timer
-//            if self.lastBuildSyncTimer == nil {
-//                self.setTimer(self.syncIntervalForBuild(self.lastbuild!.estimatedDuration.doubleValue))
-//            }
+            if self.buildSyncTimer == nil {
+                self.setTimer(self.syncIntervalForBuild(self.build!.estimatedDuration.doubleValue))
+            }
             
             // show progress view
             self.progressView?.hidden = false
@@ -86,8 +95,33 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
             // hide progress view
             self.progressView?.hidden = true
             // stop build status timer, set to nil
-            //self.lastBuildSyncTimer?.invalidate()
-            //self.lastBuildSyncTimer = nil
+            self.buildSyncTimer?.invalidate()
+            self.buildSyncTimer = nil
+        }
+    }
+    
+    func setTimer(interval: Double) {
+        self.buildSyncTimer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: #selector(buildSyncTimerTick), userInfo: nil, repeats: true)
+        self.buildSyncTimerTick()
+    }
+    
+    // determines how often to pool a build for completion.
+    // the longer the esimatedDuration the less often it is polled
+    func syncIntervalForBuild(estimatedDuration: Double) -> Double {
+        //        let durationSec = estimatedDuration / 1000
+        //        // if the estimated duration is 9 minutes is less
+        //        if durationSec <= 540 {
+        //            return (durationSec * 0.5)
+        //        } else {
+        //            return (durationSec * 0.01)
+        //        }
+        return 1.0
+    }
+    
+    func buildSyncTimerTick() {
+        // query build progress
+        if self.build != nil {
+            self.syncMgr.syncProgressForBuild(self.build!, jenkinsInstance: self.build!.rel_Build_Job.rel_Job_JenkinsInstance!)
         }
     }
     
