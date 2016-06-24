@@ -179,12 +179,28 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        var numRows: Int = 0
+        var numRows: Int = 2
         return numRows
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = self.tableView!.dequeueReusableCellWithIdentifier("BuildCell", forIndexPath: indexPath)        
+        let cell: UITableViewCell = self.tableView!.dequeueReusableCellWithIdentifier("BuildCell", forIndexPath: indexPath)
+        
+        if ( indexPath.row == 0 ) {
+            if let actions = self.build!.actions as? [[String: AnyObject]] {
+                for action: [String: AnyObject] in actions {
+                    if let causes = action["causes"] as? [[String: AnyObject]] {
+                        let firstcause = causes[0]
+                        if let shortDesc = firstcause["shortDescription"] as? String {
+                            cell.textLabel?.text = shortDesc
+                        }
+                    }
+                }
+            }
+        } else {
+            
+        }
+        
         return cell
     }
     
