@@ -185,6 +185,8 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell: UITableViewCell = self.tableView!.dequeueReusableCellWithIdentifier("BuildCell", forIndexPath: indexPath)
+        var labelTxt: String = ""
+        var detailLableTxt: String = ""
         
         if ( indexPath.row == 0 ) {
             if let actions = self.build!.actions as? [[String: AnyObject]] {
@@ -192,18 +194,33 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
                     if let causes = action["causes"] as? [[String: AnyObject]] {
                         let firstcause = causes[0]
                         if let shortDesc = firstcause["shortDescription"] as? String {
-                            cell.textLabel?.text = shortDesc
+                            labelTxt = shortDesc
+                            cell.imageView?.image = UIImage(named:"orange-square")
                         }
                     }
                 }
             }
         } else {
-            
+            if let actions = self.build!.actions as? [[String: AnyObject]] {
+                for action: [String: AnyObject] in actions {
+                    if let lastrev = action["lastBuiltRevision"] as? [String: AnyObject],
+                    let branch = lastrev["branch"] as? [[String:AnyObject]],
+                    let sha1 = branch[0]["SHA1"] as? String,
+                    let name = branch[0]["name"] as? String {
+                        labelTxt = "Revision: " + String(sha1.characters.prefix(10))
+                        detailLableTxt = name
+                        cell.imageView?.image = UIImage(named: "git-logo")
+                    }
+                }
+            }
         }
         
+        cell.textLabel?.text = labelTxt
+        cell.detailTextLabel?.text = detailLableTxt
+    
         return cell
     }
-    
+
     /*
     // MARK: - Navigation
 
