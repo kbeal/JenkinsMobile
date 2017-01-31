@@ -8,12 +8,12 @@
 
 import Foundation
 
-let IS_IPAD = (UI_USER_INTERFACE_IDIOM() == .Pad)
-let IS_IPHONE = (UI_USER_INTERFACE_IDIOM() == .Phone)
-let IS_RETINA = (UIScreen.mainScreen().scale >= 2.0)
+let IS_IPAD = (UI_USER_INTERFACE_IDIOM() == .pad)
+let IS_IPHONE = (UI_USER_INTERFACE_IDIOM() == .phone)
+let IS_RETINA = (UIScreen.main.scale >= 2.0)
 
-let SCREEN_WIDTH = (UIScreen.mainScreen().bounds.size.width)
-let SCREEN_HEIGHT = (UIScreen.mainScreen().bounds.size.height)
+let SCREEN_WIDTH = (UIScreen.main.bounds.size.width)
+let SCREEN_HEIGHT = (UIScreen.main.bounds.size.height)
 let SCREEN_MAX_LENGTH = (max(SCREEN_WIDTH, SCREEN_HEIGHT))
 let SCREEN_MIN_LENGTH = (min(SCREEN_WIDTH, SCREEN_HEIGHT))
 

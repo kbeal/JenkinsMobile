@@ -14,20 +14,20 @@ let canvasSize: CGSize = CGSize(width: width, height: height)
 
 class StatusCircle {
     
-    static func imageForCircle(color: UIColor) -> UIImage {
+    static func imageForCircle(_ color: UIColor) -> UIImage {
         // create the context
         UIGraphicsBeginImageContextWithOptions(canvasSize, false, 0)
         //let context = UIGraphicsGetCurrentContext()
         
         // setup the circle size
-        let circleRect: CGRect = CGRectMake(0, 0, canvasSize.width, canvasSize.height)
+        let circleRect: CGRect = CGRect(x: 0, y: 0, width: canvasSize.width, height: canvasSize.height)
         
         // Draw the Circle
-        let path = UIBezierPath(ovalInRect: circleRect)
+        let path = UIBezierPath(ovalIn: circleRect)
         color.setFill()
         path.fill()
         
         // return Image
-        return UIGraphicsGetImageFromCurrentImageContext()
+        return UIGraphicsGetImageFromCurrentImageContext()!
     }
 }

@@ -485,8 +485,10 @@
 				TargetAttributes = {
 					8AC329E818E4F3A90002D106 = {
 						DevelopmentTeam = P7854HNS86;
+						LastSwiftMigration = 0820;
 					};
 					8AC32A1418E4F3A90002D106 = {
+						LastSwiftMigration = 0820;
 						TestTargetID = 8AC329E818E4F3A90002D106;
 					};
 				};
@@ -840,6 +842,7 @@
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "JenkinsMobile/JenkinsMobile-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -863,6 +866,7 @@
 				PROVISIONING_PROFILE = "";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "JenkinsMobile/JenkinsMobile-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -892,6 +896,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "JenkinsMobileTests/JenkinsMobileTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -916,6 +921,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.kylebeal.ios.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "JenkinsMobileTests/JenkinsMobileTests-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};

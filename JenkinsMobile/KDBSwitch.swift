@@ -9,10 +9,10 @@
 import UIKit
 
 enum SwitchViewType {
-    case UseAuthentication
-    case AllowInvalidSSL
-    case Enabled
-    case Active
+    case useAuthentication
+    case allowInvalidSSL
+    case enabled
+    case active
 }
 
 class KDBSwitch: UISwitch {

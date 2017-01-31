@@ -44,6 +44,6 @@ class BuildDictionaryTests: XCTestCase {
     
     func testValueForKey() {
         let build1: BuildDictionary? = BuildDictionary(dictionary: NSDictionary(objects: [1,"SUCCESS","www.google.com/job/Job1/1/"], forKeys: [BuildNumberKey,BuildResultKey,BuildURLKey]))
-        XCTAssertEqual((build1!.valueForKey(BuildNumberKey) as! Int), 1)
+        XCTAssertEqual((build1!.value(forKey: BuildNumberKey) as! Int), 1)
     }
 }

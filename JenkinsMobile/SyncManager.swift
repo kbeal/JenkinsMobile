@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-public class SyncManager: NSObject {
+open class SyncManager: NSObject {
 
     var dataMgr: DataManager = DataManager.sharedInstance
     var masterMOC: NSManagedObjectContext
@@ -20,23 +20,23 @@ public class SyncManager: NSObject {
             if (currentJenkinsInstance != nil) {
                 self.syncJenkinsInstance(currentJenkinsInstance!)
                 self.updateCurrentURLPref(currentJenkinsInstance!.url!)
-                let notification = NSNotification(name: SyncManagerCurrentJenkinsInstanceChangedNotification, object: nil)
-                NSNotificationCenter.defaultCenter().postNotification(notification)
+                let notification = Notification(name: NSNotification.Name.SyncManagerCurrentJenkinsInstanceChanged, object: nil)
+                NotificationCenter.default.post(notification)
             }
         }
     }
     
-    private var jobSyncQueue = UniqueQueue<Job>()
-    private var viewSyncQueue = UniqueQueue<View>()
-    private var buildSyncQueue = UniqueQueue<Build>()
-    private var syncTimer: NSTimer?
+    fileprivate var jobSyncQueue = UniqueQueue<Job>()
+    fileprivate var viewSyncQueue = UniqueQueue<View>()
+    fileprivate var buildSyncQueue = UniqueQueue<Build>()
+    fileprivate var syncTimer: Timer?
     //var currentBuilds: NSMutableArray
     //var currentBuildsTimer: NSTimer
     var requestHandler: KDBJenkinsRequestHandler
     
     
     // MARK: - Init and Setup
-    public class var sharedInstance : SyncManager {
+    open class var sharedInstance : SyncManager {
         struct Static {
             static let instance : SyncManager = SyncManager()
         }
@@ -50,9 +50,9 @@ public class SyncManager: NSObject {
         super.init()
         initTimer()
         initObservers()
-        let defaults = NSUserDefaults.standardUserDefaults()
-        if let url: String = defaults.stringForKey(SyncManagerCurrentJenkinsInstance) {
-            self.currentJenkinsInstance = JenkinsInstance.fetchJenkinsInstanceWithURL(url, fromManagedObjectContext: self.mainMOC)
+        let defaults = UserDefaults.standard
+        if let url: String = defaults.string(forKey: SyncManagerCurrentJenkinsInstance) {
+            self.currentJenkinsInstance = JenkinsInstance.fetch(withURL: url, from: self.mainMOC)
         }
     }
     
@@ -60,33 +60,33 @@ public class SyncManager: NSObject {
         let runningTests = NSClassFromString("XCTestCase") != nil
         if !runningTests {
             // only start the timer if we aren't running unit tests
-            syncTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: #selector(SyncManager.syncTimerTick), userInfo: nil, repeats: true)
+            syncTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(SyncManager.syncTimerTick), userInfo: nil, repeats: true)
         }
     }
     
     // set up any NSNotificationCenter observers
     func initObservers() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.jobDetailResponseReceived(_:)), name: JobDetailResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.jobDetailRequestFailed(_:)), name: JobDetailRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.jenkinsInstanceDetailResponseReceived(_:)), name: JenkinsInstanceDetailResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.jenkinsInstanceDetailRequestFailed(_:)), name: JenkinsInstanceDetailRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.jenkinsInstanceViewsResponseReceived(_:)), name: JenkinsInstanceViewsResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.jenkinsInstanceDetailRequestFailed(_:)), name: JenkinsInstanceViewsRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.viewDetailResponseReceived(_:)), name: ViewDetailResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.viewChildViewsResponseReceived(_:)), name: ViewChildViewsResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.viewDetailRequestFailed(_:)), name: ViewDetailRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.viewDetailRequestFailed(_:)), name: ViewChildViewsRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.buildDetailResponseReceived(_:)), name: BuildDetailResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.buildDetailRequestFailed(_:)), name: BuildDetailRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.activeConfigurationDetailResponseReceived(_:)), name: ActiveConfigurationDetailResponseReceivedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.activeConfigurationDetailRequestFailed(_:)), name: ActiveConfigurationDetailRequestFailedNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SyncManager.buildProgressResponseReceived(_:)), name: BuildProgressResponseReceivedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.jobDetailResponseReceived(_:)), name: NSNotification.Name.JobDetailResponseReceived, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.jobDetailRequestFailed(_:)), name: NSNotification.Name.JobDetailRequestFailed, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.jenkinsInstanceDetailResponseReceived(_:)), name: NSNotification.Name.JenkinsInstanceDetailResponseReceived, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.jenkinsInstanceDetailRequestFailed(_:)), name: NSNotification.Name.JenkinsInstanceDetailRequestFailed, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.jenkinsInstanceViewsResponseReceived(_:)), name: NSNotification.Name.JenkinsInstanceViewsResponseReceived, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.jenkinsInstanceDetailRequestFailed(_:)), name: NSNotification.Name.JenkinsInstanceViewsRequestFailed, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.viewDetailResponseReceived(_:)), name: NSNotification.Name.ViewDetailResponseReceived, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.viewChildViewsResponseReceived(_:)), name: NSNotification.Name.ViewChildViewsResponseReceived, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.viewDetailRequestFailed(_:)), name: NSNotification.Name.ViewDetailRequestFailed, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.viewDetailRequestFailed(_:)), name: NSNotification.Name.ViewChildViewsRequestFailed, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.buildDetailResponseReceived(_:)), name: NSNotification.Name.BuildDetailResponseReceived, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.buildDetailRequestFailed(_:)), name: NSNotification.Name.BuildDetailRequestFailed, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.activeConfigurationDetailResponseReceived(_:)), name: NSNotification.Name.ActiveConfigurationDetailResponseReceived, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.activeConfigurationDetailRequestFailed(_:)), name: NSNotification.Name.ActiveConfigurationDetailRequestFailed, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.buildProgressResponseReceived(_:)), name: NSNotification.Name.BuildProgressResponseReceived, object: nil)
     }
     
     func syncTimerTick() {
         if (jobSyncQueue.count() > 0) {
             // pop a job from the jobQueue and sync it
-            self.masterMOC.performBlock({
+            self.masterMOC.perform({
                 let job = self.jobSyncQueue.pop()!
                 self.syncJob(job)
             })
@@ -94,7 +94,7 @@ public class SyncManager: NSObject {
         
         if (viewSyncQueue.count() > 0) {
             // pop a view from the jobQueue and sync it
-            self.masterMOC.performBlock({
+            self.masterMOC.perform({
                 let view = self.viewSyncQueue.pop()!
                 self.syncView(view)
             })
@@ -102,23 +102,23 @@ public class SyncManager: NSObject {
         
         if (buildSyncQueue.count() > 0) {
             // pop a build from the jobQueue and sync it
-            self.masterMOC.performBlock({
+            self.masterMOC.perform({
                 let build = self.buildSyncQueue.pop()!
                 self.syncBuild(build)
             })
         }
     }
     
-    func updateCurrentURLPref(newURL: String) {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setObject(newURL, forKey: SyncManagerCurrentJenkinsInstance)
+    func updateCurrentURLPref(_ newURL: String) {
+        let defaults = UserDefaults.standard
+        defaults.set(newURL, forKey: SyncManagerCurrentJenkinsInstance)
     }
     
-    public func jobSyncQueueSize() -> Int { return jobSyncQueue.count() }
+    open func jobSyncQueueSize() -> Int { return jobSyncQueue.count() }
     
     // MARK: - Sync Objects
-    public func syncAllJobs(jenkinsInstance: JenkinsInstance) {
-        masterMOC.performBlock({
+    open func syncAllJobs(_ jenkinsInstance: JenkinsInstance) {
+        masterMOC.perform({
             if let bgji: JenkinsInstance = self.dataMgr.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance {
                 let allJobs = bgji.rel_Jobs
                 for job in allJobs! {
@@ -130,8 +130,8 @@ public class SyncManager: NSObject {
         })
     }
     
-    public func syncAllViews(jenkinsInstance: JenkinsInstance) {
-        masterMOC.performBlock({
+    open func syncAllViews(_ jenkinsInstance: JenkinsInstance) {
+        masterMOC.perform({
             if let bgji: JenkinsInstance = self.dataMgr.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance {
                 let allViews = bgji.rel_Views
                 for view in allViews! {
@@ -143,9 +143,9 @@ public class SyncManager: NSObject {
         })
     }
     
-    public func syncAllJobsForView(view: View) {
+    open func syncAllJobsForView(_ view: View) {
         if let bgview: View = self.dataMgr.ensureObjectOnBackgroundThread(view) as? View {
-            masterMOC.performBlock({
+            masterMOC.perform({
                 let viewjobs = bgview.rel_View_Jobs
                 for job in viewjobs! {
                     self.jobSyncQueue.push(job)
@@ -154,9 +154,9 @@ public class SyncManager: NSObject {
         }
     }
     
-    public func syncSubViewsForView(view: View) {
+    open func syncSubViewsForView(_ view: View) {
         if let bgview: View = self.dataMgr.ensureObjectOnBackgroundThread(view) as? View {
-            masterMOC.performBlock({
+            masterMOC.perform({
                 let subviews = bgview.rel_View_Views
                 for subview in subviews! {
                     self.viewSyncQueue.push(subview)
@@ -165,50 +165,50 @@ public class SyncManager: NSObject {
         }
     }
     
-    public func syncJenkinsInstance(instance: JenkinsInstance) {
+    open func syncJenkinsInstance(_ instance: JenkinsInstance) {
         if let bgji: JenkinsInstance = self.dataMgr.ensureObjectOnBackgroundThread(instance) as? JenkinsInstance {
-            self.masterMOC.performBlock({
-                self.requestHandler.importDetailsForJenkinsInstance(bgji)                
+            self.masterMOC.perform({
+                self.requestHandler.importDetails(for: bgji)                
             })
         }
     }
     
-    public func syncViewsForJenkinsInstance(instance: JenkinsInstance) {
+    open func syncViewsForJenkinsInstance(_ instance: JenkinsInstance) {
         if let bgji: JenkinsInstance = self.dataMgr.ensureObjectOnBackgroundThread(instance) as? JenkinsInstance {
-            self.masterMOC.performBlock({
-                self.requestHandler.importViewsForJenkinsInstance(bgji)
+            self.masterMOC.perform({
+                self.requestHandler.importViews(for: bgji)
             })
         }
     }
     
-    public func syncView(view: View) {
+    open func syncView(_ view: View) {
         if let bgview: View = self.dataMgr.ensureObjectOnBackgroundThread(view) as? View {
-            self.masterMOC.performBlock({
+            self.masterMOC.perform({
                 // sync view details and queue all jobs in view for sync
-                self.requestHandler.importDetailsForView(bgview)
+                self.requestHandler.importDetails(for: bgview)
             })
         }
     }
     
-    public func syncChildViewsForView(view: View) {
+    open func syncChildViewsForView(_ view: View) {
         if let bgview: View = self.dataMgr.ensureObjectOnBackgroundThread(view) as? View {
-            self.masterMOC.performBlock({
-                self.requestHandler.importChildViewsForView(bgview)
+            self.masterMOC.perform({
+                self.requestHandler.importChildViews(for: bgview)
             })
         }
     }
     
-    public func syncJob(job: Job) {
+    open func syncJob(_ job: Job) {
         if let bgjob: Job = self.dataMgr.ensureObjectOnBackgroundThread(job) as? Job {
-            self.masterMOC.performBlock({
-                self.requestHandler.importDetailsForJob(bgjob)
+            self.masterMOC.perform({
+                self.requestHandler.importDetails(for: bgjob)
             })
         }
     }
     
-    public func syncLatestBuildsForJob(job: Job, numberOfBuilds: Int32) {
+    open func syncLatestBuildsForJob(_ job: Job, numberOfBuilds: Int32) {
         if let bgjob: Job = self.dataMgr.ensureObjectOnBackgroundThread(job) as? Job {
-            self.masterMOC.performBlock({
+            self.masterMOC.perform({
                 if let latestBuilds: [Build] = bgjob.fetchLatestBuilds(numberOfBuilds) as? [Build] {
                     for build: Build in latestBuilds {
                         self.buildSyncQueue.push(build)
@@ -218,57 +218,57 @@ public class SyncManager: NSObject {
         }
     }
     
-    public func syncBuild(build: Build) {
+    open func syncBuild(_ build: Build) {
         if let bgbuild: Build = self.dataMgr.ensureObjectOnBackgroundThread(build) as? Build {
-            self.masterMOC.performBlock({
-                self.requestHandler.importDetailsForBuild(bgbuild)
+            self.masterMOC.perform({
+                self.requestHandler.importDetails(for: bgbuild)
             })
         }
     }
     
-    public func syncActiveConfiguration(ac: ActiveConfiguration) {
+    open func syncActiveConfiguration(_ ac: ActiveConfiguration) {
         if let bgac: ActiveConfiguration = self.dataMgr.ensureObjectOnBackgroundThread(ac) as? ActiveConfiguration {
-            self.masterMOC.performBlock({
-                self.requestHandler.importDetailsForActiveConfiguration(bgac)
+            self.masterMOC.perform({
+                self.requestHandler.importDetails(for: bgac)
             })
         }
     }
     
-    public func syncProgressForBuild(build: Build, jenkinsInstance: JenkinsInstance) {
+    open func syncProgressForBuild(_ build: Build, jenkinsInstance: JenkinsInstance) {
         if let bgbuild: Build = self.dataMgr.ensureObjectOnBackgroundThread(build) as? Build,
             let bgji: JenkinsInstance = self.dataMgr.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance{
-            self.masterMOC.performBlock({
-                self.requestHandler.importProgressForBuild(bgbuild, onJenkinsInstance: bgji)
+            self.masterMOC.perform({
+                self.requestHandler.importProgress(for: bgbuild, on: bgji)
             })
         }
     }
     
     // MARK: - Responses Received
-    func jobDetailResponseReceived(notification: NSNotification) {
+    func jobDetailResponseReceived(_ notification: Notification) {
         var values: Dictionary = notification.userInfo!
         let job = values[RequestedObjectKey] as! Job
         
-        job.managedObjectContext?.performBlock({
+        job.managedObjectContext?.perform({
             values[JobLastSyncResultKey] = "200: OK"
             values[JobJenkinsInstanceKey] = job.rel_Job_JenkinsInstance
-            values[JobLastSyncKey] = NSDate()
+            values[JobLastSyncKey] = Date()
             job.setValues(values)
             self.saveContext(job.managedObjectContext)
         })
     }
     
     // triggered by successful view details requests
-    func viewDetailResponseReceived(notification: NSNotification) {
+    func viewDetailResponseReceived(_ notification: Notification) {
         var values: Dictionary = notification.userInfo!
         let view = values[RequestedObjectKey] as! View
         
-        view.managedObjectContext?.performBlock({
+        view.managedObjectContext?.perform({
             values[ViewLastSyncResultKey] = "200: OK"
             values[ViewJenkinsInstanceKey] = view.rel_View_JenkinsInstance
-            values[ViewParentViewKey] = view.rel_ParentView
+            values[ViewParentViewKey] = view.rel_Parent
             view.setValues(values)
             self.saveContext(view.managedObjectContext)
-            self.dataMgr.masterMOC.performBlock({
+            self.dataMgr.masterMOC.perform({
                 self.dataMgr.saveContext(self.dataMgr.masterMOC)
             })
         })
@@ -278,17 +278,17 @@ public class SyncManager: NSObject {
     }
     
     // triggered by successful view child views requests
-    func viewChildViewsResponseReceived(notification: NSNotification) {
+    func viewChildViewsResponseReceived(_ notification: Notification) {
         var values: Dictionary = notification.userInfo!
         let view = values[RequestedObjectKey] as! View
         
-        view.managedObjectContext?.performBlock({
+        view.managedObjectContext?.perform({
             values[ViewLastSyncResultKey] = "200: OK"
             values[ViewJenkinsInstanceKey] = view.rel_View_JenkinsInstance
-            values[ViewParentViewKey] = view.rel_ParentView
+            values[ViewParentViewKey] = view.rel_Parent
             view.updateValues(values)
             self.saveContext(view.managedObjectContext)
-            self.dataMgr.masterMOC.performBlock({
+            self.dataMgr.masterMOC.perform({
                 self.dataMgr.saveContext(self.dataMgr.masterMOC)
             })
         })
@@ -297,11 +297,11 @@ public class SyncManager: NSObject {
         //self.syncSubViewsForView(view)
     }
     
-    func jenkinsInstanceDetailResponseReceived(notification: NSNotification) {
+    func jenkinsInstanceDetailResponseReceived(_ notification: Notification) {
         var values: Dictionary = notification.userInfo!
         let ji: JenkinsInstance = values[RequestedObjectKey] as! JenkinsInstance
         
-        ji.managedObjectContext?.performBlock({
+        ji.managedObjectContext?.perform({
             if (ji.lastSyncResult == nil) {
                 self.notifyOfNewLargeInstance(values,url: ji.url!)
             }
@@ -314,19 +314,19 @@ public class SyncManager: NSObject {
 
             ji.setValues(values)
             self.saveContext(ji.managedObjectContext)
-            self.dataMgr.masterMOC.performBlock({
+            self.dataMgr.masterMOC.perform({
                 self.dataMgr.saveContext(self.dataMgr.masterMOC)
             })
             // post notification that we're done saving this JenkinsInstance
-            let notification = NSNotification(name: JenkinsInstanceDidSaveNotification, object: nil, userInfo: [JenkinsInstanceURLKey: ji.url!])
-            NSNotificationCenter.defaultCenter().postNotification(notification)
+            let notification = Notification(name: NSNotification.Name.JenkinsInstanceDidSave, object: nil, userInfo: [JenkinsInstanceURLKey: ji.url!])
+            NotificationCenter.default.post(notification)
 
             self.syncAllViews(ji)
         })
     }
     
     // sends notification if this instance has > 1,000 jobs
-    func notifyOfNewLargeInstance(values: [NSObject: AnyObject], url: String) {
+    func notifyOfNewLargeInstance(_ values: [AnyHashable: Any], url: String) {
         let views: [[String: AnyObject]] = values[JenkinsInstanceViewsKey] as! [[String: AnyObject]]
         var largestJobCnt = 0
         for view in views {
@@ -338,16 +338,16 @@ public class SyncManager: NSObject {
         
         if (largestJobCnt > 1000) {
             // post notification that we're saving a new JenkinsInstance
-            let notification = NSNotification(name: NewLargeJenkinsInstanceDetailResponseReceivedNotification, object: nil, userInfo: [JenkinsInstanceURLKey: url])
-            NSNotificationCenter.defaultCenter().postNotification(notification)
+            let notification = Notification(name: NSNotification.Name.NewLargeJenkinsInstanceDetailResponseReceived, object: nil, userInfo: [JenkinsInstanceURLKey: url])
+            NotificationCenter.default.post(notification)
         }
     }
     
-    func jenkinsInstanceViewsResponseReceived(notification: NSNotification) {
+    func jenkinsInstanceViewsResponseReceived(_ notification: Notification) {
         var values: Dictionary = notification.userInfo!
         let ji: JenkinsInstance = values[RequestedObjectKey] as! JenkinsInstance
         
-        ji.managedObjectContext?.performBlock({
+        ji.managedObjectContext?.perform({
             values[JenkinsInstanceEnabledKey] = true
             values[JenkinsInstanceAuthenticatedKey] = true
             values[JenkinsInstanceLastSyncResultKey] = "200: OK"
@@ -357,7 +357,7 @@ public class SyncManager: NSObject {
             
             ji.updateValues(values)
             self.saveContext(ji.managedObjectContext)
-            self.dataMgr.masterMOC.performBlock({
+            self.dataMgr.masterMOC.perform({
                 self.dataMgr.saveContext(self.dataMgr.masterMOC)
             })
 
@@ -365,11 +365,11 @@ public class SyncManager: NSObject {
         })
     }
     
-    func buildDetailResponseReceived(notification: NSNotification) {
+    func buildDetailResponseReceived(_ notification: Notification) {
         var values: Dictionary = notification.userInfo!
         let build: Build = values[RequestedObjectKey] as! Build
         
-        build.managedObjectContext?.performBlock({
+        build.managedObjectContext?.perform({
             values[BuildLastSyncResultKey] = "200: OK"
             values[BuildJobKey] = build.rel_Build_Job
             build.setValues(values)
@@ -377,25 +377,25 @@ public class SyncManager: NSObject {
         })
     }
     
-    func activeConfigurationDetailResponseReceived(notification: NSNotification) {
+    func activeConfigurationDetailResponseReceived(_ notification: Notification) {
         var values: Dictionary = notification.userInfo!
         let ac: ActiveConfiguration = values[RequestedObjectKey] as! ActiveConfiguration
         let job = ac.rel_ActiveConfiguration_Job
         
-        ac.managedObjectContext?.performBlock({
+        ac.managedObjectContext?.perform({
             values[ActiveConfigurationLastSyncResultKey] = "200: OK"
             values[ActiveConfigurationJobKey] = job
-            values[ActiveConfigurationLastSyncKey] = NSDate()
+            values[ActiveConfigurationLastSyncKey] = Date()
             ac.setValues(values)
             self.saveContext(ac.managedObjectContext)
         })
     }
     
-    func buildProgressResponseReceived(notification: NSNotification) {
+    func buildProgressResponseReceived(_ notification: Notification) {
         var values: Dictionary = notification.userInfo!
         let build: Build = values[RequestedObjectKey] as! Build
         
-        build.managedObjectContext?.performBlock({
+        build.managedObjectContext?.perform({
             build.setProgressUpdateValues(values)
             
             // if we switched to building to not building, re-query the job itself
@@ -408,7 +408,7 @@ public class SyncManager: NSObject {
     }
     
     // MARK: - Requests that Failed
-    func jobDetailRequestFailed(notification: NSNotification) {
+    func jobDetailRequestFailed(_ notification: Notification) {
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         //let errorUserInfo: Dictionary = requestError.userInfo
@@ -418,26 +418,26 @@ public class SyncManager: NSObject {
             let status: Int = userInfo[StatusCodeKey] as! Int
             switch status {
             case 404:
-                job.managedObjectContext?.performBlock({
-                    job.managedObjectContext?.deleteObject(job)
+                job.managedObjectContext?.perform({
+                    job.managedObjectContext?.delete(job)
                     self.saveContext(job.managedObjectContext)
                 })
             default:
-                job.managedObjectContext?.performBlock({
-                    job.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
+                job.managedObjectContext?.perform({
+                    job.lastSyncResult = String(status) + ": " + HTTPURLResponse.localizedString(forStatusCode: status)
                     self.saveContext(job.managedObjectContext)
                 })
             }
         default:
-            job.managedObjectContext?.performBlock({
-                job.managedObjectContext?.deleteObject(job)
+            job.managedObjectContext?.perform({
+                job.managedObjectContext?.delete(job)
                 self.saveContext(job.managedObjectContext)
             })
         }
     }
     
     // triggered by failed view details requests as well as failed view child views requests
-    func viewDetailRequestFailed(notification: NSNotification) {
+    func viewDetailRequestFailed(_ notification: Notification) {
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         //let errorUserInfo: Dictionary = requestError.userInfo
@@ -448,25 +448,25 @@ public class SyncManager: NSObject {
             let status: Int = userInfo[StatusCodeKey] as! Int
             switch status {
             case 404:
-                view.managedObjectContext?.performBlock({
-                    view.managedObjectContext?.deleteObject(view)
+                view.managedObjectContext?.perform({
+                    view.managedObjectContext?.delete(view)
                     self.saveContext(view.managedObjectContext)
                 })
             default:
-                view.managedObjectContext?.performBlock({
-                    view.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
+                view.managedObjectContext?.perform({
+                    view.lastSyncResult = String(status) + ": " + HTTPURLResponse.localizedString(forStatusCode: status)
                     self.saveContext(view.managedObjectContext)
                 })
             }
         default:
-            view.managedObjectContext?.performBlock({
-                view.managedObjectContext?.deleteObject(view)
+            view.managedObjectContext?.perform({
+                view.managedObjectContext?.delete(view)
                 self.saveContext(view.managedObjectContext)
             })
         }
     }
     
-    func jenkinsInstanceDetailRequestFailed(notification: NSNotification) {
+    func jenkinsInstanceDetailRequestFailed(_ notification: Notification) {
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         //let errorUserInfo: Dictionary = requestError.userInfo
@@ -475,7 +475,7 @@ public class SyncManager: NSObject {
         switch requestError.code {
         case NSURLErrorBadServerResponse:
             let status: Int = userInfo[StatusCodeKey] as! Int
-            let message: String = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
+            let message: String = String(status) + ": " + HTTPURLResponse.localizedString(forStatusCode: status)
             switch status {
             case 401:
                 unauthenticateJenkinsInstance(ji,message: message)
@@ -492,7 +492,7 @@ public class SyncManager: NSObject {
         }
     }
     
-    func buildDetailRequestFailed(notification: NSNotification) {
+    func buildDetailRequestFailed(_ notification: Notification) {
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         //let errorUserInfo: Dictionary = requestError.userInfo
@@ -503,25 +503,25 @@ public class SyncManager: NSObject {
             let status: Int = userInfo[StatusCodeKey] as! Int
             switch status {
             case 404:
-                build.managedObjectContext?.performBlock({
-                    build.managedObjectContext?.deleteObject(build)
+                build.managedObjectContext?.perform({
+                    build.managedObjectContext?.delete(build)
                     self.saveContext(build.managedObjectContext)
                 })
             default:
-                build.managedObjectContext?.performBlock({
-                    build.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
+                build.managedObjectContext?.perform({
+                    build.lastSyncResult = String(status) + ": " + HTTPURLResponse.localizedString(forStatusCode: status)
                     self.saveContext(build.managedObjectContext)
                 })
             }
         default:
-            build.managedObjectContext?.performBlock({
-                build.managedObjectContext?.deleteObject(build)
+            build.managedObjectContext?.perform({
+                build.managedObjectContext?.delete(build)
                 self.saveContext(build.managedObjectContext)
             })
         }
     }
     
-    func activeConfigurationDetailRequestFailed(notification: NSNotification) {
+    func activeConfigurationDetailRequestFailed(_ notification: Notification) {
         let userInfo: Dictionary = notification.userInfo!
         let requestError: NSError = userInfo[RequestErrorKey] as! NSError
         //let errorUserInfo: Dictionary = requestError.userInfo
@@ -532,19 +532,19 @@ public class SyncManager: NSObject {
             let status: Int = userInfo[StatusCodeKey] as! Int
             switch status {
             case 404:
-                ac.managedObjectContext?.performBlock({
-                    ac.managedObjectContext?.deleteObject(ac)
+                ac.managedObjectContext?.perform({
+                    ac.managedObjectContext?.delete(ac)
                     self.saveContext(ac.managedObjectContext)
                 })
             default:
-                ac.managedObjectContext?.performBlock({
-                    ac.lastSyncResult = String(status) + ": " + NSHTTPURLResponse.localizedStringForStatusCode(status)
+                ac.managedObjectContext?.perform({
+                    ac.lastSyncResult = String(status) + ": " + HTTPURLResponse.localizedString(forStatusCode: status)
                     self.saveContext(ac.managedObjectContext)
                 })
             }
         default:
-            ac.managedObjectContext?.performBlock({
-                ac.managedObjectContext?.deleteObject(ac)
+            ac.managedObjectContext?.perform({
+                ac.managedObjectContext?.delete(ac)
                 self.saveContext(ac.managedObjectContext)
             })
         }
@@ -552,16 +552,16 @@ public class SyncManager: NSObject {
 
     // MARK: - Helper methods
     // TODO: Should these go in the JenkinsInstance model?
-    func unauthenticateJenkinsInstance(ji: JenkinsInstance, message: String) {
-        ji.managedObjectContext?.performBlock({
+    func unauthenticateJenkinsInstance(_ ji: JenkinsInstance, message: String) {
+        ji.managedObjectContext?.perform({
             ji.authenticated = false
             ji.lastSyncResult = message
             self.saveContext(ji.managedObjectContext)
         })
     }
     
-    func disableJenkinsInstance(ji: JenkinsInstance, message: String) {
-        ji.managedObjectContext?.performBlock({
+    func disableJenkinsInstance(_ ji: JenkinsInstance, message: String) {
+        ji.managedObjectContext?.perform({
             ji.enabled = false
             ji.lastSyncResult = message
             self.saveContext(ji.managedObjectContext)
@@ -569,7 +569,7 @@ public class SyncManager: NSObject {
     }
     
     // MARK: NSManagedObjectContext management
-    func saveContext(context: NSManagedObjectContext?) {
+    func saveContext(_ context: NSManagedObjectContext?) {
         self.dataMgr.saveContext(context!)
     }
 }

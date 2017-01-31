@@ -26,7 +26,7 @@ class JobsTableViewController: KDBJenkinsTableViewController, NSFetchedResultsCo
             self.navigationItem.leftBarButtonItem = nil
             self.navigationItem.title = self.parentView!.name
         } else {
-            self.navigationItem.leftBarButtonItem?.image = UIImage(named: "logo.png")?.imageWithRenderingMode(.AlwaysOriginal)
+            self.navigationItem.leftBarButtonItem?.image = UIImage(named: "logo.png")?.withRenderingMode(.alwaysOriginal)
             self.navigationItem.title = "All Jobs"
         }
     }
@@ -47,45 +47,45 @@ class JobsTableViewController: KDBJenkinsTableViewController, NSFetchedResultsCo
 //    }
     
     // MARK: - Table view data source
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return (self.fetchedResultsController.sections?.count)!
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let sectionInfo = self.fetchedResultsController.sections![section]
         return sectionInfo.numberOfObjects
     }
     
-    func configureCell(cell: UITableViewCell, indexPath: NSIndexPath) {
-        let job = self.fetchedResultsController.objectAtIndexPath(indexPath) as! Job
+    func configureCell(_ cell: UITableViewCell, indexPath: IndexPath) {
+        let job = self.fetchedResultsController.object(at: indexPath) as! Job
         cell.textLabel?.text = job.name
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = self.tableView.dequeueReusableCellWithIdentifier("JobCell", forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = self.tableView.dequeueReusableCell(withIdentifier: "JobCell", for: indexPath)
         self.configureCell(cell, indexPath: indexPath)
         return cell
     }
     
     // MARK: - Navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showJobDetail" {
-            let jobDetailNavController = segue.destinationViewController as! UINavigationController
+            let jobDetailNavController = segue.destination as! UINavigationController
             let jobDetailTVC = jobDetailNavController.topViewController as! JobDetailViewController
-            jobDetailTVC.job = self.fetchedResultsController.objectAtIndexPath(self.tableView.indexPathForSelectedRow!) as? Job
+            jobDetailTVC.job = self.fetchedResultsController.object(at: self.tableView.indexPathForSelectedRow!) as? Job
         }
     }
     
     // MARK: - Fetched Results Controller Delegate
-    var fetchedResultsController: NSFetchedResultsController {
+    var fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult> {
         if self._fetchedResultsController != nil {
             return self._fetchedResultsController!
         }
         let managedObjectContext = self.managedObjectContext
         
-        let entity = NSEntityDescription.entityForName("Job", inManagedObjectContext: managedObjectContext)
+        let entity = NSEntityDescription.entity(forEntityName: "Job", in: managedObjectContext)
         let sort = NSSortDescriptor(key: "name", ascending: true)
-        let req = NSFetchRequest()
+        let req = NSFetchRequest<NSFetchRequestResult>()
         req.entity = entity
         req.sortDescriptors = [sort]
         
@@ -108,6 +108,6 @@ class JobsTableViewController: KDBJenkinsTableViewController, NSFetchedResultsCo
         
         return self._fetchedResultsController!
     }
-    var _fetchedResultsController: NSFetchedResultsController?
+    var _fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult>?
 
 }

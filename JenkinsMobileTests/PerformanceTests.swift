@@ -24,7 +24,7 @@ class PerformanceTests: XCTestCase {
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8080/"]
         let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://localhost:8080", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         
-        context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: self.context!)})
+        context?.performAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstance(withValues: jenkinsInstanceValues as [AnyHashable: Any], in: self.context!)})
         self.jenkinsInstance?.password = "password"
         self.jenkinsInstance?.allowInvalidSSLCertificate = true
         
@@ -32,13 +32,13 @@ class PerformanceTests: XCTestCase {
     }
     
     override func tearDown() {
-        self.jenkinsInstance?.managedObjectContext?.deleteObject(self.jenkinsInstance!)
+        self.jenkinsInstance?.managedObjectContext?.delete(self.jenkinsInstance!)
         saveContext()
     }
     
     func saveContext () {
         datamgr.saveContext(datamgr.mainMOC)
-        datamgr.masterMOC.performBlockAndWait({
+        datamgr.masterMOC.performAndWait({
             self.datamgr.saveContext(self.datamgr.masterMOC)
         })
     }
@@ -50,22 +50,22 @@ class PerformanceTests: XCTestCase {
         var existingJobNames: [String] = []
         
         for i in 1...existingJobCount {
-            let uuid = NSUUID().UUIDString
+            let uuid = UUID().uuidString
             let vals: [String: AnyObject] = [JobNameKey: uuid, JobURLKey: "http://localhost:8080/job/"+uuid, JobColorKey: "blue", JobJenkinsInstanceKey: self.jenkinsInstance!]
-            Job.createJobWithValues(vals, inManagedObjectContext: self.context!)
+            Job.createJob(withValues: vals, in: self.context!)
             // save half of the names up to jobBatchCount
             if ((i%2 == 0) && (existingJobNames.count < jobBatchCount)){
                 existingJobNames.append(uuid)
             }
         }
         
-        let knownuuid = NSUUID().UUIDString
+        let knownuuid = UUID().uuidString
         let knownVals: [String: AnyObject] = [JobNameKey: knownuuid, JobURLKey: "http://localhost:8080/job/"+knownuuid, JobColorKey: "blue", JobJenkinsInstanceKey: self.jenkinsInstance!]
-        Job.createJobWithValues(knownVals, inManagedObjectContext: self.context!)
+        Job.createJob(withValues: knownVals, in: self.context!)
         jobNames.append(knownuuid)
         
         for _ in 1...jobBatchCount {
-            let uuid = NSUUID().UUIDString
+            let uuid = UUID().uuidString
             jobNames.append(uuid)
         }
         
@@ -73,8 +73,8 @@ class PerformanceTests: XCTestCase {
         XCTAssertEqual(self.jenkinsInstance?.rel_Jobs!.count, existingJobCount+1)
         XCTAssertEqual(existingJobNames.count, jobBatchCount)
         
-        self.measureBlock({
-            let jobs = Job.fetchJobsWithNames(jobNames, inManagedObjectContext: self.context!, andJenkinsInstance: self.jenkinsInstance!)
+        self.measure({
+            let jobs = Job.fetchJobs(withNames: jobNames, in: self.context!, andJenkinsInstance: self.jenkinsInstance!)
             XCTAssertEqual(jobs.count, 1)
             //let existingJobs = Job.fetchJobsWithNames(existingJobNames, inManagedObjectContext: self.context, andJenkinsInstance: self.jenkinsInstance)
             //XCTAssertEqual(existingJobs.count, jobBatchCount)
@@ -87,14 +87,14 @@ class PerformanceTests: XCTestCase {
         var jobSet: NSSet
         
         for _ in 1...jobcount {
-            let uuid = NSUUID().UUIDString
+            let uuid = UUID().uuidString
             let dict = NSDictionary(objects: [uuid,"blue","http://www.google.com"], forKeys: [JobNameKey,JobColorKey,JobURLKey])
             jobs.append(JobDictionary(dictionary: dict)!)
         }
         
         jobSet = NSSet(array: jobs)
         
-        self.measureBlock({
+        self.measure({
             jobSet = NSSet(array: jobs)
         })
         
@@ -103,8 +103,8 @@ class PerformanceTests: XCTestCase {
 
     func testPerformanceViewSaveValues() {
         let jobcount = 1000
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.datamgr.masterMOC, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.datamgr.masterMOC, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -121,17 +121,17 @@ class PerformanceTests: XCTestCase {
         
         var jobs: [Dictionary<String, String>] = []
         for _ in 1...jobcount {
-            let uuid = NSUUID().UUIDString
+            let uuid = UUID().uuidString
             jobs.append([JobNameKey: uuid, JobColorKey: "blue", JobURLKey: "http://www.google.com"])
         }
         
-        let values: [NSObject: AnyObject] = [ViewNameKey: "TestView", ViewURLKey: "http://localhost:8080/view/TestView/", ViewJobsKey: jobs, ViewJenkinsInstanceKey: self.jenkinsInstance!]
+        let values: [AnyHashable: Any] = [ViewNameKey: "TestView", ViewURLKey: "http://localhost:8080/view/TestView/", ViewJobsKey: jobs, ViewJenkinsInstanceKey: self.jenkinsInstance!]
         
-        self.measureBlock({
-            View.createViewWithValues(values, inManagedObjectContext: self.datamgr.masterMOC)
+        self.measure({
+            View.createView(withValues: values, in: self.datamgr.masterMOC)
         })
         
-        waitForExpectationsWithTimeout(20, handler: { error in
+        waitForExpectations(timeout: 20, handler: { error in
             
         })
     }

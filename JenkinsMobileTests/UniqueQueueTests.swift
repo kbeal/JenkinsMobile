@@ -21,7 +21,7 @@ class UniqueQueueTests: XCTestCase {
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
         let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         
-        self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: datamgr.mainMOC)
+        self.jenkinsInstance = JenkinsInstance.createJenkinsInstance(withValues: jenkinsInstanceValues as [AnyHashable: Any], in: datamgr.mainMOC)
     }
 
     func testUniqueQueueIter() {
@@ -31,10 +31,10 @@ class UniqueQueueTests: XCTestCase {
         let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
-        let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: context)
-        let job3 = Job.createJobWithValues(job3vals, inManagedObjectContext: context)
-        let job4 = Job.createJobWithValues(job4vals, inManagedObjectContext: context)
+        let job1 = Job.createJob(withValues: job1vals, in: context)
+        let job2 = Job.createJob(withValues: job2vals, in: context)
+        let job3 = Job.createJob(withValues: job3vals, in: context)
+        let job4 = Job.createJob(withValues: job4vals, in: context)
         
         uq.push(job1)
         uq.push(job2)
@@ -56,10 +56,10 @@ class UniqueQueueTests: XCTestCase {
         let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
-        let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: context)
-        let job3 = Job.createJobWithValues(job3vals, inManagedObjectContext: context)
-        let job4 = Job.createJobWithValues(job4vals, inManagedObjectContext: context)
+        let job1 = Job.createJob(withValues: job1vals, in: context)
+        let job2 = Job.createJob(withValues: job2vals, in: context)
+        let job3 = Job.createJob(withValues: job3vals, in: context)
+        let job4 = Job.createJob(withValues: job4vals, in: context)
         
         uq.push(job1)
         uq.push(job2)
@@ -87,10 +87,10 @@ class UniqueQueueTests: XCTestCase {
         let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
-        let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: context)
-        let job3 = Job.createJobWithValues(job3vals, inManagedObjectContext: context)
-        let job4 = Job.createJobWithValues(job4vals, inManagedObjectContext: context)
+        let job1 = Job.createJob(withValues: job1vals, in: context)
+        let job2 = Job.createJob(withValues: job2vals, in: context)
+        let job3 = Job.createJob(withValues: job3vals, in: context)
+        let job4 = Job.createJob(withValues: job4vals, in: context)
         
         uq.push(job1)
         uq.push(job2)
@@ -110,8 +110,8 @@ class UniqueQueueTests: XCTestCase {
         
         let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
-        let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: context)
+        let job1 = Job.createJob(withValues: job1vals, in: context)
+        let job2 = Job.createJob(withValues: job2vals, in: context)
         
         //initial item count should be 0
         XCTAssertEqual(uq.count(), 0, "initial uq count is wrong")
@@ -131,10 +131,10 @@ class UniqueQueueTests: XCTestCase {
         let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
         let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context)
-        let job2 = Job.createJobWithValues(job2vals, inManagedObjectContext: context)
-        let job3 = Job.createJobWithValues(job3vals, inManagedObjectContext: context)
-        let job4 = Job.createJobWithValues(job4vals, inManagedObjectContext: context)
+        let job1 = Job.createJob(withValues: job1vals, in: context)
+        let job2 = Job.createJob(withValues: job2vals, in: context)
+        let job3 = Job.createJob(withValues: job3vals, in: context)
+        let job4 = Job.createJob(withValues: job4vals, in: context)
         
         uq.push(job1)
         uq.push(job2)

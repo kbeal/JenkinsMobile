@@ -12,7 +12,7 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     
     let syncMgr = SyncManager.sharedInstance
     var build: Build?
-    var buildSyncTimer: NSTimer?
+    var buildSyncTimer: Timer?
     @IBOutlet weak var statusBallView: UIImageView?
     @IBOutlet weak var tableView: UITableView?
     @IBOutlet weak var emptyTableView: UIView?
@@ -26,13 +26,13 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
 
         if self.build != nil {
             //observe changes to model
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BuildDetailViewController.handleDataModelChange(_:)), name: NSManagedObjectContextDidSaveNotification, object: syncMgr.masterMOC)
+            NotificationCenter.default.addObserver(self, selector: #selector(BuildDetailViewController.handleDataModelChange(_:)), name: NSNotification.Name.NSManagedObjectContextDidSave, object: syncMgr.masterMOC)
             // sync this job with latest from server
             syncMgr.syncBuild(self.build!)
         }
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         print("****** build detail view will disappear")
         // stop build status timer, set to nil
         self.buildSyncTimer?.invalidate()
@@ -45,7 +45,7 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
         // Dispose of any resources that can be recreated.
     }
     
-    func handleDataModelChange(notification: NSNotification) {
+    func handleDataModelChange(_ notification: Notification) {
         if let userInfo = notification.userInfo {
             let updatedObjects = userInfo[NSUpdatedObjectsKey] as! NSSet as! Set<NSManagedObject>
             for obj: NSManagedObject in updatedObjects {
@@ -57,7 +57,7 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     }
     
     func updateDisplay() {
-        dispatch_async(dispatch_get_main_queue(), {
+        DispatchQueue.main.async(execute: {
             if self.build != nil {
                 self.updateLabels()
                 self.updateJobStatusIcon()
@@ -67,7 +67,7 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     }
     
     func updateLabels() {
-        self.buildNumberLabel?.text = "# " + String(self.build!.number)
+        self.buildNumberLabel?.text = "# " + String(describing: self.build!.number)
         self.buildDateLabel?.text = DateHelper.dateStringFromDate(self.build!.timestamp)
     }
     
@@ -89,25 +89,25 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
             }
             
             // show progress view
-            self.progressView?.hidden = false
+            self.progressView?.isHidden = false
             
         } else {
             // hide progress view
-            self.progressView?.hidden = true
+            self.progressView?.isHidden = true
             // stop build status timer, set to nil
             self.buildSyncTimer?.invalidate()
             self.buildSyncTimer = nil
         }
     }
     
-    func setTimer(interval: Double) {
-        self.buildSyncTimer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: #selector(buildSyncTimerTick), userInfo: nil, repeats: true)
+    func setTimer(_ interval: Double) {
+        self.buildSyncTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(buildSyncTimerTick), userInfo: nil, repeats: true)
         self.buildSyncTimerTick()
     }
     
     // determines how often to pool a build for completion.
     // the longer the esimatedDuration the less often it is polled
-    func syncIntervalForBuild(estimatedDuration: Double) -> Double {
+    func syncIntervalForBuild(_ estimatedDuration: Double) -> Double {
         //        let durationSec = estimatedDuration / 1000
         //        // if the estimated duration is 9 minutes is less
         //        if durationSec <= 540 {
@@ -139,19 +139,19 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
         }
     }
     
-    func startImageViewAnimation(imageView: UIImageView, color: String) {
+    func startImageViewAnimation(_ imageView: UIImageView, color: String) {
         imageView.animationImages = self.animationImages(color)
         imageView.animationDuration = StatusBallAnimationDuration
         imageView.startAnimating()
     }
     
-    func stopImageViewAnimation(imageView: UIImageView, color: String) {
+    func stopImageViewAnimation(_ imageView: UIImageView, color: String) {
         imageView.image = UIImage(named: color + "-status-100")
         imageView.stopAnimating()
         imageView.animationImages = nil
     }
     
-    func animationImages(color: String) -> [UIImage] {
+    func animationImages(_ color: String) -> [UIImage] {
         return [
             UIImage(named: color + "-status-100")!,
             UIImage(named: color + "-status-80")!,
@@ -164,27 +164,27 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     }
     
     // MARK: - Table view delegate
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         // http://stackoverflow.com/a/25877725
-        cell.separatorInset = UIEdgeInsetsZero
-        cell.layoutMargins = UIEdgeInsetsZero
+        cell.separatorInset = UIEdgeInsets.zero
+        cell.layoutMargins = UIEdgeInsets.zero
         // Doesn't seem to be needed. Keep for posterity
         //cell.preservesSuperviewLayoutMargins = false
     }
 
     // MARK: - Table view data source
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        var numSections: Int = 1
+    func numberOfSections(in tableView: UITableView) -> Int {
+        let numSections: Int = 1
         return numSections
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        var numRows: Int = 2
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let numRows: Int = 2
         return numRows
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = self.tableView!.dequeueReusableCellWithIdentifier("BuildCell", forIndexPath: indexPath)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: UITableViewCell = self.tableView!.dequeueReusableCell(withIdentifier: "BuildCell", for: indexPath)
         var labelTxt: String = ""
         var detailLableTxt: String = ""
         

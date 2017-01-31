@@ -14,45 +14,45 @@
 
 import Foundation
 
-public class JobDictionary: NSObject, NSCoding {
+open class JobDictionary: NSObject, NSCoding {
     
     var dictionary: NSDictionary!
     
     required convenience public init?(coder decoder: NSCoder) {
-        let dictionary = decoder.decodeObjectForKey(JobDictionaryDictionaryKey) as! NSDictionary
+        let dictionary = decoder.decodeObject(forKey: JobDictionaryDictionaryKey) as! NSDictionary
         self.init(dictionary: dictionary)
     }
     
     public init?(dictionary: NSDictionary) {
         super.init()
-        let name: String? = dictionary.objectForKey(JobNameKey) as? String
+        let name: String? = dictionary.object(forKey: JobNameKey) as? String
         if name == nil { return nil }
         self.dictionary = dictionary
     }
     
-    public subscript(key: AnyObject) -> AnyObject? {
-        return self.dictionary.objectForKey(key)
+    open subscript(key: AnyObject) -> AnyObject? {
+        return self.dictionary.object(forKey: key) as AnyObject?
     }
     
-    public override func isEqual(object: AnyObject?) -> Bool {
+    open override func isEqual(_ object: Any?) -> Bool {
         var isEqual: Bool = false
         
         if let obj: JobDictionary = object as? JobDictionary {
-            isEqual = obj[JobNameKey]!.isEqual(self.dictionary[JobNameKey])
+            isEqual = obj[JobNameKey as AnyObject]!.isEqual(self.dictionary[JobNameKey])
         }
         
         return isEqual
     }
     
-    public override var hash: Int {
-        return self.dictionary.objectForKey(JobNameKey)!.hash
+    open override var hash: Int {
+        return (self.dictionary.object(forKey: JobNameKey)! as AnyObject).hash
     }
     
-    public override func valueForKey(key: String) -> AnyObject? {
-        return self.dictionary.valueForKey(key)
+    open override func value(forKey key: String) -> Any? {
+        return self.dictionary.value(forKey: key)
     }
 
-    public func encodeWithCoder(coder: NSCoder) {
-        coder.encodeObject(self.dictionary, forKey: JobDictionaryDictionaryKey)
+    open func encode(with coder: NSCoder) {
+        coder.encode(self.dictionary, forKey: JobDictionaryDictionaryKey)
     }
 }

@@ -18,7 +18,7 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
         self.managedObjectContext = SyncManager.sharedInstance.mainMOC
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.tableView.reloadData()
     }
@@ -29,17 +29,17 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
     }
 
     // MARK: - Table view data source
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let sectionInfo = self.fetchedResultsController.sections![section] 
         return sectionInfo.numberOfObjects
     }
 
-    func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
-        let jinstance = self.fetchedResultsController.objectAtIndexPath(indexPath) as! JenkinsInstance
+    func configureCell(_ cell: UITableViewCell, atIndexPath indexPath: IndexPath) {
+        let jinstance = self.fetchedResultsController.object(at: indexPath) as! JenkinsInstance
         cell.textLabel?.text = jinstance.name
         cell.detailTextLabel?.text = jinstance.url
         
@@ -47,24 +47,24 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
             if ((jinstance.url != nil) && (currentJI.url == jinstance.url)) {
                 if (currentJI.shouldAuthenticate!.boolValue) {
                     if ((jinstance.authenticated != nil) && (currentJI.authenticated!.boolValue)) {
-                        cell.imageView?.image = StatusCircle.imageForCircle(UIColor.blueColor())
+                        cell.imageView?.image = StatusCircle.imageForCircle(UIColor.blue)
                     } else {
-                        cell.imageView?.image = StatusCircle.imageForCircle(UIColor.redColor())
+                        cell.imageView?.image = StatusCircle.imageForCircle(UIColor.red)
                     }
                 } else {
-                    cell.imageView?.image = StatusCircle.imageForCircle(UIColor.blueColor())
+                    cell.imageView?.image = StatusCircle.imageForCircle(UIColor.blue)
                 }
             } else {
-                cell.imageView?.image = StatusCircle.imageForCircle(UIColor.grayColor())
+                cell.imageView?.image = StatusCircle.imageForCircle(UIColor.gray)
             }
         } else {
-            cell.imageView?.image = StatusCircle.imageForCircle(UIColor.grayColor())
+            cell.imageView?.image = StatusCircle.imageForCircle(UIColor.gray)
         }
         
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("JenkinsInstanceCell", forIndexPath: indexPath) 
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "JenkinsInstanceCell", for: indexPath) 
         configureCell(cell, atIndexPath: indexPath)
         return cell
     }
@@ -107,39 +107,40 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using [segue destinationViewController].
         // Pass the selected object to the new view controller.
-        let destinationNavController: UINavigationController = segue.destinationViewController as! UINavigationController
+        let destinationNavController: UINavigationController = segue.destination as! UINavigationController
         let destination: JenkinsInstanceTableViewController = destinationNavController.topViewController as! JenkinsInstanceTableViewController
         
         if (segue.identifier == "showJenkinsInstance") {
-            destination.jinstance = self.fetchedResultsController.objectAtIndexPath(self.tableView.indexPathForSelectedRow!) as! JenkinsInstance
+            destination.jinstance = self.fetchedResultsController.object(at: self.tableView.indexPathForSelectedRow!) as! JenkinsInstance
         } else {
-            destination.jinstance = JenkinsInstance.createJenkinsInstanceWithValues(nil, inManagedObjectContext: self.managedObjectContext!)
+            destination.jinstance = JenkinsInstance.createJenkinsInstance(withValues: nil, in: self.managedObjectContext!)
         }
         destination.subMenuDelegate = self
     }
     
     // MARK: - SubMenu Delegate
     func revealToggle() {
-        let time = dispatch_time(dispatch_time_t(DISPATCH_TIME_NOW), Int64(0.5 * Double(NSEC_PER_SEC)))
-        dispatch_after(time, dispatch_get_main_queue()) {
+        let time = DispatchTime(uptimeNanoseconds: DispatchTime.now().uptimeNanoseconds) + Double(Int64(0.5 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+        
+        DispatchQueue.main.asyncAfter(deadline: time) {
             let revealVC = self.revealViewController()
-            revealVC.revealToggleAnimated(true)
+            revealVC?.revealToggle(animated: true)
         }
     }
 
     // MARK: - Fetched Results Controller Delegate
-    var fetchedResultsController: NSFetchedResultsController {
+    var fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult> {
         if self._fetchedResultsController != nil {
             return self._fetchedResultsController!
         }
         let managedObjectContext = self.managedObjectContext!
         
-        let entity = NSEntityDescription.entityForName("JenkinsInstance", inManagedObjectContext: managedObjectContext)
+        let entity = NSEntityDescription.entity(forEntityName: "JenkinsInstance", in: managedObjectContext)
         let sort = NSSortDescriptor(key: "name", ascending: true)
-        let req = NSFetchRequest()
+        let req = NSFetchRequest<NSFetchRequestResult>()
         req.entity = entity
         req.sortDescriptors = [sort]
         
@@ -158,30 +159,30 @@ class MenuViewController: UITableViewController, NSFetchedResultsControllerDeleg
         
         return self._fetchedResultsController!
     }
-    var _fetchedResultsController: NSFetchedResultsController?
+    var _fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult>?
     
-    func controllerWillChangeContent(controller: NSFetchedResultsController) {
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         self.tableView.beginUpdates()
     }
     
-    func controller(controller: NSFetchedResultsController, didChangeObject object: AnyObject, atIndexPath indexPath: NSIndexPath?,
-        forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange object: Any, at indexPath: IndexPath?,
+        for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
             switch type {
-            case .Insert:
-                self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
-            case .Update:
-                let cell = self.tableView.cellForRowAtIndexPath(indexPath!)
+            case .insert:
+                self.tableView.insertRows(at: [newIndexPath!], with: UITableViewRowAnimation.fade)
+            case .update:
+                let cell = self.tableView.cellForRow(at: indexPath!)
                 self.configureCell(cell!, atIndexPath: indexPath!)
-                self.tableView.reloadRowsAtIndexPaths([indexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
-            case .Move:
-                self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
-                self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
-            case .Delete:
-                self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: UITableViewRowAnimation.Fade)
+                self.tableView.reloadRows(at: [indexPath!], with: UITableViewRowAnimation.fade)
+            case .move:
+                self.tableView.deleteRows(at: [indexPath!], with: UITableViewRowAnimation.fade)
+                self.tableView.insertRows(at: [newIndexPath!], with: UITableViewRowAnimation.fade)
+            case .delete:
+                self.tableView.deleteRows(at: [indexPath!], with: UITableViewRowAnimation.fade)
             }
     }
     
-    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         self.tableView.endUpdates()
     }
 

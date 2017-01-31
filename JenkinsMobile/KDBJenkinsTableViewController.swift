@@ -28,9 +28,9 @@ class KDBJenkinsTableViewController: UITableViewController {
     }
     
     func setSplitViewDelegate() {
-        let appDelegate = UIApplication.sharedApplication().delegate as! KDBAppDelegate
+        let appDelegate = UIApplication.shared.delegate as! KDBAppDelegate
         let revealController = self.revealViewController()
-        let splitController = revealController.frontViewController as! UISplitViewController
+        let splitController = revealController?.frontViewController as! UISplitViewController
         splitController.delegate = appDelegate
     }
 }

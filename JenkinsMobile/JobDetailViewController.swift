@@ -8,13 +8,37 @@
 
 import UIKit
 import SpriteKit
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 class JobDetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     var job: Job?
     var lastbuild: Build?
     var permalinks = [[String:AnyObject?]]()
-    var lastBuildSyncTimer: NSTimer?
+    var lastBuildSyncTimer: Timer?
     var latestBuilds: [AnyObject]?
     var upstreamProjectsSectionIndex: Int?
     var downstreamProjectsSectionIndex: Int?
@@ -40,7 +64,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         if self.job != nil {
             self.lastbuild = self.getLatestBuild()
             //observe changes to model
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(JobDetailViewController.handleDataModelChange(_:)), name: NSManagedObjectContextDidSaveNotification, object: syncMgr.masterMOC)
+            NotificationCenter.default.addObserver(self, selector: #selector(JobDetailViewController.handleDataModelChange(_:)), name: NSNotification.Name.NSManagedObjectContextDidSave, object: syncMgr.masterMOC)
             // sync this job with latest from server
             syncMgr.syncJob(self.job!)
             // sync details for latest builds
@@ -58,7 +82,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         self.configureViewModeSwitcher()
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         print("****** job detail view will disappear")
         // stop build status timer, set to nil
         self.lastBuildSyncTimer?.invalidate()
@@ -69,14 +93,14 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     // updates last segment to 'Configurations' if this job has active configs
     func configureViewModeSwitcher() {
         if self.jobHasACS {
-            self.viewModeSwitcher?.setTitle("Configurations", forSegmentAtIndex: 2)
+            self.viewModeSwitcher?.setTitle("Configurations", forSegmentAt: 2)
         } else {
-            self.viewModeSwitcher?.setTitle("Description", forSegmentAtIndex: 2)
+            self.viewModeSwitcher?.setTitle("Description", forSegmentAt: 2)
         }
     }
     
-    func setTimer(interval: Double) {
-        self.lastBuildSyncTimer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self, selector: #selector(lastBuildSyncTimerTick), userInfo: nil, repeats: true)
+    func setTimer(_ interval: Double) {
+        self.lastBuildSyncTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(lastBuildSyncTimerTick), userInfo: nil, repeats: true)
         self.lastBuildSyncTimerTick()
     }
     
@@ -85,16 +109,16 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         // fetch the last build
         if let jobLastBuild: [String:AnyObject] = self.job?.lastBuild as? [String:AnyObject],
             let lastBuildURL: String = jobLastBuild[BuildURLKey] as? String {
-                build = Build.fetchBuildWithURL(lastBuildURL, inContext: syncMgr.mainMOC)
+                build = Build.fetch(withURL: lastBuildURL, in: syncMgr.mainMOC)
         }
         return build
     }
     
     func fetchLatestBuilds() {
-        self.latestBuilds = self.job!.fetchLatestBuilds(30)
+        self.latestBuilds = self.job!.fetchLatestBuilds(30) as [AnyObject]?
     }
     
-    func handleDataModelChange(notification: NSNotification) {
+    func handleDataModelChange(_ notification: Notification) {
         if let userInfo = notification.userInfo {
             let updatedObjects = userInfo[NSUpdatedObjectsKey] as! NSSet as! Set<NSManagedObject>
             for obj: NSManagedObject in updatedObjects {
@@ -111,11 +135,11 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func watchedJobChanged() {
-        dispatch_async(dispatch_get_main_queue(), {
+        DispatchQueue.main.async(execute: {
             // if job's last build changed make sure it gets synced up
             if let jobLastBuild: [String:AnyObject] = self.job!.lastBuild as? [String:AnyObject] {
                 if let jobLastBuildNum: Int = jobLastBuild[BuildNumberKey] as? Int {
-                    if jobLastBuildNum != self.lastbuild?.number.integerValue {
+                    if jobLastBuildNum != self.lastbuild?.number.intValue {
                         self.syncMgr.syncLatestBuildsForJob(self.job!, numberOfBuilds: 5)
                         self.lastbuild = self.getLatestBuild()
                     }
@@ -126,13 +150,13 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     
     func setNavTitleAndButton() {
         if job != nil {
-            self.navigationItem.leftBarButtonItem?.image = UIImage(named: "logo.png")?.imageWithRenderingMode(.AlwaysOriginal)
+            self.navigationItem.leftBarButtonItem?.image = UIImage(named: "logo.png")?.withRenderingMode(.alwaysOriginal)
             self.navigationItem.title = job!.name
         }
     }
     
     func updateDisplay() {
-        dispatch_async(dispatch_get_main_queue(), {
+        DispatchQueue.main.async(execute: {
             if self.job != nil {
                 self.updateLastBuildLabels()
                 self.updateJobStatusIcon()
@@ -156,7 +180,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
             if healthReports.count > 0 {
                 let firstReport: Dictionary<String, AnyObject> = healthReports[0]
                 if let healthIconClassName = firstReport[JobHealthReportIconClassNameKey] as? String {
-                    healthImageName = healthIconClassName.stringByReplacingOccurrencesOfString("icon-", withString: "")
+                    healthImageName = healthIconClassName.replacingOccurrences(of: "icon-", with: "")
                 }
             }
         }
@@ -183,12 +207,12 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
                 
                 // show progress view
                 //print("********** showing progress view: \(self.progressView?.progress)")
-                self.progressView?.hidden = false
+                self.progressView?.isHidden = false
 
             } else {
                 //print("********** hiding progress view")
                 // hide progress view
-                self.progressView?.hidden = true
+                self.progressView?.isHidden = true
                 // stop build status timer, set to nil
                 self.lastBuildSyncTimer?.invalidate()
                 self.lastBuildSyncTimer = nil
@@ -214,7 +238,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     // permalinks table, all build history table, job description, etc
     // based on user's choice
     @IBAction func updateContentModeView() {
-        dispatch_async(dispatch_get_main_queue(), {
+        DispatchQueue.main.async(execute: {
             switch self.viewModeSwitcher!.selectedSegmentIndex {
             case 0:
                 // status, or permalinks mode
@@ -237,22 +261,22 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func showBuildsTable() {
-        self.emptyPermalinksView?.hidden = true
-        self.tableView?.hidden = false
-        self.descriptionView!.hidden = true
+        self.emptyPermalinksView?.isHidden = true
+        self.tableView?.isHidden = false
+        self.descriptionView!.isHidden = true
     }
     
     func showEmptyBuildsTable() {
-        self.emptyPermalinksView?.hidden = false
-        self.tableView?.hidden = true
-        self.descriptionView!.hidden = true
+        self.emptyPermalinksView?.isHidden = false
+        self.tableView?.isHidden = true
+        self.descriptionView!.isHidden = true
     }
     
     func showDescriptionView() {
         self.updateJobDescriptionView()
-        self.emptyPermalinksView?.hidden = true
-        self.tableView?.hidden = true
-        self.descriptionView!.hidden = false
+        self.emptyPermalinksView?.isHidden = true
+        self.tableView?.isHidden = true
+        self.descriptionView!.isHidden = false
     }
     
     func updateBuildsTable() {
@@ -295,7 +319,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     func updateJobDescriptionView() {
         if let desc = self.job!.job_description {
             do {
-                let attrdesc = try NSAttributedString(data: desc.dataUsingEncoding(NSUTF8StringEncoding)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType, NSCharacterEncodingDocumentAttribute: NSUTF8StringEncoding], documentAttributes: nil)
+                let attrdesc = try NSAttributedString(data: desc.data(using: String.Encoding.utf8)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType, NSCharacterEncodingDocumentAttribute: String.Encoding.utf8], documentAttributes: nil)
                 self.descriptionView?.attributedText = attrdesc
             } catch {
                 self.descriptionView?.text = ""
@@ -324,19 +348,19 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
-    func startImageViewAnimation(imageView: UIImageView, color: String) {
+    func startImageViewAnimation(_ imageView: UIImageView, color: String) {
         imageView.animationImages = self.animationImages(color)
         imageView.animationDuration = StatusBallAnimationDuration
         imageView.startAnimating()
     }
     
-    func stopImageViewAnimation(imageView: UIImageView, color: String) {
+    func stopImageViewAnimation(_ imageView: UIImageView, color: String) {
         imageView.image = UIImage(named: color + "-status-100")
         imageView.stopAnimating()
         imageView.animationImages = nil
     }
     
-    func animationImages(color: String) -> [UIImage] {
+    func animationImages(_ color: String) -> [UIImage] {
         return [
             UIImage(named: color + "-status-100")!,
             UIImage(named: color + "-status-80")!,
@@ -351,37 +375,37 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     // Updates array of permalink builds that is used
     // as datasource for permalinks table view
     func updatePermalinks() {
-        self.permalinks.removeAll(keepCapacity: true)
+        self.permalinks.removeAll(keepingCapacity: true)
         if self.job!.lastBuild != nil {
-            self.permalinks.append([JobPermalinkNameKey:"Last build",JobPermalinkKey: self.job!.lastBuild!])
+            self.permalinks.append([JobPermalinkNameKey:"Last build" as Optional<AnyObject>,JobPermalinkKey: self.job!.lastBuild! as Optional<AnyObject>])
         }
         
         if self.job?.lastStableBuild != nil {
-            self.permalinks.append([JobPermalinkNameKey:"Last stable build",JobPermalinkKey: self.job!.lastStableBuild!])
+            self.permalinks.append([JobPermalinkNameKey:"Last stable build" as Optional<AnyObject>,JobPermalinkKey: self.job!.lastStableBuild! as Optional<AnyObject>])
         }
         
         if self.job?.lastSuccessfulBuild != nil {
-            self.permalinks.append([JobPermalinkNameKey:"Last successful build",JobPermalinkKey: self.job!.lastSuccessfulBuild!])
+            self.permalinks.append([JobPermalinkNameKey:"Last successful build" as Optional<AnyObject>,JobPermalinkKey: self.job!.lastSuccessfulBuild! as Optional<AnyObject>])
         }
         
         if self.job?.lastFailedBuild != nil {
-            self.permalinks.append([JobPermalinkNameKey:"Last failed build",JobPermalinkKey: self.job!.lastFailedBuild!])
+            self.permalinks.append([JobPermalinkNameKey:"Last failed build" as Optional<AnyObject>,JobPermalinkKey: self.job!.lastFailedBuild! as Optional<AnyObject>])
         }
         
         if self.job?.lastUnsuccessfulBuild != nil {
-            self.permalinks.append([JobPermalinkNameKey:"Last unsuccessful build",JobPermalinkKey: self.job!.lastUnsuccessfulBuild!])
+            self.permalinks.append([JobPermalinkNameKey:"Last unsuccessful build" as Optional<AnyObject>,JobPermalinkKey: self.job!.lastUnsuccessfulBuild! as Optional<AnyObject>])
         }
         
         if self.job?.lastUnstableBuild != nil {
-            self.permalinks.append([JobPermalinkNameKey:"Last unstable build",JobPermalinkKey: self.job!.lastUnstableBuild!])
+            self.permalinks.append([JobPermalinkNameKey:"Last unstable build" as Optional<AnyObject>,JobPermalinkKey: self.job!.lastUnstableBuild! as Optional<AnyObject>])
         }
         
         if self.job?.lastCompletedBuild != nil {
-            self.permalinks.append([JobPermalinkNameKey:"Last completed build",JobPermalinkKey: self.job!.lastCompletedBuild!])
+            self.permalinks.append([JobPermalinkNameKey:"Last completed build" as Optional<AnyObject>,JobPermalinkKey: self.job!.lastCompletedBuild! as Optional<AnyObject>])
         }
         
         if self.permalinks.count > 0 {
-            self.permalinks.append([JobPermalinkNameKey:"All builds",JobPermalinkKey:nil])
+            self.permalinks.append([JobPermalinkNameKey:"All builds" as Optional<AnyObject>,JobPermalinkKey:nil])
         }
     }
     
@@ -397,7 +421,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     
     // determines how often to pool a build for completion. 
     // the longer the esimatedDuration the less often it is polled
-    func syncIntervalForBuild(estimatedDuration: Double) -> Double {
+    func syncIntervalForBuild(_ estimatedDuration: Double) -> Double {
 //        let durationSec = estimatedDuration / 1000
 //        // if the estimated duration is 9 minutes is less
 //        if durationSec <= 540 {
@@ -409,46 +433,46 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     // MARK: - Table view delegate
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         // http://stackoverflow.com/a/25877725
-        cell.separatorInset = UIEdgeInsetsZero
-        cell.layoutMargins = UIEdgeInsetsZero
+        cell.separatorInset = UIEdgeInsets.zero
+        cell.layoutMargins = UIEdgeInsets.zero
         // Doesn't seem to be needed. Keep for posterity
         //cell.preservesSuperviewLayoutMargins = false
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // if the status view mode is selected
         if self.viewModeSwitcher?.selectedSegmentIndex == 0 {
             // if the selected row is the last row in the permalinks section
-            if ( (indexPath.section == 0) && (indexPath.row == (self.tableView!.numberOfRowsInSection(indexPath.section) - 1))) {
+            if ( (indexPath.section == 0) && (indexPath.row == (self.tableView!.numberOfRows(inSection: indexPath.section) - 1))) {
                 // goto the all builds view
                 print("all builds")
             } else {
                 // else goto build detail
-                self.performSegueWithIdentifier("showBuildDetail", sender: self)
+                self.performSegue(withIdentifier: "showBuildDetail", sender: self)
             }
         } else {
             // else goto build detail
-            self.performSegueWithIdentifier("showBuildDetail", sender: self)
+            self.performSegue(withIdentifier: "showBuildDetail", sender: self)
         }
-        self.tableView?.deselectRowAtIndexPath(indexPath, animated: true)
+        self.tableView?.deselectRow(at: indexPath, animated: true)
     }
     
     // MARK: - Table view data source
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         var numSections: Int = 1
         
         if self.viewModeSwitcher?.selectedSegmentIndex == 0 {
             if let upprojs = self.job!.upstreamProjects {
-                if upprojs.count() > 0 {
+                if (upprojs as AnyObject).count() > 0 {
                     self.upstreamProjectsSectionIndex = numSections
                     numSections += 1
                 }
             }
             
             if let downprojs = self.job!.downstreamProjects {
-                if downprojs.count() > 0 {
+                if (downprojs as AnyObject).count() > 0 {
                     self.downstreamProjectsSectionIndex = numSections
                     numSections += 1
                 }
@@ -485,7 +509,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         return numRows
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         var numRows: Int = 0
         
         if section == 0 {
@@ -494,7 +518,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
             if let upindex = self.upstreamProjectsSectionIndex {
                 if section == upindex {
                     if let upprojs = self.job!.upstreamProjects {
-                        numRows = upprojs.count()
+                        numRows = (upprojs as AnyObject).count()
                     }
                 }
             }
@@ -502,7 +526,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
             if let downindex = self.downstreamProjectsSectionIndex {
                 if section == downindex {
                     if let downprojs = self.job!.downstreamProjects {
-                        numRows = downprojs.count()
+                        numRows = (downprojs as AnyObject).count()
                     }
                 }
             }
@@ -511,7 +535,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         return numRows
     }
     
-    func configureConfigurationCell(cell: UITableViewCell, configuration: [String: AnyObject]) {
+    func configureConfigurationCell(_ cell: UITableViewCell, configuration: [String: AnyObject]) {
         cell.detailTextLabel?.text = ""
         
         if let configname = configuration[ActiveConfigurationNameKey] as? String {
@@ -529,7 +553,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
-    func configureRelatedProjectCell(cell: UITableViewCell, relatedProject: [String: AnyObject]) {
+    func configureRelatedProjectCell(_ cell: UITableViewCell, relatedProject: [String: AnyObject]) {
         cell.detailTextLabel?.text = ""
         
         if let projname = relatedProject[JobNameKey] as? String {
@@ -548,7 +572,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
 
     }
     
-    func configurePermalinkCell(cell: UITableViewCell, indexPath: NSIndexPath) {
+    func configurePermalinkCell(_ cell: UITableViewCell, indexPath: IndexPath) {
         let permalinkwrapper: [String: AnyObject?] = self.permalinks[indexPath.row]
         cell.textLabel?.text = permalinkwrapper[JobPermalinkNameKey] as? String
         cell.detailTextLabel?.text = "View all builds for this Job"
@@ -588,7 +612,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
-    func configureBuildHistoryCell(cell: UITableViewCell, indexPath: NSIndexPath) {
+    func configureBuildHistoryCell(_ cell: UITableViewCell, indexPath: IndexPath) {
         if let latest = self.latestBuilds,
             let build = latest[indexPath.row] as? Build {
                 if let color = Build.getColorForResult(build.result) {
@@ -599,7 +623,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
-    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         var name: String = ""
         if self.viewModeSwitcher?.selectedSegmentIndex == 0 {
             if section == 0 {
@@ -621,8 +645,8 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         return name
     }
 
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = self.tableView!.dequeueReusableCellWithIdentifier("BuildCell", forIndexPath: indexPath)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: UITableViewCell = self.tableView!.dequeueReusableCell(withIdentifier: "BuildCell", for: indexPath)
         if indexPath.section == 0 {
             if let modeSwitcher = self.viewModeSwitcher {
                 switch modeSwitcher.selectedSegmentIndex {
@@ -666,12 +690,12 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     // MARK: - Navigation
-    override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         var perform = false
         if identifier == "showBuildDetail" {
             // only segue to build details if we in the right view mode
             // and table section
-            let index: NSIndexPath = (self.tableView?.indexPathForSelectedRow)!
+            let index: IndexPath = (self.tableView?.indexPathForSelectedRow)!
             if index.section == 0 {
                 if let modeSwitcher = self.viewModeSwitcher {
                     if modeSwitcher.selectedSegmentIndex < 2 {
@@ -682,11 +706,11 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         }
         return perform
     }
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showBuildDetail" {
-            let buildDetailNavController = segue.destinationViewController as! UINavigationController
+            let buildDetailNavController = segue.destination as! UINavigationController
             let buildDetailVC = buildDetailNavController.topViewController as! BuildDetailViewController
-            let index: NSIndexPath = (self.tableView?.indexPathForSelectedRow)!
+            let index: IndexPath = (self.tableView?.indexPathForSelectedRow)!
 
             if index.section == 0 {
                 // switch on selected segment
@@ -697,7 +721,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
                         let permalinkwrapper: [String: AnyObject?] = self.permalinks[index.row]
                         if let permalink = permalinkwrapper[JobPermalinkKey] as! [String: AnyObject]? {
                             let buildURL: String = permalink[BuildURLKey] as! String
-                            let build = Build.fetchBuildWithURL(buildURL, inContext: syncMgr.mainMOC)
+                            let build = Build.fetch(withURL: buildURL, in: syncMgr.mainMOC)
                             buildDetailVC.build = build
                         }
                     //history mode

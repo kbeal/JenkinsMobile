@@ -44,6 +44,6 @@ class JobDictionaryTests: XCTestCase {
     
     func testValueForKey() {
         let job1: JobDictionary? = JobDictionary(dictionary: NSDictionary(objects: ["Job1","blue","www.google.com/job/Job1/"], forKeys: [JobNameKey,JobColorKey,JobURLKey]))
-        XCTAssertEqual((job1!.valueForKey(JobNameKey) as! String), "Job1")
+        XCTAssertEqual((job1!.value(forKey: JobNameKey) as! String), "Job1")
     }
 }

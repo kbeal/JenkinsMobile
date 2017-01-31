@@ -9,10 +9,10 @@
 import UIKit
 
 enum TextFieldType {
-    case Name
-    case URL
-    case Username
-    case Password
+    case name
+    case url
+    case username
+    case password
 }
 
 class KDBTextField: UITextField {
@@ -22,12 +22,12 @@ class KDBTextField: UITextField {
     func setInvalidBorder() {
         self.layer.cornerRadius = 8.0
         self.layer.masksToBounds = true
-        self.layer.borderColor = UIColor.redColor().CGColor
+        self.layer.borderColor = UIColor.red.cgColor
         self.layer.borderWidth = 1.0
     }
     
     func setNoBorder() {
-        self.layer.borderColor = UIColor.clearColor().CGColor
+        self.layer.borderColor = UIColor.clear.cgColor
     }
 
     required init?(coder aDecoder: NSCoder) {

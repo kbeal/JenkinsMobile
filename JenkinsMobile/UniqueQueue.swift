@@ -14,25 +14,25 @@
 
 import Foundation
 
-public class UniqueQueue<T: Hashable> {
+open class UniqueQueue<T: Hashable> {
     
     var itemsDict = Dictionary<T,Bool>()
     var itemsArray: [T] = []
-    let lockQueue = dispatch_queue_create("com.kylebeal.JenkinsMobile.UniqueQueue.LockQueue", DISPATCH_QUEUE_SERIAL)
+    let lockQueue = DispatchQueue(label: "com.kylebeal.JenkinsMobile.UniqueQueue.LockQueue", attributes: [])
     
     init() {}
     
     func count() -> Int {
         var cnt: Int?
-        dispatch_sync(lockQueue, {
+        lockQueue.sync(execute: {
             self.assertCount("count")
             cnt = self.itemsArray.count
         })
         return cnt!
     }
     
-    func push(newItem: T) {
-        dispatch_sync(lockQueue, {
+    func push(_ newItem: T) {
+        lockQueue.sync(execute: {
             if let _ = self.itemsDict[newItem] {
                 return
             } else {
@@ -45,34 +45,34 @@ public class UniqueQueue<T: Hashable> {
     
     func pop() -> T? {
         var itm: T?
-        dispatch_sync(lockQueue, {
+        lockQueue.sync(execute: {
             if self.itemsArray.count == 0 {
                 itm = nil
             } else {
                 itm = self.itemsArray[0]
-                self.itemsArray.removeAtIndex(0)
-                self.itemsDict.removeValueForKey(itm!)
+                self.itemsArray.remove(at: 0)
+                self.itemsDict.removeValue(forKey: itm!)
                 self.assertCount("pop")
             }
         })
         return itm
     }
     
-    func assertCount(caller: String) {
+    func assertCount(_ caller: String) {
         assert(self.itemsArray.count==self.itemsDict.count, "\(caller) UniqueQueue array \(self.itemsArray.count) and dictionary \(self.itemsDict.count) not in Sync!!")
     }
     
     func removeAll() {
-        dispatch_sync(lockQueue, {
-            self.itemsArray.removeAll(keepCapacity: false)
-            self.itemsDict.removeAll(keepCapacity: false)
+        lockQueue.sync(execute: {
+            self.itemsArray.removeAll(keepingCapacity: false)
+            self.itemsDict.removeAll(keepingCapacity: false)
         })
     }
     
 }
 
-extension UniqueQueue: SequenceType {
-    public func generate() -> IndexingGenerator<[T]> {
-        return itemsArray.generate()
+extension UniqueQueue: Sequence {
+    public func makeIterator() -> IndexingIterator<[T]> {
+        return itemsArray.makeIterator()
     }
 }

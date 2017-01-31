@@ -8,46 +8,46 @@
 
 import Foundation
 
-public class BuildDictionary: NSObject, NSCoding {
+open class BuildDictionary: NSObject, NSCoding {
     
     var dictionary: NSDictionary!
     
     required convenience public init?(coder decoder: NSCoder) {
-        let dictionary = decoder.decodeObjectForKey(BuildDictionaryDictionaryKey) as! NSDictionary
+        let dictionary = decoder.decodeObject(forKey: BuildDictionaryDictionaryKey) as! NSDictionary
         self.init(dictionary: dictionary)
     }
     
     public init?(dictionary: NSDictionary) {
         super.init()
-        let number: Int? = dictionary.objectForKey(BuildNumberKey) as? Int
+        let number: Int? = dictionary.object(forKey: BuildNumberKey) as? Int
         if number == nil { return nil }
         self.dictionary = dictionary
     }
     
-    public subscript(key: AnyObject) -> AnyObject? {
-        return self.dictionary.objectForKey(key)
+    open subscript(key: AnyObject) -> AnyObject? {
+        return self.dictionary.object(forKey: key) as AnyObject?
     }
     
-    public override func isEqual(object: AnyObject?) -> Bool {
+    open override func isEqual(_ object: Any?) -> Bool {
         var isEqual: Bool = false
         
         if let obj: BuildDictionary = object as? BuildDictionary {
-            isEqual = obj[BuildNumberKey]!.isEqual(self.dictionary[BuildNumberKey])
+            isEqual = obj[BuildNumberKey as AnyObject]!.isEqual(self.dictionary[BuildNumberKey])
         }
         
         return isEqual
     }
     
-    public override var hash: Int {
-        return self.dictionary.objectForKey(BuildNumberKey)!.hash
+    open override var hash: Int {
+        return (self.dictionary.object(forKey: BuildNumberKey)! as AnyObject).hash
     }
     
-    public override func valueForKey(key: String) -> AnyObject? {
-        return self.dictionary.valueForKey(key)
+    open override func value(forKey key: String) -> Any? {
+        return self.dictionary.value(forKey: key)
     }
     
-    public func encodeWithCoder(coder: NSCoder) {
-        coder.encodeObject(self.dictionary, forKey: BuildDictionaryDictionaryKey)
+    open func encode(with coder: NSCoder) {
+        coder.encode(self.dictionary, forKey: BuildDictionaryDictionaryKey)
     }
 }
 

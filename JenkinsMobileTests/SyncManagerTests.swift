@@ -26,7 +26,7 @@ class SyncManagerTests: XCTestCase {
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8081/"]
         let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://localhost:8081", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         
-        context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: self.context!)})
+        context?.performAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstance(withValues: jenkinsInstanceValues as [AnyHashable: Any], in: self.context!)})
         self.jenkinsInstance?.password = "password"
         self.jenkinsInstance?.allowInvalidSSLCertificate = true
         
@@ -39,14 +39,14 @@ class SyncManagerTests: XCTestCase {
     
     func saveContext () {
         datamgr.saveContext(datamgr.mainMOC)
-        datamgr.masterMOC.performBlockAndWait({
+        datamgr.masterMOC.performAndWait({
             self.datamgr.saveContext(self.datamgr.masterMOC)
         })
     }
     
     func testSyncView() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let insertedObjs: NSSet? = notification.userInfo![NSInsertedObjectsKey] as! NSSet?
             if insertedObjs != nil {
@@ -64,20 +64,20 @@ class SyncManagerTests: XCTestCase {
         
         let viewURL = "http://localhost:8081/view/Name%20With%20Spaces/"
         let viewVals = [ViewNameKey: "Name With Spaces", ViewURLKey: viewURL, ViewJenkinsInstanceKey: jenkinsInstance!]
-        let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context!)
+        let view1 = View.createView(withValues: viewVals, in: context!)
         //saveContext()
         
         self.mgr.syncView(view1)
         
         // wait for expectations
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testSyncJenkinsInstanceViews() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -93,21 +93,21 @@ class SyncManagerTests: XCTestCase {
         })
         
         let jiVals = [JenkinsInstanceNameKey: "Test", JenkinsInstanceURLKey: "http://localhost:8081/", JenkinsInstanceUsernameKey: "admin"]
-        let ji = JenkinsInstance.createJenkinsInstanceWithValues(jiVals, inManagedObjectContext: context!)
+        let ji = JenkinsInstance.createJenkinsInstance(withValues: jiVals, in: context!)
         ji.password = "password"
         saveContext()
         
         self.mgr.syncViewsForJenkinsInstance(ji)
         
         // wait for expectations
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testSyncViewChildViews() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -124,20 +124,20 @@ class SyncManagerTests: XCTestCase {
         
         let viewURL = "http://localhost:8081/view/GrandParent/"
         let viewVals = [ViewNameKey: "GrandParent", ViewURLKey: viewURL, ViewJenkinsInstanceKey: jenkinsInstance!]
-        let view1 = View.createViewWithValues(viewVals, inManagedObjectContext: context!)
+        let view1 = View.createView(withValues: viewVals, in: context!)
         saveContext()
         
         self.mgr.syncChildViewsForView(view1)
         
         // wait for expectations
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testSyncJob() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -146,7 +146,7 @@ class SyncManagerTests: XCTestCase {
                         if job.url == "http://localhost:8080/job/Job3/"  && job.color == "blue" {
                             if let
                                 firstbuild = job.firstBuild as! NSDictionary?,
-                                building   = firstbuild[BuildBuildingKey] as! Bool?
+                                let building   = firstbuild[BuildBuildingKey] as! Bool?
                             {
                                 if !building {
                                     expectationFulfilled=true
@@ -160,19 +160,19 @@ class SyncManagerTests: XCTestCase {
         })
         
         let jobVals1 = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
+        let job = Job.createJob(withValues: jobVals1, in: context!)
         saveContext()
         self.mgr.syncJob(job)
         
         // wait for expectations
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testSyncBuild() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -188,25 +188,25 @@ class SyncManagerTests: XCTestCase {
         })
         
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://www.google.com/job/TestJob/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
+        let job = Job.createJob(withValues: jobVals1, in: context!)
         
         let buildURL = "http://localhost:8081/job/Job3/1/"
         
         let buildVals = [BuildJobKey: job, BuildURLKey: buildURL, BuildNumberKey: 1]
-        let build1 = Build.createBuildWithValues(buildVals, inManagedObjectContext: self.context!)
+        let build1 = Build.createBuild(withValues: buildVals, in: self.context!)
         saveContext()
         
         self.mgr.syncBuild(build1!)
         
         // wait for expectations
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testSyncActiveConfiguration() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -221,18 +221,18 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let jobvals = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job2/", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context!)
+        let jobvals = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job2/", JobLastSyncKey: Date(), JobJenkinsInstanceKey: jenkinsInstance!]
+        let job = Job.createJob(withValues: jobvals, in: context!)
         
         let ac1 = [ActiveConfigurationColorKey:"blue",ActiveConfigurationNameKey:"config=1",ActiveConfigurationJobKey:job,ActiveConfigurationURLKey:"http://localhost:8081/job/Job2/config1=10,config2=test/"]
-        let activeConf1 = ActiveConfiguration.createActiveConfigurationWithValues(ac1, inManagedObjectContext: context!)
+        let activeConf1 = ActiveConfiguration.createActiveConfiguration(withValues: ac1, in: context!)
         saveContext()
         
         self.mgr.syncActiveConfiguration(activeConf1)
 
         
         // wait for expectations
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
@@ -242,8 +242,8 @@ class SyncManagerTests: XCTestCase {
     }
     
     func testJobShouldSync() {
-        let jobvals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobLastSyncKey: NSDate(), JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobvals, inManagedObjectContext: context!)
+        let jobvals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://www.google.com", JobLastSyncKey: Date(), JobJenkinsInstanceKey: jenkinsInstance!]
+        let job = Job.createJob(withValues: jobvals, in: context!)
         
         XCTAssertFalse(job.shouldSync(), "shouldsync should be false")
     }
@@ -253,16 +253,16 @@ class SyncManagerTests: XCTestCase {
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8081/"]
         let values = [JenkinsInstanceNameKey: "QA Ubuntu", JenkinsInstanceURLKey: "https://jenkins.qa.ubuntu.com/", JenkinsInstanceEnabledKey: true, JenkinsInstancePrimaryViewKey: primaryView]
 
-        JenkinsInstance.findOrCreateJenkinsInstanceWithValues(values as [NSObject : AnyObject], inManagedObjectContext: context!)
+        JenkinsInstance.findOrCreateJenkinsInstance(withValues: values as [AnyHashable: Any], in: context!)
         saveContext()
         
-        let fetchreq = NSFetchRequest()
-        fetchreq.entity = NSEntityDescription.entityForName("JenkinsInstance", inManagedObjectContext: context!)
+        let fetchreq = NSFetchRequest<NSFetchRequestResult>()
+        fetchreq.entity = NSEntityDescription.entity(forEntityName: "JenkinsInstance", in: context!)
         fetchreq.predicate = NSPredicate(format: "name = %@", "QA Ubuntu")
         fetchreq.includesPropertyValues = false
         
         do {
-            let jenkinss = try context?.executeFetchRequest(fetchreq)
+            let jenkinss = try context?.fetch(fetchreq)
             let ji = jenkinss![0] as! JenkinsInstance
             XCTAssertEqual(ji.name, "QA Ubuntu", "jenkins instance name is wrong. should be QA Ubuntu, got: \(ji.name) instead")
             XCTAssertEqual(jenkinss!.count, 1, "jenkinss count is wrong. Should be 1 got: \(jenkinss!.count) instead")
@@ -272,8 +272,8 @@ class SyncManagerTests: XCTestCase {
     }
 
     func testJenkinsInstanceUnauthenticated() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -289,7 +289,7 @@ class SyncManagerTests: XCTestCase {
         })
         
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8081/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstanceAuthenticatedKey: true]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
+        let jinstance1 = JenkinsInstance.createJenkinsInstance(withValues: jenkinsInstanceValues1 as [AnyHashable: Any], in: self.context!)
         jinstance1.allowInvalidSSLCertificate = true
         jinstance1.shouldAuthenticate = true
         jinstance1.password = "password1"
@@ -299,16 +299,16 @@ class SyncManagerTests: XCTestCase {
         XCTAssert(jinstance1.authenticated!.boolValue, "jenkins instance should be authenticated")
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForJenkinsInstance(jinstance1)
+        requestHandler.importDetails(for: jinstance1)
         
-        waitForExpectationsWithTimeout(2, handler: { error in
+        waitForExpectations(timeout: 2, handler: { error in
             
         })
     }
     
     func testJenkinsInstanceReauthenticated() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -324,7 +324,7 @@ class SyncManagerTests: XCTestCase {
         })
         
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8081/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
+        let jinstance1 = JenkinsInstance.createJenkinsInstance(withValues: jenkinsInstanceValues1 as [AnyHashable: Any], in: self.context!)
         jinstance1.allowInvalidSSLCertificate = true
         jinstance1.password = "password"
         jinstance1.authenticated = false
@@ -334,16 +334,16 @@ class SyncManagerTests: XCTestCase {
         XCTAssertFalse(jinstance1.authenticated!.boolValue, "jenkins instance should not be authenticated")
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForJenkinsInstance(jinstance1)
+        requestHandler.importDetails(for: jinstance1)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testJenkinsInstanceLastSyncResultOK() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -362,22 +362,22 @@ class SyncManagerTests: XCTestCase {
         
         let primaryView = [ViewNameKey: "Test", ViewURLKey: "http://localhost:8081/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8081/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
+        let jinstance1 = JenkinsInstance.createJenkinsInstance(withValues: jenkinsInstanceValues1 as [AnyHashable: Any], in: self.context!)
         jinstance1.password = "password"
         jinstance1.allowInvalidSSLCertificate = true;
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForJenkinsInstance(jinstance1)
+        requestHandler.importDetails(for: jinstance1)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testJenkinsInstanceLastSyncResult401() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -394,24 +394,24 @@ class SyncManagerTests: XCTestCase {
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8081/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8081/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
+        let jinstance1 = JenkinsInstance.createJenkinsInstance(withValues: jenkinsInstanceValues1 as [AnyHashable: Any], in: self.context!)
         jinstance1.password = "password1"
         jinstance1.allowInvalidSSLCertificate = true;
         jinstance1.shouldAuthenticate = true
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForJenkinsInstance(jinstance1)
+        requestHandler.importDetails(for: jinstance1)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testJenkinsInstanceLastSyncResult403() {
         // this jenkins instance must not have anonymous access turned on
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -428,22 +428,22 @@ class SyncManagerTests: XCTestCase {
         
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8081/"]
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8081/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "user", JenkinsInstancePrimaryViewKey: primaryView, JenkinsInstanceShouldAuthenticateKey: true]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
+        let jinstance1 = JenkinsInstance.createJenkinsInstance(withValues: jenkinsInstanceValues1 as [AnyHashable: Any], in: self.context!)
         jinstance1.password = "password"
         jinstance1.allowInvalidSSLCertificate = true;
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForJenkinsInstance(jinstance1)
+        requestHandler.importDetails(for: jinstance1)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
 
     func testJobLastSyncResultOK() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -462,20 +462,20 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.username = "admin"
         jenkinsInstance?.password = "password"
         let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: jobURLStr, JobJenkinsInstanceKey: jenkinsInstance!]
-        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context!)
+        let job1 = Job.createJob(withValues: job1vals, in: context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForJob(job1)
+        requestHandler.importDetails(for: job1)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testJobLastSyncResult401() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -495,20 +495,20 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.shouldAuthenticate = true
         let jobURLStr = "http://localhost:8081/job/Job3/"
         let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: jobURLStr, JobJenkinsInstanceKey: jenkinsInstance!]
-        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context!)
+        let job1 = Job.createJob(withValues: job1vals, in: context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForJob(job1)
+        requestHandler.importDetails(for: job1)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testJobLastSyncResult403() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -528,20 +528,20 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.shouldAuthenticate = true
         let jobURLStr = "http://localhost:8081/job/Job3/"
         let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: jobURLStr, JobJenkinsInstanceKey: jenkinsInstance!]
-        let job1 = Job.createJobWithValues(job1vals, inManagedObjectContext: context!)
+        let job1 = Job.createJob(withValues: job1vals, in: context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForJob(job1)
+        requestHandler.importDetails(for: job1)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testViewLastSyncResultOK() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -558,24 +558,24 @@ class SyncManagerTests: XCTestCase {
         
         let viewURLStr = "http://localhost:8081/view/GrandParent/"
         let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8081/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin"]
-        let jinstance1 = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues1 as [NSObject : AnyObject], inManagedObjectContext: self.context!)
+        let jinstance1 = JenkinsInstance.createJenkinsInstance(withValues: jenkinsInstanceValues1 as [AnyHashable: Any], in: self.context!)
         jinstance1.password = "password"
         jinstance1.allowInvalidSSLCertificate = true;
         let childViewVals1 = [ViewNameKey: "All", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jinstance1]
-        let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context!)
+        let view = View.createView(withValues: childViewVals1, in: self.context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForView(view)
+        requestHandler.importDetails(for: view)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testViewLastSyncResult401() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -595,20 +595,20 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.shouldAuthenticate = true
         let viewURLStr = "http://localhost:8081/view/GrandParent/"
         let childViewVals1 = [ViewNameKey: "GrandParent", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jenkinsInstance!]
-        let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context!)
+        let view = View.createView(withValues: childViewVals1, in: self.context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForView(view)
+        requestHandler.importDetails(for: view)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testViewLastSyncResult403() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -628,23 +628,23 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.shouldAuthenticate = true
         let viewURLStr = "http://localhost:8081/view/GrandParent/"
         let childViewVals1 = [ViewNameKey: "GrandParent", ViewURLKey: viewURLStr, ViewJenkinsInstanceKey: jenkinsInstance!]
-        let view = View.createViewWithValues(childViewVals1, inManagedObjectContext: self.context!)
+        let view = View.createView(withValues: childViewVals1, in: self.context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForView(view)
+        requestHandler.importDetails(for: view)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testBuildShouldSync() {
-        let now = (NSDate().timeIntervalSince1970) * 1000
+        let now = (Date().timeIntervalSince1970) * 1000
         let fourSecondsAgo = now - 4000000
         let tenSecondsAgo = now - 10000000
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://jenkins:8081/job/TestJob", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
+        let job = Job.createJob(withValues: jobVals1, in: context!)
         
         // should only sync
         // if building and duration (currentTime - build.timestamp) is within 80% of estimatedDuration
@@ -654,11 +654,11 @@ class SyncManagerTests: XCTestCase {
         let buildVals4 = [BuildBuildingKey: true, BuildEstimatedDurationKey: 5000, BuildTimestampKey: tenSecondsAgo, BuildJobKey: job, BuildNumberKey: 103, BuildURLKey: "http://jenkins:8081/job/TestJob/103"]
         let buildVals5 = [BuildJobKey: job, BuildNumberKey: 103, BuildURLKey: "http://jenkins:8081/job/TestJob/103"]
         
-        let build1 = Build.createBuildWithValues(buildVals1, inManagedObjectContext: context!)
-        let build2 = Build.createBuildWithValues(buildVals2, inManagedObjectContext: context!)
-        let build3 = Build.createBuildWithValues(buildVals3, inManagedObjectContext: context!)
-        let build4 = Build.createBuildWithValues(buildVals4, inManagedObjectContext: context!)
-        let build5 = Build.createBuildWithValues(buildVals5, inManagedObjectContext: context!)
+        let build1 = Build.createBuild(withValues: buildVals1, in: context!)
+        let build2 = Build.createBuild(withValues: buildVals2, in: context!)
+        let build3 = Build.createBuild(withValues: buildVals3, in: context!)
+        let build4 = Build.createBuild(withValues: buildVals4, in: context!)
+        let build5 = Build.createBuild(withValues: buildVals5, in: context!)
         
         XCTAssertFalse(build1!.shouldSync(), "build1 should not sync because its building value is false")
         XCTAssertFalse(build2!.shouldSync(), "build2 should not sync because it was just kicked off")
@@ -668,8 +668,8 @@ class SyncManagerTests: XCTestCase {
     }
     
     func testBuildLastSyncResultOK() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -688,22 +688,22 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.username = "admin"
         jenkinsInstance?.password = "password"
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://snowman:8081/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
+        let job = Job.createJob(withValues: jobVals1, in: context!)
         let buildVals1 = [BuildBuildingKey: false, BuildEstimatedDurationKey: 120000, BuildJobKey: job, BuildNumberKey: 100, BuildURLKey: buildURLStr]
-        let build = Build.createBuildWithValues(buildVals1, inManagedObjectContext: self.context!)
+        let build = Build.createBuild(withValues: buildVals1, in: self.context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForBuild(build)
+        requestHandler.importDetails(for: build)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testBuildLastSyncResult401() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -723,22 +723,22 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.shouldAuthenticate = true
         let buildURLStr = "http://localhost:8081/job/Job3/1/"
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
+        let job = Job.createJob(withValues: jobVals1, in: context!)
         let buildVals1 = [BuildBuildingKey: false, BuildEstimatedDurationKey: 120000, BuildJobKey: job, BuildNumberKey: 100, BuildURLKey: buildURLStr]
-        let build = Build.createBuildWithValues(buildVals1, inManagedObjectContext: self.context!)
+        let build = Build.createBuild(withValues: buildVals1, in: self.context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForBuild(build)
+        requestHandler.importDetails(for: build)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testBuildLastSyncResult403() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -757,22 +757,22 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.password = "password"
         let buildURLStr = "http://localhost:8081/job/Job3/1/"
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
+        let job = Job.createJob(withValues: jobVals1, in: context!)
         let buildVals1 = [BuildBuildingKey: false, BuildEstimatedDurationKey: 120000, BuildJobKey: job, BuildNumberKey: 100, BuildURLKey: buildURLStr]
-        let build = Build.createBuildWithValues(buildVals1, inManagedObjectContext: self.context!)
+        let build = Build.createBuild(withValues: buildVals1, in: self.context!)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForBuild(build)
+        requestHandler.importDetails(for: build)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
    
     func testActiveConfigurationLastSyncResultOK() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -788,25 +788,25 @@ class SyncManagerTests: XCTestCase {
         })
         
         let jobVals1 = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
+        let job = Job.createJob(withValues: jobVals1, in: context!)
         
         let acURL = "http://localhost:8081/job/Job2/config1=10,config2=test/"
         
         let acVals = [ActiveConfigurationNameKey: "config1=10,config2=test", ActiveConfigurationURLKey: acURL, ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
-        let ac = ActiveConfiguration.createActiveConfigurationWithValues(acVals, inManagedObjectContext: self.context)
+        let ac = ActiveConfiguration.createActiveConfiguration(withValues: acVals, in: self.context)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForActiveConfiguration(ac)
+        requestHandler.importDetails(for: ac)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testActiveConfigurationLastSyncResult401() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -825,25 +825,25 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.password = "password1"
         jenkinsInstance?.shouldAuthenticate = true
         let jobVals1 = [JobNameKey: "Job6", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
+        let job = Job.createJob(withValues: jobVals1, in: context!)
         
         let acURL = "http://localhost:8081/job/Job2/config1=10,config2=test/"
         
         let acVals = [ActiveConfigurationNameKey: "config1=10,config2=test", ActiveConfigurationURLKey: acURL, ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
-        let ac = ActiveConfiguration.createActiveConfigurationWithValues(acVals, inManagedObjectContext: self.context)
+        let ac = ActiveConfiguration.createActiveConfiguration(withValues: acVals, in: self.context)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForActiveConfiguration(ac)
+        requestHandler.importDetails(for: ac)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }
     
     func testActiveConfigurationLastSyncResult403() {
-        _ = expectationForNotification(NSManagedObjectContextDidSaveNotification, object: self.context, handler: {
-            (notification: NSNotification!) -> Bool in
+        _ = expectation(forNotification: NSNotification.Name.NSManagedObjectContextDidSave.rawValue, object: self.context, handler: {
+            (notification: Notification!) -> Bool in
             var expectationFulfilled = false
             let updatedObjects: NSSet? = notification.userInfo![NSUpdatedObjectsKey] as! NSSet?
             if updatedObjects != nil {
@@ -861,18 +861,18 @@ class SyncManagerTests: XCTestCase {
         jenkinsInstance?.username = "user"
         jenkinsInstance?.password = "password"
         let jobVals1 = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://localhost:8081/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
+        let job = Job.createJob(withValues: jobVals1, in: context!)
         
         let acURL = "http://localhost:8081/job/Job2/config1=10,config2=test/"
         
         let acVals = [ActiveConfigurationNameKey: "config1=10,config2=test", ActiveConfigurationURLKey: acURL, ActiveConfigurationJobKey: job, ActiveConfigurationColorKey: "blue"]
-        let ac = ActiveConfiguration.createActiveConfigurationWithValues(acVals, inManagedObjectContext: self.context)
+        let ac = ActiveConfiguration.createActiveConfiguration(withValues: acVals, in: self.context)
         saveContext()
         
         let requestHandler: KDBJenkinsRequestHandler = KDBJenkinsRequestHandler()
-        requestHandler.importDetailsForActiveConfiguration(ac)
+        requestHandler.importDetails(for: ac)
         
-        waitForExpectationsWithTimeout(3, handler: { error in
+        waitForExpectations(timeout: 3, handler: { error in
             
         })
     }

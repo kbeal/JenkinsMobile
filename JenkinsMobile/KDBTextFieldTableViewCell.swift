@@ -15,7 +15,7 @@ class KDBTextFieldTableViewCell: UITableViewCell {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.textLabel?.backgroundColor = UIColor.redColor()
+        self.textLabel?.backgroundColor = UIColor.red
     }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -27,7 +27,7 @@ class KDBTextFieldTableViewCell: UITableViewCell {
         // Initialization code
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state

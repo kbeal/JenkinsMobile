@@ -23,7 +23,7 @@ class BuildProgressTests: XCTestCase {
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8081/"]
         let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://localhost:8081", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
         
-        context?.performBlockAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstanceWithValues(jenkinsInstanceValues as [NSObject : AnyObject], inManagedObjectContext: self.context!)})
+        context?.performAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstance(withValues: jenkinsInstanceValues as [AnyHashable: Any], in: self.context!)})
         self.jenkinsInstance?.password = "password"
         self.jenkinsInstance?.allowInvalidSSLCertificate = true
         
@@ -32,9 +32,9 @@ class BuildProgressTests: XCTestCase {
     
     func testUpdateBuildProgress() {
         let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://localhost:8080/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job = Job.createJobWithValues(jobVals1, inManagedObjectContext: context!)
+        let job = Job.createJob(withValues: jobVals1, in: context!)
         let buildvals = [BuildNumberKey: 1, BuildURLKey: "http://localhost:8080/job/Job1/1/", BuildJobKey: job, BuildEstimatedDurationKey: 120000]
-        let build = Build.createBuildWithValues(buildvals, inManagedObjectContext: context!)
+        let build = Build.createBuild(withValues: buildvals, in: context!)
         DataManager.sharedInstance.saveMainContext()
         let buildprogress = BuildProgress(build: build!)
         
@@ -49,7 +49,7 @@ class BuildProgressTests: XCTestCase {
     
     func saveContext () {
         datamgr.saveContext(datamgr.mainMOC)
-        datamgr.masterMOC.performBlockAndWait({
+        datamgr.masterMOC.performAndWait({
             self.datamgr.saveContext(self.datamgr.masterMOC)
         })
     }

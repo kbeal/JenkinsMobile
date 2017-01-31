@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class BuildProgress: NSProgress {
+open class BuildProgress: Progress {
     
     var buildToWatch: Build!
     var dataMgr: DataManager = DataManager.sharedInstance
@@ -18,10 +18,10 @@ public class BuildProgress: NSProgress {
         let bgbuild: Build? = dataMgr.ensureObjectOnBackgroundThread(build) as? Build
         if bgbuild == nil { return nil }
         self.buildToWatch = bgbuild
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BuildProgress.handleDataModelChange(_:)), name: NSManagedObjectContextDidSaveNotification, object: dataMgr.masterMOC)
+        NotificationCenter.default.addObserver(self, selector: #selector(BuildProgress.handleDataModelChange(_:)), name: NSNotification.Name.NSManagedObjectContextDidSave, object: dataMgr.masterMOC)
     }
     
-    func handleDataModelChange(notification: NSNotification) {
+    func handleDataModelChange(_ notification: Notification) {
         if let userInfo = notification.userInfo {
             let updatedObjects = userInfo[NSUpdatedObjectsKey] as! NSSet as! Set<NSManagedObject>
             let insertedObjects = userInfo[NSInsertedObjectsKey] as! NSSet as! Set<NSManagedObject>
@@ -39,7 +39,7 @@ public class BuildProgress: NSProgress {
     }
     
     func updateProgress() {
-        self.totalUnitCount = self.buildToWatch.estimatedDuration.longLongValue
+        self.totalUnitCount = self.buildToWatch.estimatedDuration.int64Value
         if let executor: NSDictionary = self.buildToWatch.executor as? NSDictionary {
             if let progress: Int = executor[BuildExecutorProgressKey] as? Int {
                 let duration: Double = self.buildToWatch.estimatedDuration.doubleValue * (Double(progress) / 100)
