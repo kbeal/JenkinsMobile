@@ -22,7 +22,7 @@ class PerformanceTests: XCTestCase {
         //context = self.datamgr.mainMOC
         context = self.datamgr.masterMOC
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8080/"]
-        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://localhost:8080", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
+        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://localhost:8080", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView] as [String : Any]
         
         context?.performAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstance(withValues: jenkinsInstanceValues as [AnyHashable: Any], in: self.context!)})
         self.jenkinsInstance?.password = "password"
@@ -51,7 +51,7 @@ class PerformanceTests: XCTestCase {
         
         for i in 1...existingJobCount {
             let uuid = UUID().uuidString
-            let vals: [String: AnyObject] = [JobNameKey: uuid, JobURLKey: "http://localhost:8080/job/"+uuid, JobColorKey: "blue", JobJenkinsInstanceKey: self.jenkinsInstance!]
+            let vals: [String: AnyObject] = [JobNameKey: uuid as AnyObject, JobURLKey: ("http://localhost:8080/job/"+uuid) as AnyObject, JobColorKey: "blue" as AnyObject, JobJenkinsInstanceKey: self.jenkinsInstance!]
             Job.createJob(withValues: vals, in: self.context!)
             // save half of the names up to jobBatchCount
             if ((i%2 == 0) && (existingJobNames.count < jobBatchCount)){
@@ -60,7 +60,7 @@ class PerformanceTests: XCTestCase {
         }
         
         let knownuuid = UUID().uuidString
-        let knownVals: [String: AnyObject] = [JobNameKey: knownuuid, JobURLKey: "http://localhost:8080/job/"+knownuuid, JobColorKey: "blue", JobJenkinsInstanceKey: self.jenkinsInstance!]
+        let knownVals: [String: AnyObject] = [JobNameKey: knownuuid as AnyObject, JobURLKey: ("http://localhost:8080/job/"+knownuuid) as AnyObject, JobColorKey: "blue" as AnyObject, JobJenkinsInstanceKey: self.jenkinsInstance!]
         Job.createJob(withValues: knownVals, in: self.context!)
         jobNames.append(knownuuid)
         
@@ -88,7 +88,7 @@ class PerformanceTests: XCTestCase {
         
         for _ in 1...jobcount {
             let uuid = UUID().uuidString
-            let dict = NSDictionary(objects: [uuid,"blue","http://www.google.com"], forKeys: [JobNameKey,JobColorKey,JobURLKey])
+            let dict = NSDictionary(objects: [uuid,"blue","http://www.google.com"], forKeys: [JobNameKey as NSCopying,JobColorKey as NSCopying,JobURLKey as NSCopying])
             jobs.append(JobDictionary(dictionary: dict)!)
         }
         

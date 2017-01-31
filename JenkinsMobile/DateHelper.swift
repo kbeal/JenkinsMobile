@@ -23,13 +23,13 @@ open class DateHelper {
         let date: Date = Date(timeIntervalSince1970: timestamp/1000)
         let units: NSCalendar.Unit = [.second,.minute,.hour,.day,.month,.year]
         let components = (Calendar.current as NSCalendar).components(units, from: date, to: Date(), options: [])
-        
-        let yearStr = String(describing: components.year) + " yr"
-        let monthStr = String(describing: components.month) + " mo"
-        let dayStr = components.day! > 1 ? (String(describing: components.day) + " days") : (String(describing: components.day) + " day")
-        let hourStr = String(describing: components.hour) + " hr"
-        let minuteStr = String(describing: components.minute) + " min"
-        let secondStr = String(describing: components.second) + " sec"
+
+        let yearStr = "\(components.year!) yr"
+        let monthStr = "\(components.month!) mo"
+        let dayStr = components.day! > 1 ? ("\(components.day!) days") : ("\(components.day!) day")
+        let hourStr = "\(components.hour!) hr"
+        let minuteStr = "\(components.minute!) min"
+        let secondStr = "\(components.second!) sec"
         
 
         if (components.second! > 0) {

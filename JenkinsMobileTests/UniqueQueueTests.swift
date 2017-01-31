@@ -19,7 +19,7 @@ class UniqueQueueTests: XCTestCase {
     override func setUp() {
         context = datamgr.mainMOC
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://jenkins:8080/"]
-        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
+        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://jenkins:8080", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView] as [String : Any]
         
         self.jenkinsInstance = JenkinsInstance.createJenkinsInstance(withValues: jenkinsInstanceValues as [AnyHashable: Any], in: datamgr.mainMOC)
     }
@@ -27,10 +27,10 @@ class UniqueQueueTests: XCTestCase {
     func testUniqueQueueIter() {
         let uq = UniqueQueue<Job>()
         
-        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
+        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
+        let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
+        let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
         let job1 = Job.createJob(withValues: job1vals, in: context)
         let job2 = Job.createJob(withValues: job2vals, in: context)
         let job3 = Job.createJob(withValues: job3vals, in: context)
@@ -52,10 +52,10 @@ class UniqueQueueTests: XCTestCase {
     func testUniqueQueueIterPop() {
         let uq = UniqueQueue<Job>()
         
-        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
+        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
+        let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
+        let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
         let job1 = Job.createJob(withValues: job1vals, in: context)
         let job2 = Job.createJob(withValues: job2vals, in: context)
         let job3 = Job.createJob(withValues: job3vals, in: context)
@@ -83,10 +83,10 @@ class UniqueQueueTests: XCTestCase {
     func testUniqueQueueRemoveAll() {
         let uq = UniqueQueue<Job>()
         
-        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
+        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
+        let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
+        let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
         let job1 = Job.createJob(withValues: job1vals, in: context)
         let job2 = Job.createJob(withValues: job2vals, in: context)
         let job3 = Job.createJob(withValues: job3vals, in: context)
@@ -108,8 +108,8 @@ class UniqueQueueTests: XCTestCase {
     func testUniqueQueuePush() {
         let uq = UniqueQueue<Job>()
         
-        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
+        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
         let job1 = Job.createJob(withValues: job1vals, in: context)
         let job2 = Job.createJob(withValues: job2vals, in: context)
         
@@ -127,10 +127,10 @@ class UniqueQueueTests: XCTestCase {
     func testUniqueQueuePop() {
         let uq = UniqueQueue<Job>()
         
-        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!]
-        let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let job1vals = [JobNameKey: "Job1", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
+        let job2vals = [JobNameKey: "Job2", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job2/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
+        let job3vals = [JobNameKey: "Job3", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job3/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
+        let job4vals = [JobNameKey: "Job4", JobColorKey: "blue", JobURLKey: "http://snowman:8080/jenkins/job/Job4/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
         let job1 = Job.createJob(withValues: job1vals, in: context)
         let job2 = Job.createJob(withValues: job2vals, in: context)
         let job3 = Job.createJob(withValues: job3vals, in: context)

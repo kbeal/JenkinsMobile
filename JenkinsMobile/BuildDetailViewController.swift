@@ -13,6 +13,7 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     let syncMgr = SyncManager.sharedInstance
     var build: Build?
     var buildSyncTimer: Timer?
+    var changes: [Dictionary<String, Any>]?
     @IBOutlet weak var statusBallView: UIImageView?
     @IBOutlet weak var tableView: UITableView?
     @IBOutlet weak var emptyTableView: UIView?
@@ -100,6 +101,27 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
         }
     }
     
+    // updates the lower area of view that contains
+    // permalinks table, all build history table, job description, etc
+    // based on user's choice
+    @IBAction func updateContentModeView() {
+        DispatchQueue.main.async(execute: {
+            switch self.viewModeSwitcher!.selectedSegmentIndex {
+            case 0:
+                // build info. SHA ID and trigger
+                self.showTable()
+            case 1:
+                // changes. SCM changesets
+                self.showTable()
+            case 2:
+                // console.
+                print("3")
+            default:
+                break
+            }
+        })
+    }
+    
     func setTimer(_ interval: Double) {
         self.buildSyncTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(buildSyncTimerTick), userInfo: nil, repeats: true)
         self.buildSyncTimerTick()
@@ -163,6 +185,17 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
             UIImage(named: color + "-status-80")!]
     }
     
+    func showTable() {
+        self.tableView?.reloadData()
+        self.tableView?.isHidden = false
+        //self.consoleView!.isHidden = true
+    }
+    
+    func hideTable() {
+        self.tableView?.isHidden = true
+        //self.consoleView?.isHidden = false
+    }
+    
     // MARK: - Table view delegate
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         // http://stackoverflow.com/a/25877725
@@ -179,15 +212,34 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let numRows: Int = 2
+        var numRows: Int = 0
+        
+        if let modeSwitcher = self.viewModeSwitcher {
+            switch modeSwitcher.selectedSegmentIndex {
+            case 0:
+                // info mode
+                numRows = 2
+            case 1:
+                // build changes
+                if self.changes == nil {
+                    if let cs: [String: Any] = self.build!.changeset as? [String : Any] {
+                        self.changes = cs["Items"] as! [Dictionary<String, Any>]?
+                        numRows = (self.changes?.count)!
+                    }
+                }
+                break
+            default:
+                numRows = 0
+            }
+        }
+        print(String(numRows))
         return numRows
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = self.tableView!.dequeueReusableCell(withIdentifier: "BuildCell", for: indexPath)
+    func configureBuildInfoCell(cell: UITableViewCell, indexPath: IndexPath) -> UITableViewCell {
         var labelTxt: String = ""
         var detailLableTxt: String = ""
-        
+        //trigger (causes)
         if ( indexPath.row == 0 ) {
             if let actions = self.build!.actions as? [[String: AnyObject]] {
                 for action: [String: AnyObject] in actions {
@@ -200,13 +252,13 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
                     }
                 }
             }
-        } else {
+        } else { // SHA ID
             if let actions = self.build!.actions as? [[String: AnyObject]] {
                 for action: [String: AnyObject] in actions {
                     if let lastrev = action["lastBuiltRevision"] as? [String: AnyObject],
-                    let branch = lastrev["branch"] as? [[String:AnyObject]],
-                    let sha1 = branch[0]["SHA1"] as? String,
-                    let name = branch[0]["name"] as? String {
+                        let branch = lastrev["branch"] as? [[String:AnyObject]],
+                        let sha1 = branch[0]["SHA1"] as? String,
+                        let name = branch[0]["name"] as? String {
                         labelTxt = "Revision: " + String(sha1.characters.prefix(10))
                         detailLableTxt = name
                         cell.imageView?.image = UIImage(named: "git-logo")
@@ -217,6 +269,26 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
         
         cell.textLabel?.text = labelTxt
         cell.detailTextLabel?.text = detailLableTxt
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: UITableViewCell = self.tableView!.dequeueReusableCell(withIdentifier: "BuildCell", for: indexPath)
+        
+        if let modeSwitcher = self.viewModeSwitcher {
+            switch modeSwitcher.selectedSegmentIndex {
+            case 0:
+                // info mode
+                self.configureBuildInfoCell(cell: cell, indexPath: indexPath)
+            case 1:
+                // build changes
+                //self.configureBuildChangesCell(cell, indexPath: indexPath)
+                break
+            default:
+                // info mode
+                self.configureBuildInfoCell(cell: cell, indexPath: indexPath)
+            }
+        }
     
         return cell
     }

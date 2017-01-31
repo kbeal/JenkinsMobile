@@ -27,7 +27,7 @@ class DateHelerTests: XCTestCase {
         components.month = -6
         components.day = -4
         let oneYearSixMonthsAgo = (calendar as NSCalendar).date(byAdding: components, to: rightnow, options: [])
-        let oneYearSixMonthsAgoStr = DateHelper.relativeDateStringFromTimestamp((oneYearSixMonthsAgo?.timeIntervalSince1970)! * 1000)
+        let oneYearSixMonthsAgoStr = DateHelper.relativeDateStringFromTimestamp((oneYearSixMonthsAgo!.timeIntervalSince1970) * 1000)!
         
         // 10 mo
         components.year = 0

@@ -21,7 +21,7 @@ class BuildProgressTests: XCTestCase {
         //context = self.datamgr.mainMOC
         context = self.datamgr.masterMOC
         let primaryView = [ViewNameKey: "All", ViewURLKey: "http://localhost:8081/"]
-        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://localhost:8081", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView]
+        let jenkinsInstanceValues = [JenkinsInstanceNameKey: "TestInstance", JenkinsInstanceURLKey: "http://localhost:8081", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "admin", JenkinsInstancePrimaryViewKey: primaryView] as [String : Any]
         
         context?.performAndWait({self.jenkinsInstance = JenkinsInstance.createJenkinsInstance(withValues: jenkinsInstanceValues as [AnyHashable: Any], in: self.context!)})
         self.jenkinsInstance?.password = "password"
@@ -31,9 +31,9 @@ class BuildProgressTests: XCTestCase {
     }
     
     func testUpdateBuildProgress() {
-        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://localhost:8080/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!]
+        let jobVals1 = [JobNameKey: "TestJob", JobColorKey: "blue", JobURLKey: "http://localhost:8080/job/Job1/", JobJenkinsInstanceKey: jenkinsInstance!] as [String : Any]
         let job = Job.createJob(withValues: jobVals1, in: context!)
-        let buildvals = [BuildNumberKey: 1, BuildURLKey: "http://localhost:8080/job/Job1/1/", BuildJobKey: job, BuildEstimatedDurationKey: 120000]
+        let buildvals = [BuildNumberKey: 1, BuildURLKey: "http://localhost:8080/job/Job1/1/", BuildJobKey: job, BuildEstimatedDurationKey: 120000] as [String : Any]
         let build = Build.createBuild(withValues: buildvals, in: context!)
         DataManager.sharedInstance.saveMainContext()
         let buildprogress = BuildProgress(build: build!)
