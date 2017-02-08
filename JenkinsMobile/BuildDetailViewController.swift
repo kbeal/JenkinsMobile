@@ -13,7 +13,14 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     let syncMgr = SyncManager.sharedInstance
     var build: Build?
     var buildSyncTimer: Timer?
-    var changes: [Dictionary<String, Any>]?
+    lazy var changes: [Dictionary<String, Any>] = {
+        var chgs = [Dictionary<String, Any>]()
+        if let cs: [String: Any] = self.build!.changeset as? [String : Any] {
+            chgs = cs["items"] as! [Dictionary<String, Any>]
+        }
+        return chgs
+    }()
+    
     @IBOutlet weak var statusBallView: UIImageView?
     @IBOutlet weak var tableView: UITableView?
     @IBOutlet weak var emptyTableView: UIView?
@@ -221,22 +228,16 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
                 numRows = 2
             case 1:
                 // build changes
-                if self.changes == nil {
-                    if let cs: [String: Any] = self.build!.changeset as? [String : Any] {
-                        self.changes = cs["Items"] as! [Dictionary<String, Any>]?
-                        numRows = (self.changes?.count)!
-                    }
-                }
+                numRows = self.changes.count
                 break
             default:
                 numRows = 0
             }
         }
-        print(String(numRows))
         return numRows
     }
     
-    func configureBuildInfoCell(cell: UITableViewCell, indexPath: IndexPath) -> UITableViewCell {
+    func configureBuildInfoCell(cell: UITableViewCell, indexPath: IndexPath) {
         var labelTxt: String = ""
         var detailLableTxt: String = ""
         //trigger (causes)
@@ -269,7 +270,25 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
         
         cell.textLabel?.text = labelTxt
         cell.detailTextLabel?.text = detailLableTxt
-        return cell
+    }
+    
+    func configureBuildChangesCell(cell: UITableViewCell, indexPath: IndexPath) {
+        var labelTxt: String = ""
+        var detailLableTxt: String = ""
+        
+        let change = self.changes[indexPath.row]
+        labelTxt = change["msg"] as! String
+        
+        let timestamp = change["timestamp"] as! Double
+        let dateStr = DateHelper.dateStringFromTimestamp(timestamp)
+        let author = change["author"] as! [String: String]
+        let commitID = change["commitId"] as! String
+        let commitIDShort = String(commitID.characters.prefix(12))
+        detailLableTxt = dateStr + " - " + author["fullName"]! + " - " + commitIDShort
+        
+        cell.textLabel?.text = labelTxt
+        cell.detailTextLabel?.text = detailLableTxt
+        cell.imageView?.image = nil
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -282,7 +301,7 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
                 self.configureBuildInfoCell(cell: cell, indexPath: indexPath)
             case 1:
                 // build changes
-                //self.configureBuildChangesCell(cell, indexPath: indexPath)
+                self.configureBuildChangesCell(cell: cell, indexPath: indexPath)
                 break
             default:
                 // info mode
