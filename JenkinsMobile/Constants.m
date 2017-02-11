@@ -22,6 +22,8 @@ NSString * const ViewChildViewsResponseReceivedNotification = @"ViewChildViewsRe
 NSString * const ViewChildViewsRequestFailedNotification = @"ViewChildViewsRequestFailed";
 NSString * const BuildProgressResponseReceivedNotification = @"BuildProgressResponseReceived";
 NSString * const BuildProgressRequestFailedNotification = @"BuildProgressRequestFailed";
+NSString * const BuildConsoleTextResponseReceivedNotification = @"BuldConsoleTextResponseReceived";
+NSString * const BuildConsoleTextRequestFailedNotification = @"BuildConsoleTextRequestFailed";
 NSString * const JobTestResultsImageResponseReceivedNotification = @"JobTestResultsImageResponseReceived";
 NSString * const JenkinsInstanceDetailResponseReceivedNotification = @"JenkinsInstanceDetailResponseReceived";
 NSString * const NewLargeJenkinsInstanceDetailResponseReceivedNotification = @"NewLargeJenkinsInstanceDetailResponseReceived";
@@ -136,6 +138,7 @@ NSString * const BuildIDKey = @"id";
 NSString * const BuildFullDisplayNameKey = @"fullDisplayName";
 NSString * const BuildLastSyncResultKey = @"lastSyncResult";
 NSString * const BuildExecutorProgressKey = @"progress";
+NSString * const BuildConsoleTextKey = @"consoleText";
 
 #pragma mark - JenkinsInstance Keys
 NSString * const JenkinsInstanceNameKey = @"name";

@@ -39,10 +39,10 @@ open class BuildProgress: Progress {
     }
     
     func updateProgress() {
-        self.totalUnitCount = self.buildToWatch.estimatedDuration.int64Value
+        self.totalUnitCount = (self.buildToWatch.estimatedDuration?.int64Value)!
         if let executor: NSDictionary = self.buildToWatch.executor as? NSDictionary {
             if let progress: Int = executor[BuildExecutorProgressKey] as? Int {
-                let duration: Double = self.buildToWatch.estimatedDuration.doubleValue * (Double(progress) / 100)
+                let duration: Double = self.buildToWatch.estimatedDuration!.doubleValue * (Double(progress) / 100)
                 self.completedUnitCount = Int64(duration)
             }
         } else {

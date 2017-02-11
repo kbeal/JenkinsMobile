@@ -11,27 +11,24 @@
 
 @class ActiveConfiguration, Job;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface Build : NSManagedObject
 
-@property (nonatomic, retain) id actions;
-@property (nonatomic, retain) id artifacts;
-@property (nonatomic, retain) NSString * build_description;
-@property (nonatomic, retain) NSString * build_id;
-@property (nonatomic, retain) NSNumber * building;
-@property (nonatomic, retain) NSString * builtOn;
-@property (nonatomic, retain) id changeset;
-@property (nonatomic, retain) id culprits;
-@property (nonatomic, retain) NSNumber * duration;
-@property (nonatomic, retain) NSNumber * estimatedDuration;
-@property (nonatomic, retain) id executor;
-@property (nonatomic, retain) NSString * fullDisplayName;
-@property (nonatomic, retain) NSNumber * keepLog;
-@property (nonatomic, retain) NSString * lastSyncResult;
-@property (nonatomic, retain) NSNumber * number;
-@property (nonatomic, retain) NSString * result;
-@property (nonatomic, retain) NSDate * timestamp;
-@property (nonatomic, retain) NSString * url;
-@property (nonatomic, retain) ActiveConfiguration *rel_Build_ActiveConfiguration;
-@property (nonatomic, retain) Job *rel_Build_Job;
+- (void)setValues:(NSDictionary * _Nonnull) values;
+- (BOOL) shouldSync;
+- (void)setProgressUpdateValues:(NSDictionary * _Nonnull) values;
+- (void) updateConsoleText:(NSString * _Nonnull) consoleText;
+
++ (Build * _Nullable) createBuildWithValues:(NSDictionary * _Nonnull) values inManagedObjectContext:(NSManagedObjectContext * _Nonnull)context;
++ (Build * _Nullable) fetchBuildWithURL:(NSString * _Nonnull)url inContext:(NSManagedObjectContext * _Nonnull) context;
++ (NSArray * _Nullable)fetchBuildsWithNumbers: (NSArray * _Nonnull) numbers forJob: (Job * _Nonnull) job;
++ (NSString * _Nullable) getColorForResult:(NSString * _Nullable) result;
++ (NSString * _Nonnull) removeApiFromURL:(NSURL * _Nonnull) url;
++ (BOOL) colorIsBuilding:(NSString * _Nonnull) color;
 
 @end
+
+NS_ASSUME_NONNULL_END
+
+#import "Build+CoreDataProperties.h"

@@ -25,6 +25,7 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     @IBOutlet weak var tableView: UITableView?
     @IBOutlet weak var emptyTableView: UIView?
     @IBOutlet weak var progressView: UIProgressView?
+    @IBOutlet weak var consoleView: UITextView?
     @IBOutlet weak var viewModeSwitcher: UISegmentedControl?
     @IBOutlet weak var buildNumberLabel: UILabel?
     @IBOutlet weak var buildDateLabel: UILabel?
@@ -70,30 +71,31 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
                 self.updateLabels()
                 self.updateJobStatusIcon()
                 self.updateBuildProgressView()
+                self.updateConsoleView();
             }
         })
     }
     
     func updateLabels() {
         self.buildNumberLabel?.text = "# " + String(describing: self.build!.number)
-        self.buildDateLabel?.text = DateHelper.dateStringFromDate(self.build!.timestamp)
+        self.buildDateLabel?.text = DateHelper.dateStringFromDate(self.build!.timestamp!)
     }
     
     func updateJobStatusIcon() {
-        if self.build!.building.boolValue {
-            self.startImageViewAnimation(self.statusBallView!, color: self.build!.rel_Build_Job.color!)
+        if (self.build!.building?.boolValue)! {
+            self.startImageViewAnimation(self.statusBallView!, color: (self.build!.rel_Build_Job?.color!)!)
         } else {
             self.stopImageViewAnimation(self.statusBallView!, color: Build.getColorForResult(self.build!.result)!)
         }
     }
     
     func updateBuildProgressView() {
-        if self.build!.building.boolValue {
+        if (self.build!.building?.boolValue)! {
             self.updateProgressViewObservedProgress()
             
             // create and start build status timer
             if self.buildSyncTimer == nil {
-                self.setTimer(self.syncIntervalForBuild(self.build!.estimatedDuration.doubleValue))
+                self.setTimer(self.syncIntervalForBuild((self.build!.estimatedDuration?.doubleValue)!))
             }
             
             // show progress view
@@ -105,6 +107,12 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
             // stop build status timer, set to nil
             self.buildSyncTimer?.invalidate()
             self.buildSyncTimer = nil
+        }
+    }
+    
+    func updateConsoleView() {
+        if !(consoleView?.isHidden)! {
+            consoleView?.text = self.build!.consoleText!
         }
     }
     
@@ -122,7 +130,7 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
                 self.showTable()
             case 2:
                 // console.
-                print("3")
+                self.hideTable()
             default:
                 break
             }
@@ -150,7 +158,7 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     func buildSyncTimerTick() {
         // query build progress
         if self.build != nil {
-            self.syncMgr.syncProgressForBuild(self.build!, jenkinsInstance: self.build!.rel_Build_Job.rel_Job_JenkinsInstance!)
+            self.syncMgr.syncProgressForBuild(self.build!, jenkinsInstance: (self.build!.rel_Build_Job?.rel_Job_JenkinsInstance!)!)
         }
     }
     
@@ -195,12 +203,13 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     func showTable() {
         self.tableView?.reloadData()
         self.tableView?.isHidden = false
-        //self.consoleView!.isHidden = true
+        self.consoleView?.isHidden = true
     }
     
     func hideTable() {
         self.tableView?.isHidden = true
-        //self.consoleView?.isHidden = false
+        self.consoleView?.isHidden = false
+        self.syncMgr.syncConsoleTextForBuild(self.build!,jenkinsInstance: self.build!.rel_Build_Job!.rel_Job_JenkinsInstance!)
     }
     
     // MARK: - Table view delegate

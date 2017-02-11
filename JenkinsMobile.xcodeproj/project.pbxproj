@@ -51,7 +51,6 @@
 		8AA1CD281A9D366800F977B0 /* Job.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA1CD271A9D366800F977B0 /* Job.m */; };
 		8AA1CD311A9EA94500F977B0 /* Build.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA1CD301A9EA94500F977B0 /* Build.m */; };
 		8AA1CD371A9EA94500F977B0 /* ActiveConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA1CD361A9EA94500F977B0 /* ActiveConfiguration.m */; };
-		8AA1CD3D1A9EA99A00F977B0 /* Build+More.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA1CD3C1A9EA99A00F977B0 /* Build+More.m */; };
 		8AA4DAAC1C7E815D008E82C0 /* BuildProgressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA4DAAB1C7E815D008E82C0 /* BuildProgressTests.swift */; };
 		8AA85D6D1AF070C000F8B915 /* KDBMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA85D6C1AF070C000F8B915 /* KDBMasterViewController.m */; };
 		8ABC1B3E1C6D817E008764EF /* DeviceTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABC1B3D1C6D817E008764EF /* DeviceTypes.swift */; };
@@ -82,6 +81,7 @@
 		8AE9636B1B8FDCEB000F6A0E /* KDBTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE9636A1B8FDCEB000F6A0E /* KDBTextFieldTableViewCell.swift */; };
 		8AE963701B9270F9000F6A0E /* StatusCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE9636F1B9270F9000F6A0E /* StatusCircle.swift */; };
 		8AF4970E1C1A242200D95025 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A76B0F1199C3AE200B219C5 /* Constants.m */; };
+		8AF5F62C1E4F6991006D4509 /* Build+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AF5F62A1E4F6991006D4509 /* Build+CoreDataProperties.m */; };
 		8AFBC11F19468806008EDC9D /* KDBMasterBuildListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */; };
 		8AFC02191B5883EA00D2B78E /* DismissSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC02181B5883EA00D2B78E /* DismissSegue.swift */; };
 		8AFC021A1B58865F00D2B78E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A41D37A1AE86C7C00650CFE /* Main.storyboard */; };
@@ -162,8 +162,6 @@
 		8AA1CD301A9EA94500F977B0 /* Build.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Build.m; sourceTree = "<group>"; };
 		8AA1CD351A9EA94500F977B0 /* ActiveConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveConfiguration.h; sourceTree = "<group>"; };
 		8AA1CD361A9EA94500F977B0 /* ActiveConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveConfiguration.m; sourceTree = "<group>"; };
-		8AA1CD3B1A9EA99A00F977B0 /* Build+More.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Build+More.h"; sourceTree = "<group>"; };
-		8AA1CD3C1A9EA99A00F977B0 /* Build+More.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Build+More.m"; sourceTree = "<group>"; };
 		8AA4DAAB1C7E815D008E82C0 /* BuildProgressTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuildProgressTests.swift; sourceTree = "<group>"; };
 		8AA85D6B1AF070C000F8B915 /* KDBMasterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBMasterViewController.h; sourceTree = "<group>"; };
 		8AA85D6C1AF070C000F8B915 /* KDBMasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBMasterViewController.m; sourceTree = "<group>"; };
@@ -200,6 +198,8 @@
 		8AE904B719BD4C3500EE6A79 /* KDBJobTestResultsTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBJobTestResultsTableViewCell.m; sourceTree = "<group>"; };
 		8AE9636A1B8FDCEB000F6A0E /* KDBTextFieldTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDBTextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		8AE9636F1B9270F9000F6A0E /* StatusCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusCircle.swift; sourceTree = "<group>"; };
+		8AF5F6291E4F6991006D4509 /* Build+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Build+CoreDataProperties.h"; sourceTree = "<group>"; };
+		8AF5F62A1E4F6991006D4509 /* Build+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Build+CoreDataProperties.m"; sourceTree = "<group>"; };
 		8AFBC11D19468806008EDC9D /* KDBMasterBuildListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KDBMasterBuildListTableViewController.h; sourceTree = "<group>"; };
 		8AFBC11E19468806008EDC9D /* KDBMasterBuildListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KDBMasterBuildListTableViewController.m; sourceTree = "<group>"; };
 		8AFC02181B5883EA00D2B78E /* DismissSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DismissSegue.swift; sourceTree = "<group>"; };
@@ -384,6 +384,8 @@
 		8AE3B96918EF80D000E061C1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				8AF5F6291E4F6991006D4509 /* Build+CoreDataProperties.h */,
+				8AF5F62A1E4F6991006D4509 /* Build+CoreDataProperties.m */,
 				8ACE01291C618418009488DD /* Job+CoreDataProperties.h */,
 				8ACE012A1C618418009488DD /* Job+CoreDataProperties.m */,
 				8A5A2D971C179C450060143E /* JenkinsInstance+CoreDataProperties.h */,
@@ -402,8 +404,6 @@
 				8AA1CD271A9D366800F977B0 /* Job.m */,
 				8A6D731A1A6F268700BFA0A5 /* ActiveConfiguration+More.h */,
 				8A6D731B1A6F268700BFA0A5 /* ActiveConfiguration+More.m */,
-				8AA1CD3B1A9EA99A00F977B0 /* Build+More.h */,
-				8AA1CD3C1A9EA99A00F977B0 /* Build+More.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -635,6 +635,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8AF5F62C1E4F6991006D4509 /* Build+CoreDataProperties.m in Sources */,
 				8A4ACA5D1B3A3DE50088648C /* SWRevealViewController.m in Sources */,
 				8A779FDB1B7D636A00678BC0 /* KDBTextField.swift in Sources */,
 				8A9B05B11924452D0019B336 /* KDBBuildDetailViewController.m in Sources */,
@@ -675,7 +676,6 @@
 				8A4ACA641B3A40280088648C /* MenuViewController.swift in Sources */,
 				8A41D37F1AE86EBD00650CFE /* KDBViewsTableViewController.m in Sources */,
 				8A817AAF196390D700ED7075 /* KDBBallScene.m in Sources */,
-				8AA1CD3D1A9EA99A00F977B0 /* Build+More.m in Sources */,
 				8A99949C197AB258009B82DD /* UIButton+RelatedProject.m in Sources */,
 				8AE348731C471B1A0066A5C7 /* JobDetailViewController.swift in Sources */,
 				8AC329FB18E4F3A90002D106 /* main.m in Sources */,

@@ -139,7 +139,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
             // if job's last build changed make sure it gets synced up
             if let jobLastBuild: [String:AnyObject] = self.job!.lastBuild as? [String:AnyObject] {
                 if let jobLastBuildNum: Int = jobLastBuild[BuildNumberKey] as? Int {
-                    if jobLastBuildNum != self.lastbuild?.number.intValue {
+                    if jobLastBuildNum != self.lastbuild?.number?.intValue {
                         self.syncMgr.syncLatestBuildsForJob(self.job!, numberOfBuilds: 5)
                         self.lastbuild = self.getLatestBuild()
                     }
@@ -197,12 +197,12 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
         if self.lastbuild != nil {
             //print("********** updating build progress view for build \(self.lastbuild?.number.integerValue)")
             //print("********** the build building is \(self.lastbuild?.building.integerValue)")
-            if self.lastbuild!.building.boolValue {
+            if (self.lastbuild!.building?.boolValue)! {
                 self.updateProgressViewObservedProgress()
                 
                 // create and start build status timer
                 if self.lastBuildSyncTimer == nil {
-                    self.setTimer(self.syncIntervalForBuild(self.lastbuild!.estimatedDuration.doubleValue))
+                    self.setTimer(self.syncIntervalForBuild((self.lastbuild!.estimatedDuration?.doubleValue)!))
                 }
                 
                 // show progress view
@@ -340,7 +340,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     
     func updateJobStatusIcon() {
         if self.lastbuild != nil {
-            if self.lastbuild!.building.boolValue {
+            if (self.lastbuild!.building?.boolValue)! {
                 self.startImageViewAnimation(self.statusBallView!, color: self.job!.color!)
             } else {
                 self.stopImageViewAnimation(self.statusBallView!, color: self.job!.color!)
@@ -588,7 +588,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
             if let building: Bool = permalink[BuildBuildingKey] as? Bool {
                 if building {
                     self.startImageViewAnimation(cell.imageView!, color: self.job!.color!)
-                    timestamp = self.lastbuild!.timestamp.timeIntervalSince1970 * 1000
+                    timestamp = (self.lastbuild!.timestamp?.timeIntervalSince1970)! * 1000
                 } else {
                     let color: String? = Build.getColorForResult(permalink[BuildResultKey] as? String)
                     if color != nil {
@@ -618,7 +618,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
                 if let color = Build.getColorForResult(build.result) {
                     cell.imageView?.image = UIImage(named: color + "-status-100")
                 }
-                cell.textLabel?.text = "#" + build.number.stringValue + " - " + DateHelper.dateStringFromTimestamp((build.timestamp.timeIntervalSince1970 * 1000))
+                cell.textLabel?.text = "#" + (build.number?.stringValue)! + " - " + DateHelper.dateStringFromTimestamp(((build.timestamp?.timeIntervalSince1970)! * 1000))
                 cell.detailTextLabel?.text = "" 
         }
     }

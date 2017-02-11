@@ -7,7 +7,7 @@
 //
 
 #import "Job.h"
-#import "Build+More.h"
+#import "Build.h"
 #import "JenkinsInstance.h"
 #import "View.h"
 #import "Constants.h"

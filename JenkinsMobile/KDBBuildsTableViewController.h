@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "Job.h"
-#import "Build+More.h"
+#import "Build.h"
 #import "JenkinsMobile-Swift.h"
 
 @interface KDBBuildsTableViewController : UITableViewController <NSFetchedResultsControllerDelegate>

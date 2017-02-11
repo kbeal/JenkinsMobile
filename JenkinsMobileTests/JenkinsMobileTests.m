@@ -10,7 +10,7 @@
 #import "Job.h"
 #import "View.h"
 #import "JenkinsInstance.h"
-#import "Build+More.h"
+#import "Build.h"
 #import "Constants.h"
 #import "ActiveConfiguration+More.h"
 #import "JenkinsMobileTests-Swift.h"

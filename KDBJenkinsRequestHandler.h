@@ -21,6 +21,7 @@
 - (void) importDetailsForActiveConfiguration: (ActiveConfiguration *) ac;
 - (void) importDetailsForBuild: (Build *) build;
 - (void) importProgressForBuild:(Build *) build onJenkinsInstance:(JenkinsInstance *) jinstance;
+- (void) importConsoleTextForBuild: (Build *) build onJenkinsInstance:(JenkinsInstance *) jinstance;
 - (void) importDetailsForJenkinsInstance: (JenkinsInstance *) jinstance;
 - (void) importViewsForJenkinsInstance: (JenkinsInstance *) jinstance;
 - (void) pingJenkinsInstance: (JenkinsInstance *) jinstance;

@@ -81,6 +81,7 @@ open class SyncManager: NSObject {
         NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.activeConfigurationDetailResponseReceived(_:)), name: NSNotification.Name.ActiveConfigurationDetailResponseReceived, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.activeConfigurationDetailRequestFailed(_:)), name: NSNotification.Name.ActiveConfigurationDetailRequestFailed, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.buildProgressResponseReceived(_:)), name: NSNotification.Name.BuildProgressResponseReceived, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(SyncManager.buildConsoleTextReceived(_:)), name: NSNotification.Name.BuildConsoleTextResponseReceived, object: nil)
     }
     
     func syncTimerTick() {
@@ -243,6 +244,15 @@ open class SyncManager: NSObject {
         }
     }
     
+    open func syncConsoleTextForBuild(_ build: Build, jenkinsInstance: JenkinsInstance) {
+        if let bgbuild: Build = self.dataMgr.ensureObjectOnBackgroundThread(build) as? Build,
+            let bgji: JenkinsInstance = self.dataMgr.ensureObjectOnBackgroundThread(jenkinsInstance) as? JenkinsInstance{
+            self.masterMOC.perform({
+                self.requestHandler.importConsoleText(for: bgbuild, on: bgji)
+            })
+        }
+    }
+    
     // MARK: - Responses Received
     func jobDetailResponseReceived(_ notification: Notification) {
         var values: Dictionary = notification.userInfo!
@@ -400,9 +410,20 @@ open class SyncManager: NSObject {
             
             // if we switched to building to not building, re-query the job itself
             if let _ = build.changedValues()[BuildBuildingKey] {
-                self.syncJob(build.rel_Build_Job)
+                self.syncJob(build.rel_Build_Job!)
             }
             
+            self.saveContext(build.managedObjectContext)
+        })
+    }
+    
+    func buildConsoleTextReceived(_ notification: Notification) {
+        let values: Dictionary = notification.userInfo!
+        let build: Build = values[RequestedObjectKey] as! Build
+        let consoleText: String = values[BuildConsoleTextKey] as! String
+        
+        build.managedObjectContext?.perform({
+            build.updateConsoleText(consoleText)
             self.saveContext(build.managedObjectContext)
         })
     }

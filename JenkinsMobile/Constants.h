@@ -28,6 +28,8 @@ extern NSString * const BuildDetailResponseReceivedNotification;
 extern NSString * const BuildDetailRequestFailedNotification;
 extern NSString * const BuildProgressResponseReceivedNotification;
 extern NSString * const BuildProgressRequestFailedNotification;
+extern NSString * const BuildConsoleTextResponseReceivedNotification;
+extern NSString * const BuildConsoleTextRequestFailedNotification;
 extern NSString * const ActiveConfigurationDetailResponseReceivedNotification;
 extern NSString * const ActiveConfigurationDetailRequestFailedNotification;
 extern NSString * const JobTestResultsImageResponseReceivedNotification;
@@ -133,6 +135,7 @@ extern NSString * const BuildIDKey;
 extern NSString * const BuildFullDisplayNameKey;
 extern NSString * const BuildLastSyncResultKey;
 extern NSString * const BuildExecutorProgressKey;
+extern NSString * const BuildConsoleTextKey;
 
 #pragma mark - JenkinsInstance Keys
 extern NSString * const JenkinsInstanceNameKey;
