@@ -13,6 +13,7 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     let syncMgr = SyncManager.sharedInstance
     var build: Build?
     var buildSyncTimer: Timer?
+    var visible: Bool = false
     lazy var changes: [Dictionary<String, Any>] = {
         var chgs = [Dictionary<String, Any>]()
         if let cs: [String: Any] = self.build!.changeset as? [String : Any] {
@@ -36,17 +37,34 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
         if self.build != nil {
             //observe changes to model
             NotificationCenter.default.addObserver(self, selector: #selector(BuildDetailViewController.handleDataModelChange(_:)), name: NSNotification.Name.NSManagedObjectContextDidSave, object: syncMgr.masterMOC)
-            // sync this job with latest from server
-            syncMgr.syncBuild(self.build!)
         }
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        print("****** build detail view will disappear")
+    override func viewWillAppear(_ animated: Bool) {
+        self.setNavTitleAndButton()
+        super.viewWillAppear(animated)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        self.visible = true
+        // sync this build with latest from server
+        syncMgr.syncBuild(self.build!)
+        super.viewDidAppear(animated)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
         // stop build status timer, set to nil
         self.buildSyncTimer?.invalidate()
         self.buildSyncTimer = nil
         super.viewWillDisappear(animated)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.visible = false
+        // stop build status timer, set to nil
+        self.buildSyncTimer?.invalidate()
+        self.buildSyncTimer = nil
+        super.viewDidDisappear(animated)
     }
 
     override func didReceiveMemoryWarning() {
@@ -65,6 +83,13 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
         }
     }
     
+    func setNavTitleAndButton() {
+        if self.build != nil {
+            self.navigationItem.leftBarButtonItem?.image = UIImage(named: "logo.png")?.withRenderingMode(.alwaysOriginal)
+            self.navigationItem.title = "# " + build!.number!.stringValue
+        }
+    }
+    
     func updateDisplay() {
         DispatchQueue.main.async(execute: {
             if self.build != nil {
@@ -77,7 +102,7 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     }
     
     func updateLabels() {
-        self.buildNumberLabel?.text = "# " + String(describing: self.build!.number)
+        self.buildNumberLabel?.text = "# " + self.build!.number!.stringValue
         self.buildDateLabel?.text = DateHelper.dateStringFromDate(self.build!.timestamp!)
     }
     
@@ -138,8 +163,10 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     }
     
     func setTimer(_ interval: Double) {
-        self.buildSyncTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(buildSyncTimerTick), userInfo: nil, repeats: true)
-        self.buildSyncTimerTick()
+        if (self.visible) {
+            self.buildSyncTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(buildSyncTimerTick), userInfo: nil, repeats: true)
+            self.buildSyncTimerTick()
+        }
     }
     
     // determines how often to pool a build for completion.
@@ -156,9 +183,15 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     }
     
     func buildSyncTimerTick() {
+        print("build detail tick")
         // query build progress
         if self.build != nil {
             self.syncMgr.syncProgressForBuild(self.build!, jenkinsInstance: (self.build!.rel_Build_Job?.rel_Job_JenkinsInstance!)!)
+        }
+        
+        if !self.visible {
+            self.buildSyncTimer?.invalidate()
+            self.buildSyncTimer = nil
         }
     }
     

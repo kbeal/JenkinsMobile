@@ -43,6 +43,7 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     var upstreamProjectsSectionIndex: Int?
     var downstreamProjectsSectionIndex: Int?
     var jobHasACS: Bool = false // indicates whether this job has active configurations
+    var visible: Bool = false // determines whether this VC is visible
     let syncMgr = SyncManager.sharedInstance
     @IBOutlet weak var statusBallView: UIImageView?
     @IBOutlet weak var healthImageView: UIImageView?
@@ -57,37 +58,49 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setNavTitleAndButton()
-        self.updateDisplay()
         self.emptyViewImageTopConstraint?.constant = emptyViewImageTopConstraintConstant()
         
         if self.job != nil {
-            self.lastbuild = self.getLatestBuild()
             //observe changes to model
             NotificationCenter.default.addObserver(self, selector: #selector(JobDetailViewController.handleDataModelChange(_:)), name: NSNotification.Name.NSManagedObjectContextDidSave, object: syncMgr.masterMOC)
-            // sync this job with latest from server
-            syncMgr.syncJob(self.job!)
-            // sync details for latest builds
-            syncMgr.syncLatestBuildsForJob(self.job!, numberOfBuilds: 10)
-            // select first segment of view mode switcher
-            self.viewModeSwitcher?.selectedSegmentIndex = 0
-            // determine if job has active configurations
-            if let acs = self.job!.activeConfigurations as? [[String: AnyObject]] {
-                if acs.count > 0 {
-                    self.jobHasACS = true
-                }
-            }
         }
-        
-        self.configureViewModeSwitcher()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        print("****** job detail view will disappear")
+    override func viewWillAppear(_ animated: Bool) {
+        // determine if job has active configurations
+        if let acs = self.job!.activeConfigurations as? [[String: AnyObject]] {
+            if acs.count > 0 {
+                self.jobHasACS = true
+            }
+        }
+        setNavTitleAndButton()
+        self.updateDisplay()
+        self.configureViewModeSwitcher()
+        super.viewWillAppear(animated)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        self.visible = true
+        // sync this job with latest from server
+        syncMgr.syncJob(self.job!)
+        // sync details for latest builds
+        syncMgr.syncLatestBuildsForJob(self.job!, numberOfBuilds: 10)
+        // select first segment of view mode switcher
+        self.viewModeSwitcher?.selectedSegmentIndex = 0
+        self.lastbuild = self.getLatestBuild()
+        super.viewDidAppear(animated)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
         // stop build status timer, set to nil
         self.lastBuildSyncTimer?.invalidate()
         self.lastBuildSyncTimer = nil
         super.viewWillDisappear(animated)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.visible = false
+        super.viewDidDisappear(animated)
     }
     
     // updates last segment to 'Configurations' if this job has active configs
@@ -100,8 +113,10 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func setTimer(_ interval: Double) {
-        self.lastBuildSyncTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(lastBuildSyncTimerTick), userInfo: nil, repeats: true)
-        self.lastBuildSyncTimerTick()
+        if (self.visible) {
+            self.lastBuildSyncTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(lastBuildSyncTimerTick), userInfo: nil, repeats: true)
+            self.lastBuildSyncTimerTick()
+        }
     }
     
     func getLatestBuild() -> Build? {
@@ -168,9 +183,15 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func lastBuildSyncTimerTick() {
+        print("job detail tick")
         // query build progress
         if self.lastbuild != nil {
             self.syncMgr.syncProgressForBuild(self.lastbuild!, jenkinsInstance: self.job!.rel_Job_JenkinsInstance!)
+        }
+        
+        if !self.visible {
+            self.lastBuildSyncTimer?.invalidate()
+            self.lastBuildSyncTimer = nil
         }
     }
     
@@ -588,7 +609,9 @@ class JobDetailViewController: UIViewController, UITableViewDataSource, UITableV
             if let building: Bool = permalink[BuildBuildingKey] as? Bool {
                 if building {
                     self.startImageViewAnimation(cell.imageView!, color: self.job!.color!)
-                    timestamp = (self.lastbuild!.timestamp?.timeIntervalSince1970)! * 1000
+                    if let lastbuild = self.lastbuild {
+                        timestamp = (lastbuild.timestamp?.timeIntervalSince1970)! * 1000
+                    }
                 } else {
                     let color: String? = Build.getColorForResult(permalink[BuildResultKey] as? String)
                     if color != nil {
