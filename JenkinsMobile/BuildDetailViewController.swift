@@ -47,6 +47,7 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     
     override func viewDidAppear(_ animated: Bool) {
         self.visible = true
+        self.updateDisplay()
         // sync this build with latest from server
         syncMgr.syncBuild(self.build!)
         super.viewDidAppear(animated)
@@ -152,10 +153,14 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
                 self.showTable()
             case 1:
                 // changes. SCM changesets
-                self.showTable()
+                if self.changes.count > 0 {
+                    self.showTable()
+                } else {
+                    self.showEmptyTable()
+                }
             case 2:
                 // console.
-                self.hideTable()
+                self.showConsoleView()
             default:
                 break
             }
@@ -183,7 +188,6 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
     }
     
     func buildSyncTimerTick() {
-        print("build detail tick")
         // query build progress
         if self.build != nil {
             self.syncMgr.syncProgressForBuild(self.build!, jenkinsInstance: (self.build!.rel_Build_Job?.rel_Job_JenkinsInstance!)!)
@@ -237,12 +241,20 @@ class BuildDetailViewController: UIViewController , UITableViewDataSource, UITab
         self.tableView?.reloadData()
         self.tableView?.isHidden = false
         self.consoleView?.isHidden = true
+        self.emptyTableView?.isHidden = true
     }
     
-    func hideTable() {
+    func showConsoleView() {
         self.tableView?.isHidden = true
         self.consoleView?.isHidden = false
+        self.emptyTableView?.isHidden = true
         self.syncMgr.syncConsoleTextForBuild(self.build!,jenkinsInstance: self.build!.rel_Build_Job!.rel_Job_JenkinsInstance!)
+    }
+    
+    func showEmptyTable() {
+        self.tableView?.isHidden = true
+        self.consoleView?.isHidden = true
+        self.emptyTableView?.isHidden = false
     }
     
     // MARK: - Table view delegate
