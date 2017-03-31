@@ -42,7 +42,7 @@
         <attribute name="building" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="builtOn" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="changeset" optional="YES" attributeType="Transformable" syncable="YES"/>
-        <attribute name="completedTime" optional="YES" transient="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="completedTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="consoleText" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="culprits" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="duration" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>

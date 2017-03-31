@@ -85,20 +85,18 @@
 
 + (BOOL) colorIsBuilding:(NSString * _Nonnull) color { return [color rangeOfString:@"anime"].length > 0 ? true : false; }
 
-- (NSDate *) completedTime
-{
-    [self willAccessValueForKey:@"completedTime"];
-    return [NSDate dateWithTimeIntervalSince1970:([self.timestamp timeIntervalSince1970] + [self.duration doubleValue])];
-    [self didAccessValueForKey:@"completedTime"];
-}
-
 - (void) setTimestamp:(NSDate *)timestamp
 {
     [self willChangeValueForKey:@"timestamp"];
-    [self willChangeValueForKey:@"completedTime"];
     [self setPrimitiveValue:timestamp forKey:@"timestamp"];
     [self didChangeValueForKey:@"timestamp"];
-    [self didChangeValueForKey:@"completedTime"];
+    
+    if ((self.duration != nil) || ([self.duration doubleValue] > 0)) {
+        [self willChangeValueForKey:@"completedTime"];
+        NSDate *complete = [NSDate dateWithTimeIntervalSince1970:[timestamp timeIntervalSince1970] + [self.duration doubleValue]];
+        [self setPrimitiveValue:complete forKey:@"completedTime"];
+        [self didChangeValueForKey:@"completedTime"];
+    }
 }
 
 - (void) setDuration:(NSNumber *)duration
@@ -106,6 +104,8 @@
     [self willChangeValueForKey:@"duration"];
     [self willChangeValueForKey:@"completedTime"];
     [self setPrimitiveValue:duration forKey:@"duration"];
+    NSDate *complete = [NSDate dateWithTimeIntervalSince1970:[self.timestamp timeIntervalSince1970] + [duration doubleValue]];
+    [self setPrimitiveValue:complete forKey:@"completedTime"];
     [self didChangeValueForKey:@"duration"];
     [self didChangeValueForKey:@"completedTime"];
 }

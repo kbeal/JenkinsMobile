@@ -47,9 +47,6 @@
         [self configureView];
         // Query Jenkins for updates to job
         [self getUpdates];
-        
-        // Update the builds table view
-        [self.buildsVC setJob:newJob];
     }
 
     if (self.masterPopoverController != nil) {
