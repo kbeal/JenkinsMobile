@@ -40,7 +40,7 @@ class BuildProgressTests: XCTestCase {
         
         XCTAssertEqual(buildprogress!.fractionCompleted, 0.0)
         
-        build!.executor = [BuildExecutorProgressKey: 15]
+        build!.executor = [BuildExecutorProgressKey: 15] as NSObject
         DataManager.sharedInstance.saveMainContext()
         DataManager.sharedInstance.saveContext(DataManager.sharedInstance.masterMOC)
         

@@ -2,9 +2,8 @@
 //  Build+CoreDataProperties.h
 //  JenkinsMobile
 //
-//  Created by Kyle Beal on 2/11/17.
+//  Created by Kyle Beal on 3/30/17.
 //  Copyright © 2017 Kyle Beal. All rights reserved.
-//  This file was automatically generated and should not be edited.
 //
 
 #import "Build.h"
@@ -23,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) NSNumber *building;
 @property (nullable, nonatomic, copy) NSString *builtOn;
 @property (nullable, nonatomic, retain) NSObject *changeset;
+@property (nullable, nonatomic, copy) NSString *consoleText;
 @property (nullable, nonatomic, retain) NSObject *culprits;
 @property (nullable, nonatomic, copy) NSNumber *duration;
 @property (nullable, nonatomic, copy) NSNumber *estimatedDuration;
@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) NSString *result;
 @property (nullable, nonatomic, copy) NSDate *timestamp;
 @property (nullable, nonatomic, copy) NSString *url;
-@property (nullable, nonatomic, copy) NSString *consoleText;
+@property (nullable, nonatomic, copy) NSDate *completedTime;
 @property (nullable, nonatomic, retain) ActiveConfiguration *rel_Build_ActiveConfiguration;
 @property (nullable, nonatomic, retain) Job *rel_Build_Job;
 

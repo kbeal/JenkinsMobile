@@ -682,19 +682,30 @@
 
 - (void) testCreateBuildWithMinimalValues
 {
+    Build *build = [self createBuildWithMinimalValues];
+    XCTAssert([build.url isEqual:@"http://www.google.com"], @"build url is wrong");
+    XCTAssert([build.number isEqualToNumber:[NSNumber numberWithInt:100]], @"build number is wrong");
+}
+
+- (void) testBuildCompletedTime
+{
     NSArray *jobKeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobColorKey, nil];
     NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
     NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
     Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context];
     
-    NSArray *buildkeys = [NSArray arrayWithObjects:@"number",@"url",BuildJobKey,nil];
-    NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com",job, nil];
+    NSNumber *timestamp = [NSNumber numberWithDouble:528823830000];
+    NSNumber *duration = [NSNumber numberWithInt:123456];
+    
+    NSArray *buildkeys = [NSArray arrayWithObjects:@"description",@"building",@"builtOn",@"duration",@"estimatedDuration",@"executor",@"fullDisplayName",BuildIDKey,@"keepLog",@"number",@"result",@"timestamp",@"url",BuildJobKey,nil];
+    NSArray *buildvalues = [NSArray arrayWithObjects:@"build 1 description",[NSNumber numberWithBool:NO],@"1/1/14",duration,duration,@"",@"build 1 test",@"build test id",[NSNumber numberWithBool:NO],[NSNumber numberWithInt:100],@"SUCCESS",timestamp,@"http://www.google.com",job, nil];
     NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
     
     Build *build = [Build createBuildWithValues:buildvals inManagedObjectContext:_context];
     
-    XCTAssert([build.url isEqual:@"http://www.google.com"], @"build url is wrong");
-    XCTAssert([build.number isEqualToNumber:[NSNumber numberWithInt:100]], @"build number is wrong");
+    double completedTime = [build.timestamp timeIntervalSince1970] + [build.duration doubleValue];
+    
+    XCTAssertEqual([build.completedTime timeIntervalSince1970], completedTime);
 }
 
 - (void) testDeleteBuild
@@ -939,6 +950,21 @@
     }
     NSError *saveError = nil;
     [_context save:&saveError];
+}
+
+#pragma MARK - helper methods
+- (Build *) createBuildWithMinimalValues
+{
+    NSArray *jobKeys = [NSArray arrayWithObjects:JobNameKey,JobURLKey,JobColorKey, nil];
+    NSArray *jobValues1 = [NSArray arrayWithObjects:@"Job1",@"http://www.google.com",@"blue", nil];
+    NSDictionary *job1 = [NSDictionary dictionaryWithObjects:jobValues1 forKeys:jobKeys];
+    Job *job = [Job createJobWithValues:job1 inManagedObjectContext:_context];
+    
+    NSArray *buildkeys = [NSArray arrayWithObjects:@"number",@"url",BuildJobKey,nil];
+    NSArray *buildvalues = [NSArray arrayWithObjects:[NSNumber numberWithInt:100],@"http://www.google.com",job, nil];
+    NSDictionary *buildvals = [NSDictionary dictionaryWithObjects:buildvalues forKeys:buildkeys];
+    
+    return [Build createBuildWithValues:buildvals inManagedObjectContext:_context];
 }
 
 - (void) deleteAllJobs

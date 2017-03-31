@@ -2,12 +2,11 @@
 //  Build+CoreDataProperties.m
 //  JenkinsMobile
 //
-//  Created by Kyle Beal on 2/11/17.
+//  Created by Kyle Beal on 3/30/17.
 //  Copyright © 2017 Kyle Beal. All rights reserved.
-//  This file was automatically generated and should not be edited.
 //
 
-#import "Build+CoreDataProperties.h"
+#import "Build.h"
 
 @implementation Build (CoreDataProperties)
 
@@ -22,6 +21,7 @@
 @dynamic building;
 @dynamic builtOn;
 @dynamic changeset;
+@dynamic consoleText;
 @dynamic culprits;
 @dynamic duration;
 @dynamic estimatedDuration;
@@ -33,7 +33,7 @@
 @dynamic result;
 @dynamic timestamp;
 @dynamic url;
-@dynamic consoleText;
+@dynamic completedTime;
 @dynamic rel_Build_ActiveConfiguration;
 @dynamic rel_Build_Job;
 
