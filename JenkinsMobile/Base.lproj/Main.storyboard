@@ -940,10 +940,10 @@
         <image name="logo.png" width="40" height="40"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="3sO-aj-MOV"/>
-        <segue reference="MUS-XP-D46"/>
         <segue reference="3G3-aD-8Sm"/>
-        <segue reference="maD-Zs-txT"/>
+        <segue reference="9wF-Gc-rYZ"/>
+        <segue reference="MUS-XP-D46"/>
         <segue reference="PUT-gz-wxJ"/>
+        <segue reference="maD-Zs-txT"/>
     </inferredMetricsTieBreakers>
 </document>
