@@ -349,9 +349,15 @@ class SyncManagerTests: XCTestCase {
                 for obj in updatedObjects! {
                     if let ji = obj as? JenkinsInstance {
                         if ji.lastSyncResult == "200: OK" && ji.url == "http://localhost:8080/" {
-                            expectationFulfilled=true
-                        } else {
-                            print(ji.url! + ": " + ji.lastSyncResult!)
+                            if let job = ji.rel_Jobs!.first as Job! {
+                                let lb = job.lastBuild as! [String: AnyObject]
+                                let lburl = lb[BuildURLKey] as! String
+                                if let lbuild = Build.fetch(withURL: lburl, in: self.context!),
+                                    let lbnum = lb[BuildNumberKey] as? NSNumber,
+                                    lbuild.number! == lbnum {
+                                    expectationFulfilled=true
+                                }
+                            }
                         }
                     }
                 }
@@ -359,8 +365,7 @@ class SyncManagerTests: XCTestCase {
             return expectationFulfilled
         })
         
-        let primaryView = [ViewNameKey: "Test", ViewURLKey: "http://localhost:8080/"]
-        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "kbeal", JenkinsInstancePrimaryViewKey: primaryView] as [String : Any]
+        let jenkinsInstanceValues1 = [JenkinsInstanceNameKey: "TestInstance1", JenkinsInstanceURLKey: "http://localhost:8080/", JenkinsInstanceEnabledKey: true, JenkinsInstanceUsernameKey: "kbeal"] as [String : Any]
         let jinstance1 = JenkinsInstance.createJenkinsInstance(withValues: jenkinsInstanceValues1 as [AnyHashable: Any], in: self.context!)
         jinstance1.password = "changeme"
         jinstance1.allowInvalidSSLCertificate = true;

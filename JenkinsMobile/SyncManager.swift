@@ -340,7 +340,7 @@ open class SyncManager: NSObject {
         let views: [[String: AnyObject]] = values[JenkinsInstanceViewsKey] as! [[String: AnyObject]]
         var largestJobCnt = 0
         for view in views {
-            let jobs: [[String: String]] = view[ViewJobsKey] as! [[String: String]]
+            let jobs: [[String: AnyObject]] = view[ViewJobsKey] as! [[String: AnyObject]]
             if (jobs.count > largestJobCnt) {
                 largestJobCnt = jobs.count
             }
@@ -371,7 +371,7 @@ open class SyncManager: NSObject {
                 self.dataMgr.saveContext(self.dataMgr.masterMOC)
             })
 
-            self.syncAllViews(ji)
+
         })
     }
     

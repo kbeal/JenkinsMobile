@@ -213,6 +213,7 @@
     self.lastSync = NULL_TO_NIL([values objectForKey:JobLastSyncKey]);
     self.lastSyncResult = NULL_TO_NIL([values objectForKey:JobLastSyncResultKey]);
     [self createBuildsFromJobValues:NULL_TO_NIL([values objectForKey:JobBuildsKey])];
+    [self createPermalinkBuilds];
 }
 
 - (NSSet *)findBuildsInResponseToRelate:(NSSet *) responseJobs
@@ -287,6 +288,33 @@
     return managedBuilds;
 }
 
+- (void) createPermalinkBuilds
+{
+    // creates Build managed objects from Job's permalink builds (lastbuild, lastCompletedBuild, lastFailedBuild, etc)
+    // for right now just implementing lastbuild - don't yet have need for others
+    DataManager *datamgr = [DataManager sharedInstance];
+    if (self.lastBuild != nil) {
+        // try to fetch the JenkinsInstance on a backgrond context.
+        JenkinsInstance *bgji = (JenkinsInstance *)[datamgr ensureObjectOnBackgroundThread:self.rel_Job_JenkinsInstance];
+        // only create builds if instance exists on master context.
+        // Will only exist if it has been persisted to disk.
+        if (bgji != nil) {
+            NSMutableSet *responseBuildDicts = [NSMutableSet setWithCapacity:1];
+            [responseBuildDicts addObject:[[BuildDictionary alloc] initWithDictionary:(NSDictionary *)self.lastBuild]];
+            
+            // find the builds needing created in CoreData and related to this Job
+            NSSet *buildsToRelate = [self findBuildsInResponseToRelate:responseBuildDicts];
+            NSSet *managedBuilds = [self findOrCreateBuilds:buildsToRelate];
+            [self addRel_Job_Builds:managedBuilds];
+            
+            // save our work
+            [self.managedObjectContext performBlockAndWait:^{
+                [datamgr saveContext:self.managedObjectContext];
+            }];
+        }
+    }
+}
+
 - (void) createBuildsFromJobValues: (NSArray *) buildsArray
 {
     DataManager *datamgr = [DataManager sharedInstance];
@@ -297,7 +325,6 @@
         // Will only exist if it has been persisted to disk.
         if (bgji != nil) {
             // copy response object builds into Set of BuildDictionaries
-            // BuildDictionary is specialized NSDictionary using name Key for comparison
             NSMutableSet *responseBuildDicts = [NSMutableSet setWithCapacity:buildsArray.count];
             for (NSDictionary *build in buildsArray) {
                 [responseBuildDicts addObject:[[BuildDictionary alloc] initWithDictionary:build]];
